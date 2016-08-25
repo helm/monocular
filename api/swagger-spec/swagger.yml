@@ -1,0 +1,20 @@
+swagger: "2.0"
+info:
+  title: Monocular
+  version: 0.0.1
+produces:
+  - application/json
+consumes:
+  - application/json
+schemes:
+  - http
+paths:
+  /healthz:
+    get:
+      operationId: healthz
+      summary: "health check"
+      responses:
+        200:
+          description: healthy
+        default:
+          description: unexpected error
