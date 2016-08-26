@@ -7,6 +7,7 @@ import (
 	httpkit "github.com/go-swagger/go-swagger/httpkit"
 	middleware "github.com/go-swagger/go-swagger/httpkit/middleware"
 
+	"github.com/helm/monocular/handlers"
 	"github.com/helm/monocular/pkg/swagger/restapi/operations"
 )
 
@@ -25,7 +26,7 @@ func configureAPI(api *operations.MonocularAPI) http.Handler {
 	api.JSONProducer = httpkit.JSONProducer()
 
 	api.HealthzHandler = operations.HealthzHandlerFunc(func() middleware.Responder {
-		return middleware.NotImplemented("operation .Healthz has not yet been implemented")
+		return handlers.Healthz()
 	})
 
 	api.ServerShutdown = func() {}
