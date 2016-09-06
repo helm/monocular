@@ -18,3 +18,75 @@ paths:
           description: healthy
         default:
           description: unexpected error
+  /v1/charts/{repo}/{chartName}:
+    get:
+      operationId: getChart
+      summary: "get chart by repo/name"
+      parameters:
+        - name: repo
+          in: path
+          type: string
+          required: true
+        - name: chartName
+          in: path
+          type: string
+          required: true
+      responses:
+        200:
+          description: chart response
+          schema:
+            type: object
+            properties:
+              data:
+                $ref: "#/definitions/chart"
+        default:
+          description: unexpected error
+          schema:
+            $ref: "#/definitions/error"
+definitions:
+  chartAttributes:
+    type: object
+    required:
+      - name
+      - home
+    properties:
+      name:
+        type: string
+        minLength: 1
+      home:
+        type: string
+        minLength: 1
+  chart:
+    type: object
+    required:
+      - type
+      - id
+      - attributes
+    properties:
+      type:
+        type: string
+        minLength: 1
+      id:
+        type: string
+        minLength: 1
+      links:
+        type: object
+        required:
+          - latest
+        properties:
+          latest:
+            type: string
+            minLength: 1
+      attributes:
+        $ref: "#/definitions/chartAttributes"
+  error:
+    type: object
+    required:
+      - code
+      - message
+    properties:
+      code:
+        type: integer
+        format: int64
+      message:
+        type: string

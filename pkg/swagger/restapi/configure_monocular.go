@@ -25,6 +25,9 @@ func configureAPI(api *operations.MonocularAPI) http.Handler {
 
 	api.JSONProducer = httpkit.JSONProducer()
 
+	api.GetChartHandler = operations.GetChartHandlerFunc(func(params operations.GetChartParams) middleware.Responder {
+		return handlers.GetChart(params)
+	})
 	api.HealthzHandler = operations.HealthzHandlerFunc(func() middleware.Responder {
 		return handlers.Healthz()
 	})
