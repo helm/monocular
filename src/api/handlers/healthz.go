@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"github.com/go-swagger/go-swagger/httpkit/middleware"
-	"github.com/helm/monocular/pkg/swagger/restapi/operations"
+	"github.com/helm/monocular/src/api/pkg/swagger/restapi/operations"
 )
 
 // Healthz is the handler for the /healthz endpoint

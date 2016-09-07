@@ -4,9 +4,9 @@ import (
 	"log"
 
 	"github.com/go-swagger/go-swagger/httpkit/middleware"
-	"github.com/helm/monocular/data"
-	"github.com/helm/monocular/pkg/swagger/models"
-	"github.com/helm/monocular/pkg/swagger/restapi/operations"
+	"github.com/helm/monocular/src/api/data"
+	"github.com/helm/monocular/src/api/pkg/swagger/models"
+	"github.com/helm/monocular/src/api/pkg/swagger/restapi/operations"
 )
 
 const chartResourceName = "chart"

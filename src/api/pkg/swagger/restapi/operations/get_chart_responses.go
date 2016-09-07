@@ -8,7 +8,7 @@ import (
 
 	"github.com/go-swagger/go-swagger/httpkit"
 
-	"github.com/helm/monocular/pkg/swagger/models"
+	"github.com/helm/monocular/src/api/pkg/swagger/models"
 )
 
 /*GetChartOK chart response

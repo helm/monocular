@@ -7,8 +7,8 @@ import (
 	httpkit "github.com/go-swagger/go-swagger/httpkit"
 	middleware "github.com/go-swagger/go-swagger/httpkit/middleware"
 
-	"github.com/helm/monocular/handlers"
-	"github.com/helm/monocular/pkg/swagger/restapi/operations"
+	"github.com/helm/monocular/src/api/handlers"
+	"github.com/helm/monocular/src/api/pkg/swagger/restapi/operations"
 )
 
 // This file is safe to edit. Once it exists it will not be overwritten
