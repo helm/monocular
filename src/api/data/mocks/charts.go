@@ -1,6 +1,6 @@
 package mocks
 
-import "github.com/helm/monocular/pkg/swagger/models"
+import "github.com/helm/monocular/src/api/pkg/swagger/models"
 
 // GetMockRedisChart returns a mock "kubernetes/redis" chart
 func GetMockRedisChart() models.Chart {

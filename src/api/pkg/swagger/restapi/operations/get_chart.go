@@ -9,7 +9,7 @@ import (
 	"github.com/go-swagger/go-swagger/errors"
 	middleware "github.com/go-swagger/go-swagger/httpkit/middleware"
 	"github.com/go-swagger/go-swagger/strfmt"
-	"github.com/helm/monocular/pkg/swagger/models"
+	"github.com/helm/monocular/src/api/pkg/swagger/models"
 )
 
 // GetChartHandlerFunc turns a function with the right signature into a get chart handler

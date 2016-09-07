@@ -1,5 +1,5 @@
 hash: 4c4365fe248d66b6f3c2a3835610322b4c7c653c25b16dda9dd4b6f52d6e3725
-updated: 2016-08-25T17:20:50.996955538Z
+updated: 2016-09-07T18:39:58.047149679Z
 imports:
 - name: github.com/arschles/assert
   version: fc2da9844984ce5093111298174706e14d4c0c47
@@ -10,22 +10,22 @@ imports:
   version: ff42df2bf231f6a12383b36332f8364254ea86d6
   subpackages:
   - spec
-  - errors
-  - httpkit
   - httpkit/middleware
+  - errors
+  - httpkit/validate
   - strfmt
+  - swag
+  - httpkit
   - jsonpointer
   - jsonreference
-  - swag
   - httpkit/middleware/header
   - httpkit/middleware/untyped
   - internal/validate
-  - httpkit/validate
 - name: github.com/gorilla/context
   version: 1ea25387ff6f684839d82767c1733ff4d4d15d0a
   repo: https://github.com/gorilla/context
 - name: github.com/gorilla/mux
-  version: 34bf6dc9faa08144e925df4fa1838551b16d6c2a
+  version: 0a192a193177452756c362c20087ddafcf6829c4
 - name: github.com/jessevdk/go-flags
   version: 6b9493b3cb60367edd942144879646604089e3f7
   repo: https://github.com/jessevdk/go-flags

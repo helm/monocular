@@ -9,7 +9,7 @@ import (
 	"github.com/go-swagger/go-swagger/swag"
 	graceful "github.com/tylerb/graceful"
 
-	"github.com/helm/monocular/pkg/swagger/restapi/operations"
+	"github.com/helm/monocular/src/api/pkg/swagger/restapi/operations"
 )
 
 //go:generate swagger generate server -t ../.. -A Monocular -f ./swagger.yml
