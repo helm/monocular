@@ -16,13 +16,6 @@ swagger:model chartResourceLinks
 */
 type ChartResourceLinks struct {
 
-	/* home
-
-	Required: true
-	Min Length: 1
-	*/
-	Home string `json:"home"`
-
 	/* latest
 
 	Required: true
@@ -35,11 +28,6 @@ type ChartResourceLinks struct {
 func (m *ChartResourceLinks) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateHome(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
 	if err := m.validateLatest(formats); err != nil {
 		// prop
 		res = append(res, err)
@@ -48,19 +36,6 @@ func (m *ChartResourceLinks) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *ChartResourceLinks) validateHome(formats strfmt.Registry) error {
-
-	if err := validate.RequiredString("home", "body", string(m.Home)); err != nil {
-		return err
-	}
-
-	if err := validate.MinLength("home", "body", string(m.Home), 1); err != nil {
-		return err
-	}
-
 	return nil
 }
 

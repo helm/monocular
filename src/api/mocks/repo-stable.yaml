@@ -1,0 +1,25 @@
+redis-2.0.0:
+  name: redis
+  url: https://storage.googleapis.com/kubernetes-charts/redis-2.0.0.tgz
+  created: 2016-05-26 11:23:44.086354411 +0000 UTC
+  checksum: 2cea3048cf85d588204e1b1cc0674472b4517919
+  description: Deploy a basic redis pod
+  version: 2.0.0
+  home: https://github.com/kubernetes/charts/redis
+alpine-0.1.0:
+  name: alpine
+  url: https://storage.googleapis.com/kubernetes-charts/alpine-0.1.0.tgz
+  created: 2016-05-26 11:23:44.086354411 +0000 UTC
+  checksum: a61575c2d3160e5e39abf2a5ec984d6119404b18
+  description: Deploy a basic Alpine Linux pod
+  version: 0.1.0
+  home: https://github.com/example-charts/alpine
+
+alpine-0.1.1:
+  name: alpine
+  url: https://storage.googleapis.com/kubernetes-charts/alpine-0.1.1.tgz
+  created: 2016-05-27 11:23:44.086354411 +0000 UTC
+  checksum: 123575c2d3160e5e39abf2a5ec984d6119404b18
+  description: Deploy a basic Alpine Linux pod
+  version: 0.1.1
+  home: https://github.com/example-charts/alpine

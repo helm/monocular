@@ -97,12 +97,8 @@ definitions:
     type: object
     required:
       - latest
-      - home
     properties:
       latest:
-        type: string
-        minLength: 1
-      home:
         type: string
         minLength: 1
   chartResourceAttributes:
@@ -112,6 +108,8 @@ definitions:
       - description
       - created
       - checksum
+      - repo
+      - home
     properties:
       name:
         type: string
@@ -120,6 +118,12 @@ definitions:
         type: string
         minLength: 1
       created:
+        type: string
+        minLength: 1
+      repo:
+        type: string
+        minLenth: 1
+      home:
         type: string
         minLength: 1
   error:

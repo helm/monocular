@@ -30,12 +30,25 @@ type ChartResourceAttributes struct {
 	*/
 	Description string `json:"description"`
 
+	/* home
+
+	Required: true
+	Min Length: 1
+	*/
+	Home string `json:"home"`
+
 	/* name
 
 	Required: true
 	Min Length: 1
 	*/
 	Name string `json:"name"`
+
+	/* repo
+
+	Required: true
+	*/
+	Repo string `json:"repo"`
 }
 
 // Validate validates this chart resource attributes
@@ -52,7 +65,17 @@ func (m *ChartResourceAttributes) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateHome(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
 	if err := m.validateName(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
+	if err := m.validateRepo(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
@@ -89,6 +112,19 @@ func (m *ChartResourceAttributes) validateDescription(formats strfmt.Registry) e
 	return nil
 }
 
+func (m *ChartResourceAttributes) validateHome(formats strfmt.Registry) error {
+
+	if err := validate.RequiredString("home", "body", string(m.Home)); err != nil {
+		return err
+	}
+
+	if err := validate.MinLength("home", "body", string(m.Home), 1); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (m *ChartResourceAttributes) validateName(formats strfmt.Registry) error {
 
 	if err := validate.RequiredString("name", "body", string(m.Name)); err != nil {
@@ -96,6 +132,15 @@ func (m *ChartResourceAttributes) validateName(formats strfmt.Registry) error {
 	}
 
 	if err := validate.MinLength("name", "body", string(m.Name), 1); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *ChartResourceAttributes) validateRepo(formats strfmt.Registry) error {
+
+	if err := validate.RequiredString("repo", "body", string(m.Repo)); err != nil {
 		return err
 	}
 
