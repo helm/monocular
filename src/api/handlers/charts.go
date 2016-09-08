@@ -22,7 +22,7 @@ func GetChart(params operations.GetChartParams) middleware.Responder {
 }
 
 // chartHTTPBody is a convenience that returns a swagger-friendly HTTP 200 response with chart body data
-func chartHTTPBody(chart models.Chart) middleware.Responder {
+func chartHTTPBody(chart models.Resource) middleware.Responder {
 	return operations.NewGetChartOK().WithPayload(
 		operations.GetChartOKBodyBody{
 			Data: &chart,

@@ -1,18 +1,26 @@
 package mocks
 
-import "github.com/helm/monocular/src/api/pkg/swagger/models"
+import (
+	"fmt"
 
-// GetMockRedisChart returns a mock "kubernetes/redis" chart
-func GetMockRedisChart() models.Chart {
-	return models.Chart{
+	"github.com/helm/monocular/src/api/pkg/swagger/models"
+)
+
+// GetMockRedisChart returns a mock "stable/redis" chart
+func GetMockRedisChart() models.Resource {
+	data, _ := getYAML(getMocksWd() + "redis-chart-0.1.0.yaml")
+	chart, _ := ParseYAMLChartVersion(data)
+	return models.Resource{
 		Type: "chart",
-		ID:   "charts/redis",
-		Links: &models.ChartLinks{
-			Latest: "https://storage.googleapis.com/kubernetes-charts/redis-2.0.0.tgz",
+		ID:   fmt.Sprintf("stable/%s", chart.Name),
+		Links: &models.ChartResourceLinks{
+			Latest: chart.URL,
+			Home:   chart.Home,
 		},
-		Attributes: &models.ChartAttributes{
-			Name: "redis",
-			Home: "https://github.com/kubernetes/charts/redis",
+		Attributes: &models.ChartResourceAttributes{
+			Name:        chart.Name,
+			Description: chart.Description,
+			Created:     chart.Created,
 		},
 	}
 }

@@ -10,11 +10,11 @@ import (
 	"github.com/go-swagger/go-swagger/httpkit/validate"
 )
 
-/*ChartAttributes chart attributes
+/*ChartResourceLinks chart resource links
 
-swagger:model chartAttributes
+swagger:model chartResourceLinks
 */
-type ChartAttributes struct {
+type ChartResourceLinks struct {
 
 	/* home
 
@@ -23,16 +23,16 @@ type ChartAttributes struct {
 	*/
 	Home string `json:"home"`
 
-	/* name
+	/* latest
 
 	Required: true
 	Min Length: 1
 	*/
-	Name string `json:"name"`
+	Latest string `json:"latest"`
 }
 
-// Validate validates this chart attributes
-func (m *ChartAttributes) Validate(formats strfmt.Registry) error {
+// Validate validates this chart resource links
+func (m *ChartResourceLinks) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateHome(formats); err != nil {
@@ -40,7 +40,7 @@ func (m *ChartAttributes) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateName(formats); err != nil {
+	if err := m.validateLatest(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
@@ -51,7 +51,7 @@ func (m *ChartAttributes) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *ChartAttributes) validateHome(formats strfmt.Registry) error {
+func (m *ChartResourceLinks) validateHome(formats strfmt.Registry) error {
 
 	if err := validate.RequiredString("home", "body", string(m.Home)); err != nil {
 		return err
@@ -64,13 +64,13 @@ func (m *ChartAttributes) validateHome(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *ChartAttributes) validateName(formats strfmt.Registry) error {
+func (m *ChartResourceLinks) validateLatest(formats strfmt.Registry) error {
 
-	if err := validate.RequiredString("name", "body", string(m.Name)); err != nil {
+	if err := validate.RequiredString("latest", "body", string(m.Latest)); err != nil {
 		return err
 	}
 
-	if err := validate.MinLength("name", "body", string(m.Name), 1); err != nil {
+	if err := validate.MinLength("latest", "body", string(m.Latest), 1); err != nil {
 		return err
 	}
 

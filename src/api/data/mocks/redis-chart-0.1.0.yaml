@@ -1,0 +1,7 @@
+name: redis
+url: https://storage.googleapis.com/kubernetes-charts/redis-0.1.0.tgz
+created: 2016-05-26 11:23:44.086354411 +0000 UTC
+checksum: 2cea3048cf85d588204e1b1cc0674472b4517919
+description: Deploy a basic redis pod
+version: 0.1.0
+home: https://github.com/kubernetes/charts/redis
