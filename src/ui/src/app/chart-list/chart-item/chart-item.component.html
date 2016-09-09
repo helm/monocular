@@ -1,0 +1,19 @@
+<div class='chart-item col-md-6'>
+  <div class='content'>
+    <div class='header row'>
+      <div class='col-md-6'>
+        <a (click)="goToDetail(chart)" href="javascript:void(0)">{{ chart.attributes.name | uppercase }}</a>
+      </div>
+      <div class='col-md-6 text-right'>
+        <span class="label label-primary"> {{ chart.attributes.repo }}</span>
+      </div>
+    </div>
+    <div class='extra-info'>
+      <a (click)="goToDetail(chart)" href="javascript:void(0)">
+        <div class="col-sm-3 thumbnail"><img src='assets/images/k8s-icon.png'/></div>
+      </a>
+      <div class='col-sm-9'>{{chart.attributes.description}}</div>
+    </div>
+    <div class='clearfix'>
+  </div>
+</div>

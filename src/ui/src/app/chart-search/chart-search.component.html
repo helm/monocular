@@ -1,0 +1,9 @@
+<h2>
+  <div *ngIf="hasResults()">
+    <span class='query-string'>{{ charts.length }}</span> results found for "{{ query }}"
+  </div>
+  <div *ngIf="!hasResults()">
+    <span class='query-string'>{{ query }}</span> did not return any results
+  </div>
+</h2>
+<app-chart-list [charts]="charts"></app-chart-list>

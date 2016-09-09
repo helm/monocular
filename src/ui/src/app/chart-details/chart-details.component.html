@@ -1,0 +1,6 @@
+<h2 *ngIf="!chart">Chart version not found</h2>
+<div *ngIf="chart">
+  <app-chart-details-header [chart]=chart></app-chart-details-header>
+  <app-chart-details-usage [chart]=chart></app-chart-details-usage>
+  <app-chart-details-readme [chart]=chart></app-chart-details-readme>
+</div>
