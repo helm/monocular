@@ -47,6 +47,8 @@ type MonocularAPI struct {
 	GetAllChartsHandler GetAllChartsHandler
 	// GetChartHandler sets the operation handler for the get chart operation
 	GetChartHandler GetChartHandler
+	// GetChartsInRepoHandler sets the operation handler for the get charts in repo operation
+	GetChartsInRepoHandler GetChartsInRepoHandler
 	// HealthzHandler sets the operation handler for the healthz operation
 	HealthzHandler HealthzHandler
 
@@ -110,6 +112,10 @@ func (o *MonocularAPI) Validate() error {
 
 	if o.GetChartHandler == nil {
 		unregistered = append(unregistered, "GetChartHandler")
+	}
+
+	if o.GetChartsInRepoHandler == nil {
+		unregistered = append(unregistered, "GetChartsInRepoHandler")
 	}
 
 	if o.HealthzHandler == nil {
@@ -198,6 +204,11 @@ func (o *MonocularAPI) initHandlerCache() {
 		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/v1/charts/{repo}/{chartName}"] = NewGetChart(o.context, o.GetChartHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v1/charts/{repo}"] = NewGetChartsInRepo(o.context, o.GetChartsInRepoHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)

@@ -61,6 +61,27 @@ paths:
           description: unexpected error
           schema:
             $ref: "#/definitions/error"
+  /v1/charts/{repo}:
+    get:
+      operationId: getChartsInRepo
+      summary: "get all charts by repo"
+      parameters:
+        - name: repo
+          in: path
+          type: string
+          required: true
+      responses:
+        200:
+          description: charts by repo response
+          schema:
+            type: object
+            properties:
+              data:
+                $ref: "#/definitions/resource"
+        default:
+          description: unexpected error
+          schema:
+            $ref: "#/definitions/error"
 definitions:
   resource:
     type: object
