@@ -52,7 +52,7 @@ func ParseYAMLChartVersion(rawYAML []byte) (models.ChartVersion, error) {
 func MakeChartResource(chart models.ChartVersion, repo, version string) models.Resource {
 	var ret models.Resource
 	ret.Type = "chart"
-	ret.ID = fmt.Sprintf("stable/%s", chart.Name)
+	ret.ID = fmt.Sprintf("%s/%s", repo, chart.Name)
 	ret.Links = &models.ChartResourceLinks{
 		Latest: fmt.Sprintf("/v1/charts/%s/%s/%s", repo, chart.Name, version),
 	}

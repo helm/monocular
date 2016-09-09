@@ -1,0 +1,16 @@
+mysql-0.3.0:
+  name: mysql
+  url: https://storage.googleapis.com/incubator-charts/mysql-0.3.0.tgz
+  created: 2016-05-26 11:23:44.086354411 +0000 UTC
+  checksum: 2cea3987cf85d588204e1b1cc0674472b4517919
+  description: Deploy a basic mysql pod
+  version: 0.3.0
+  home: https://github.com/kubernetes/charts/incubator/mysql
+zookeeper-0.1.0:
+  name: zookeeper
+  url: https://storage.googleapis.com/incubator-charts/zookeeper-0.1.0.tgz
+  created: 2016-05-26 11:23:44.086354411 +0000 UTC
+  checksum: a61575c2d3160e5e39abf2a5ec984d6119404d13
+  description: Deploy a basic Zookeeper pod
+  version: 0.1.0
+  home: https://github.com/kubernetes/charts/incubator/zookeeper
