@@ -1,0 +1,12 @@
+version: '2'
+
+services:
+  myapp:
+    tty: true # Enables debugging capabilities when attached to this container.
+    image: prydonius/angular2
+    ports:
+      - 4200:4200
+      - 49152:49152
+    volumes:
+      - .:/app
+    command: "ng serve -h 0.0.0.0"
