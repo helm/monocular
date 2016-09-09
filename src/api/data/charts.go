@@ -16,3 +16,13 @@ func GetChart(repo, name string) (models.Resource, error) {
 	}
 	return chart, nil
 }
+
+// GetAllCharts gets all charts from all configured repos
+func GetAllCharts() ([]*models.Resource, error) {
+	// TODO implement actual "get chart" business logic
+	charts, err := mocks.GetAllChartsFromMockRepos()
+	if err != nil {
+		return nil, errors.New("chart not found")
+	}
+	return charts, nil
+}

@@ -21,11 +21,30 @@ func GetChart(params operations.GetChartParams) middleware.Responder {
 	return chartHTTPBody(chart)
 }
 
+// GetAllCharts is the handler for the /charts endpoint
+func GetAllCharts() middleware.Responder {
+	charts, err := data.GetAllCharts()
+	if err != nil {
+		log.Printf("data.GetAllCharts error (%s)", err)
+		return notFound(chartResourceName + "s")
+	}
+	return chartsHTTPBody(charts)
+}
+
 // chartHTTPBody is a convenience that returns a swagger-friendly HTTP 200 response with chart body data
 func chartHTTPBody(chart models.Resource) middleware.Responder {
 	return operations.NewGetChartOK().WithPayload(
 		operations.GetChartOKBodyBody{
 			Data: &chart,
+		},
+	)
+}
+
+// chartsHTTPBody is a convenience that returns a swagger-friendly HTTP 200 response with charts body data
+func chartsHTTPBody(charts []*models.Resource) middleware.Responder {
+	return operations.NewGetAllChartsOK().WithPayload(
+		operations.GetAllChartsOKBodyBody{
+			Data: charts,
 		},
 	)
 }

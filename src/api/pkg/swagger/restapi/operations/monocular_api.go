@@ -43,6 +43,8 @@ type MonocularAPI struct {
 	// JSONProducer registers a producer for a "application/json" mime type
 	JSONProducer httpkit.Producer
 
+	// GetAllChartsHandler sets the operation handler for the get all charts operation
+	GetAllChartsHandler GetAllChartsHandler
 	// GetChartHandler sets the operation handler for the get chart operation
 	GetChartHandler GetChartHandler
 	// HealthzHandler sets the operation handler for the healthz operation
@@ -100,6 +102,10 @@ func (o *MonocularAPI) Validate() error {
 
 	if o.JSONProducer == nil {
 		unregistered = append(unregistered, "JSONProducer")
+	}
+
+	if o.GetAllChartsHandler == nil {
+		unregistered = append(unregistered, "GetAllChartsHandler")
 	}
 
 	if o.GetChartHandler == nil {
@@ -182,6 +188,11 @@ func (o *MonocularAPI) initHandlerCache() {
 	if o.handlers == nil {
 		o.handlers = make(map[string]map[string]http.Handler)
 	}
+
+	if o.handlers["GET"] == nil {
+		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v1/charts"] = NewGetAllCharts(o.context, o.GetAllChartsHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)
