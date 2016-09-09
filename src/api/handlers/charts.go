@@ -31,6 +31,16 @@ func GetAllCharts() middleware.Responder {
 	return chartsHTTPBody(charts)
 }
 
+// GetChartsInRepo is the handler for the /charts/{repo} endpoint
+func GetChartsInRepo(params operations.GetChartsInRepoParams) middleware.Responder {
+	charts, err := data.GetChartsInRepo(params.Repo)
+	if err != nil {
+		log.Printf("data.GetAllCharts error (%s)", err)
+		return notFound(chartResourceName + "s")
+	}
+	return chartsHTTPBody(charts)
+}
+
 // chartHTTPBody is a convenience that returns a swagger-friendly HTTP 200 response with chart body data
 func chartHTTPBody(chart models.Resource) middleware.Responder {
 	return operations.NewGetChartOK().WithPayload(
