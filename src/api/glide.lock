@@ -1,5 +1,5 @@
-hash: 4c4365fe248d66b6f3c2a3835610322b4c7c653c25b16dda9dd4b6f52d6e3725
-updated: 2016-09-07T18:39:58.047149679Z
+hash: 3535c94b54cfac5757a2097e05ac3c88405500d7930ed21f590b6e3467e12114
+updated: 2016-09-09T00:11:57.298886678Z
 imports:
 - name: github.com/arschles/assert
   version: fc2da9844984ce5093111298174706e14d4c0c47
@@ -14,8 +14,8 @@ imports:
   - errors
   - httpkit/validate
   - strfmt
-  - swag
   - httpkit
+  - swag
   - jsonpointer
   - jsonreference
   - httpkit/middleware/header
@@ -51,5 +51,4 @@ imports:
   - netutil
 - name: gopkg.in/yaml.v2
   version: a83829b6f1293c91addabc89d0571c246397bbf4
-  repo: https://gopkg.in/yaml.v2
 testImports: []

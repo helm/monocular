@@ -65,7 +65,7 @@ type GetChartOKBodyBody struct {
 
 	Required: true
 	*/
-	Data *models.Chart `json:"data"`
+	Data *models.Resource `json:"data"`
 }
 
 // Validate validates this get chart o k body body
