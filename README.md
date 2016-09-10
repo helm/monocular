@@ -18,7 +18,11 @@ Monocular comprises a UI front end, and a RESTFul HTTP back end API.
 
 # UI Prerequisites
 
-TBD
+The UI is an angular 2 client application located in `src/ui/`.
+
+We leverage [docker](https://www.docker.com) (via `docker-compose`) to provide all local dependencies.
+
+More UI docs are [here](src/ui/README.md).
 
 # API Prerequisites
 
@@ -28,7 +32,7 @@ The API is a golang HTTP server located in `src/api/`.
 
 `cd src/api/ && make bootstrap` will launch a docker container, and run a `glide install` command to install all API dependencies in the `src/api/vendor/` directory.
 
-More API docs are [here](src/api/README.md)
+More API docs are [here](src/api/README.md).
 
 ## Status of the Project
 
