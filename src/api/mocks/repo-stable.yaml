@@ -1,25 +1,144 @@
-redis-2.0.0:
+apache-0.0.1:
+  name: apache
+  url: https://storage.googleapis.com/kubernetes-charts/apache-0.0.1.tgz
+  created: 2016-05-26 11:23:44.086354411 +0000 UTC
+  checksum: 68eb4f96567c1d5fa9417b2bb9b9cbb2
+  description: Chart for Apache HTTP Server
+  version: 0.0.1
+  home: https://github.com/kubernetes/charts/apache
+drupal-0.0.1:
+  name: drupal
+  url: https://storage.googleapis.com/kubernetes-charts/drupal-0.0.1.tgz
+  created: 2016-05-26 11:23:44.086354411 +0000 UTC
+  checksum: 126dfaf2cf26742efa5687b3e509850a
+  description: One of the most versatile open source content management systems.
+  version: 0.0.1
+  home: https://github.com/kubernetes/charts/drupal
+ghost-0.0.1:
+  name: ghost
+  url: https://storage.googleapis.com/kubernetes-charts/ghost-0.0.1.tgz
+  created: 2016-05-26 11:23:44.086354411 +0000 UTC
+  checksum: 326afc847f315d86f330b7c852025a5a
+  description: A simple, powerful publishing platform that allows you to share your stories with the world
+  version: 0.0.1
+  home: https://github.com/kubernetes/charts/ghost
+joomla-0.0.1:
+  name: joomla
+  url: https://storage.googleapis.com/kubernetes-charts/joomla-0.0.1.tgz
+  created: 2016-05-26 11:23:44.086354411 +0000 UTC
+  checksum: 26acf95df7948031c838f1d2ecaa4c93
+  description: PHP content management system (CMS) for publishing web content
+  version: 0.0.1
+  home: https://github.com/kubernetes/charts/joomla
+mariadb-0.0.1:
+  name: mariadb
+  url: https://storage.googleapis.com/kubernetes-charts/mariadb-0.0.1.tgz
+  created: 2016-05-26 11:23:44.086354411 +0000 UTC
+  checksum: 20bf80db6dd524d90d656f5a1f9140b4
+  description: Chart for MariaDB
+  version: 0.0.1
+  home: https://github.com/kubernetes/charts/mariadb
+mariadb-cluster-0.0.1:
+  name: mariadb-cluster
+  url: https://storage.googleapis.com/kubernetes-charts/mariadb-cluster-0.0.1.tgz
+  created: 2016-05-26 11:23:44.086354411 +0000 UTC
+  checksum: b568546d9d360918b68714a4dcf5d5ea
+  description: Chart to create a Highly available MariaDB cluster
+  version: 0.0.1
+  home: https://github.com/kubernetes/charts/mariadb-cluster
+memcached-0.0.1:
+  name: memcached
+  url: https://storage.googleapis.com/kubernetes-charts/memcached-0.0.1.tgz
+  created: 2016-05-26 11:23:44.086354411 +0000 UTC
+  checksum: cef496cbc509c3ba71df229c2a02ac66
+  description: Chart for Memcached
+  version: 0.0.1
+  home: https://github.com/kubernetes/charts/memcached
+mongodb-0.0.1:
+  name: mongodb
+  url: https://storage.googleapis.com/kubernetes-charts/mongodb-0.0.1.tgz
+  created: 2016-05-26 11:23:44.086354411 +0000 UTC
+  checksum: 7162512956e4da7a4a8e0156a70d827e
+  description: Chart for MongoDB
+  version: 0.0.1
+  home: https://github.com/kubernetes/charts/mongodb
+nginx-0.0.1:
+  name: nginx
+  url: https://storage.googleapis.com/kubernetes-charts/nginx-0.0.1.tgz
+  created: 2016-05-26 11:23:44.086354411 +0000 UTC
+  checksum: c8b7c77b1ec6b658dc4b2d595a987028
+  description: Chart for the nginx server
+  version: 0.0.1
+  home: https://github.com/kubernetes/charts/nginx
+odoo-0.0.1:
+  name: odoo
+  url: https://storage.googleapis.com/kubernetes-charts/odoo-0.0.1.tgz
+  created: 2016-05-26 11:23:44.086354411 +0000 UTC
+  checksum: 7f0b777137e84cab7071d1377293b856
+  description: A suite of web based open source business apps.
+  version: 0.0.1
+  home: https://github.com/kubernetes/charts/odoo
+phpbb-0.0.1:
+  name: phpbb
+  url: https://storage.googleapis.com/kubernetes-charts/phpbb-0.0.1.tgz
+  created: 2016-05-26 11:23:44.086354411 +0000 UTC
+  checksum: 3cad7251f532ef93efcb9a488c4b4609
+  description: Community forum that supports the notion of users and groups, file attachments, full-text search, notifications and more.
+  version: 0.0.1
+  home: https://github.com/kubernetes/charts/phpbb
+postgresql-0.0.1:
+  name: postgresql
+  url: https://storage.googleapis.com/kubernetes-charts/postgresql-0.0.1.tgz
+  created: 2016-05-26 11:23:44.086354411 +0000 UTC
+  checksum: f061ec714d6398ce0ad1d22fcdc8b804
+  description: Chart for PostgreSQL
+  version: 0.0.1
+  home: https://github.com/kubernetes/charts/postgresql
+rabbitmq-0.0.1:
+  name: rabbitmq
+  url: https://storage.googleapis.com/kubernetes-charts/rabbitmq-0.0.1.tgz
+  created: 2016-05-26 11:23:44.086354411 +0000 UTC
+  checksum: f4ed741d8248b086f374e5242ad8caa5
+  description: Open source message broker software that implements the Advanced Message Queuing Protocol (AMQP)
+  version: 0.0.1
+  home: https://github.com/kubernetes/charts/rabbitmq
+redis-0.0.1:
   name: redis
-  url: https://storage.googleapis.com/kubernetes-charts/redis-2.0.0.tgz
+  url: https://storage.googleapis.com/kubernetes-charts/redis-0.0.1.tgz
   created: 2016-05-26 11:23:44.086354411 +0000 UTC
-  checksum: 2cea3048cf85d588204e1b1cc0674472b4517919
-  description: Deploy a basic redis pod
-  version: 2.0.0
+  checksum: ef07ac2dbb340c46f58f333e255d01d8
+  description: Chart for Redis
+  version: 0.0.1
   home: https://github.com/kubernetes/charts/redis
-alpine-0.1.0:
-  name: alpine
-  url: https://storage.googleapis.com/kubernetes-charts/alpine-0.1.0.tgz
+redmine-0.0.1:
+  name: redmine
+  url: https://storage.googleapis.com/kubernetes-charts/redmine-0.0.1.tgz
   created: 2016-05-26 11:23:44.086354411 +0000 UTC
-  checksum: a61575c2d3160e5e39abf2a5ec984d6119404b18
-  description: Deploy a basic Alpine Linux pod
-  version: 0.1.0
-  home: https://github.com/example-charts/alpine
-
-alpine-0.1.1:
-  name: alpine
-  url: https://storage.googleapis.com/kubernetes-charts/alpine-0.1.1.tgz
-  created: 2016-05-27 11:23:44.086354411 +0000 UTC
-  checksum: 123575c2d3160e5e39abf2a5ec984d6119404b18
-  description: Deploy a basic Alpine Linux pod
-  version: 0.1.1
-  home: https://github.com/example-charts/alpine
+  checksum: e86173802cbd53f29e254c6f67197840
+  description: A flexible project management web application.
+  version: 0.0.1
+  home: https://github.com/kubernetes/charts/redmine
+testlink-0.0.1:
+  name: testlink
+  url: https://storage.googleapis.com/kubernetes-charts/testlink-0.0.1.tgz
+  created: 2016-05-26 11:23:44.086354411 +0000 UTC
+  checksum: 006b056e144ea2cf04c809cf7562f2b5
+  description: Web-based test management system that facilitates software quality assurance.
+  version: 0.0.1
+  home: https://github.com/kubernetes/charts/testlink
+tomcat-0.0.1:
+  name: tomcat
+  url: https://storage.googleapis.com/kubernetes-charts/tomcat-0.0.1.tgz
+  created: 2016-05-26 11:23:44.086354411 +0000 UTC
+  checksum: 4f9146cb17ceabf6cd11751d03b215f7
+  description: Chart for Apache Tomcat
+  version: 0.0.1
+  home: https://github.com/kubernetes/charts/tomcat
+wildfly-0.0.1:
+  name: wildfly
+  url: https://storage.googleapis.com/kubernetes-charts/wildfly-0.0.1.tgz
+  created: 2016-05-26 11:23:44.086354411 +0000 UTC
+  checksum: de0e05443c5e05e812e118ae7249cc85
+  description: Chart for Wildfly
+  version: 0.0.1
+  home: https://github.com/kubernetes/charts/wildfly
