@@ -23,7 +23,7 @@ export class ChartDetailsComponent implements OnInit {
       let repo = params['repo'];
       let chartName = params['chartName']
       this.chartsService.getChart(repo, chartName)
-        .then(chart => this.chart = chart)
+        .subscribe(chart => this.chart = chart)
       })
-    }
+  }
 }

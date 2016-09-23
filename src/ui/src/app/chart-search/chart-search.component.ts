@@ -31,7 +31,7 @@ export class ChartSearchComponent implements OnInit {
   }
 
   searchCharts(q: String): void {
-		this.chartsService.searchCharts(q).then(charts => this.charts = charts);
+		this.chartsService.searchCharts(q).subscribe(charts => this.charts = charts);
   }
 
   hasResults(): boolean {

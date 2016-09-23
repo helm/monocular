@@ -15,23 +15,11 @@ Regarding its functionality we can highlight:
 
 ### Running Monocular UI
 
-Currently, the UI is relying on mocked data so an instance of Monocular
-API is not necessary for the time being. Expect this to change in the
-near future.
+Monocular UI requires a running instance of the Monocular backend.
 
-In order to run the Angular application we provide a `docker-compose.yml`. Just execute:
+The easiest way to have a running multi-tier development environment is to use the the `docker-compose.yml` file placed at the project root directory.
 
-```
-docker-compose up
-```
-
-Once the initialization is completed you should see a message like:
-
-```
-** NG Live Development Server is running on http://0.0.0.0:4200. **
-```
-
-Now just visit `http://{your-docker-machine-ip-address}:4200` and enjoy!
+Refer to [Running a development environment](src/README.md) for more details.
 
 ### Stack
 

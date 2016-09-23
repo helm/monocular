@@ -1,0 +1,20 @@
+version: '2'
+
+services:
+  ui:
+    tty: true # Enables debugging capabilities when attached to this container.
+    image: bitnami/angular:2.0.0
+    ports:
+      - 4200:4200
+    volumes:
+      - ./src/ui:/app
+    command: "ng serve -h 0.0.0.0"
+  api:
+    tty: true
+    build: ./dev_env/api
+    ports:
+      - 8080:8080
+    volumes:
+      - ./src/api:/go/src/github.com/helm/monocular/src/api
+    environment:
+      - ENVIRONMENT=development

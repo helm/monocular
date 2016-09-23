@@ -16,6 +16,6 @@ export class ChartIndexComponent implements OnInit {
   }
 
   loadCharts(): void {
-		this.chartsService.getCharts().then(charts => this.charts = charts);
+		this.chartsService.getCharts().subscribe(charts => this.charts = charts);
   }
 }

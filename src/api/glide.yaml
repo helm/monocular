@@ -3,7 +3,15 @@ import:
 - package: github.com/gorilla/mux
 - package: github.com/kelseyhightower/envconfig
 - package: github.com/arschles/assert
-- package: github.com/go-openapi/runtime/middleware
+- package: github.com/go-openapi/runtime
+  subpackages:
+  - middleware
 - package: github.com/go-swagger/go-swagger
   version: 0.6.0
 - package: gopkg.in/yaml.v2
+- package: github.com/rs/cors
+  version: ~1.0.0
+- package: github.com/rs/xhandler
+  version: ~1.0.0
+- package: github.com/imdario/mergo
+  version: ~0.2.2

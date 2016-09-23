@@ -2,6 +2,7 @@ package restapi
 
 import (
 	"crypto/tls"
+	"log"
 	"net/http"
 	"time"
 
@@ -9,10 +10,12 @@ import (
 	runtime "github.com/go-openapi/runtime"
 	middleware "github.com/go-openapi/runtime/middleware"
 
+	"github.com/helm/monocular/src/api/config"
 	"github.com/helm/monocular/src/api/data/cache"
 	"github.com/helm/monocular/src/api/handlers"
 	"github.com/helm/monocular/src/api/jobs"
 	"github.com/helm/monocular/src/api/swagger/restapi/operations"
+	"github.com/rs/cors"
 )
 
 // This file is safe to edit. Once it exists it will not be overwritten
@@ -82,5 +85,26 @@ func setupMiddlewares(handler http.Handler) http.Handler {
 // The middleware configuration happens before anything, this middleware also applies to serving the swagger.json document.
 // So this is a good place to plug in a panic handling middleware, logging and metrics
 func setupGlobalMiddleware(handler http.Handler) http.Handler {
+	handler = setupCorsMiddleware(handler)
+	return handler
+}
+
+func setupCorsMiddleware(handler http.Handler) http.Handler {
+	config, err := config.GetConfig()
+
+	if err != nil {
+		log.Fatalf("Can not load configuration %v\n", err)
+	}
+
+	c := cors.New(cors.Options{
+		AllowedOrigins: config.Cors.AllowedOrigins,
+		// They need to be the same than the Access-Control-Request-Headers so it works
+		// on pre-flight requests
+		AllowedHeaders:   config.Cors.AllowedHeaders,
+		AllowCredentials: true,
+	})
+
+	// Insert the middleware
+	handler = c.Handler(handler)
 	return handler
 }
