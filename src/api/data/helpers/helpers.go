@@ -51,10 +51,10 @@ func ParseYAMLChartVersion(rawYAML []byte) (models.ChartVersion, error) {
 // MakeChartResource composes a Resource type that represents a repo+chart
 func MakeChartResource(chart models.ChartVersion, repo, version string) models.Resource {
 	var ret models.Resource
-	ret.Type = StrPoint("chart")
-	ret.ID = StrPoint(fmt.Sprintf("%s/%s", repo, *chart.Name))
+	ret.Type = StrToPtr("chart")
+	ret.ID = StrToPtr(fmt.Sprintf("%s/%s", repo, *chart.Name))
 	ret.Links = &models.ChartResourceLinks{
-		Latest: StrPoint(fmt.Sprintf("/v1/charts/%s/%s/%s", repo, *chart.Name, version)),
+		Latest: StrToPtr(fmt.Sprintf("/v1/charts/%s/%s/%s", repo, *chart.Name, version)),
 	}
 	ret.Attributes = &models.ChartResourceAttributes{
 		Repo:        &repo,
@@ -107,12 +107,12 @@ func newestSemVer(v1 string, v2 string) (string, error) {
 	return v1, nil
 }
 
-// Int64Point converts an int64 to an *int64
-func Int64Point(n int64) *int64 {
+// Int64ToPtr converts an int64 to an *int64
+func Int64ToPtr(n int64) *int64 {
 	return &n
 }
 
-// StrPoint converts a string to a *string
-func StrPoint(s string) *string {
+// StrToPtr converts a string to a *string
+func StrToPtr(s string) *string {
 	return &s
 }

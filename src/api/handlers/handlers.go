@@ -14,6 +14,6 @@ import (
 func notFound(resource string) middleware.Responder {
 	message := fmt.Sprintf("404 %s not found", resource)
 	return operations.NewGetChartDefault(http.StatusNotFound).WithPayload(
-		&models.Error{Code: helpers.Int64Point(http.StatusNotFound), Message: &message},
+		&models.Error{Code: helpers.Int64ToPtr(http.StatusNotFound), Message: &message},
 	)
 }
