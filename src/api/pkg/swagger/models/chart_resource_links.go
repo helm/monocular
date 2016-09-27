@@ -4,10 +4,10 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	strfmt "github.com/go-swagger/go-swagger/strfmt"
+	strfmt "github.com/go-openapi/strfmt"
 
-	"github.com/go-swagger/go-swagger/errors"
-	"github.com/go-swagger/go-swagger/httpkit/validate"
+	"github.com/go-openapi/errors"
+	"github.com/go-openapi/validate"
 )
 
 /*ChartResourceLinks chart resource links
@@ -21,7 +21,7 @@ type ChartResourceLinks struct {
 	Required: true
 	Min Length: 1
 	*/
-	Latest string `json:"latest"`
+	Latest *string `json:"latest"`
 }
 
 // Validate validates this chart resource links
@@ -41,11 +41,11 @@ func (m *ChartResourceLinks) Validate(formats strfmt.Registry) error {
 
 func (m *ChartResourceLinks) validateLatest(formats strfmt.Registry) error {
 
-	if err := validate.RequiredString("latest", "body", string(m.Latest)); err != nil {
+	if err := validate.Required("latest", "body", m.Latest); err != nil {
 		return err
 	}
 
-	if err := validate.MinLength("latest", "body", string(m.Latest), 1); err != nil {
+	if err := validate.MinLength("latest", "body", string(*m.Latest), 1); err != nil {
 		return err
 	}
 

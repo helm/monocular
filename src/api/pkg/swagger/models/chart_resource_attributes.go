@@ -4,10 +4,10 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	strfmt "github.com/go-swagger/go-swagger/strfmt"
+	strfmt "github.com/go-openapi/strfmt"
 
-	"github.com/go-swagger/go-swagger/errors"
-	"github.com/go-swagger/go-swagger/httpkit/validate"
+	"github.com/go-openapi/errors"
+	"github.com/go-openapi/validate"
 )
 
 /*ChartResourceAttributes chart resource attributes
@@ -21,34 +21,34 @@ type ChartResourceAttributes struct {
 	Required: true
 	Min Length: 1
 	*/
-	Created string `json:"created"`
+	Created *string `json:"created"`
 
 	/* description
 
 	Required: true
 	Min Length: 1
 	*/
-	Description string `json:"description"`
+	Description *string `json:"description"`
 
 	/* home
 
 	Required: true
 	Min Length: 1
 	*/
-	Home string `json:"home"`
+	Home *string `json:"home"`
 
 	/* name
 
 	Required: true
 	Min Length: 1
 	*/
-	Name string `json:"name"`
+	Name *string `json:"name"`
 
 	/* repo
 
 	Required: true
 	*/
-	Repo string `json:"repo"`
+	Repo *string `json:"repo"`
 }
 
 // Validate validates this chart resource attributes
@@ -88,11 +88,11 @@ func (m *ChartResourceAttributes) Validate(formats strfmt.Registry) error {
 
 func (m *ChartResourceAttributes) validateCreated(formats strfmt.Registry) error {
 
-	if err := validate.RequiredString("created", "body", string(m.Created)); err != nil {
+	if err := validate.Required("created", "body", m.Created); err != nil {
 		return err
 	}
 
-	if err := validate.MinLength("created", "body", string(m.Created), 1); err != nil {
+	if err := validate.MinLength("created", "body", string(*m.Created), 1); err != nil {
 		return err
 	}
 
@@ -101,11 +101,11 @@ func (m *ChartResourceAttributes) validateCreated(formats strfmt.Registry) error
 
 func (m *ChartResourceAttributes) validateDescription(formats strfmt.Registry) error {
 
-	if err := validate.RequiredString("description", "body", string(m.Description)); err != nil {
+	if err := validate.Required("description", "body", m.Description); err != nil {
 		return err
 	}
 
-	if err := validate.MinLength("description", "body", string(m.Description), 1); err != nil {
+	if err := validate.MinLength("description", "body", string(*m.Description), 1); err != nil {
 		return err
 	}
 
@@ -114,11 +114,11 @@ func (m *ChartResourceAttributes) validateDescription(formats strfmt.Registry) e
 
 func (m *ChartResourceAttributes) validateHome(formats strfmt.Registry) error {
 
-	if err := validate.RequiredString("home", "body", string(m.Home)); err != nil {
+	if err := validate.Required("home", "body", m.Home); err != nil {
 		return err
 	}
 
-	if err := validate.MinLength("home", "body", string(m.Home), 1); err != nil {
+	if err := validate.MinLength("home", "body", string(*m.Home), 1); err != nil {
 		return err
 	}
 
@@ -127,11 +127,11 @@ func (m *ChartResourceAttributes) validateHome(formats strfmt.Registry) error {
 
 func (m *ChartResourceAttributes) validateName(formats strfmt.Registry) error {
 
-	if err := validate.RequiredString("name", "body", string(m.Name)); err != nil {
+	if err := validate.Required("name", "body", m.Name); err != nil {
 		return err
 	}
 
-	if err := validate.MinLength("name", "body", string(m.Name), 1); err != nil {
+	if err := validate.MinLength("name", "body", string(*m.Name), 1); err != nil {
 		return err
 	}
 
@@ -140,7 +140,7 @@ func (m *ChartResourceAttributes) validateName(formats strfmt.Registry) error {
 
 func (m *ChartResourceAttributes) validateRepo(formats strfmt.Registry) error {
 
-	if err := validate.RequiredString("repo", "body", string(m.Repo)); err != nil {
+	if err := validate.Required("repo", "body", m.Repo); err != nil {
 		return err
 	}
 

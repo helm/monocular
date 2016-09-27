@@ -51,13 +51,13 @@ func ParseYAMLChartVersion(rawYAML []byte) (models.ChartVersion, error) {
 // MakeChartResource composes a Resource type that represents a repo+chart
 func MakeChartResource(chart models.ChartVersion, repo, version string) models.Resource {
 	var ret models.Resource
-	ret.Type = "chart"
-	ret.ID = fmt.Sprintf("%s/%s", repo, chart.Name)
+	ret.Type = StrPoint("chart")
+	ret.ID = StrPoint(fmt.Sprintf("%s/%s", repo, *chart.Name))
 	ret.Links = &models.ChartResourceLinks{
-		Latest: fmt.Sprintf("/v1/charts/%s/%s/%s", repo, chart.Name, version),
+		Latest: StrPoint(fmt.Sprintf("/v1/charts/%s/%s/%s", repo, *chart.Name, version)),
 	}
 	ret.Attributes = &models.ChartResourceAttributes{
-		Repo:        repo,
+		Repo:        &repo,
 		Name:        chart.Name,
 		Description: chart.Description,
 		Created:     chart.Created,
@@ -71,17 +71,17 @@ func GetLatestChartVersion(charts []models.ChartVersion, name string) (models.Ch
 	var latest string
 	var ret models.ChartVersion
 	for _, chart := range charts {
-		if chart.Name == name {
+		if *chart.Name == name {
 			if latest == "" {
-				latest = chart.Version
+				latest = *chart.Version
 				ret = chart
 			} else {
-				newest, err := newestSemVer(latest, chart.Version)
+				newest, err := newestSemVer(latest, *chart.Version)
 				if err != nil {
 					return models.ChartVersion{}, err
 				}
 				latest = newest
-				if latest == chart.Version {
+				if latest == *chart.Version {
 					ret = chart
 				}
 			}
@@ -105,4 +105,14 @@ func newestSemVer(v1 string, v2 string) (string, error) {
 		}
 	}
 	return v1, nil
+}
+
+// Int64Point converts an int64 to an *int64
+func Int64Point(n int64) *int64 {
+	return &n
+}
+
+// StrPoint converts a string to a *string
+func StrPoint(s string) *string {
+	return &s
 }

@@ -6,24 +6,25 @@ package operations
 import (
 	"net/http"
 
-	"github.com/go-swagger/go-swagger/errors"
-	middleware "github.com/go-swagger/go-swagger/httpkit/middleware"
-	"github.com/go-swagger/go-swagger/httpkit/validate"
-	"github.com/go-swagger/go-swagger/strfmt"
+	"github.com/go-openapi/errors"
+	middleware "github.com/go-openapi/runtime/middleware"
+	"github.com/go-openapi/strfmt"
+	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 	"github.com/helm/monocular/src/api/pkg/swagger/models"
 )
 
 // GetAllChartsHandlerFunc turns a function with the right signature into a get all charts handler
-type GetAllChartsHandlerFunc func() middleware.Responder
+type GetAllChartsHandlerFunc func(GetAllChartsParams) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn GetAllChartsHandlerFunc) Handle() middleware.Responder {
-	return fn()
+func (fn GetAllChartsHandlerFunc) Handle(params GetAllChartsParams) middleware.Responder {
+	return fn(params)
 }
 
 // GetAllChartsHandler interface for that can handle valid get all charts params
 type GetAllChartsHandler interface {
-	Handle() middleware.Responder
+	Handle(GetAllChartsParams) middleware.Responder
 }
 
 // NewGetAllCharts creates a new http.Handler for the get all charts operation
@@ -43,13 +44,14 @@ type GetAllCharts struct {
 
 func (o *GetAllCharts) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, _ := o.Context.RouteInfo(r)
+	var Params = NewGetAllChartsParams()
 
-	if err := o.Context.BindValidRequest(r, route, nil); err != nil { // bind params
+	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 
-	res := o.Handler.Handle() // actually handle the request
+	res := o.Handler.Handle(Params) // actually handle the request
 
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
@@ -90,6 +92,10 @@ func (o *GetAllChartsOKBodyBody) validateData(formats strfmt.Registry) error {
 	}
 
 	for i := 0; i < len(o.Data); i++ {
+
+		if swag.IsZero(o.Data[i]) { // not required
+			continue
+		}
 
 		if o.Data[i] != nil {
 

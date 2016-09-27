@@ -4,10 +4,10 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	strfmt "github.com/go-swagger/go-swagger/strfmt"
+	strfmt "github.com/go-openapi/strfmt"
 
-	"github.com/go-swagger/go-swagger/errors"
-	"github.com/go-swagger/go-swagger/httpkit/validate"
+	"github.com/go-openapi/errors"
+	"github.com/go-openapi/validate"
 )
 
 /*Resource resource
@@ -27,7 +27,7 @@ type Resource struct {
 	Required: true
 	Min Length: 1
 	*/
-	ID string `json:"id"`
+	ID *string `json:"id"`
 
 	/* links
 	 */
@@ -38,7 +38,7 @@ type Resource struct {
 	Required: true
 	Min Length: 1
 	*/
-	Type string `json:"type"`
+	Type *string `json:"type"`
 }
 
 // Validate validates this resource
@@ -73,11 +73,11 @@ func (m *Resource) validateAttributes(formats strfmt.Registry) error {
 
 func (m *Resource) validateID(formats strfmt.Registry) error {
 
-	if err := validate.RequiredString("id", "body", string(m.ID)); err != nil {
+	if err := validate.Required("id", "body", m.ID); err != nil {
 		return err
 	}
 
-	if err := validate.MinLength("id", "body", string(m.ID), 1); err != nil {
+	if err := validate.MinLength("id", "body", string(*m.ID), 1); err != nil {
 		return err
 	}
 
@@ -86,11 +86,11 @@ func (m *Resource) validateID(formats strfmt.Registry) error {
 
 func (m *Resource) validateType(formats strfmt.Registry) error {
 
-	if err := validate.RequiredString("type", "body", string(m.Type)); err != nil {
+	if err := validate.Required("type", "body", m.Type); err != nil {
 		return err
 	}
 
-	if err := validate.MinLength("type", "body", string(m.Type), 1); err != nil {
+	if err := validate.MinLength("type", "body", string(*m.Type), 1); err != nil {
 		return err
 	}
 

@@ -4,10 +4,10 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	strfmt "github.com/go-swagger/go-swagger/strfmt"
+	strfmt "github.com/go-openapi/strfmt"
 
-	"github.com/go-swagger/go-swagger/errors"
-	"github.com/go-swagger/go-swagger/httpkit/validate"
+	"github.com/go-openapi/errors"
+	"github.com/go-openapi/validate"
 )
 
 /*Error error
@@ -20,13 +20,13 @@ type Error struct {
 
 	Required: true
 	*/
-	Code int64 `json:"code"`
+	Code *int64 `json:"code"`
 
 	/* message
 
 	Required: true
 	*/
-	Message string `json:"message"`
+	Message *string `json:"message"`
 }
 
 // Validate validates this error
@@ -51,7 +51,7 @@ func (m *Error) Validate(formats strfmt.Registry) error {
 
 func (m *Error) validateCode(formats strfmt.Registry) error {
 
-	if err := validate.Required("code", "body", int64(m.Code)); err != nil {
+	if err := validate.Required("code", "body", m.Code); err != nil {
 		return err
 	}
 
@@ -60,7 +60,7 @@ func (m *Error) validateCode(formats strfmt.Registry) error {
 
 func (m *Error) validateMessage(formats strfmt.Registry) error {
 
-	if err := validate.RequiredString("message", "body", string(m.Message)); err != nil {
+	if err := validate.Required("message", "body", m.Message); err != nil {
 		return err
 	}
 

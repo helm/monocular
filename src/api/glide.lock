@@ -1,54 +1,108 @@
-hash: 3535c94b54cfac5757a2097e05ac3c88405500d7930ed21f590b6e3467e12114
-updated: 2016-09-09T00:11:57.298886678Z
+hash: a8ecae121ca9c84f0ba3dc414a5c3814c020dd426eb5f6f8c96ad5635ad491c5
+updated: 2016-09-26T15:46:39.941699903-07:00
 imports:
 - name: github.com/arschles/assert
   version: fc2da9844984ce5093111298174706e14d4c0c47
 - name: github.com/asaskevich/govalidator
-  version: 9699ab6b38bee2e02cd3fe8b99ecf67665395c96
+  version: 593d64559f7600f29581a3ee42177f5dbded27a9
   repo: https://github.com/asaskevich/govalidator
-- name: github.com/go-swagger/go-swagger
-  version: ff42df2bf231f6a12383b36332f8364254ea86d6
+- name: github.com/go-openapi/analysis
+  version: b44dc874b601d9e4e2f6e19140e794ba24bead3b
+- name: github.com/go-openapi/errors
+  version: 4178436c9f2430cdd945c50301cfb61563b56573
+- name: github.com/go-openapi/jsonpointer
+  version: 46af16f9f7b149af66e5d1bd010e3574dc06de98
+  repo: https://github.com/go-openapi/jsonpointer
+- name: github.com/go-openapi/jsonreference
+  version: 13c6e3589ad90f49bd3e3bbe2c2cb3d7a4142272
+  repo: https://github.com/go-openapi/jsonreference
+- name: github.com/go-openapi/loads
+  version: 18441dfa706d924a39a030ee2c3b1d8d81917b38
+- name: github.com/go-openapi/runtime
+  version: 18efe8c11921c0ddabc8e91554971d6db1f91c7c
   subpackages:
-  - spec
+  - middleware
+  - middleware/denco
+  - middleware/header
+  - middleware/untyped
+  - security
+- name: github.com/go-openapi/spec
+  version: 6aced65f8501fe1217321abf0749d354824ba2ff
+- name: github.com/go-openapi/strfmt
+  version: d65c7fdb29eca313476e529628176fe17e58c488
+- name: github.com/go-openapi/swag
+  version: 0e04f5e499b19bf51031c01a00f098f25067d8dc
+- name: github.com/go-openapi/validate
+  version: 03d947b0268e1c2bb5c74ac4095447f140c9a112
+- name: github.com/go-swagger/go-swagger
+  version: 4c101d534a9bc418b0c47c4e017153f317304ca4
+  subpackages:
   - httpkit/middleware
   - errors
-  - httpkit/validate
-  - strfmt
   - httpkit
   - swag
-  - jsonpointer
-  - jsonreference
-  - httpkit/middleware/header
-  - httpkit/middleware/untyped
-  - internal/validate
+  - httpkit/validate
+  - spec
+  - strfmt
 - name: github.com/gorilla/context
-  version: 1ea25387ff6f684839d82767c1733ff4d4d15d0a
-  repo: https://github.com/gorilla/context
+  version: 08b5f424b9271eedf6f9f0ce86cb9396ed337a42
 - name: github.com/gorilla/mux
-  version: 0a192a193177452756c362c20087ddafcf6829c4
+  version: 757bef944d0f21880861c2dd9c871ca543023cba
+- name: github.com/helm/monocular
+  version: 1b01e10270dfd78da9834ae4b8dfce0b1d106d83
+  subpackages:
+  - src/api/pkg/swagger/restapi
+  - src/api/pkg/swagger/restapi/operations
+  - src/api/mocks
+  - src/api/pkg/swagger/models
+  - src/api/data
+  - src/api/data/helpers
+  - src/api/handlers
 - name: github.com/jessevdk/go-flags
-  version: 6b9493b3cb60367edd942144879646604089e3f7
-  repo: https://github.com/jessevdk/go-flags
+  version: a8cab0163d48558ffd77076c9c99388529766f63
 - name: github.com/kelseyhightower/envconfig
-  version: 1e291572dcb9ba673cdcdb15e0f422702415ebaf
-- name: github.com/naoina/denco
-  version: 9af2ba0e24214bac003821f4a501b131b2e04c75
-  repo: https://github.com/naoina/denco
-- name: github.com/opennota/urlesc
-  version: 5fa9ff0392746aeae1c4b37fcc42c65afa7a9587
-  repo: https://github.com/opennota/urlesc
+  version: 13674b2d056fb658a00ba3f36e78043ced07c924
+- name: github.com/mailru/easyjson
+  version: 34560e358dc05e2c28f6fda2f5c9e7494a4b9b19
+  repo: https://github.com/mailru/easyjson
+  subpackages:
+  - buffer
+  - jlexer
+  - jwriter
 - name: github.com/PuerkitoBio/purell
-  version: d69616f51cdfcd7514d6a380847a152dfc2a749d
+  version: 8a290539e2e8629dbc4e6bad948158f790ec31f4
   repo: https://github.com/PuerkitoBio/purell
+- name: github.com/PuerkitoBio/urlesc
+  version: 5bd2802263f21d8788851d5305584c82a5c75d7e
+  repo: https://github.com/PuerkitoBio/urlesc
 - name: github.com/tylerb/graceful
-  version: c78c8d9dded2ad16ad81b1fa526a81b2bb8049f6
-  repo: https://github.com/tylerb/graceful
+  version: 50a48b6e73fcc75b45e22c05b79629a67c79e938
 - name: golang.org/x/net
-  version: e7da8edaa52631091740908acaf2c2d4c9b3ce90
+  version: 9bc2a3340c92c17a20edcd0080e93851ed58f5d5
   repo: https://go.googlesource.com/net
   subpackages:
   - context
+  - idna
   - netutil
+- name: golang.org/x/text
+  version: 09c7ea1fcb3345da09be5a32c9c52303acd1dc2c
+  repo: https://go.googlesource.com/text
+  subpackages:
+  - cases
+  - internal/gen
+  - internal/tag
+  - internal/triegen
+  - internal/ucd
+  - language
+  - runes
+  - secure/bidirule
+  - secure/precis
+  - transform
+  - unicode/bidi
+  - unicode/cldr
+  - unicode/norm
+  - unicode/rangetable
+  - width
 - name: gopkg.in/yaml.v2
-  version: a83829b6f1293c91addabc89d0571c246397bbf4
+  version: e4d366fc3c7938e2958e662b4258c7a89e1f0e3e
 testImports: []

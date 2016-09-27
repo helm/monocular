@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/go-swagger/go-swagger/httpkit/middleware"
+	middleware "github.com/go-openapi/runtime/middleware"
+	"github.com/helm/monocular/src/api/data/helpers"
 	"github.com/helm/monocular/src/api/pkg/swagger/models"
 	"github.com/helm/monocular/src/api/pkg/swagger/restapi/operations"
 )
@@ -13,6 +14,6 @@ import (
 func notFound(resource string) middleware.Responder {
 	message := fmt.Sprintf("404 %s not found", resource)
 	return operations.NewGetChartDefault(http.StatusNotFound).WithPayload(
-		&models.Error{Code: http.StatusNotFound, Message: message},
+		&models.Error{Code: helpers.Int64Point(http.StatusNotFound), Message: &message},
 	)
 }

@@ -6,7 +6,7 @@ package operations
 import (
 	"net/http"
 
-	"github.com/go-swagger/go-swagger/httpkit"
+	"github.com/go-openapi/runtime"
 )
 
 /*HealthzOK healthy
@@ -22,7 +22,7 @@ func NewHealthzOK() *HealthzOK {
 }
 
 // WriteResponse to the client
-func (o *HealthzOK) WriteResponse(rw http.ResponseWriter, producer httpkit.Producer) {
+func (o *HealthzOK) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
 	rw.WriteHeader(200)
 }
@@ -58,7 +58,7 @@ func (o *HealthzDefault) SetStatusCode(code int) {
 }
 
 // WriteResponse to the client
-func (o *HealthzDefault) WriteResponse(rw http.ResponseWriter, producer httpkit.Producer) {
+func (o *HealthzDefault) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
 	rw.WriteHeader(o._statusCode)
 }

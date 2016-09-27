@@ -6,9 +6,10 @@ package operations
 import (
 	"net/http"
 
-	"github.com/go-swagger/go-swagger/errors"
-	middleware "github.com/go-swagger/go-swagger/httpkit/middleware"
-	"github.com/go-swagger/go-swagger/strfmt"
+	"github.com/go-openapi/errors"
+	middleware "github.com/go-openapi/runtime/middleware"
+	"github.com/go-openapi/strfmt"
+	"github.com/go-openapi/validate"
 	"github.com/helm/monocular/src/api/pkg/swagger/models"
 )
 
@@ -84,6 +85,10 @@ func (o *GetChartOKBodyBody) Validate(formats strfmt.Registry) error {
 }
 
 func (o *GetChartOKBodyBody) validateData(formats strfmt.Registry) error {
+
+	if err := validate.Required("getChartOK"+"."+"data", "body", o.Data); err != nil {
+		return err
+	}
 
 	if o.Data != nil {
 

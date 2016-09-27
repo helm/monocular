@@ -6,10 +6,10 @@ package operations
 import (
 	"net/http"
 
-	"github.com/go-swagger/go-swagger/errors"
-	"github.com/go-swagger/go-swagger/httpkit/middleware"
+	"github.com/go-openapi/errors"
+	"github.com/go-openapi/runtime/middleware"
 
-	strfmt "github.com/go-swagger/go-swagger/strfmt"
+	strfmt "github.com/go-openapi/strfmt"
 )
 
 // NewGetChartsInRepoParams creates a new GetChartsInRepoParams object
@@ -24,6 +24,10 @@ func NewGetChartsInRepoParams() GetChartsInRepoParams {
 //
 // swagger:parameters getChartsInRepo
 type GetChartsInRepoParams struct {
+
+	// HTTP Request Object
+	HTTPRequest *http.Request
+
 	/*
 	  Required: true
 	  In: path
@@ -35,6 +39,7 @@ type GetChartsInRepoParams struct {
 // for simple values it will use straight method calls
 func (o *GetChartsInRepoParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
 	var res []error
+	o.HTTPRequest = r
 
 	rRepo, rhkRepo, _ := route.Params.GetOK("repo")
 	if err := o.bindRepo(rRepo, rhkRepo, route.Formats); err != nil {
