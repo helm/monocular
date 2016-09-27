@@ -3,7 +3,7 @@ package handlers
 import (
 	"log"
 
-	"github.com/go-swagger/go-swagger/httpkit/middleware"
+	middleware "github.com/go-openapi/runtime/middleware"
 	"github.com/helm/monocular/src/api/data"
 	"github.com/helm/monocular/src/api/pkg/swagger/models"
 	"github.com/helm/monocular/src/api/pkg/swagger/restapi/operations"
@@ -22,7 +22,7 @@ func GetChart(params operations.GetChartParams) middleware.Responder {
 }
 
 // GetAllCharts is the handler for the /charts endpoint
-func GetAllCharts() middleware.Responder {
+func GetAllCharts(params operations.GetAllChartsParams) middleware.Responder {
 	charts, err := data.GetAllCharts()
 	if err != nil {
 		log.Printf("data.GetAllCharts error (%s)", err)

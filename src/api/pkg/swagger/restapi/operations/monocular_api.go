@@ -8,40 +8,39 @@ import (
 	"net/http"
 	"strings"
 
-	httpkit "github.com/go-swagger/go-swagger/httpkit"
-	middleware "github.com/go-swagger/go-swagger/httpkit/middleware"
-	spec "github.com/go-swagger/go-swagger/spec"
-	strfmt "github.com/go-swagger/go-swagger/strfmt"
-	"github.com/go-swagger/go-swagger/swag"
+	loads "github.com/go-openapi/loads"
+	runtime "github.com/go-openapi/runtime"
+	middleware "github.com/go-openapi/runtime/middleware"
+	spec "github.com/go-openapi/spec"
+	strfmt "github.com/go-openapi/strfmt"
+	"github.com/go-openapi/swag"
 )
 
 // NewMonocularAPI creates a new Monocular instance
-func NewMonocularAPI(spec *spec.Document) *MonocularAPI {
-	o := &MonocularAPI{
-		spec:            spec,
+func NewMonocularAPI(spec *loads.Document) *MonocularAPI {
+	return &MonocularAPI{
 		handlers:        make(map[string]map[string]http.Handler),
 		formats:         strfmt.Default,
 		defaultConsumes: "application/json",
 		defaultProduces: "application/json",
 		ServerShutdown:  func() {},
+		spec:            spec,
 	}
-
-	return o
 }
 
 /*MonocularAPI the monocular API */
 type MonocularAPI struct {
-	spec            *spec.Document
+	spec            *loads.Document
 	context         *middleware.Context
 	handlers        map[string]map[string]http.Handler
 	formats         strfmt.Registry
 	defaultConsumes string
 	defaultProduces string
 	// JSONConsumer registers a consumer for a "application/json" mime type
-	JSONConsumer httpkit.Consumer
+	JSONConsumer runtime.Consumer
 
 	// JSONProducer registers a producer for a "application/json" mime type
-	JSONProducer httpkit.Producer
+	JSONProducer runtime.Producer
 
 	// GetAllChartsHandler sets the operation handler for the get all charts operation
 	GetAllChartsHandler GetAllChartsHandler
@@ -62,6 +61,9 @@ type MonocularAPI struct {
 
 	// Custom command line argument groups with their descriptions
 	CommandLineOptionsGroups []swag.CommandLineOptionsGroup
+
+	// User defined logger function.
+	Logger func(string, ...interface{})
 }
 
 // SetDefaultProduces sets the default produces media type
@@ -72,6 +74,11 @@ func (o *MonocularAPI) SetDefaultProduces(mediaType string) {
 // SetDefaultConsumes returns the default consumes media type
 func (o *MonocularAPI) SetDefaultConsumes(mediaType string) {
 	o.defaultConsumes = mediaType
+}
+
+// SetSpec sets a spec that will be served for the clients.
+func (o *MonocularAPI) SetSpec(spec *loads.Document) {
+	o.spec = spec
 }
 
 // DefaultProduces returns the default produces media type
@@ -135,16 +142,16 @@ func (o *MonocularAPI) ServeErrorFor(operationID string) func(http.ResponseWrite
 }
 
 // AuthenticatorsFor gets the authenticators for the specified security schemes
-func (o *MonocularAPI) AuthenticatorsFor(schemes map[string]spec.SecurityScheme) map[string]httpkit.Authenticator {
+func (o *MonocularAPI) AuthenticatorsFor(schemes map[string]spec.SecurityScheme) map[string]runtime.Authenticator {
 
 	return nil
 
 }
 
 // ConsumersFor gets the consumers for the specified media types
-func (o *MonocularAPI) ConsumersFor(mediaTypes []string) map[string]httpkit.Consumer {
+func (o *MonocularAPI) ConsumersFor(mediaTypes []string) map[string]runtime.Consumer {
 
-	result := make(map[string]httpkit.Consumer)
+	result := make(map[string]runtime.Consumer)
 	for _, mt := range mediaTypes {
 		switch mt {
 
@@ -158,9 +165,9 @@ func (o *MonocularAPI) ConsumersFor(mediaTypes []string) map[string]httpkit.Cons
 }
 
 // ProducersFor gets the producers for the specified media types
-func (o *MonocularAPI) ProducersFor(mediaTypes []string) map[string]httpkit.Producer {
+func (o *MonocularAPI) ProducersFor(mediaTypes []string) map[string]runtime.Producer {
 
-	result := make(map[string]httpkit.Producer)
+	result := make(map[string]runtime.Producer)
 	for _, mt := range mediaTypes {
 		switch mt {
 

@@ -6,7 +6,7 @@ package operations
 import (
 	"net/http"
 
-	"github.com/go-swagger/go-swagger/httpkit"
+	"github.com/go-openapi/runtime"
 
 	"github.com/helm/monocular/src/api/pkg/swagger/models"
 )
@@ -38,7 +38,7 @@ func (o *GetChartsInRepoOK) SetPayload(payload GetChartsInRepoOKBodyBody) {
 }
 
 // WriteResponse to the client
-func (o *GetChartsInRepoOK) WriteResponse(rw http.ResponseWriter, producer httpkit.Producer) {
+func (o *GetChartsInRepoOK) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
 	rw.WriteHeader(200)
 	if err := producer.Produce(rw, o.Payload); err != nil {
@@ -92,7 +92,7 @@ func (o *GetChartsInRepoDefault) SetPayload(payload *models.Error) {
 }
 
 // WriteResponse to the client
-func (o *GetChartsInRepoDefault) WriteResponse(rw http.ResponseWriter, producer httpkit.Producer) {
+func (o *GetChartsInRepoDefault) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
 	rw.WriteHeader(o._statusCode)
 	if o.Payload != nil {

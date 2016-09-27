@@ -4,7 +4,7 @@ import (
 	"log"
 	"os"
 
-	spec "github.com/go-swagger/go-swagger/spec"
+	loads "github.com/go-openapi/loads"
 	flags "github.com/jessevdk/go-flags"
 
 	"github.com/helm/monocular/src/api/pkg/swagger/restapi"
@@ -15,7 +15,7 @@ import (
 // Make sure not to overwrite this file after you generated it because all your edits would be lost!
 
 func main() {
-	swaggerSpec, err := spec.New(restapi.SwaggerJSON, "")
+	swaggerSpec, err := loads.Analyzed(restapi.SwaggerJSON, "")
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -30,11 +30,20 @@ func main() {
 
 	server.ConfigureFlags()
 	for _, optsGroup := range api.CommandLineOptionsGroups {
-		parser.AddGroup(optsGroup.ShortDescription, optsGroup.LongDescription, optsGroup.Options)
+		_, err := parser.AddGroup(optsGroup.ShortDescription, optsGroup.LongDescription, optsGroup.Options)
+		if err != nil {
+			log.Fatalln(err)
+		}
 	}
 
 	if _, err := parser.Parse(); err != nil {
-		os.Exit(1)
+		code := 1
+		if fe, ok := err.(*flags.Error); ok {
+			if fe.Type == flags.ErrHelp {
+				code = 0
+			}
+		}
+		os.Exit(code)
 	}
 
 	server.ConfigureAPI()

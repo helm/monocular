@@ -21,7 +21,7 @@ func GetChartFromMockRepo(repo, chartName string) (models.Resource, error) {
 	if err != nil {
 		return ret, err
 	}
-	ret = helpers.MakeChartResource(chart, repo, chart.Version)
+	ret = helpers.MakeChartResource(chart, repo, *chart.Version)
 	return ret, nil
 }
 
@@ -37,7 +37,7 @@ func GetAllChartsFromMockRepos() ([]*models.Resource, error) {
 			return ret, err
 		}
 		for _, chart := range charts {
-			resource := helpers.MakeChartResource(chart, repo, chart.Version)
+			resource := helpers.MakeChartResource(chart, repo, *chart.Version)
 			ret = append(ret, &resource)
 		}
 	}
@@ -54,7 +54,7 @@ func GetChartsFromMockRepo(repo string) ([]*models.Resource, error) {
 		return ret, err
 	}
 	for _, chart := range charts {
-		resource := helpers.MakeChartResource(chart, repo, chart.Version)
+		resource := helpers.MakeChartResource(chart, repo, *chart.Version)
 		ret = append(ret, &resource)
 	}
 	return ret, nil
