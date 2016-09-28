@@ -2,7 +2,6 @@ package helpers
 
 import (
 	"fmt"
-	"log"
 	"strings"
 
 	"github.com/helm/monocular/src/api/pkg/swagger/models"
@@ -12,7 +11,8 @@ import (
 // IsYAML checks for valid YAML
 func IsYAML(b []byte) bool {
 	var yml map[string]interface{}
-	return yaml.Unmarshal(b, &yml) == nil
+	ret := yaml.Unmarshal(b, &yml)
+	return ret == nil
 }
 
 // ParseYAMLRepo converts a YAML representation of a repo
@@ -25,27 +25,17 @@ func ParseYAMLRepo(rawYAML []byte) ([]models.ChartVersion, error) {
 	var charts []models.ChartVersion
 	for chartVersion := range repo {
 		cV := repo[chartVersion]
-		c, err := yaml.Marshal(&cV)
-		if err != nil {
-			log.Fatalf("couldn't parse repo chart: %v", err)
-		}
+		// we drop the error response because we can never enter into this error state:
+		// 1. "repo" is statically produced above
+		// 2. the key value at "cV" is a resilient, yaml-marshallable interface: it was unmarshalled from yaml above
+		c, _ := yaml.Marshal(&cV)
 		var chart models.ChartVersion
 		if err := yaml.Unmarshal(c, &chart); err != nil {
-			log.Fatalf("couldn't parse repo chart: %v", err)
+			return nil, err
 		}
 		charts = append(charts, chart)
 	}
 	return charts, nil
-}
-
-// ParseYAMLChartVersion converts a YAML representation of a versioned chart
-// to a ChartVersion type
-func ParseYAMLChartVersion(rawYAML []byte) (models.ChartVersion, error) {
-	var chart models.ChartVersion
-	if err := yaml.Unmarshal(rawYAML, &chart); err != nil {
-		return models.ChartVersion{}, err
-	}
-	return chart, nil
 }
 
 // MakeChartResource composes a Resource type that represents a repo+chart
@@ -68,27 +58,19 @@ func MakeChartResource(chart models.ChartVersion, repo, version string) models.R
 
 // GetLatestChartVersion returns the most recent version from a slice of versioned charts
 func GetLatestChartVersion(charts []models.ChartVersion, name string) (models.ChartVersion, error) {
-	var latest string
+	latest := "0.0.0"
 	var ret models.ChartVersion
 	for _, chart := range charts {
 		if *chart.Name == name {
-			if latest == "" {
-				latest = *chart.Version
+			newest, err := newestSemVer(latest, *chart.Version)
+			if err != nil {
+				return models.ChartVersion{}, err
+			}
+			latest = newest
+			if latest == *chart.Version {
 				ret = chart
-			} else {
-				newest, err := newestSemVer(latest, *chart.Version)
-				if err != nil {
-					return models.ChartVersion{}, err
-				}
-				latest = newest
-				if latest == *chart.Version {
-					ret = chart
-				}
 			}
 		}
-	}
-	if latest == "" {
-		return ret, fmt.Errorf("unable to determine latest version")
 	}
 	return ret, nil
 }
@@ -96,7 +78,13 @@ func GetLatestChartVersion(charts []models.ChartVersion, name string) (models.Ch
 // newestSemVer returns the newest (largest) semver string
 func newestSemVer(v1 string, v2 string) (string, error) {
 	v1Slice := strings.Split(v1, ".")
+	if len(v1Slice) != 3 {
+		return "", semverStringError(v1)
+	}
 	v2Slice := strings.Split(v2, ".")
+	if len(v2Slice) != 3 {
+		return "", semverStringError(v2)
+	}
 	for i, subVer1 := range v1Slice {
 		if v2Slice[i] > subVer1 {
 			return v2, nil
@@ -105,6 +93,11 @@ func newestSemVer(v1 string, v2 string) (string, error) {
 		}
 	}
 	return v1, nil
+}
+
+// semverStringError returns a bad semver string error
+func semverStringError(v string) error {
+	return fmt.Errorf("%s is not a semver-compatible string", v)
 }
 
 // Int64ToPtr converts an int64 to an *int64
