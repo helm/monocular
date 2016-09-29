@@ -42,10 +42,10 @@ swagger-serverstub:
 	rm -Rf ${SWAGGER_GEN_DIR}/cmd
 
 test:
-	${DEV_ENV_CMD} sh -c 'go test -tags testonly $$(glide nv)'
+	${DEV_ENV_CMD} sh -c 'go test -tags testonly -cover $$(glide nv)'
 
 test-native:
-	go test -tags=testonly $$(glide nv)
+	go test -tags=testonly -cover $$(glide nv)
 
 docker-build: build
 	docker build --rm -t ${IMAGE} rootfs

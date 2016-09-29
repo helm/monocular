@@ -43,18 +43,16 @@ func GetChartsInRepo(params operations.GetChartsInRepoParams) middleware.Respond
 
 // chartHTTPBody is a convenience that returns a swagger-friendly HTTP 200 response with chart body data
 func chartHTTPBody(chart models.Resource) middleware.Responder {
-	return operations.NewGetChartOK().WithPayload(
-		operations.GetChartOKBodyBody{
-			Data: &chart,
-		},
-	)
+	resourceData := models.ResourceData{
+		Data: &chart,
+	}
+	return operations.NewGetChartOK().WithPayload(&resourceData)
 }
 
 // chartsHTTPBody is a convenience that returns a swagger-friendly HTTP 200 response with charts body data
 func chartsHTTPBody(charts []*models.Resource) middleware.Responder {
-	return operations.NewGetAllChartsOK().WithPayload(
-		operations.GetAllChartsOKBodyBody{
-			Data: charts,
-		},
-	)
+	resourceArrayData := models.ResourceArrayData{
+		Data: charts,
+	}
+	return operations.NewGetAllChartsOK().WithPayload(&resourceArrayData)
 }
