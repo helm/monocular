@@ -12,9 +12,12 @@ import (
 func GetChartFromMockRepo(repo, chartName string) (models.Resource, error) {
 	var ret models.Resource
 	y, err := getMockRepo(repo)
+	if err != nil {
+		return ret, err
+	}
 	charts, err := helpers.ParseYAMLRepo(y)
 	if err != nil {
-		log.Fatalf("couldn't parse mock repo!")
+		log.Printf("couldn't parse mock repo %s!\n", repo)
 		return ret, err
 	}
 	chart, err := helpers.GetLatestChartVersion(charts, chartName)
@@ -33,7 +36,7 @@ func GetAllChartsFromMockRepos() ([]*models.Resource, error) {
 		y, err := getMockRepo(repo)
 		charts, err := helpers.ParseYAMLRepo(y)
 		if err != nil {
-			log.Fatalf("couldn't parse mock repo!")
+			log.Printf("couldn't parse mock repo %s!\n", repo)
 			return ret, err
 		}
 		for _, chart := range charts {
@@ -48,9 +51,12 @@ func GetAllChartsFromMockRepos() ([]*models.Resource, error) {
 func GetChartsFromMockRepo(repo string) ([]*models.Resource, error) {
 	var ret []*models.Resource
 	y, err := getMockRepo(repo)
+	if err != nil {
+		return ret, err
+	}
 	charts, err := helpers.ParseYAMLRepo(y)
 	if err != nil {
-		log.Fatalf("couldn't parse mock repo %s!\n", repo)
+		log.Printf("couldn't parse mock repo %s!\n", repo)
 		return ret, err
 	}
 	for _, chart := range charts {
@@ -62,9 +68,10 @@ func GetChartsFromMockRepo(repo string) ([]*models.Resource, error) {
 
 // getMockRepo is a convenience that loads a yaml repo from the filesystem
 func getMockRepo(repo string) ([]byte, error) {
-	y, err := getYAML(getMocksWd() + fmt.Sprintf("repo-%s.yaml", repo))
+	path := getMocksWd() + fmt.Sprintf("repo-%s.yaml", repo)
+	y, err := getYAML(path)
 	if err != nil {
-		log.Fatalf("couldn't load mock repo %s!\n", repo)
+		log.Printf("couldn't load mock repo %s!\n", path)
 		return nil, err
 	}
 	return y, nil
