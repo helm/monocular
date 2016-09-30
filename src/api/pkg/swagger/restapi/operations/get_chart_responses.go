@@ -18,7 +18,7 @@ swagger:response getChartOK
 type GetChartOK struct {
 
 	// In: body
-	Payload GetChartOKBodyBody `json:"body,omitempty"`
+	Payload *models.ResourceData `json:"body,omitempty"`
 }
 
 // NewGetChartOK creates GetChartOK with default headers values
@@ -27,13 +27,13 @@ func NewGetChartOK() *GetChartOK {
 }
 
 // WithPayload adds the payload to the get chart o k response
-func (o *GetChartOK) WithPayload(payload GetChartOKBodyBody) *GetChartOK {
+func (o *GetChartOK) WithPayload(payload *models.ResourceData) *GetChartOK {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the get chart o k response
-func (o *GetChartOK) SetPayload(payload GetChartOKBodyBody) {
+func (o *GetChartOK) SetPayload(payload *models.ResourceData) {
 	o.Payload = payload
 }
 
@@ -41,10 +41,11 @@ func (o *GetChartOK) SetPayload(payload GetChartOKBodyBody) {
 func (o *GetChartOK) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
 	rw.WriteHeader(200)
-	if err := producer.Produce(rw, o.Payload); err != nil {
-		panic(err) // let the recovery middleware deal with this
+	if o.Payload != nil {
+		if err := producer.Produce(rw, o.Payload); err != nil {
+			panic(err) // let the recovery middleware deal with this
+		}
 	}
-
 }
 
 /*GetChartDefault unexpected error

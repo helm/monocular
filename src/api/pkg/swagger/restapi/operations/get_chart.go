@@ -6,11 +6,7 @@ package operations
 import (
 	"net/http"
 
-	"github.com/go-openapi/errors"
 	middleware "github.com/go-openapi/runtime/middleware"
-	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/validate"
-	"github.com/helm/monocular/src/api/pkg/swagger/models"
 )
 
 // GetChartHandlerFunc turns a function with the right signature into a get chart handler
@@ -54,48 +50,4 @@ func (o *GetChart) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
-}
-
-/*GetChartOKBodyBody get chart o k body body
-
-swagger:model GetChartOKBodyBody
-*/
-type GetChartOKBodyBody struct {
-
-	/* data
-
-	Required: true
-	*/
-	Data *models.Resource `json:"data"`
-}
-
-// Validate validates this get chart o k body body
-func (o *GetChartOKBodyBody) Validate(formats strfmt.Registry) error {
-	var res []error
-
-	if err := o.validateData(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (o *GetChartOKBodyBody) validateData(formats strfmt.Registry) error {
-
-	if err := validate.Required("getChartOK"+"."+"data", "body", o.Data); err != nil {
-		return err
-	}
-
-	if o.Data != nil {
-
-		if err := o.Data.Validate(formats); err != nil {
-			return err
-		}
-	}
-
-	return nil
 }

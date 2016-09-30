@@ -18,7 +18,7 @@ swagger:response getAllChartsOK
 type GetAllChartsOK struct {
 
 	// In: body
-	Payload GetAllChartsOKBodyBody `json:"body,omitempty"`
+	Payload *models.ResourceArrayData `json:"body,omitempty"`
 }
 
 // NewGetAllChartsOK creates GetAllChartsOK with default headers values
@@ -27,13 +27,13 @@ func NewGetAllChartsOK() *GetAllChartsOK {
 }
 
 // WithPayload adds the payload to the get all charts o k response
-func (o *GetAllChartsOK) WithPayload(payload GetAllChartsOKBodyBody) *GetAllChartsOK {
+func (o *GetAllChartsOK) WithPayload(payload *models.ResourceArrayData) *GetAllChartsOK {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the get all charts o k response
-func (o *GetAllChartsOK) SetPayload(payload GetAllChartsOKBodyBody) {
+func (o *GetAllChartsOK) SetPayload(payload *models.ResourceArrayData) {
 	o.Payload = payload
 }
 
@@ -41,10 +41,11 @@ func (o *GetAllChartsOK) SetPayload(payload GetAllChartsOKBodyBody) {
 func (o *GetAllChartsOK) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
 	rw.WriteHeader(200)
-	if err := producer.Produce(rw, o.Payload); err != nil {
-		panic(err) // let the recovery middleware deal with this
+	if o.Payload != nil {
+		if err := producer.Produce(rw, o.Payload); err != nil {
+			panic(err) // let the recovery middleware deal with this
+		}
 	}
-
 }
 
 /*GetAllChartsDefault unexpected error

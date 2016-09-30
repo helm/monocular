@@ -35,10 +35,7 @@ paths:
         200:
           description: chart response
           schema:
-            type: object
-            properties:
-              data:
-                $ref: "#/definitions/resource"
+            $ref: "#/definitions/resourceData"
         default:
           description: unexpected error
           schema:
@@ -51,12 +48,7 @@ paths:
         200:
           description: charts response
           schema:
-            type: object
-            properties:
-              data:
-                type: array
-                items:
-                  $ref: "#/definitions/resource"
+            $ref: "#/definitions/resourceArrayData"
         default:
           description: unexpected error
           schema:
@@ -100,6 +92,22 @@ definitions:
         type: object
       attributes:
         type: object
+  resourceData:
+    type: object
+    required:
+      - data
+    properties:
+      data:
+        $ref: "#/definitions/resource"
+  resourceArrayData:
+    type: object
+    required:
+      - data
+    properties:
+      data:
+        type: array
+        items:
+          $ref: "#/definitions/resource"
   chartVersion:
     type: object
     required:

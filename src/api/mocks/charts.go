@@ -13,6 +13,7 @@ func GetChartFromMockRepo(repo, chartName string) (models.Resource, error) {
 	var ret models.Resource
 	y, err := getMockRepo(repo)
 	if err != nil {
+		log.Printf("couldn't load mock repo %s!\n", repo)
 		return ret, err
 	}
 	charts, err := helpers.ParseYAMLRepo(y)
@@ -34,6 +35,10 @@ func GetAllChartsFromMockRepos() ([]*models.Resource, error) {
 	repos := []string{"stable", "incubator"}
 	for _, repo := range repos {
 		y, err := getMockRepo(repo)
+		if err != nil {
+			log.Printf("couldn't load mock repo %s!\n", repo)
+			return ret, err
+		}
 		charts, err := helpers.ParseYAMLRepo(y)
 		if err != nil {
 			log.Printf("couldn't parse mock repo %s!\n", repo)
@@ -52,6 +57,7 @@ func GetChartsFromMockRepo(repo string) ([]*models.Resource, error) {
 	var ret []*models.Resource
 	y, err := getMockRepo(repo)
 	if err != nil {
+		log.Printf("couldn't load mock repo %s!\n", repo)
 		return ret, err
 	}
 	charts, err := helpers.ParseYAMLRepo(y)
