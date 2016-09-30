@@ -74,7 +74,11 @@ func GetChartsFromMockRepo(repo string) ([]*models.Resource, error) {
 
 // getMockRepo is a convenience that loads a yaml repo from the filesystem
 func getMockRepo(repo string) ([]byte, error) {
-	path := getMocksWd() + fmt.Sprintf("repo-%s.yaml", repo)
+	path, err := getMocksWd()
+	if err != nil {
+		return nil, err
+	}
+	path += fmt.Sprintf("repo-%s.yaml", repo)
 	y, err := getYAML(path)
 	if err != nil {
 		log.Printf("couldn't load mock repo %s!\n", path)
