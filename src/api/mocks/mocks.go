@@ -23,9 +23,9 @@ func getYAML(filepath string) ([]byte, error) {
 	return data, nil
 }
 
-// getMocksWd returns the full local pathname of the monocular API mocks directory, including a trailing "/"
+// getTestDataWd returns the full local pathname of the monocular API mocks/testdata directory, including a trailing "/"
 // The purpose is for various sub-packages to load filesystem-derived mocks from their cwd
-func getMocksWd() (string, error) {
+func getTestDataWd() (string, error) {
 	cwd, err := os.Getwd()
 	if err != nil {
 		return "", err
@@ -36,7 +36,7 @@ func getMocksWd() (string, error) {
 	for i, dirname := range cwdSplit {
 		if dirname == "api" {
 			cwdSplit = cwdSplit[:i+1] // strip directories after "api"
-			return strings.Join(cwdSplit, "/") + "/mocks/", nil
+			return strings.Join(cwdSplit, "/") + "/mocks/testdata/", nil
 		}
 	}
 	return cwd, fmt.Errorf("can't get mocks dir unless cwd is a child of 'api' dir")
