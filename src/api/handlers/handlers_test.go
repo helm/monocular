@@ -1,8 +1,6 @@
 package handlers
 
 import (
-	"encoding/json"
-	"io"
 	"net/http"
 	"net/http/httptest"
 	"strconv"
@@ -11,6 +9,7 @@ import (
 	"github.com/arschles/assert"
 	"github.com/go-openapi/runtime"
 	"github.com/helm/monocular/src/api/pkg/swagger/models"
+	"github.com/helm/monocular/src/api/pkg/testutil"
 )
 
 func TestNotFound(t *testing.T) {
@@ -22,16 +21,16 @@ func TestNotFound(t *testing.T) {
 	resp.WriteResponse(w, runtime.JSONProducer())
 	assert.Equal(t, w.Code, http.StatusNotFound, "expect a 404 response code")
 	var httpBody1 models.Error
-	assert.NoErr(t, ErrorModelFromJSON(w.Body, &httpBody1))
-	AssertErrBodyData(t, http.StatusNotFound, resource1, httpBody1)
+	assert.NoErr(t, testutil.ErrorModelFromJSON(w.Body, &httpBody1))
+	testutil.AssertErrBodyData(t, http.StatusNotFound, resource1, httpBody1)
 	w = httptest.NewRecorder()
 	var httpBody2 models.Error
 	resp2 := notFound(resource2)
 	assert.NotNil(t, resp2, "notFound response")
 	resp2.WriteResponse(w, runtime.JSONProducer())
 	assert.Equal(t, w.Code, http.StatusNotFound, "expect a 404 response code")
-	assert.NoErr(t, ErrorModelFromJSON(w.Body, &httpBody2))
-	AssertErrBodyData(t, http.StatusNotFound, resource2, httpBody2)
+	assert.NoErr(t, testutil.ErrorModelFromJSON(w.Body, &httpBody2))
+	testutil.AssertErrBodyData(t, http.StatusNotFound, resource2, httpBody2)
 }
 
 func AssertErrBodyData(t *testing.T, code int64, resource string, body models.Error) {
@@ -40,9 +39,9 @@ func AssertErrBodyData(t *testing.T, code int64, resource string, body models.Er
 }
 
 func AssertChartResourceBodyData(t *testing.T, chart models.Resource, body models.ResourceData) {
-	attributes, err := ChartResourceAttributesFromHTTPResponse(body)
+	attributes, err := testutil.ChartResourceAttributesFromHTTPResponse(body)
 	assert.NoErr(t, err)
-	links, err := ChartResourceLinksFromHTTPResponse(body)
+	links, err := testutil.ChartResourceLinksFromHTTPResponse(body)
 	assert.NoErr(t, err)
 	assert.Equal(t, *chart.ID, *body.Data.ID, "chart ID data in HTTP body data")
 	assert.Equal(t, *chart.Type, *body.Data.Type, "chart type data in HTTP body data")
@@ -52,36 +51,4 @@ func AssertChartResourceBodyData(t *testing.T, chart models.Resource, body model
 	assert.Equal(t, *chart.Attributes.(*models.ChartResourceAttributes).Name, *attributes.Name, "chart name data in HTTP body data")
 	assert.Equal(t, *chart.Attributes.(*models.ChartResourceAttributes).Repo, *attributes.Repo, "chart repo data in HTTP body data")
 	assert.Equal(t, *chart.Links.(*models.ChartResourceLinks).Latest, *links.Latest, "chart link to latest data in HTTP body data")
-}
-
-func ErrorModelFromJSON(r io.Reader, errorModel *models.Error) error {
-	return json.NewDecoder(r).Decode(errorModel)
-}
-
-func ResourceDataFromJSON(r io.Reader, resource *models.ResourceData) error {
-	return json.NewDecoder(r).Decode(resource)
-}
-
-func ResourceArrayDataFromJSON(r io.Reader, resource *models.ResourceArrayData) error {
-	return json.NewDecoder(r).Decode(resource)
-}
-
-func ChartResourceAttributesFromHTTPResponse(body models.ResourceData) (models.ChartResourceAttributes, error) {
-	var attributes models.ChartResourceAttributes
-	b, err := json.Marshal(body.Data.Attributes.(map[string]interface{}))
-	if err != nil {
-		return attributes, err
-	}
-	err = json.Unmarshal(b, &attributes)
-	return attributes, err
-}
-
-func ChartResourceLinksFromHTTPResponse(body models.ResourceData) (models.ChartResourceLinks, error) {
-	var links models.ChartResourceLinks
-	b, err := json.Marshal(body.Data.Links.(map[string]interface{}))
-	if err != nil {
-		return links, err
-	}
-	err = json.Unmarshal(b, &links)
-	return links, err
 }

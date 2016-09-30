@@ -4,18 +4,14 @@ import (
 	"testing"
 
 	"github.com/arschles/assert"
-)
-
-const (
-	repoName  = "stable"
-	chartName = "apache"
+	"github.com/helm/monocular/src/api/pkg/testutil"
 )
 
 func TestGetChart(t *testing.T) {
-	chart, err := GetChart(repoName, chartName)
+	chart, err := GetChart(testutil.RepoName, testutil.ChartName)
 	assert.NoErr(t, err)
-	assert.Equal(t, *chart.ID, repoName+"/"+chartName, "chart ID")
-	chart, err = GetChart("bogon", chartName)
+	assert.Equal(t, *chart.ID, testutil.RepoName+"/"+testutil.ChartName, "chart ID")
+	chart, err = GetChart(testutil.BogusRepo, testutil.ChartName)
 	assert.ExistsErr(t, err, "sent bogus repo name to GetChart")
 	assert.Nil(t, chart.ID, "zero value ID")
 }
@@ -26,7 +22,7 @@ func TestGetAllCharts(t *testing.T) {
 }
 
 func TestGetChartsInRepo(t *testing.T) {
-	charts, err := GetChartsInRepo(repoName)
+	charts, err := GetChartsInRepo(testutil.RepoName)
 	assert.NoErr(t, err)
 	assert.True(t, len(charts) > 0, "returned charts")
 	noCharts, err := GetChartsInRepo("bogon")
