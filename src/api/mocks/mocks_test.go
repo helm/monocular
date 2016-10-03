@@ -7,12 +7,13 @@ import (
 	"testing"
 
 	"github.com/arschles/assert"
+	"github.com/helm/monocular/src/api/pkg/testutil"
 )
 
 func TestGetYAML(t *testing.T) {
 	path, err := getTestDataWd()
 	assert.NoErr(t, err)
-	path += fmt.Sprintf("repo-%s.yaml", repoName)
+	path += fmt.Sprintf("repo-%s.yaml", testutil.RepoName)
 	_, err = getYAML(path)
 	assert.NoErr(t, err)
 	path, err = getTestDataWd()
