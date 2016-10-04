@@ -43,3 +43,7 @@ serving monocular at http://127.0.0.1:8080
 Monocular uses [go-swagger](https://github.com/go-swagger/go-swagger) to define and generate the RESTFul server code. `Makefile` provides a convenience for generating server stub code:
 
 - `make swagger-serverstub`
+
+# Testing the API
+
+- `make test`

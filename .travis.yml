@@ -1,0 +1,12 @@
+language: generic
+cache:
+  directories:
+    - src/api/vendor
+services:
+  - docker
+install:
+  - make -C src/api bootstrap
+script:
+  - make -C src/api test build
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
