@@ -1,7 +1,7 @@
 language: generic
 cache:
   directories:
-    - vendor
+    - src/api/vendor
 services:
   - docker
 install:
