@@ -42,7 +42,10 @@ swagger-serverstub:
 	rm -Rf ${SWAGGER_GEN_DIR}/cmd
 
 test:
-	${DEV_ENV_CMD} sh -c 'go test -tags testonly -cover $$(glide nv)'
+	${DEV_ENV_CMD} sh -c 'go test -v $$(glide nv)'
+
+test-cover:
+	${DEV_ENV_CMD} _scripts/test-cover.sh
 
 test-native:
 	go test -tags=testonly -cover $$(glide nv)
