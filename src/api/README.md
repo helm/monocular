@@ -1,3 +1,5 @@
+[![codecov](https://codecov.io/gh/helm/monocular/branch/master/graph/badge.svg)](https://codecov.io/gh/helm/monocular)
+
 # Monocular API
 
 The API is a golang HTTP RESTFul server. It abstracts away Helm Chart Repository data and provides a simple, idiomatic HTTP interface for search and discovery functionality. E.g.:
