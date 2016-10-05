@@ -7,6 +7,6 @@ services:
 install:
   - make -C src/api bootstrap
 script:
-  - make -C src/api test-cover build
+  - make -C src/api test test-cover build
 after_success:
   - bash <(curl -s https://codecov.io/bash)

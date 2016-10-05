@@ -45,7 +45,7 @@ test:
 	${DEV_ENV_CMD} sh -c 'go test -v $$(glide nv)'
 
 test-cover:
-	${DEV_ENV_CMD} test-cover.sh
+	${DEV_ENV_CMD} _scripts/test-cover.sh
 
 test-native:
 	go test -tags=testonly -cover $$(glide nv)
