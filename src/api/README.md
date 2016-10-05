@@ -1,4 +1,7 @@
+[![Build Status](https://travis-ci.org/helm/monocular.svg?branch=master)](https://travis-ci.org/helm/monocular)
 [![codecov](https://codecov.io/gh/helm/monocular/branch/master/graph/badge.svg)](https://codecov.io/gh/helm/monocular)
+[![Go Report Card](https://goreportcard.com/badge/github.com/helm/monocular)](https://goreportcard.com/report/github.com/helm/monocular)
+[![codebeat badge](https://codebeat.co/badges/820a0d9f-5282-4a8e-b5f7-a27c217d9f0e)](https://codebeat.co/projects/github-com-helm-monocular)
 
 # Monocular API
 
