@@ -7,25 +7,27 @@ import (
 	"github.com/helm/monocular/src/api/pkg/testutil"
 )
 
+var chartsImplementation = NewMockCharts()
+
 func TestGetChart(t *testing.T) {
-	chart, err := GetChart(testutil.RepoName, testutil.ChartName)
+	chart, err := chartsImplementation.GetChart(testutil.RepoName, testutil.ChartName)
 	assert.NoErr(t, err)
 	assert.Equal(t, *chart.ID, testutil.RepoName+"/"+testutil.ChartName, "chart ID")
-	chart, err = GetChart(testutil.BogusRepo, testutil.ChartName)
+	chart, err = chartsImplementation.GetChart(testutil.BogusRepo, testutil.ChartName)
 	assert.ExistsErr(t, err, "sent bogus repo name to GetChart")
 	assert.Nil(t, chart.ID, "zero value ID")
 }
 
 func TestGetAllCharts(t *testing.T) {
-	_, err := GetAllCharts()
+	_, err := chartsImplementation.GetAll()
 	assert.NoErr(t, err)
 }
 
 func TestGetChartsInRepo(t *testing.T) {
-	charts, err := GetChartsInRepo(testutil.RepoName)
+	charts, err := chartsImplementation.GetAllFromRepo(testutil.RepoName)
 	assert.NoErr(t, err)
 	assert.True(t, len(charts) > 0, "returned charts")
-	noCharts, err := GetChartsInRepo("bogon")
+	noCharts, err := chartsImplementation.GetAllFromRepo(testutil.BogusRepo)
 	assert.ExistsErr(t, err, "sent bogus repo name to GetChartsInRepo")
 	assert.True(t, len(noCharts) == 0, "empty charts slice")
 }

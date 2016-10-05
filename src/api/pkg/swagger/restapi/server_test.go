@@ -15,6 +15,8 @@ import (
 	"github.com/helm/monocular/src/api/pkg/testutil"
 )
 
+var chartsImplementation = data.NewMockCharts()
+
 // tests the GET /healthz endpoint
 func TestGetHealthz(t *testing.T) {
 	srv, err := newServer()
@@ -31,7 +33,7 @@ func TestGetCharts(t *testing.T) {
 	srv, err := newServer()
 	assert.NoErr(t, err)
 	defer srv.Close()
-	charts, err := data.GetAllCharts()
+	charts, err := chartsImplementation.GetAll()
 	assert.NoErr(t, err)
 	resp, err := httpGet(srv, urlPath("v1", "charts"))
 	assert.NoErr(t, err)
@@ -47,7 +49,7 @@ func TestGetChartsInRepo200(t *testing.T) {
 	srv, err := newServer()
 	assert.NoErr(t, err)
 	defer srv.Close()
-	charts, err := data.GetChartsInRepo(testutil.RepoName)
+	charts, err := chartsImplementation.GetAllFromRepo(testutil.RepoName)
 	assert.NoErr(t, err)
 	resp, err := httpGet(srv, urlPath("v1", "charts", testutil.RepoName))
 	assert.NoErr(t, err)
@@ -77,7 +79,7 @@ func TestGetChartInRepo200(t *testing.T) {
 	srv, err := newServer()
 	assert.NoErr(t, err)
 	defer srv.Close()
-	chart, err := data.GetChart(testutil.RepoName, testutil.ChartName)
+	chart, err := chartsImplementation.GetChart(testutil.RepoName, testutil.ChartName)
 	assert.NoErr(t, err)
 	resp, err := httpGet(srv, urlPath("v1", "charts", testutil.RepoName, testutil.ChartName))
 	assert.NoErr(t, err)
@@ -116,6 +118,5 @@ func urlPath(ver string, remainder ...string) string {
 }
 
 func httpGet(s *httptest.Server, route string) (*http.Response, error) {
-	fmt.Println(s.URL + "/" + route)
 	return http.Get(s.URL + "/" + route)
 }

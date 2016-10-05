@@ -8,21 +8,22 @@ import (
 	"github.com/arschles/assert"
 	"github.com/go-openapi/runtime"
 	"github.com/helm/monocular/src/api/data"
-	"github.com/helm/monocular/src/api/mocks"
 	"github.com/helm/monocular/src/api/pkg/swagger/models"
 	"github.com/helm/monocular/src/api/pkg/swagger/restapi/operations"
 	"github.com/helm/monocular/src/api/pkg/testutil"
 )
 
+var chartsImplementation = data.NewMockCharts()
+
 func TestGetChart200(t *testing.T) {
-	chart, err := data.GetChart(testutil.RepoName, testutil.ChartName)
+	chart, err := chartsImplementation.GetChart(testutil.RepoName, testutil.ChartName)
 	assert.NoErr(t, err)
 	w := httptest.NewRecorder()
 	params := operations.GetChartParams{
 		Repo:      testutil.RepoName,
 		ChartName: testutil.ChartName,
 	}
-	resp := GetChart(params)
+	resp := GetChart(params, chartsImplementation)
 	assert.NotNil(t, resp, "GetChart response")
 	resp.WriteResponse(w, runtime.JSONProducer())
 	assert.Equal(t, w.Code, http.StatusOK, "expect a 200 response code")
@@ -37,7 +38,7 @@ func TestGetChart404(t *testing.T) {
 		Repo:      testutil.BogusRepo,
 		ChartName: testutil.ChartName,
 	}
-	errResp := GetChart(bogonParams)
+	errResp := GetChart(bogonParams, chartsImplementation)
 	errResp.WriteResponse(w, runtime.JSONProducer())
 	assert.Equal(t, w.Code, http.StatusNotFound, "expect a 404 response code")
 	var httpBody models.Error
@@ -46,11 +47,11 @@ func TestGetChart404(t *testing.T) {
 }
 
 func TestGetAllCharts200(t *testing.T) {
-	charts, err := data.GetAllCharts()
+	charts, err := chartsImplementation.GetAll()
 	assert.NoErr(t, err)
 	w := httptest.NewRecorder()
 	params := operations.GetAllChartsParams{}
-	resp := GetAllCharts(params)
+	resp := GetAllCharts(params, chartsImplementation)
 	assert.NotNil(t, resp, "GetAllCharts response")
 	resp.WriteResponse(w, runtime.JSONProducer())
 	assert.Equal(t, w.Code, http.StatusOK, "expect a 200 response code")
@@ -60,13 +61,13 @@ func TestGetAllCharts200(t *testing.T) {
 }
 
 func TestGetChartsInRepo200(t *testing.T) {
-	charts, err := data.GetChartsInRepo(testutil.RepoName)
+	charts, err := chartsImplementation.GetAllFromRepo(testutil.RepoName)
 	assert.NoErr(t, err)
 	w := httptest.NewRecorder()
 	params := operations.GetChartsInRepoParams{
 		Repo: testutil.RepoName,
 	}
-	resp := GetChartsInRepo(params)
+	resp := GetChartsInRepo(params, chartsImplementation)
 	assert.NotNil(t, resp, "GetChartsInRepo response")
 	resp.WriteResponse(w, runtime.JSONProducer())
 	assert.Equal(t, w.Code, http.StatusOK, "expect a 200 response code")
@@ -78,9 +79,9 @@ func TestGetChartsInRepo200(t *testing.T) {
 func TestGetChartsInRepo404(t *testing.T) {
 	w := httptest.NewRecorder()
 	params := operations.GetChartsInRepoParams{
-		Repo: "bogon",
+		Repo: testutil.BogusRepo,
 	}
-	resp := GetChartsInRepo(params)
+	resp := GetChartsInRepo(params, chartsImplementation)
 	assert.NotNil(t, resp, "GetChartsInRepo response")
 	resp.WriteResponse(w, runtime.JSONProducer())
 	assert.Equal(t, w.Code, http.StatusNotFound, "expect a 404 response code")
@@ -91,7 +92,7 @@ func TestGetChartsInRepo404(t *testing.T) {
 
 func TestChartHTTPBody(t *testing.T) {
 	w := httptest.NewRecorder()
-	chart, err := mocks.GetChartFromMockRepo(testutil.RepoName, testutil.ChartName)
+	chart, err := chartsImplementation.GetChart(testutil.RepoName, testutil.ChartName)
 	assert.NoErr(t, err)
 	resp := chartHTTPBody(chart)
 	assert.NotNil(t, resp, "chartHTTPBody response")
@@ -104,7 +105,7 @@ func TestChartHTTPBody(t *testing.T) {
 
 func TestChartsHTTPBody(t *testing.T) {
 	w := httptest.NewRecorder()
-	charts, err := mocks.GetAllChartsFromMockRepos()
+	charts, err := chartsImplementation.GetAll()
 	assert.NoErr(t, err)
 	resp := chartsHTTPBody(charts)
 	assert.NotNil(t, resp, "chartHTTPBody response")

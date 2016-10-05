@@ -32,10 +32,15 @@ func TestGetMocksWd(t *testing.T) {
 	path, err = getTestDataWd()
 	assert.NoErr(t, err)
 	assertMocksDir(t, path)
+	err = os.Chdir("../..") // change to the git repo root directory
+	assert.NoErr(t, err)
+	path, err = getTestDataWd()
+	assert.NoErr(t, err)
+	assertMocksDir(t, path)
 	err = os.Chdir("/")
 	assert.NoErr(t, err)
 	_, err = getTestDataWd()
-	assert.ExistsErr(t, err, "can't determine mocks dir if not in 'api' dir or one of its descendant dirs")
+	assert.ExistsErr(t, err, "couldn't locate ourselves in relation to the 'src/api' directory of the monocular repo")
 }
 
 func assertMocksDir(t *testing.T, path string) {

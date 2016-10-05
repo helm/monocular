@@ -8,6 +8,7 @@ import (
 	runtime "github.com/go-openapi/runtime"
 	middleware "github.com/go-openapi/runtime/middleware"
 
+	"github.com/helm/monocular/src/api/data"
 	"github.com/helm/monocular/src/api/handlers"
 	"github.com/helm/monocular/src/api/pkg/swagger/restapi/operations"
 )
@@ -22,6 +23,7 @@ func configureFlags(api *operations.MonocularAPI) {
 
 func configureAPI(api *operations.MonocularAPI) http.Handler {
 	// configure the api here
+	chartsImplementation := data.NewMockCharts()
 	api.ServeError = errors.ServeError
 
 	// Set your custom logger if needed. Default one is log.Printf
@@ -35,13 +37,13 @@ func configureAPI(api *operations.MonocularAPI) http.Handler {
 	api.JSONProducer = runtime.JSONProducer()
 
 	api.GetChartHandler = operations.GetChartHandlerFunc(func(params operations.GetChartParams) middleware.Responder {
-		return handlers.GetChart(params)
+		return handlers.GetChart(params, chartsImplementation)
 	})
 	api.GetAllChartsHandler = operations.GetAllChartsHandlerFunc(func(params operations.GetAllChartsParams) middleware.Responder {
-		return handlers.GetAllCharts(params)
+		return handlers.GetAllCharts(params, chartsImplementation)
 	})
 	api.GetChartsInRepoHandler = operations.GetChartsInRepoHandlerFunc(func(params operations.GetChartsInRepoParams) middleware.Responder {
-		return handlers.GetChartsInRepo(params)
+		return handlers.GetChartsInRepo(params, chartsImplementation)
 	})
 	api.HealthzHandler = operations.HealthzHandlerFunc(func(params operations.HealthzParams) middleware.Responder {
 		return handlers.Healthz(params)

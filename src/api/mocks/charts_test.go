@@ -11,7 +11,7 @@ func TestGetChartFromMockRepo(t *testing.T) {
 	chart, err := GetChartFromMockRepo(testutil.RepoName, testutil.ChartName)
 	assert.NoErr(t, err)
 	assert.Equal(t, *chart.ID, testutil.RepoName+"/"+testutil.ChartName, "chart ID")
-	chart, err = GetChartFromMockRepo("bogon", testutil.ChartName)
+	chart, err = GetChartFromMockRepo(testutil.BogusRepo, testutil.ChartName)
 	assert.ExistsErr(t, err, "sent bogus repo name to GetChartFromMockRepo")
 	assert.Nil(t, chart.ID, "zero value ID")
 }
@@ -29,7 +29,7 @@ func TestGetChartsFromMockRepo(t *testing.T) {
 	charts, err = GetChartsFromMockRepo("unparseable")
 	assert.ExistsErr(t, err, "sent unparseable repo name to GetChartsFromMockRepo")
 	assert.True(t, len(charts) == 0, "empty charts slice returned")
-	charts, err = GetChartsFromMockRepo("bogon")
+	charts, err = GetChartsFromMockRepo(testutil.BogusRepo)
 	assert.ExistsErr(t, err, "sent bogus repo name to GetChartsFromMockRepo")
 	assert.True(t, len(charts) == 0, "empty charts slice returned")
 }
