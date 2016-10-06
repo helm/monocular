@@ -8,8 +8,8 @@ import (
 	runtime "github.com/go-openapi/runtime"
 	middleware "github.com/go-openapi/runtime/middleware"
 
-	"github.com/helm/monocular/src/api/data"
 	"github.com/helm/monocular/src/api/handlers"
+	"github.com/helm/monocular/src/api/mocks"
 	"github.com/helm/monocular/src/api/pkg/swagger/restapi/operations"
 )
 
@@ -23,7 +23,7 @@ func configureFlags(api *operations.MonocularAPI) {
 
 func configureAPI(api *operations.MonocularAPI) http.Handler {
 	// configure the api here
-	chartsImplementation := data.NewMockCharts()
+	chartsImplementation := mocks.NewMockCharts()
 	api.ServeError = errors.ServeError
 
 	// Set your custom logger if needed. Default one is log.Printf

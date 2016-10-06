@@ -1,12 +1,49 @@
 package mocks
 
 import (
+	"errors"
 	"fmt"
 	"log"
 
+	"github.com/helm/monocular/src/api/data"
 	"github.com/helm/monocular/src/api/data/helpers"
 	"github.com/helm/monocular/src/api/pkg/swagger/models"
 )
+
+// mockCharts fulfills the data.Charts interface
+type mockCharts struct{}
+
+// NewMockCharts returns a new mockCharts
+func NewMockCharts() data.Charts {
+	return &mockCharts{}
+}
+
+// ChartFromRepo method for mockCharts
+func (g *mockCharts) ChartFromRepo(repo, name string) (models.Resource, error) {
+	chart, err := GetChartFromMockRepo(repo, name)
+	if err != nil {
+		return models.Resource{}, errors.New("chart not found")
+	}
+	return chart, nil
+}
+
+// AllFromRepo method for mockCharts
+func (g *mockCharts) AllFromRepo(repo string) ([]*models.Resource, error) {
+	charts, err := GetChartsFromMockRepo(repo)
+	if err != nil {
+		return nil, fmt.Errorf("charts not found for repo %s", repo)
+	}
+	return charts, nil
+}
+
+// All method for mockCharts
+func (g *mockCharts) All() ([]*models.Resource, error) {
+	charts, err := GetAllChartsFromMockRepos()
+	if err != nil {
+		return nil, errors.New("unable to load all charts")
+	}
+	return charts, nil
+}
 
 // GetChartFromMockRepo returns a mock "stable/redis" chart resource
 func GetChartFromMockRepo(repo, chartName string) (models.Resource, error) {

@@ -7,16 +7,16 @@ import (
 
 	"github.com/arschles/assert"
 	"github.com/go-openapi/runtime"
-	"github.com/helm/monocular/src/api/data"
+	"github.com/helm/monocular/src/api/mocks"
 	"github.com/helm/monocular/src/api/pkg/swagger/models"
 	"github.com/helm/monocular/src/api/pkg/swagger/restapi/operations"
 	"github.com/helm/monocular/src/api/pkg/testutil"
 )
 
-var chartsImplementation = data.NewMockCharts()
+var chartsImplementation = mocks.NewMockCharts()
 
 func TestGetChart200(t *testing.T) {
-	chart, err := chartsImplementation.GetChart(testutil.RepoName, testutil.ChartName)
+	chart, err := chartsImplementation.ChartFromRepo(testutil.RepoName, testutil.ChartName)
 	assert.NoErr(t, err)
 	w := httptest.NewRecorder()
 	params := operations.GetChartParams{
@@ -47,7 +47,7 @@ func TestGetChart404(t *testing.T) {
 }
 
 func TestGetAllCharts200(t *testing.T) {
-	charts, err := chartsImplementation.GetAll()
+	charts, err := chartsImplementation.All()
 	assert.NoErr(t, err)
 	w := httptest.NewRecorder()
 	params := operations.GetAllChartsParams{}
@@ -61,7 +61,7 @@ func TestGetAllCharts200(t *testing.T) {
 }
 
 func TestGetChartsInRepo200(t *testing.T) {
-	charts, err := chartsImplementation.GetAllFromRepo(testutil.RepoName)
+	charts, err := chartsImplementation.AllFromRepo(testutil.RepoName)
 	assert.NoErr(t, err)
 	w := httptest.NewRecorder()
 	params := operations.GetChartsInRepoParams{
@@ -92,7 +92,7 @@ func TestGetChartsInRepo404(t *testing.T) {
 
 func TestChartHTTPBody(t *testing.T) {
 	w := httptest.NewRecorder()
-	chart, err := chartsImplementation.GetChart(testutil.RepoName, testutil.ChartName)
+	chart, err := chartsImplementation.ChartFromRepo(testutil.RepoName, testutil.ChartName)
 	assert.NoErr(t, err)
 	resp := chartHTTPBody(chart)
 	assert.NotNil(t, resp, "chartHTTPBody response")
@@ -105,7 +105,7 @@ func TestChartHTTPBody(t *testing.T) {
 
 func TestChartsHTTPBody(t *testing.T) {
 	w := httptest.NewRecorder()
-	charts, err := chartsImplementation.GetAll()
+	charts, err := chartsImplementation.All()
 	assert.NoErr(t, err)
 	resp := chartsHTTPBody(charts)
 	assert.NotNil(t, resp, "chartHTTPBody response")

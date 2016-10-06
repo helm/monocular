@@ -9,13 +9,13 @@ import (
 
 	"github.com/arschles/assert"
 	"github.com/go-openapi/loads"
-	"github.com/helm/monocular/src/api/data"
+	"github.com/helm/monocular/src/api/mocks"
 	"github.com/helm/monocular/src/api/pkg/swagger/models"
 	"github.com/helm/monocular/src/api/pkg/swagger/restapi/operations"
 	"github.com/helm/monocular/src/api/pkg/testutil"
 )
 
-var chartsImplementation = data.NewMockCharts()
+var chartsImplementation = mocks.NewMockCharts()
 
 // tests the GET /healthz endpoint
 func TestGetHealthz(t *testing.T) {
@@ -33,7 +33,7 @@ func TestGetCharts(t *testing.T) {
 	srv, err := newServer()
 	assert.NoErr(t, err)
 	defer srv.Close()
-	charts, err := chartsImplementation.GetAll()
+	charts, err := chartsImplementation.All()
 	assert.NoErr(t, err)
 	resp, err := httpGet(srv, urlPath("v1", "charts"))
 	assert.NoErr(t, err)
@@ -49,7 +49,7 @@ func TestGetChartsInRepo200(t *testing.T) {
 	srv, err := newServer()
 	assert.NoErr(t, err)
 	defer srv.Close()
-	charts, err := chartsImplementation.GetAllFromRepo(testutil.RepoName)
+	charts, err := chartsImplementation.AllFromRepo(testutil.RepoName)
 	assert.NoErr(t, err)
 	resp, err := httpGet(srv, urlPath("v1", "charts", testutil.RepoName))
 	assert.NoErr(t, err)
@@ -79,7 +79,7 @@ func TestGetChartInRepo200(t *testing.T) {
 	srv, err := newServer()
 	assert.NoErr(t, err)
 	defer srv.Close()
-	chart, err := chartsImplementation.GetChart(testutil.RepoName, testutil.ChartName)
+	chart, err := chartsImplementation.ChartFromRepo(testutil.RepoName, testutil.ChartName)
 	assert.NoErr(t, err)
 	resp, err := httpGet(srv, urlPath("v1", "charts", testutil.RepoName, testutil.ChartName))
 	assert.NoErr(t, err)

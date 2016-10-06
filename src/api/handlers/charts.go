@@ -13,9 +13,9 @@ const chartResourceName = "chart"
 
 // GetChart is the handler for the /charts/{repo}/{name} endpoint
 func GetChart(params operations.GetChartParams, c data.Charts) middleware.Responder {
-	chart, err := c.GetChart(params.Repo, params.ChartName)
+	chart, err := c.ChartFromRepo(params.Repo, params.ChartName)
 	if err != nil {
-		log.Printf("data.Charts GetChart() error (%s)", err)
+		log.Printf("data.Charts.ChartFromRepo(%s, %s) error (%s)", params.Repo, params.ChartName, err)
 		return notFound(chartResourceName)
 	}
 	return chartHTTPBody(chart)
@@ -23,9 +23,9 @@ func GetChart(params operations.GetChartParams, c data.Charts) middleware.Respon
 
 // GetAllCharts is the handler for the /charts endpoint
 func GetAllCharts(params operations.GetAllChartsParams, c data.Charts) middleware.Responder {
-	charts, err := c.GetAll()
+	charts, err := c.All()
 	if err != nil {
-		log.Printf("data.Charts GetAll() error (%s)", err)
+		log.Printf("data.Charts All() error (%s)", err)
 		return notFound(chartResourceName + "s")
 	}
 	return chartsHTTPBody(charts)
@@ -33,9 +33,9 @@ func GetAllCharts(params operations.GetAllChartsParams, c data.Charts) middlewar
 
 // GetChartsInRepo is the handler for the /charts/{repo} endpoint
 func GetChartsInRepo(params operations.GetChartsInRepoParams, c data.Charts) middleware.Responder {
-	charts, err := c.GetAllFromRepo(params.Repo)
+	charts, err := c.AllFromRepo(params.Repo)
 	if err != nil {
-		log.Printf("data.Charts GetAllFromRepo() error (%s)", err)
+		log.Printf("data.Charts AllFromRepo(%s) error (%s)", params.Repo, err)
 		return notFound(chartResourceName + "s")
 	}
 	return chartsHTTPBody(charts)
