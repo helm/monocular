@@ -7,6 +7,7 @@ import (
 
 	"github.com/arschles/assert"
 	"github.com/go-openapi/runtime"
+	"github.com/helm/monocular/src/api/data/helpers"
 	"github.com/helm/monocular/src/api/mocks"
 	"github.com/helm/monocular/src/api/pkg/swagger/models"
 	"github.com/helm/monocular/src/api/pkg/swagger/restapi/operations"
@@ -27,9 +28,10 @@ func TestGetChart200(t *testing.T) {
 	assert.NotNil(t, resp, "GetChart response")
 	resp.WriteResponse(w, runtime.JSONProducer())
 	assert.Equal(t, w.Code, http.StatusOK, "expect a 200 response code")
-	var httpBody models.ResourceData
-	assert.NoErr(t, testutil.ResourceDataFromJSON(w.Body, &httpBody))
-	AssertChartResourceBodyData(t, chart, httpBody)
+	httpBody := new(models.ResourceData)
+	assert.NoErr(t, testutil.ResourceDataFromJSON(w.Body, httpBody))
+	chartResource := helpers.MakeChartResource(chart, testutil.RepoName)
+	AssertChartResourceBodyData(t, chartResource, httpBody)
 }
 
 func TestGetChart404(t *testing.T) {
@@ -94,13 +96,14 @@ func TestChartHTTPBody(t *testing.T) {
 	w := httptest.NewRecorder()
 	chart, err := chartsImplementation.ChartFromRepo(testutil.RepoName, testutil.ChartName)
 	assert.NoErr(t, err)
-	resp := chartHTTPBody(chart)
+	chartResource := helpers.MakeChartResource(chart, testutil.RepoName)
+	resp := chartHTTPBody(chartResource)
 	assert.NotNil(t, resp, "chartHTTPBody response")
 	resp.WriteResponse(w, runtime.JSONProducer())
 	assert.Equal(t, w.Code, http.StatusOK, "expect a 200 response code")
-	var httpBody models.ResourceData
-	assert.NoErr(t, testutil.ResourceDataFromJSON(w.Body, &httpBody))
-	AssertChartResourceBodyData(t, chart, httpBody)
+	httpBody := new(models.ResourceData)
+	assert.NoErr(t, testutil.ResourceDataFromJSON(w.Body, httpBody))
+	AssertChartResourceBodyData(t, chartResource, httpBody)
 }
 
 func TestChartsHTTPBody(t *testing.T) {

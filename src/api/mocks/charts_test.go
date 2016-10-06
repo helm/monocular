@@ -10,12 +10,11 @@ import (
 var chartsImplementation = NewMockCharts()
 
 func TestMockChartsChartFromRepo(t *testing.T) {
-	chart, err := chartsImplementation.ChartFromRepo(testutil.RepoName, testutil.ChartName)
+	// TODO: validate chart data
+	_, err := chartsImplementation.ChartFromRepo(testutil.RepoName, testutil.ChartName)
 	assert.NoErr(t, err)
-	assert.Equal(t, *chart.ID, testutil.RepoName+"/"+testutil.ChartName, "chart ID")
-	chart, err = chartsImplementation.ChartFromRepo(testutil.BogusRepo, testutil.ChartName)
+	_, err = chartsImplementation.ChartFromRepo(testutil.BogusRepo, testutil.ChartName)
 	assert.ExistsErr(t, err, "sent bogus repo name to Charts.ChartFromRepo()")
-	assert.Nil(t, chart.ID, "zero value ID")
 }
 
 func TestMockChartsAll(t *testing.T) {
@@ -33,15 +32,13 @@ func TestMockChartsAllFromRepo(t *testing.T) {
 }
 
 func TestGetChartFromMockRepo(t *testing.T) {
-	chart, err := GetChartFromMockRepo(testutil.RepoName, testutil.ChartName)
+	// TODO: validate chart data
+	_, err := GetChartFromMockRepo(testutil.RepoName, testutil.ChartName)
 	assert.NoErr(t, err)
-	assert.Equal(t, *chart.ID, testutil.RepoName+"/"+testutil.ChartName, "chart ID")
-	chart, err = GetChartFromMockRepo(testutil.BogusRepo, testutil.ChartName)
+	_, err = GetChartFromMockRepo(testutil.BogusRepo, testutil.ChartName)
 	assert.ExistsErr(t, err, "sent bogus repo name to GetChartFromMockRepo")
-	assert.Nil(t, chart.ID, "zero value ID")
-	chart, err = GetChartFromMockRepo("unparseable", testutil.ChartName)
+	_, err = GetChartFromMockRepo("unparseable", testutil.ChartName)
 	assert.ExistsErr(t, err, "sent unparseable repo name to GetChartsFromMockRepo")
-	assert.Nil(t, chart.ID, "zero value ID")
 }
 
 func TestGetAllChartsFromMockRepos(t *testing.T) {

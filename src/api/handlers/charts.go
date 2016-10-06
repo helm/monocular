@@ -5,6 +5,7 @@ import (
 
 	middleware "github.com/go-openapi/runtime/middleware"
 	"github.com/helm/monocular/src/api/data"
+	"github.com/helm/monocular/src/api/data/helpers"
 	"github.com/helm/monocular/src/api/pkg/swagger/models"
 	"github.com/helm/monocular/src/api/pkg/swagger/restapi/operations"
 )
@@ -18,7 +19,8 @@ func GetChart(params operations.GetChartParams, c data.Charts) middleware.Respon
 		log.Printf("data.Charts.ChartFromRepo(%s, %s) error (%s)", params.Repo, params.ChartName, err)
 		return notFound(chartResourceName)
 	}
-	return chartHTTPBody(chart)
+	chartResource := helpers.MakeChartResource(chart, params.Repo)
+	return chartHTTPBody(chartResource)
 }
 
 // GetAllCharts is the handler for the /charts endpoint
@@ -38,13 +40,18 @@ func GetChartsInRepo(params operations.GetChartsInRepoParams, c data.Charts) mid
 		log.Printf("data.Charts AllFromRepo(%s) error (%s)", params.Repo, err)
 		return notFound(chartResourceName + "s")
 	}
-	return chartsHTTPBody(charts)
+	var chartsResource []*models.Resource
+	for _, chart := range charts {
+		resource := helpers.MakeChartResource(chart, params.Repo)
+		chartsResource = append(chartsResource, resource)
+	}
+	return chartsHTTPBody(chartsResource)
 }
 
 // chartHTTPBody is a convenience that returns a swagger-friendly HTTP 200 response with chart body data
-func chartHTTPBody(chart models.Resource) middleware.Responder {
+func chartHTTPBody(chart *models.Resource) middleware.Responder {
 	resourceData := models.ResourceData{
-		Data: &chart,
+		Data: chart,
 	}
 	return operations.NewGetChartOK().WithPayload(&resourceData)
 }

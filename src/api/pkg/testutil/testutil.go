@@ -24,7 +24,7 @@ func AssertErrBodyData(t *testing.T, code int64, resource string, body models.Er
 }
 
 // AssertChartResourceBodyData asserts expected HTTP chart resource body data
-func AssertChartResourceBodyData(t *testing.T, chart models.Resource, body models.ResourceData) {
+func AssertChartResourceBodyData(t *testing.T, chart *models.Resource, body *models.ResourceData) {
 	attributes, err := ChartResourceAttributesFromHTTPResponse(body)
 	assert.NoErr(t, err)
 	links, err := ChartResourceLinksFromHTTPResponse(body)
@@ -56,24 +56,24 @@ func ErrorModelFromJSON(r io.Reader, errorModel *models.Error) error {
 
 // ChartResourceAttributesFromHTTPResponse is a convenience that grabs the Attributes interface from
 // a chart resource in generic models.ResourceData form and converts to a models.ChartResourceAttributes
-func ChartResourceAttributesFromHTTPResponse(body models.ResourceData) (models.ChartResourceAttributes, error) {
-	var attributes models.ChartResourceAttributes
+func ChartResourceAttributesFromHTTPResponse(body *models.ResourceData) (*models.ChartResourceAttributes, error) {
+	attributes := new(models.ChartResourceAttributes)
 	b, err := json.Marshal(body.Data.Attributes.(map[string]interface{}))
 	if err != nil {
 		return attributes, err
 	}
-	err = json.Unmarshal(b, &attributes)
+	err = json.Unmarshal(b, attributes)
 	return attributes, err
 }
 
 // ChartResourceLinksFromHTTPResponse is a convenience that grabs the Links interface from
 // a chart resource in generic models.ResourceData form and converts to a models.ChartResourceLinks
-func ChartResourceLinksFromHTTPResponse(body models.ResourceData) (models.ChartResourceLinks, error) {
-	var links models.ChartResourceLinks
+func ChartResourceLinksFromHTTPResponse(body *models.ResourceData) (*models.ChartResourceLinks, error) {
+	links := new(models.ChartResourceLinks)
 	b, err := json.Marshal(body.Data.Links.(map[string]interface{}))
 	if err != nil {
 		return links, err
 	}
-	err = json.Unmarshal(b, &links)
+	err = json.Unmarshal(b, links)
 	return links, err
 }

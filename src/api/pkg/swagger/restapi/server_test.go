@@ -9,6 +9,7 @@ import (
 
 	"github.com/arschles/assert"
 	"github.com/go-openapi/loads"
+	"github.com/helm/monocular/src/api/data/helpers"
 	"github.com/helm/monocular/src/api/mocks"
 	"github.com/helm/monocular/src/api/pkg/swagger/models"
 	"github.com/helm/monocular/src/api/pkg/swagger/restapi/operations"
@@ -85,9 +86,10 @@ func TestGetChartInRepo200(t *testing.T) {
 	assert.NoErr(t, err)
 	defer resp.Body.Close()
 	assert.Equal(t, resp.StatusCode, http.StatusOK, "response code")
-	var httpBody models.ResourceData
-	assert.NoErr(t, testutil.ResourceDataFromJSON(resp.Body, &httpBody))
-	testutil.AssertChartResourceBodyData(t, chart, httpBody)
+	httpBody := new(models.ResourceData)
+	assert.NoErr(t, testutil.ResourceDataFromJSON(resp.Body, httpBody))
+	chartResource := helpers.MakeChartResource(chart, testutil.RepoName)
+	testutil.AssertChartResourceBodyData(t, chartResource, httpBody)
 }
 
 // tests the GET /{:apiVersion}/charts/{:repo}/{:chart} endpoint 404 response

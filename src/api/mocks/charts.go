@@ -19,16 +19,16 @@ func NewMockCharts() data.Charts {
 }
 
 // ChartFromRepo method for mockCharts
-func (g *mockCharts) ChartFromRepo(repo, name string) (models.Resource, error) {
+func (g *mockCharts) ChartFromRepo(repo, name string) (*models.ChartVersion, error) {
 	chart, err := GetChartFromMockRepo(repo, name)
 	if err != nil {
-		return models.Resource{}, errors.New("chart not found")
+		return nil, errors.New("chart not found")
 	}
 	return chart, nil
 }
 
 // AllFromRepo method for mockCharts
-func (g *mockCharts) AllFromRepo(repo string) ([]*models.Resource, error) {
+func (g *mockCharts) AllFromRepo(repo string) ([]*models.ChartVersion, error) {
 	charts, err := GetChartsFromMockRepo(repo)
 	if err != nil {
 		return nil, fmt.Errorf("charts not found for repo %s", repo)
@@ -46,24 +46,22 @@ func (g *mockCharts) All() ([]*models.Resource, error) {
 }
 
 // GetChartFromMockRepo returns a mock "stable/redis" chart resource
-func GetChartFromMockRepo(repo, chartName string) (models.Resource, error) {
-	var ret models.Resource
+func GetChartFromMockRepo(repo, chartName string) (*models.ChartVersion, error) {
 	y, err := getMockRepo(repo)
 	if err != nil {
 		log.Printf("couldn't load mock repo %s!\n", repo)
-		return ret, err
+		return nil, err
 	}
 	charts, err := helpers.ParseYAMLRepo(y)
 	if err != nil {
 		log.Printf("couldn't parse mock repo %s!\n", repo)
-		return ret, err
+		return nil, err
 	}
 	chart, err := helpers.GetLatestChartVersion(charts, chartName)
 	if err != nil {
-		return ret, err
+		return nil, err
 	}
-	ret = helpers.MakeChartResource(chart, repo, *chart.Version)
-	return ret, nil
+	return chart, nil
 }
 
 // GetAllChartsFromMockRepos returns mock chart resources from all mock repos
@@ -82,31 +80,26 @@ func GetAllChartsFromMockRepos() ([]*models.Resource, error) {
 			return ret, err
 		}
 		for _, chart := range charts {
-			resource := helpers.MakeChartResource(chart, repo, *chart.Version)
-			ret = append(ret, &resource)
+			resource := helpers.MakeChartResource(chart, repo)
+			ret = append(ret, resource)
 		}
 	}
 	return ret, nil
 }
 
 // GetChartsFromMockRepo returns mock chart resources from the passed-in repo
-func GetChartsFromMockRepo(repo string) ([]*models.Resource, error) {
-	var ret []*models.Resource
+func GetChartsFromMockRepo(repo string) ([]*models.ChartVersion, error) {
 	y, err := getMockRepo(repo)
 	if err != nil {
 		log.Printf("couldn't load mock repo %s!\n", repo)
-		return ret, err
+		return nil, err
 	}
 	charts, err := helpers.ParseYAMLRepo(y)
 	if err != nil {
 		log.Printf("couldn't parse mock repo %s!\n", repo)
-		return ret, err
+		return nil, err
 	}
-	for _, chart := range charts {
-		resource := helpers.MakeChartResource(chart, repo, *chart.Version)
-		ret = append(ret, &resource)
-	}
-	return ret, nil
+	return charts, nil
 }
 
 // getMockRepo is a convenience that loads a yaml repo from the filesystem
