@@ -30,31 +30,3 @@ func TestMockChartsAllFromRepo(t *testing.T) {
 	assert.ExistsErr(t, err, "sent bogus repo name to GetChartsInRepo")
 	assert.True(t, len(noCharts) == 0, "empty charts slice")
 }
-
-func TestGetChartFromMockRepo(t *testing.T) {
-	// TODO: validate chart data
-	_, err := GetChartFromMockRepo(testutil.RepoName, testutil.ChartName)
-	assert.NoErr(t, err)
-	_, err = GetChartFromMockRepo(testutil.BogusRepo, testutil.ChartName)
-	assert.ExistsErr(t, err, "sent bogus repo name to GetChartFromMockRepo")
-	_, err = GetChartFromMockRepo("unparseable", testutil.ChartName)
-	assert.ExistsErr(t, err, "sent unparseable repo name to GetChartsFromMockRepo")
-}
-
-func TestGetAllChartsFromMockRepos(t *testing.T) {
-	charts, err := GetAllChartsFromMockRepos()
-	assert.NoErr(t, err)
-	assert.True(t, len(charts) > 0, "at least 1 chart returned")
-}
-
-func TestGetChartsFromMockRepo(t *testing.T) {
-	charts, err := GetChartsFromMockRepo(testutil.RepoName)
-	assert.NoErr(t, err)
-	assert.True(t, len(charts) > 0, "at least 1 chart returned")
-	charts, err = GetChartsFromMockRepo("unparseable")
-	assert.ExistsErr(t, err, "sent unparseable repo name to GetChartsFromMockRepo")
-	assert.True(t, len(charts) == 0, "empty charts slice returned")
-	charts, err = GetChartsFromMockRepo(testutil.BogusRepo)
-	assert.ExistsErr(t, err, "sent bogus repo name to GetChartsFromMockRepo")
-	assert.True(t, len(charts) == 0, "empty charts slice returned")
-}
