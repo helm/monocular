@@ -17,12 +17,12 @@ func IsYAML(b []byte) bool {
 
 // ParseYAMLRepo converts a YAML representation of a repo
 // to a slice of versioned charts
-func ParseYAMLRepo(rawYAML []byte) ([]models.ChartVersion, error) {
+func ParseYAMLRepo(rawYAML []byte) ([]*models.ChartVersion, error) {
 	repo := make(map[interface{}]interface{})
 	if err := yaml.Unmarshal(rawYAML, &repo); err != nil {
 		return nil, err
 	}
-	var charts []models.ChartVersion
+	var charts []*models.ChartVersion
 	for chartVersion := range repo {
 		cV := repo[chartVersion]
 		// we drop the error response because we can never enter into this error state:
@@ -33,18 +33,18 @@ func ParseYAMLRepo(rawYAML []byte) ([]models.ChartVersion, error) {
 		if err := yaml.Unmarshal(c, &chart); err != nil {
 			return nil, err
 		}
-		charts = append(charts, chart)
+		charts = append(charts, &chart)
 	}
 	return charts, nil
 }
 
 // MakeChartResource composes a Resource type that represents a repo+chart
-func MakeChartResource(chart models.ChartVersion, repo, version string) models.Resource {
+func MakeChartResource(chart *models.ChartVersion, repo string) *models.Resource {
 	var ret models.Resource
 	ret.Type = StrToPtr("chart")
 	ret.ID = StrToPtr(fmt.Sprintf("%s/%s", repo, *chart.Name))
 	ret.Links = &models.ChartResourceLinks{
-		Latest: StrToPtr(fmt.Sprintf("/v1/charts/%s/%s/%s", repo, *chart.Name, version)),
+		Latest: StrToPtr(fmt.Sprintf("/v1/charts/%s/%s/%s", repo, *chart.Name, *chart.Version)),
 	}
 	ret.Attributes = &models.ChartResourceAttributes{
 		Repo:        &repo,
@@ -53,18 +53,18 @@ func MakeChartResource(chart models.ChartVersion, repo, version string) models.R
 		Created:     chart.Created,
 		Home:        chart.Home,
 	}
-	return ret
+	return &ret
 }
 
 // GetLatestChartVersion returns the most recent version from a slice of versioned charts
-func GetLatestChartVersion(charts []models.ChartVersion, name string) (models.ChartVersion, error) {
+func GetLatestChartVersion(charts []*models.ChartVersion, name string) (*models.ChartVersion, error) {
 	latest := "0.0.0"
-	var ret models.ChartVersion
+	var ret *models.ChartVersion
 	for _, chart := range charts {
 		if *chart.Name == name {
 			newest, err := newestSemVer(latest, *chart.Version)
 			if err != nil {
-				return models.ChartVersion{}, err
+				return nil, err
 			}
 			latest = newest
 			if latest == *chart.Version {

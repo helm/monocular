@@ -7,29 +7,26 @@ import (
 	"github.com/helm/monocular/src/api/pkg/testutil"
 )
 
-func TestGetChartFromMockRepo(t *testing.T) {
-	chart, err := GetChartFromMockRepo(testutil.RepoName, testutil.ChartName)
+var chartsImplementation = NewMockCharts()
+
+func TestMockChartsChartFromRepo(t *testing.T) {
+	// TODO: validate chart data
+	_, err := chartsImplementation.ChartFromRepo(testutil.RepoName, testutil.ChartName)
 	assert.NoErr(t, err)
-	assert.Equal(t, *chart.ID, testutil.RepoName+"/"+testutil.ChartName, "chart ID")
-	chart, err = GetChartFromMockRepo("bogon", testutil.ChartName)
-	assert.ExistsErr(t, err, "sent bogus repo name to GetChartFromMockRepo")
-	assert.Nil(t, chart.ID, "zero value ID")
+	_, err = chartsImplementation.ChartFromRepo(testutil.BogusRepo, testutil.ChartName)
+	assert.ExistsErr(t, err, "sent bogus repo name to Charts.ChartFromRepo()")
 }
 
-func TestGetAllChartsFromMockRepos(t *testing.T) {
-	charts, err := GetAllChartsFromMockRepos()
+func TestMockChartsAll(t *testing.T) {
+	_, err := chartsImplementation.All()
 	assert.NoErr(t, err)
-	assert.True(t, len(charts) > 0, "at least 1 chart returned")
 }
 
-func TestGetChartsFromMockRepo(t *testing.T) {
-	charts, err := GetChartsFromMockRepo(testutil.RepoName)
+func TestMockChartsAllFromRepo(t *testing.T) {
+	charts, err := chartsImplementation.AllFromRepo(testutil.RepoName)
 	assert.NoErr(t, err)
-	assert.True(t, len(charts) > 0, "at least 1 chart returned")
-	charts, err = GetChartsFromMockRepo("unparseable")
-	assert.ExistsErr(t, err, "sent unparseable repo name to GetChartsFromMockRepo")
-	assert.True(t, len(charts) == 0, "empty charts slice returned")
-	charts, err = GetChartsFromMockRepo("bogon")
-	assert.ExistsErr(t, err, "sent bogus repo name to GetChartsFromMockRepo")
-	assert.True(t, len(charts) == 0, "empty charts slice returned")
+	assert.True(t, len(charts) > 0, "returned charts")
+	noCharts, err := chartsImplementation.AllFromRepo(testutil.BogusRepo)
+	assert.ExistsErr(t, err, "sent bogus repo name to GetChartsInRepo")
+	assert.True(t, len(noCharts) == 0, "empty charts slice")
 }

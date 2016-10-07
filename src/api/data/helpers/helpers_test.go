@@ -48,7 +48,7 @@ func TestParseYAMLRepo(t *testing.T) {
 func TestMakeChartResource(t *testing.T) {
 	charts, err := ParseYAMLRepo(getTestRepoYAML())
 	assert.NoErr(t, err)
-	chartResource := MakeChartResource(charts[0], repoName, chartVersion)
+	chartResource := MakeChartResource(charts[0], repoName)
 	assert.Equal(t, *chartResource.Type, "chart", "chart resource type field value")
 	assert.Equal(t, *chartResource.ID, repoName+"/"+chartName, "chart resource ID field value")
 	assert.Equal(t, *chartResource.Links.(*models.ChartResourceLinks).Latest, fmt.Sprintf("/v1/charts/%s/%s/%s", repoName, chartName, chartVersion), "chart resource Links.Latest field value")

@@ -4,33 +4,55 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/helm/monocular/src/api/data"
 	"github.com/helm/monocular/src/api/data/helpers"
 	"github.com/helm/monocular/src/api/pkg/swagger/models"
 )
 
-// GetChartFromMockRepo returns a mock "stable/redis" chart resource
-func GetChartFromMockRepo(repo, chartName string) (models.Resource, error) {
-	var ret models.Resource
+// mockCharts fulfills the data.Charts interface
+type mockCharts struct{}
+
+// NewMockCharts returns a new mockCharts
+func NewMockCharts() data.Charts {
+	return &mockCharts{}
+}
+
+// ChartFromRepo method for mockCharts
+func (g *mockCharts) ChartFromRepo(repo, name string) (*models.ChartVersion, error) {
 	y, err := getMockRepo(repo)
 	if err != nil {
 		log.Printf("couldn't load mock repo %s!\n", repo)
-		return ret, err
+		return nil, err
 	}
 	charts, err := helpers.ParseYAMLRepo(y)
 	if err != nil {
 		log.Printf("couldn't parse mock repo %s!\n", repo)
-		return ret, err
+		return nil, err
 	}
-	chart, err := helpers.GetLatestChartVersion(charts, chartName)
+	chart, err := helpers.GetLatestChartVersion(charts, name)
 	if err != nil {
-		return ret, err
+		return nil, err
 	}
-	ret = helpers.MakeChartResource(chart, repo, *chart.Version)
-	return ret, nil
+	return chart, nil
 }
 
-// GetAllChartsFromMockRepos returns mock chart resources from all mock repos
-func GetAllChartsFromMockRepos() ([]*models.Resource, error) {
+// AllFromRepo method for mockCharts
+func (g *mockCharts) AllFromRepo(repo string) ([]*models.ChartVersion, error) {
+	y, err := getMockRepo(repo)
+	if err != nil {
+		log.Printf("couldn't load mock repo %s!\n", repo)
+		return nil, err
+	}
+	charts, err := helpers.ParseYAMLRepo(y)
+	if err != nil {
+		log.Printf("couldn't parse mock repo %s!\n", repo)
+		return nil, err
+	}
+	return charts, nil
+}
+
+// All method for mockCharts
+func (g *mockCharts) All() ([]*models.Resource, error) {
 	var ret []*models.Resource
 	repos := []string{"stable", "incubator"}
 	for _, repo := range repos {
@@ -45,29 +67,9 @@ func GetAllChartsFromMockRepos() ([]*models.Resource, error) {
 			return ret, err
 		}
 		for _, chart := range charts {
-			resource := helpers.MakeChartResource(chart, repo, *chart.Version)
-			ret = append(ret, &resource)
+			resource := helpers.MakeChartResource(chart, repo)
+			ret = append(ret, resource)
 		}
-	}
-	return ret, nil
-}
-
-// GetChartsFromMockRepo returns mock chart resources from the passed-in repo
-func GetChartsFromMockRepo(repo string) ([]*models.Resource, error) {
-	var ret []*models.Resource
-	y, err := getMockRepo(repo)
-	if err != nil {
-		log.Printf("couldn't load mock repo %s!\n", repo)
-		return ret, err
-	}
-	charts, err := helpers.ParseYAMLRepo(y)
-	if err != nil {
-		log.Printf("couldn't parse mock repo %s!\n", repo)
-		return ret, err
-	}
-	for _, chart := range charts {
-		resource := helpers.MakeChartResource(chart, repo, *chart.Version)
-		ret = append(ret, &resource)
 	}
 	return ret, nil
 }

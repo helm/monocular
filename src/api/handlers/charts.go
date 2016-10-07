@@ -5,6 +5,7 @@ import (
 
 	middleware "github.com/go-openapi/runtime/middleware"
 	"github.com/helm/monocular/src/api/data"
+	"github.com/helm/monocular/src/api/data/helpers"
 	"github.com/helm/monocular/src/api/pkg/swagger/models"
 	"github.com/helm/monocular/src/api/pkg/swagger/restapi/operations"
 )
@@ -12,39 +13,45 @@ import (
 const chartResourceName = "chart"
 
 // GetChart is the handler for the /charts/{repo}/{name} endpoint
-func GetChart(params operations.GetChartParams) middleware.Responder {
-	chart, err := data.GetChart(params.Repo, params.ChartName)
+func GetChart(params operations.GetChartParams, c data.Charts) middleware.Responder {
+	chart, err := c.ChartFromRepo(params.Repo, params.ChartName)
 	if err != nil {
-		log.Printf("data.GetChart error (%s)", err)
+		log.Printf("data.Charts.ChartFromRepo(%s, %s) error (%s)", params.Repo, params.ChartName, err)
 		return notFound(chartResourceName)
 	}
-	return chartHTTPBody(chart)
+	chartResource := helpers.MakeChartResource(chart, params.Repo)
+	return chartHTTPBody(chartResource)
 }
 
 // GetAllCharts is the handler for the /charts endpoint
-func GetAllCharts(params operations.GetAllChartsParams) middleware.Responder {
-	charts, err := data.GetAllCharts()
+func GetAllCharts(params operations.GetAllChartsParams, c data.Charts) middleware.Responder {
+	charts, err := c.All()
 	if err != nil {
-		log.Printf("data.GetAllCharts error (%s)", err)
+		log.Printf("data.Charts All() error (%s)", err)
 		return notFound(chartResourceName + "s")
 	}
 	return chartsHTTPBody(charts)
 }
 
 // GetChartsInRepo is the handler for the /charts/{repo} endpoint
-func GetChartsInRepo(params operations.GetChartsInRepoParams) middleware.Responder {
-	charts, err := data.GetChartsInRepo(params.Repo)
+func GetChartsInRepo(params operations.GetChartsInRepoParams, c data.Charts) middleware.Responder {
+	charts, err := c.AllFromRepo(params.Repo)
 	if err != nil {
-		log.Printf("data.GetAllCharts error (%s)", err)
+		log.Printf("data.Charts AllFromRepo(%s) error (%s)", params.Repo, err)
 		return notFound(chartResourceName + "s")
 	}
-	return chartsHTTPBody(charts)
+	var chartsResource []*models.Resource
+	for _, chart := range charts {
+		resource := helpers.MakeChartResource(chart, params.Repo)
+		chartsResource = append(chartsResource, resource)
+	}
+	return chartsHTTPBody(chartsResource)
 }
 
 // chartHTTPBody is a convenience that returns a swagger-friendly HTTP 200 response with chart body data
-func chartHTTPBody(chart models.Resource) middleware.Responder {
+func chartHTTPBody(chart *models.Resource) middleware.Responder {
 	resourceData := models.ResourceData{
-		Data: &chart,
+		Data: chart,
 	}
 	return operations.NewGetChartOK().WithPayload(&resourceData)
 }

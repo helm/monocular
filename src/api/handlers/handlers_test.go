@@ -38,17 +38,17 @@ func AssertErrBodyData(t *testing.T, code int64, resource string, body models.Er
 	assert.Equal(t, *body.Message, strconv.FormatInt(code, 10)+" "+resource+" not found", "error message in HTTP body data")
 }
 
-func AssertChartResourceBodyData(t *testing.T, chart models.Resource, body models.ResourceData) {
+func AssertChartResourceBodyData(t *testing.T, chart *models.Resource, body *models.ResourceData) {
 	attributes, err := testutil.ChartResourceAttributesFromHTTPResponse(body)
 	assert.NoErr(t, err)
 	links, err := testutil.ChartResourceLinksFromHTTPResponse(body)
 	assert.NoErr(t, err)
-	assert.Equal(t, *chart.ID, *body.Data.ID, "chart ID data in HTTP body data")
-	assert.Equal(t, *chart.Type, *body.Data.Type, "chart type data in HTTP body data")
-	assert.Equal(t, *chart.Attributes.(*models.ChartResourceAttributes).Created, *attributes.Created, "chart created data in HTTP body data")
-	assert.Equal(t, *chart.Attributes.(*models.ChartResourceAttributes).Description, *attributes.Description, "chart descripion data in HTTP body data")
-	assert.Equal(t, *chart.Attributes.(*models.ChartResourceAttributes).Home, *attributes.Home, "chart home data in HTTP body data")
-	assert.Equal(t, *chart.Attributes.(*models.ChartResourceAttributes).Name, *attributes.Name, "chart name data in HTTP body data")
-	assert.Equal(t, *chart.Attributes.(*models.ChartResourceAttributes).Repo, *attributes.Repo, "chart repo data in HTTP body data")
-	assert.Equal(t, *chart.Links.(*models.ChartResourceLinks).Latest, *links.Latest, "chart link to latest data in HTTP body data")
+	assert.Equal(t, chart.ID, body.Data.ID, "chart ID data in HTTP body data")
+	assert.Equal(t, chart.Type, body.Data.Type, "chart type data in HTTP body data")
+	assert.Equal(t, chart.Attributes.(*models.ChartResourceAttributes).Created, attributes.Created, "chart created data in HTTP body data")
+	assert.Equal(t, chart.Attributes.(*models.ChartResourceAttributes).Description, attributes.Description, "chart descripion data in HTTP body data")
+	assert.Equal(t, chart.Attributes.(*models.ChartResourceAttributes).Home, attributes.Home, "chart home data in HTTP body data")
+	assert.Equal(t, chart.Attributes.(*models.ChartResourceAttributes).Name, attributes.Name, "chart name data in HTTP body data")
+	assert.Equal(t, chart.Attributes.(*models.ChartResourceAttributes).Repo, attributes.Repo, "chart repo data in HTTP body data")
+	assert.Equal(t, chart.Links.(*models.ChartResourceLinks).Latest, links.Latest, "chart link to latest data in HTTP body data")
 }

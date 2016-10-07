@@ -9,11 +9,14 @@ import (
 
 	"github.com/arschles/assert"
 	"github.com/go-openapi/loads"
-	"github.com/helm/monocular/src/api/data"
+	"github.com/helm/monocular/src/api/data/helpers"
+	"github.com/helm/monocular/src/api/mocks"
 	"github.com/helm/monocular/src/api/pkg/swagger/models"
 	"github.com/helm/monocular/src/api/pkg/swagger/restapi/operations"
 	"github.com/helm/monocular/src/api/pkg/testutil"
 )
+
+var chartsImplementation = mocks.NewMockCharts()
 
 // tests the GET /healthz endpoint
 func TestGetHealthz(t *testing.T) {
@@ -31,7 +34,7 @@ func TestGetCharts(t *testing.T) {
 	srv, err := newServer()
 	assert.NoErr(t, err)
 	defer srv.Close()
-	charts, err := data.GetAllCharts()
+	charts, err := chartsImplementation.All()
 	assert.NoErr(t, err)
 	resp, err := httpGet(srv, urlPath("v1", "charts"))
 	assert.NoErr(t, err)
@@ -47,7 +50,7 @@ func TestGetChartsInRepo200(t *testing.T) {
 	srv, err := newServer()
 	assert.NoErr(t, err)
 	defer srv.Close()
-	charts, err := data.GetChartsInRepo(testutil.RepoName)
+	charts, err := chartsImplementation.AllFromRepo(testutil.RepoName)
 	assert.NoErr(t, err)
 	resp, err := httpGet(srv, urlPath("v1", "charts", testutil.RepoName))
 	assert.NoErr(t, err)
@@ -77,15 +80,16 @@ func TestGetChartInRepo200(t *testing.T) {
 	srv, err := newServer()
 	assert.NoErr(t, err)
 	defer srv.Close()
-	chart, err := data.GetChart(testutil.RepoName, testutil.ChartName)
+	chart, err := chartsImplementation.ChartFromRepo(testutil.RepoName, testutil.ChartName)
 	assert.NoErr(t, err)
 	resp, err := httpGet(srv, urlPath("v1", "charts", testutil.RepoName, testutil.ChartName))
 	assert.NoErr(t, err)
 	defer resp.Body.Close()
 	assert.Equal(t, resp.StatusCode, http.StatusOK, "response code")
-	var httpBody models.ResourceData
-	assert.NoErr(t, testutil.ResourceDataFromJSON(resp.Body, &httpBody))
-	testutil.AssertChartResourceBodyData(t, chart, httpBody)
+	httpBody := new(models.ResourceData)
+	assert.NoErr(t, testutil.ResourceDataFromJSON(resp.Body, httpBody))
+	chartResource := helpers.MakeChartResource(chart, testutil.RepoName)
+	testutil.AssertChartResourceBodyData(t, chartResource, httpBody)
 }
 
 // tests the GET /{:apiVersion}/charts/{:repo}/{:chart} endpoint 404 response
@@ -116,6 +120,5 @@ func urlPath(ver string, remainder ...string) string {
 }
 
 func httpGet(s *httptest.Server, route string) (*http.Response, error) {
-	fmt.Println(s.URL + "/" + route)
 	return http.Get(s.URL + "/" + route)
 }
