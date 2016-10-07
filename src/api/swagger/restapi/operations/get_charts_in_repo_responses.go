@@ -8,7 +8,7 @@ import (
 
 	"github.com/go-openapi/runtime"
 
-	"github.com/helm/monocular/src/api/pkg/swagger/models"
+	"github.com/helm/monocular/src/api/swagger/models"
 )
 
 /*GetChartsInRepoOK charts by repo response

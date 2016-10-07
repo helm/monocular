@@ -1,6 +1,6 @@
 package data
 
-import "github.com/helm/monocular/src/api/pkg/swagger/models"
+import "github.com/helm/monocular/src/api/swagger/models"
 
 // Charts is an interface for managing chart data
 type Charts interface {

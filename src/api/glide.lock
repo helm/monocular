@@ -51,10 +51,10 @@ imports:
 - name: github.com/helm/monocular
   version: 1b01e10270dfd78da9834ae4b8dfce0b1d106d83
   subpackages:
-  - src/api/pkg/swagger/restapi
-  - src/api/pkg/swagger/restapi/operations
+  - src/api/swagger/restapi
+  - src/api/swagger/restapi/operations
   - src/api/mocks
-  - src/api/pkg/swagger/models
+  - src/api/swagger/models
   - src/api/data
   - src/api/data/helpers
   - src/api/handlers

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/helm/monocular/src/api/pkg/swagger/models"
+	"github.com/helm/monocular/src/api/swagger/models"
 	"gopkg.in/yaml.v2"
 )
 
