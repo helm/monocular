@@ -6,7 +6,7 @@ import (
 
 	"github.com/helm/monocular/src/api/data"
 	"github.com/helm/monocular/src/api/data/helpers"
-	"github.com/helm/monocular/src/api/pkg/swagger/models"
+	"github.com/helm/monocular/src/api/swagger/models"
 )
 
 // mockCharts fulfills the data.Charts interface

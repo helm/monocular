@@ -11,9 +11,9 @@ import (
 	"github.com/go-openapi/loads"
 	"github.com/helm/monocular/src/api/data/helpers"
 	"github.com/helm/monocular/src/api/mocks"
-	"github.com/helm/monocular/src/api/pkg/swagger/models"
-	"github.com/helm/monocular/src/api/pkg/swagger/restapi/operations"
-	"github.com/helm/monocular/src/api/pkg/testutil"
+	"github.com/helm/monocular/src/api/swagger/models"
+	"github.com/helm/monocular/src/api/swagger/restapi/operations"
+	"github.com/helm/monocular/src/api/testutil"
 )
 
 var chartsImplementation = mocks.NewMockCharts()

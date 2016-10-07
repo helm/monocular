@@ -8,8 +8,8 @@ import (
 
 	"github.com/arschles/assert"
 	"github.com/go-openapi/runtime"
-	"github.com/helm/monocular/src/api/pkg/swagger/models"
-	"github.com/helm/monocular/src/api/pkg/testutil"
+	"github.com/helm/monocular/src/api/swagger/models"
+	"github.com/helm/monocular/src/api/testutil"
 )
 
 func TestNotFound(t *testing.T) {

@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/arschles/assert"
-	"github.com/helm/monocular/src/api/pkg/testutil"
+	"github.com/helm/monocular/src/api/testutil"
 )
 
 var chartsImplementation = NewMockCharts()

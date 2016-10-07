@@ -5,9 +5,9 @@ IFS=$'\n\t'
 
 # shellcheck disable=SC2046
 pkgs=$(go list $(glide novendor))
-COVERAGE_EXCLUDES=("github.com/helm/monocular/src/api/pkg/swagger/models" \
-"github.com/helm/monocular/src/api/pkg/swagger/restapi" \
-"github.com/helm/monocular/src/api/pkg/swagger/restapi/operations" \
+COVERAGE_EXCLUDES=("github.com/helm/monocular/src/api/swagger/models" \
+"github.com/helm/monocular/src/api/swagger/restapi" \
+"github.com/helm/monocular/src/api/swagger/restapi/operations" \
 "github.com/helm/monocular/src/api")
 
 echo "" > coverage.txt

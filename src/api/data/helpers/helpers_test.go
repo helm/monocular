@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/arschles/assert"
-	"github.com/helm/monocular/src/api/pkg/swagger/models"
+	"github.com/helm/monocular/src/api/swagger/models"
 )
 
 const (

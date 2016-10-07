@@ -10,7 +10,7 @@ import (
 
 	"github.com/helm/monocular/src/api/handlers"
 	"github.com/helm/monocular/src/api/mocks"
-	"github.com/helm/monocular/src/api/pkg/swagger/restapi/operations"
+	"github.com/helm/monocular/src/api/swagger/restapi/operations"
 )
 
 // This file is safe to edit. Once it exists it will not be overwritten
