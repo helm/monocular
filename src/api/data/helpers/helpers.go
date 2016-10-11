@@ -72,6 +72,9 @@ func GetLatestChartVersion(charts []*models.ChartVersion, name string) (*models.
 			}
 		}
 	}
+	if ret == nil {
+		return ret, fmt.Errorf("chart %s not found\n", name)
+	}
 	return ret, nil
 }
 

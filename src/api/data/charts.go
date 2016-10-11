@@ -10,4 +10,6 @@ type Charts interface {
 	AllFromRepo(repo string) ([]*models.ChartVersion, error)
 	// will have a All method to retrieve all charts from all repos
 	All() ([]*models.Resource, error)
+	// will have a Refresh method to freshen charts data
+	Refresh() error
 }
