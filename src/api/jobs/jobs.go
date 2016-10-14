@@ -14,10 +14,13 @@ type Periodic interface {
 	Name() string
 }
 
+// PeriodicCanceller will cancel one or more Periodic jobs
+type PeriodicCanceller func()
+
 // DoPeriodic calls p.Do() once, and then again every p.Frequency() on each element p in pSlice.
 // For each p in pSlice, a new goroutine is started, and the returned channel can be closed
 // to stop all of the goroutines.
-func DoPeriodic(pSlice []Periodic) chan<- struct{} {
+func DoPeriodic(pSlice []Periodic) PeriodicCanceller {
 	doneCh := make(chan struct{})
 	for _, p := range pSlice {
 		go func(p Periodic) {
@@ -42,5 +45,5 @@ func DoPeriodic(pSlice []Periodic) chan<- struct{} {
 			}
 		}(p)
 	}
-	return doneCh
+	return func() { close(doneCh) }
 }

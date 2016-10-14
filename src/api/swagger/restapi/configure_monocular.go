@@ -37,7 +37,7 @@ func configureAPI(api *operations.MonocularAPI) http.Handler {
 	freshness := time.Duration(3600) * time.Second
 	periodicRefresh := cache.NewRefreshChartsData(chartsImplementation, freshness, "refresh-charts")
 	toDo := []jobs.Periodic{periodicRefresh}
-	_ = jobs.DoPeriodic(toDo)
+	jobs.DoPeriodic(toDo)
 	api.ServeError = errors.ServeError
 
 	// Set your custom logger if needed. Default one is log.Printf

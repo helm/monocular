@@ -18,7 +18,7 @@ type cachedCharts struct {
 	rwm        *sync.RWMutex
 }
 
-// NewCachedCharts returns a new cachedCharts
+// NewCachedCharts returns a new data.Charts implementation
 func NewCachedCharts(repos []map[string]string) data.Charts {
 	return &cachedCharts{
 		knownRepos: repos,
@@ -27,7 +27,8 @@ func NewCachedCharts(repos []map[string]string) data.Charts {
 	}
 }
 
-// ChartFromRepo method for cachedCharts
+// ChartFromRepo is the interface implementation for data.Charts
+// It returns the reference to a single versioned chart (the most recently published version)
 func (c *cachedCharts) ChartFromRepo(repo, name string) (*models.ChartVersion, error) {
 	c.rwm.RLock()
 	defer c.rwm.RUnlock()
@@ -41,7 +42,8 @@ func (c *cachedCharts) ChartFromRepo(repo, name string) (*models.ChartVersion, e
 	return nil, fmt.Errorf("no charts found for repo %s\n", repo)
 }
 
-// AllFromRepo method for cachedCharts
+// AllFromRepo is the interface implementation for data.Charts
+// It returns the reference to a slice of all versions of all charts in a repo
 func (c *cachedCharts) AllFromRepo(repo string) ([]*models.ChartVersion, error) {
 	c.rwm.RLock()
 	defer c.rwm.RUnlock()
@@ -51,11 +53,13 @@ func (c *cachedCharts) AllFromRepo(repo string) ([]*models.ChartVersion, error) 
 	return nil, fmt.Errorf("no charts found for repo %s\n", repo)
 }
 
-// All method for cachedCharts
+// All is the interface implementation for data.Charts
+// It returns the reference to a slice of all versions of all charts in all repos
 func (c *cachedCharts) All() ([]*models.Resource, error) {
 	c.rwm.RLock()
 	defer c.rwm.RUnlock()
 	var allCharts []*models.Resource
+	// TODO: parallellize this, it won't scale well with lots of repos
 	for _, repo := range c.knownRepos {
 		for repoName := range repo {
 			for _, chart := range c.allCharts[repoName] {
@@ -67,7 +71,8 @@ func (c *cachedCharts) All() ([]*models.Resource, error) {
 	return allCharts, nil
 }
 
-// Refresh method for cachedCharts
+// Refresh is the interface implementation for data.Charts
+// It refreshes cached data for all authoritative repository+chart data
 func (c *cachedCharts) Refresh() error {
 	c.rwm.Lock()
 	defer c.rwm.Unlock()

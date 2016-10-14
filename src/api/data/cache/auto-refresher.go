@@ -28,8 +28,7 @@ func NewRefreshChartsData(
 
 // Do implements the Periodic interface
 func (r *refreshChartsData) Do() error {
-	err := r.chartsImplementation.Refresh()
-	if err != nil {
+	if err := r.chartsImplementation.Refresh(); err != nil {
 		return err
 	}
 	return nil
