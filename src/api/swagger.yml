@@ -112,23 +112,21 @@ definitions:
     type: object
     required:
       - name
-      - url
       - created
-      - checksum
+      - digest
       - description
       - version
       - home
+      - sources
+      - urls
     properties:
       name:
-        type: string
-        minLength: 1
-      url:
         type: string
         minLength: 1
       created:
         type: string
         minLength: 1
-      checksum:
+      digest:
         type: string
         minLength: 1
       description:
@@ -140,6 +138,14 @@ definitions:
       home:
         type: string
         minLength: 1
+      sources:
+        type: array
+        items:
+          type: string
+      urls:
+        type: array
+        items:
+          type: string
   chartResourceLinks:
     type: object
     required:
@@ -154,9 +160,11 @@ definitions:
       - name
       - description
       - created
-      - checksum
+      - digest
       - repo
       - home
+      - sources
+      - urls
     properties:
       name:
         type: string
@@ -167,12 +175,23 @@ definitions:
       created:
         type: string
         minLength: 1
+      digest:
+        type: string
+        minLength: 1
       repo:
         type: string
         minLenth: 1
       home:
         type: string
         minLength: 1
+      sources:
+        type: array
+        items:
+          type: string
+      urls:
+        type: array
+        items:
+          type: string
   error:
     type: object
     required:

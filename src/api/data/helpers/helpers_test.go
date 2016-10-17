@@ -12,11 +12,12 @@ const (
 	repoName         = "stable"
 	chartName        = "apache"
 	chartURL         = "https://storage.googleapis.com/kubernetes-charts/apache-0.0.1.tgz"
-	chartCreated     = "2016-05-26 11:23:44.086354411 +0000 UTC"
-	chartChecksum    = "68eb4f96567c1d5fa9417b2bb9b9cbb2"
+	chartSource      = "https://github.com/kubernetes/charts/apache"
+	chartCreated     = "2016-10-06T16:23:20.499814565-06:00"
+	chartDigest      = "99c76e403d752c84ead610644d4b1c2f2b453a74b921f422b9dcb8a7c8b559cd"
 	chartDescription = "Chart for Apache HTTP Server"
 	chartVersion     = "0.0.1"
-	chartHome        = "https://github.com/kubernetes/charts/apache"
+	chartHome        = "https://k8s.io/helm"
 )
 
 func TestIsYAML(t *testing.T) {
@@ -33,12 +34,13 @@ func TestParseYAMLRepo(t *testing.T) {
 	assert.NoErr(t, err)
 	assert.Equal(t, len(charts), 1, "charts slice response from ParseYAMLRepo")
 	assert.Equal(t, *charts[0].Name, chartName, "chart name field value")
-	assert.Equal(t, *charts[0].URL, chartURL, "chart URL field value")
 	assert.Equal(t, *charts[0].Created, chartCreated, "chart created field value")
-	assert.Equal(t, *charts[0].Checksum, chartChecksum, "chart checksum field value")
+	assert.Equal(t, *charts[0].Digest, chartDigest, "chart checksum field value")
 	assert.Equal(t, *charts[0].Description, chartDescription, "chart description field value")
 	assert.Equal(t, *charts[0].Version, chartVersion, "chart version field value")
 	assert.Equal(t, *charts[0].Home, chartHome, "chart home field value")
+	//assert.Equal(t, *charts[0].Urls[0], chartURL, "chart URL field value")
+	//assert.Equal(t, *charts[0].Sources[0], chartSource, "chart URL field value")
 	_, err = ParseYAMLRepo([]byte(fmt.Sprintf(`this is not yaml`)))
 	assert.ExistsErr(t, err, "sent something not yaml to ParseYAMLRepo")
 	_, err = ParseYAMLRepo([]byte(fmt.Sprintf(`andy: kaufman`)))
@@ -132,12 +134,18 @@ func TestStrToPtr(t *testing.T) {
 
 func getTestRepoYAML() []byte {
 	return []byte(fmt.Sprintf(`
-%s-%s:
-  name: %s
-  url: %s
-  created: %s
-  checksum: %s
-  description: %s
-  version: %s
-  home: %s`, chartName, chartVersion, chartName, chartURL, chartCreated, chartChecksum, chartDescription, chartVersion, chartHome))
+apiVersion: v1
+entries:
+  apache:
+    - created: %s
+      description: %s
+      digest: %s
+      home: %s
+      name: %s
+      sources:
+        - %s
+      urls:
+        - %s
+      version: %s
+generated: 2016-10-06T16:23:20.499029981-06:00`, chartCreated, chartDescription, chartDigest, chartHome, chartName, chartSource, chartURL, chartVersion))
 }
