@@ -3,13 +3,15 @@ package restapi
 import (
 	"crypto/tls"
 	"net/http"
+	"time"
 
 	errors "github.com/go-openapi/errors"
 	runtime "github.com/go-openapi/runtime"
 	middleware "github.com/go-openapi/runtime/middleware"
 
+	"github.com/helm/monocular/src/api/data/cache"
 	"github.com/helm/monocular/src/api/handlers"
-	"github.com/helm/monocular/src/api/mocks"
+	"github.com/helm/monocular/src/api/jobs"
 	"github.com/helm/monocular/src/api/swagger/restapi/operations"
 )
 
@@ -23,7 +25,19 @@ func configureFlags(api *operations.MonocularAPI) {
 
 func configureAPI(api *operations.MonocularAPI) http.Handler {
 	// configure the api here
-	chartsImplementation := mocks.NewMockCharts()
+	repos := []map[string]string{
+		map[string]string{
+			"stable": "https://github.com/kubernetes/charts",
+		},
+		map[string]string{
+			"incubator": "https://github.com/kubernetes/charts/tree/master/incubator",
+		},
+	}
+	chartsImplementation := cache.NewCachedCharts(repos)
+	freshness := time.Duration(3600) * time.Second
+	periodicRefresh := cache.NewRefreshChartsData(chartsImplementation, freshness, "refresh-charts")
+	toDo := []jobs.Periodic{periodicRefresh}
+	jobs.DoPeriodic(toDo)
 	api.ServeError = errors.ServeError
 
 	// Set your custom logger if needed. Default one is log.Printf

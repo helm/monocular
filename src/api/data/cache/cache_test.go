@@ -1,4 +1,4 @@
-package mocks
+package cache
 
 import (
 	"testing"
@@ -7,11 +7,21 @@ import (
 	"github.com/helm/monocular/src/api/testutil"
 )
 
-var chartsImplementation = NewMockCharts()
+var repos = []map[string]string{
+	map[string]string{
+		"stable": "https://github.com/kubernetes/charts",
+	},
+	map[string]string{
+		"incubator": "https://github.com/kubernetes/charts/tree/master/incubator",
+	},
+}
+var chartsImplementation = NewCachedCharts(repos)
 
-func TestMockChartsChartFromRepo(t *testing.T) {
+func TestCachedChartsChartFromRepo(t *testing.T) {
+	err := chartsImplementation.Refresh()
+	assert.NoErr(t, err)
 	// TODO: validate chart data
-	_, err := chartsImplementation.ChartFromRepo(testutil.RepoName, testutil.ChartName)
+	_, err = chartsImplementation.ChartFromRepo(testutil.RepoName, testutil.ChartName)
 	assert.NoErr(t, err)
 	_, err = chartsImplementation.ChartFromRepo(testutil.BogusRepo, testutil.ChartName)
 	assert.ExistsErr(t, err, "sent bogus repo name to Charts.ChartFromRepo()")
@@ -19,16 +29,25 @@ func TestMockChartsChartFromRepo(t *testing.T) {
 	assert.ExistsErr(t, err, "sent bogus chart name to Charts.ChartFromRepo()")
 }
 
-func TestMockChartsAll(t *testing.T) {
-	_, err := chartsImplementation.All()
+func TestCachedChartsAll(t *testing.T) {
+	err := chartsImplementation.Refresh()
+	assert.NoErr(t, err)
+	_, err = chartsImplementation.All()
 	assert.NoErr(t, err)
 }
 
-func TestMockChartsAllFromRepo(t *testing.T) {
+func TestCachedChartsAllFromRepo(t *testing.T) {
+	err := chartsImplementation.Refresh()
+	assert.NoErr(t, err)
 	charts, err := chartsImplementation.AllFromRepo(testutil.RepoName)
 	assert.NoErr(t, err)
 	assert.True(t, len(charts) > 0, "returned charts")
 	noCharts, err := chartsImplementation.AllFromRepo(testutil.BogusRepo)
 	assert.ExistsErr(t, err, "sent bogus repo name to GetChartsInRepo")
 	assert.True(t, len(noCharts) == 0, "empty charts slice")
+}
+
+func TestCachedChartsRefresh(t *testing.T) {
+	err := chartsImplementation.Refresh()
+	assert.NoErr(t, err)
 }

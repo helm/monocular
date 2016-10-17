@@ -74,6 +74,10 @@ func (g *mockCharts) All() ([]*models.Resource, error) {
 	return ret, nil
 }
 
+func (g *mockCharts) Refresh() error {
+	return nil
+}
+
 // getMockRepo is a convenience that loads a yaml repo from the filesystem
 func getMockRepo(repo string) ([]byte, error) {
 	path, err := getTestDataWd()
