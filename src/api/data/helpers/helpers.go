@@ -33,8 +33,8 @@ func ParseYAMLRepo(rawYAML []byte) ([]*models.ChartVersion, error) {
 	}
 	var charts []*models.ChartVersion
 	for entry := range chartEntries {
-		for _, chart := range chartEntries[entry] {
-			charts = append(charts, &chart)
+		for i := range chartEntries[entry] {
+			charts = append(charts, &chartEntries[entry][i])
 		}
 	}
 	return charts, nil
