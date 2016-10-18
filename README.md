@@ -20,8 +20,6 @@ Monocular comprises a UI front end, and a RESTFul HTTP back end API.
 
 The UI is an angular 2 client application located in `src/ui/`.
 
-We leverage [docker](https://www.docker.com) (via `docker-compose`) to provide all local dependencies.
-
 More UI docs are [here](src/ui/README.md).
 
 # API Prerequisites
@@ -34,6 +32,20 @@ The API is a golang HTTP server located in `src/api/`.
 
 More API docs are [here](src/api/README.md).
 
-## Status of the Project
+# Running a development environment
+
+We leverage [docker](https://www.docker.com) (via `docker-compose`) to provide a multi-tier setup for development.
+
+Running `docker-compose up` from the root directory will expose:
+
+* API backend endpoint via `http://{your-docker-machine-ip-address}:8080`
+* UI frontend via `http://{your-docker-machine-ip-address}:4200`  
+
+**IMPORTANT**: If your Docker Machine hostname is different than *localhost*, you need to change
+the `backendHostname` value in the file `src/ui/src/app/config.ts`.
+
+You can restart individual services doing `docker-compose restart api|ui`
+
+# Status of the Project
 
 This project is still under active development, so you'll likely encounter [issues](https://github.com/helm/monocular/issues). Please participate by filing issues or contributing a pull request!

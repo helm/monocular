@@ -1,21 +1,18 @@
-hash: a8ecae121ca9c84f0ba3dc414a5c3814c020dd426eb5f6f8c96ad5635ad491c5
-updated: 2016-09-26T15:46:39.941699903-07:00
+hash: a2ac040c9c67340ae87f47498de3c56eb4f4f2d7ecb813d892a3d025e909142b
+updated: 2016-10-04T19:28:40.831167384+02:00
 imports:
 - name: github.com/arschles/assert
   version: fc2da9844984ce5093111298174706e14d4c0c47
 - name: github.com/asaskevich/govalidator
   version: 593d64559f7600f29581a3ee42177f5dbded27a9
-  repo: https://github.com/asaskevich/govalidator
 - name: github.com/go-openapi/analysis
   version: b44dc874b601d9e4e2f6e19140e794ba24bead3b
 - name: github.com/go-openapi/errors
   version: 4178436c9f2430cdd945c50301cfb61563b56573
 - name: github.com/go-openapi/jsonpointer
   version: 46af16f9f7b149af66e5d1bd010e3574dc06de98
-  repo: https://github.com/go-openapi/jsonpointer
 - name: github.com/go-openapi/jsonreference
   version: 13c6e3589ad90f49bd3e3bbe2c2cb3d7a4142272
-  repo: https://github.com/go-openapi/jsonreference
 - name: github.com/go-openapi/loads
   version: 18441dfa706d924a39a030ee2c3b1d8d81917b38
 - name: github.com/go-openapi/runtime
@@ -36,14 +33,6 @@ imports:
   version: 03d947b0268e1c2bb5c74ac4095447f140c9a112
 - name: github.com/go-swagger/go-swagger
   version: 4c101d534a9bc418b0c47c4e017153f317304ca4
-  subpackages:
-  - httpkit/middleware
-  - errors
-  - httpkit
-  - swag
-  - httpkit/validate
-  - spec
-  - strfmt
 - name: github.com/gorilla/context
   version: 08b5f424b9271eedf6f9f0ce86cb9396ed337a42
 - name: github.com/gorilla/mux
@@ -58,50 +47,45 @@ imports:
   - src/api/data
   - src/api/data/helpers
   - src/api/handlers
+- name: github.com/imdario/mergo
+  version: 3e95a51e0639b4cf372f2ccf74c86749d747fbdc
 - name: github.com/jessevdk/go-flags
   version: a8cab0163d48558ffd77076c9c99388529766f63
 - name: github.com/kelseyhightower/envconfig
   version: 13674b2d056fb658a00ba3f36e78043ced07c924
 - name: github.com/mailru/easyjson
   version: 34560e358dc05e2c28f6fda2f5c9e7494a4b9b19
-  repo: https://github.com/mailru/easyjson
   subpackages:
   - buffer
   - jlexer
   - jwriter
 - name: github.com/PuerkitoBio/purell
   version: 8a290539e2e8629dbc4e6bad948158f790ec31f4
-  repo: https://github.com/PuerkitoBio/purell
 - name: github.com/PuerkitoBio/urlesc
   version: 5bd2802263f21d8788851d5305584c82a5c75d7e
-  repo: https://github.com/PuerkitoBio/urlesc
+- name: github.com/rs/cors
+  version: a62a804a8a009876ca59105f7899938a1349f4b3
+- name: github.com/rs/xhandler
+  version: d9d9599b6aaf6a058cb7b1f48291ded2cbd13390
 - name: github.com/tylerb/graceful
   version: 50a48b6e73fcc75b45e22c05b79629a67c79e938
 - name: golang.org/x/net
-  version: 9bc2a3340c92c17a20edcd0080e93851ed58f5d5
-  repo: https://go.googlesource.com/net
+  version: ffe101cce3477a6c6d8f0754d103bb0a84ec1266
   subpackages:
   - context
   - idna
-  - netutil
 - name: golang.org/x/text
-  version: 09c7ea1fcb3345da09be5a32c9c52303acd1dc2c
-  repo: https://go.googlesource.com/text
+  version: 098f51fb687dbaba1f6efabeafbb6461203f9e21
   subpackages:
   - cases
-  - internal/gen
   - internal/tag
-  - internal/triegen
-  - internal/ucd
   - language
   - runes
   - secure/bidirule
   - secure/precis
   - transform
   - unicode/bidi
-  - unicode/cldr
   - unicode/norm
-  - unicode/rangetable
   - width
 - name: gopkg.in/yaml.v2
   version: e4d366fc3c7938e2958e662b4258c7a89e1f0e3e

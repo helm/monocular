@@ -1,3 +1,5 @@
 vendor/
 monocular
 coverage.txt
+*.log
+src/api/.glide
