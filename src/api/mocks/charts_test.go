@@ -19,6 +19,21 @@ func TestMockChartsChartFromRepo(t *testing.T) {
 	assert.ExistsErr(t, err, "sent bogus chart name to Charts.ChartFromRepo()")
 }
 
+func TestMockChartsChartVersionFromRepo(t *testing.T) {
+	chart, err := chartsImplementation.ChartVersionFromRepo(testutil.RepoName, testutil.ChartName, testutil.ChartVersion)
+	assert.NoErr(t, err)
+	assert.Equal(t, *chart.Name, testutil.ChartName, "chart name")
+	assert.Equal(t, *chart.Version, testutil.ChartVersion, "chart version")
+	_, err = chartsImplementation.ChartVersionFromRepo(testutil.RepoName, testutil.ChartName, "99.99.99")
+	assert.ExistsErr(t, err, "sent bogus chart version to ChartVersionFromRepo")
+	_, err = chartsImplementation.ChartVersionFromRepo(testutil.BogusRepo, testutil.ChartName, testutil.ChartVersion)
+	assert.ExistsErr(t, err, "sent bogus repo name to Charts.ChartFromRepo()")
+	_, err = chartsImplementation.ChartVersionFromRepo(testutil.RepoName, testutil.BogusRepo, testutil.ChartVersion)
+	assert.ExistsErr(t, err, "sent bogus chart name to Charts.ChartFromRepo()")
+	_, err = chartsImplementation.ChartVersionFromRepo(testutil.UnparseableRepo, testutil.ChartName, testutil.ChartVersion)
+	assert.ExistsErr(t, err, "sent unparseable repo name to ChartVersionFromRepo")
+}
+
 func TestMockChartsChartVersionsFromRepo(t *testing.T) {
 	charts, err := chartsImplementation.ChartVersionsFromRepo(testutil.RepoName, testutil.ChartName)
 	assert.NoErr(t, err)

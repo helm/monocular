@@ -56,6 +56,9 @@ func configureAPI(api *operations.MonocularAPI) http.Handler {
 	api.GetChartHandler = operations.GetChartHandlerFunc(func(params operations.GetChartParams) middleware.Responder {
 		return handlers.GetChart(params, chartsImplementation)
 	})
+	api.GetChartVersionHandler = operations.GetChartVersionHandlerFunc(func(params operations.GetChartVersionParams) middleware.Responder {
+		return handlers.GetChartVersion(params, chartsImplementation)
+	})
 	api.GetChartVersionsHandler = operations.GetChartVersionsHandlerFunc(func(params operations.GetChartVersionsParams) middleware.Responder {
 		return handlers.GetChartVersions(params, chartsImplementation)
 	})

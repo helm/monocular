@@ -36,8 +36,28 @@ func (g *mockCharts) ChartFromRepo(repo, name string) (*models.ChartVersion, err
 	return chart, nil
 }
 
+// ChartVersionFromRepo is the interface implementation for data.Charts
+// It returns the reference to a single versioned chart
+func (g *mockCharts) ChartVersionFromRepo(repo, name, version string) (*models.ChartVersion, error) {
+	y, err := getMockRepo(repo)
+	if err != nil {
+		log.Printf("couldn't load mock repo %s!\n", repo)
+		return nil, err
+	}
+	allCharts, err := helpers.ParseYAMLRepo(y)
+	if err != nil {
+		log.Printf("couldn't parse mock repo %s!\n", repo)
+		return nil, err
+	}
+	chart, err := helpers.GetChartVersion(allCharts, name, version)
+	if err != nil {
+		return nil, err
+	}
+	return chart, nil
+}
+
 // ChartVersionsFromRepo is the interface implementation for data.Charts
-// It returns the reference to a single versioned chart (the most recently published version)
+// It returns the reference to a slice of all versions of a particular chart in a repo
 func (g *mockCharts) ChartVersionsFromRepo(repo, name string) ([]*models.ChartVersion, error) {
 	y, err := getMockRepo(repo)
 	if err != nil {

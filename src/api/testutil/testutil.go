@@ -15,6 +15,7 @@ const (
 	RepoName        = "stable"
 	BogusRepo       = "bogon"
 	ChartName       = "apache"
+	ChartVersion    = "0.0.1"
 	UnparseableRepo = "unparseable"
 )
 

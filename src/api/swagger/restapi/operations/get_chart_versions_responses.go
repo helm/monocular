@@ -11,14 +11,14 @@ import (
 	"github.com/helm/monocular/src/api/swagger/models"
 )
 
-/*GetChartVersionsOK charts response
+/*GetChartVersionsOK chart response
 
 swagger:response getChartVersionsOK
 */
 type GetChartVersionsOK struct {
 
 	// In: body
-	Payload *models.ResourceArrayData `json:"body,omitempty"`
+	Payload *models.ResourceData `json:"body,omitempty"`
 }
 
 // NewGetChartVersionsOK creates GetChartVersionsOK with default headers values
@@ -27,13 +27,13 @@ func NewGetChartVersionsOK() *GetChartVersionsOK {
 }
 
 // WithPayload adds the payload to the get chart versions o k response
-func (o *GetChartVersionsOK) WithPayload(payload *models.ResourceArrayData) *GetChartVersionsOK {
+func (o *GetChartVersionsOK) WithPayload(payload *models.ResourceData) *GetChartVersionsOK {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the get chart versions o k response
-func (o *GetChartVersionsOK) SetPayload(payload *models.ResourceArrayData) {
+func (o *GetChartVersionsOK) SetPayload(payload *models.ResourceData) {
 	o.Payload = payload
 }
 

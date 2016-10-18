@@ -94,6 +94,20 @@ func GetLatestChartVersion(charts []*models.ChartVersion, name string) (*models.
 	return ret, nil
 }
 
+// GetChartVersion returns a specific versions of a chart
+func GetChartVersion(charts []*models.ChartVersion, name, version string) (*models.ChartVersion, error) {
+	var ret *models.ChartVersion
+	for _, chart := range charts {
+		if *chart.Name == name && *chart.Version == version {
+			ret = chart
+		}
+	}
+	if ret == nil {
+		return ret, fmt.Errorf("didn't find version %s of chart %s\n", version, name)
+	}
+	return ret, nil
+}
+
 // GetChartVersions returns all versions of a chart
 func GetChartVersions(charts []*models.ChartVersion, name string) ([]*models.ChartVersion, error) {
 	var ret []*models.ChartVersion

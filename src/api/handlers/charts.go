@@ -23,6 +23,17 @@ func GetChart(params operations.GetChartParams, c data.Charts) middleware.Respon
 	return chartHTTPBody(chartResource)
 }
 
+// GetChartVersion is the handler for the /charts/{repo}/{name}/versions endpoint
+func GetChartVersion(params operations.GetChartVersionParams, c data.Charts) middleware.Responder {
+	chart, err := c.ChartVersionFromRepo(params.Repo, params.ChartName, params.Version)
+	if err != nil {
+		log.Printf("data.Charts.ChartVersionFromRepo(%s, %s, %s) error (%s)", params.Repo, params.ChartName, params.Version, err)
+		return notFound(chartResourceName)
+	}
+	chartResource := helpers.MakeChartResource(chart, params.Repo)
+	return chartHTTPBody(chartResource)
+}
+
 // GetChartVersions is the handler for the /charts/{repo}/{name}/versions endpoint
 func GetChartVersions(params operations.GetChartVersionsParams, c data.Charts) middleware.Responder {
 	charts, err := c.ChartVersionsFromRepo(params.Repo, params.ChartName)
