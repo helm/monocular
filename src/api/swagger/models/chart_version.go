@@ -16,13 +16,6 @@ swagger:model chartVersion
 */
 type ChartVersion struct {
 
-	/* checksum
-
-	Required: true
-	Min Length: 1
-	*/
-	Checksum *string `json:"checksum"`
-
 	/* created
 
 	Required: true
@@ -36,6 +29,13 @@ type ChartVersion struct {
 	Min Length: 1
 	*/
 	Description *string `json:"description"`
+
+	/* digest
+
+	Required: true
+	Min Length: 1
+	*/
+	Digest *string `json:"digest"`
 
 	/* home
 
@@ -51,12 +51,17 @@ type ChartVersion struct {
 	*/
 	Name *string `json:"name"`
 
-	/* url
+	/* sources
 
 	Required: true
-	Min Length: 1
 	*/
-	URL *string `json:"url"`
+	Sources []string `json:"sources"`
+
+	/* urls
+
+	Required: true
+	*/
+	Urls []string `json:"urls"`
 
 	/* version
 
@@ -70,17 +75,17 @@ type ChartVersion struct {
 func (m *ChartVersion) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateChecksum(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
 	if err := m.validateCreated(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
 
 	if err := m.validateDescription(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
+	if err := m.validateDigest(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
@@ -95,7 +100,12 @@ func (m *ChartVersion) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateURL(formats); err != nil {
+	if err := m.validateSources(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
+	if err := m.validateUrls(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
@@ -108,19 +118,6 @@ func (m *ChartVersion) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *ChartVersion) validateChecksum(formats strfmt.Registry) error {
-
-	if err := validate.Required("checksum", "body", m.Checksum); err != nil {
-		return err
-	}
-
-	if err := validate.MinLength("checksum", "body", string(*m.Checksum), 1); err != nil {
-		return err
-	}
-
 	return nil
 }
 
@@ -144,6 +141,19 @@ func (m *ChartVersion) validateDescription(formats strfmt.Registry) error {
 	}
 
 	if err := validate.MinLength("description", "body", string(*m.Description), 1); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *ChartVersion) validateDigest(formats strfmt.Registry) error {
+
+	if err := validate.Required("digest", "body", m.Digest); err != nil {
+		return err
+	}
+
+	if err := validate.MinLength("digest", "body", string(*m.Digest), 1); err != nil {
 		return err
 	}
 
@@ -176,13 +186,18 @@ func (m *ChartVersion) validateName(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *ChartVersion) validateURL(formats strfmt.Registry) error {
+func (m *ChartVersion) validateSources(formats strfmt.Registry) error {
 
-	if err := validate.Required("url", "body", m.URL); err != nil {
+	if err := validate.Required("sources", "body", m.Sources); err != nil {
 		return err
 	}
 
-	if err := validate.MinLength("url", "body", string(*m.URL), 1); err != nil {
+	return nil
+}
+
+func (m *ChartVersion) validateUrls(formats strfmt.Registry) error {
+
+	if err := validate.Required("urls", "body", m.Urls); err != nil {
 		return err
 	}
 

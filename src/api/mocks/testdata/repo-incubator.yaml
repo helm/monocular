@@ -1,16 +1,25 @@
-mysql-0.3.0:
-  name: mysql
-  url: https://storage.googleapis.com/incubator-charts/mysql-0.3.0.tgz
-  created: 2016-05-26 11:23:44.086354411 +0000 UTC
-  checksum: 2cea3987cf85d588204e1b1cc0674472b4517919
-  description: Deploy a basic mysql pod
-  version: 0.3.0
-  home: https://github.com/kubernetes/charts/incubator/mysql
-zookeeper-0.1.0:
-  name: zookeeper
-  url: https://storage.googleapis.com/incubator-charts/zookeeper-0.1.0.tgz
-  created: 2016-05-26 11:23:44.086354411 +0000 UTC
-  checksum: a61575c2d3160e5e39abf2a5ec984d6119404d13
-  description: Deploy a basic Zookeeper pod
-  version: 0.1.0
-  home: https://github.com/kubernetes/charts/incubator/zookeeper
+apiVersion: v1
+entries:
+  mysql:
+    - created: 2016-10-06T16:23:20.499814565-06:00
+      description: Deploy a basic mysql pod
+      digest: 99c76e403d752c84ead610644d4b1c2f2b453a74b921f422b9dcb8a7c8b559cd
+      home: https://k8s.io/helm
+      name: mysql
+      sources:
+        - https://github.com/kubernetes/charts/incubator/mysql
+      urls:
+        - https://storage.googleapis.com/incubator-charts/mysql-0.3.0.tgz
+      version: 0.3.0
+  zookeeper:
+    - created: 2016-10-06T16:23:20.499814565-06:00
+      description: Deploy a basic Zookeeper pod
+      digest: 99c76e403d752c84ead610644d4b1c2f2b453a74b921f422b9dcb8a7c8b559cd
+      home: https://k8s.io/helm
+      name: zookeeper
+      sources:
+        - https://github.com/kubernetes/charts/incubator/zookeeper
+      urls:
+        - https://storage.googleapis.com/incubator-charts/zookeeper-0.1.0.tgz
+      version: 0.1.0
+generated: 2016-10-06T16:23:20.499029981-06:00

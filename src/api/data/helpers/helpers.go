@@ -22,18 +22,20 @@ func ParseYAMLRepo(rawYAML []byte) ([]*models.ChartVersion, error) {
 	if err := yaml.Unmarshal(rawYAML, &repo); err != nil {
 		return nil, err
 	}
+	entries := repo["entries"]
+	if entries == nil {
+		return nil, fmt.Errorf("error parsing entries from YAMLified repo")
+	}
+	e, _ := yaml.Marshal(&entries)
+	chartEntries := make(map[string][]models.ChartVersion)
+	if err := yaml.Unmarshal(e, &chartEntries); err != nil {
+		return nil, err
+	}
 	var charts []*models.ChartVersion
-	for chartVersion := range repo {
-		cV := repo[chartVersion]
-		// we drop the error response because we can never enter into this error state:
-		// 1. "repo" is statically produced above
-		// 2. the key value at "cV" is a resilient, yaml-marshallable interface: it was unmarshalled from yaml above
-		c, _ := yaml.Marshal(&cV)
-		var chart models.ChartVersion
-		if err := yaml.Unmarshal(c, &chart); err != nil {
-			return nil, err
+	for entry := range chartEntries {
+		for i := range chartEntries[entry] {
+			charts = append(charts, &chartEntries[entry][i])
 		}
-		charts = append(charts, &chart)
 	}
 	return charts, nil
 }
@@ -51,7 +53,10 @@ func MakeChartResource(chart *models.ChartVersion, repo string) *models.Resource
 		Name:        chart.Name,
 		Description: chart.Description,
 		Created:     chart.Created,
+		Digest:      chart.Digest,
 		Home:        chart.Home,
+		Sources:     chart.Sources,
+		Urls:        chart.Urls,
 	}
 	return &ret
 }
