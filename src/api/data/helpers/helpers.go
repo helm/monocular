@@ -8,6 +8,8 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+const apiVer1 = "v1"
+
 // IsYAML checks for valid YAML
 func IsYAML(b []byte) bool {
 	var yml map[string]interface{}
@@ -45,12 +47,10 @@ func MakeChartResource(chart *models.ChartVersion, repo string) *models.Resource
 	var ret models.Resource
 	ret.Type = StrToPtr("chart")
 	ret.ID = StrToPtr(fmt.Sprintf("%s/%s", repo, *chart.Name))
-	ret.Links = &models.ChartResourceLinks{
-		Latest: StrToPtr(fmt.Sprintf("/v1/charts/%s/%s/%s", repo, *chart.Name, *chart.Version)),
-	}
 	ret.Attributes = &models.ChartResourceAttributes{
 		Repo:        &repo,
 		Name:        chart.Name,
+		Version:     *chart.Version,
 		Description: chart.Description,
 		Created:     chart.Created,
 		Digest:      chart.Digest,
@@ -70,6 +70,13 @@ func MakeChartsResource(charts []*models.ChartVersion, repo string) []*models.Re
 		chartsResource = append(chartsResource, resource)
 	}
 	return chartsResource
+}
+
+// AddLatestLinks adds a "latest" reference to the resource's "links" object
+func AddLatestLinks(resource *models.Resource, version string) {
+	resource.Links = &models.ChartResourceLinks{
+		Latest: StrToPtr(fmt.Sprintf("/%s/charts/%s/%s/versions/%s", apiVer1, *resource.Attributes.(*models.ChartResourceAttributes).Repo, *resource.Attributes.(*models.ChartResourceAttributes).Name, version)),
+	}
 }
 
 // GetLatestChartVersion returns the most recent version from a slice of versioned charts

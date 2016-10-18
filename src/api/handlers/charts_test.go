@@ -32,6 +32,7 @@ func TestGetChart200(t *testing.T) {
 	assert.NoErr(t, testutil.ResourceDataFromJSON(w.Body, httpBody))
 	chartResource := helpers.MakeChartResource(chart, testutil.RepoName)
 	AssertChartResourceBodyData(t, chartResource, httpBody)
+	AssertChartResourceLinksBodyData(t, httpBody)
 }
 
 func TestGetChart404(t *testing.T) {
