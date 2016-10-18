@@ -5,6 +5,7 @@ package models
 
 import (
 	strfmt "github.com/go-openapi/strfmt"
+	"github.com/go-openapi/swag"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/validate"
@@ -68,6 +69,12 @@ type ChartResourceAttributes struct {
 	Required: true
 	*/
 	Urls []string `json:"urls"`
+
+	/* version
+
+	Min Length: 1
+	*/
+	Version string `json:"version,omitempty"`
 }
 
 // Validate validates this chart resource attributes
@@ -110,6 +117,11 @@ func (m *ChartResourceAttributes) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateUrls(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
+	if err := m.validateVersion(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
@@ -206,6 +218,19 @@ func (m *ChartResourceAttributes) validateSources(formats strfmt.Registry) error
 func (m *ChartResourceAttributes) validateUrls(formats strfmt.Registry) error {
 
 	if err := validate.Required("urls", "body", m.Urls); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *ChartResourceAttributes) validateVersion(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Version) { // not required
+		return nil
+	}
+
+	if err := validate.MinLength("version", "body", string(m.Version), 1); err != nil {
 		return err
 	}
 

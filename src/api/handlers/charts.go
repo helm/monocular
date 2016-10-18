@@ -20,6 +20,7 @@ func GetChart(params operations.GetChartParams, c data.Charts) middleware.Respon
 		return notFound(chartResourceName)
 	}
 	chartResource := helpers.MakeChartResource(chart, params.Repo)
+	helpers.AddLatestLinks(chartResource, *chart.Version)
 	return chartHTTPBody(chartResource)
 }
 

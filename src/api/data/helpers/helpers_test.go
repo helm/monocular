@@ -53,9 +53,9 @@ func TestMakeChartResource(t *testing.T) {
 	chartResource := MakeChartResource(charts[0], repoName)
 	assert.Equal(t, *chartResource.Type, "chart", "chart resource type field value")
 	assert.Equal(t, *chartResource.ID, repoName+"/"+chartName, "chart resource ID field value")
-	assert.Equal(t, *chartResource.Links.(*models.ChartResourceLinks).Latest, fmt.Sprintf("/v1/charts/%s/%s/%s", repoName, chartName, chartVersion), "chart resource Links.Latest field value")
 	assert.Equal(t, *chartResource.Attributes.(*models.ChartResourceAttributes).Repo, repoName, "chart resource Attributes.Repo field value")
 	assert.Equal(t, *chartResource.Attributes.(*models.ChartResourceAttributes).Name, chartName, "chart resource Attributes.Name field value")
+	assert.Equal(t, chartResource.Attributes.(*models.ChartResourceAttributes).Version, chartVersion, "chart resource Attributes.Version field value")
 	assert.Equal(t, *chartResource.Attributes.(*models.ChartResourceAttributes).Description, chartDescription, "chart resource Attributes.Description field value")
 	assert.Equal(t, *chartResource.Attributes.(*models.ChartResourceAttributes).Created, chartCreated, "chart resource Attributes.Created field value")
 	assert.Equal(t, *chartResource.Attributes.(*models.ChartResourceAttributes).Home, chartHome, "chart resource Attributes.Home field value")
@@ -67,12 +67,20 @@ func TestMakeChartsResource(t *testing.T) {
 	chartsResource := MakeChartsResource(charts, repoName)
 	assert.Equal(t, *chartsResource[0].Type, "chart", "chart resource type field value")
 	assert.Equal(t, *chartsResource[0].ID, repoName+"/"+chartName, "chart resource ID field value")
-	assert.Equal(t, *chartsResource[0].Links.(*models.ChartResourceLinks).Latest, fmt.Sprintf("/v1/charts/%s/%s/%s", repoName, chartName, chartVersion), "chart resource Links.Latest field value")
 	assert.Equal(t, *chartsResource[0].Attributes.(*models.ChartResourceAttributes).Repo, repoName, "chart resource Attributes.Repo field value")
 	assert.Equal(t, *chartsResource[0].Attributes.(*models.ChartResourceAttributes).Name, chartName, "chart resource Attributes.Name field value")
+	assert.Equal(t, chartsResource[0].Attributes.(*models.ChartResourceAttributes).Version, chartVersion, "chart resource Attributes.Version field value")
 	assert.Equal(t, *chartsResource[0].Attributes.(*models.ChartResourceAttributes).Description, chartDescription, "chart resource Attributes.Description field value")
 	assert.Equal(t, *chartsResource[0].Attributes.(*models.ChartResourceAttributes).Created, chartCreated, "chart resource Attributes.Created field value")
 	assert.Equal(t, *chartsResource[0].Attributes.(*models.ChartResourceAttributes).Home, chartHome, "chart resource Attributes.Home field value")
+}
+
+func TestAddLatestLinks(t *testing.T) {
+	charts, err := ParseYAMLRepo(getTestRepoYAML())
+	assert.NoErr(t, err)
+	chartResource := MakeChartResource(charts[0], repoName)
+	AddLatestLinks(chartResource, chartVersion)
+	assert.Equal(t, *chartResource.Links.(*models.ChartResourceLinks).Latest, fmt.Sprintf("/%s/charts/%s/%s/versions/%s", apiVer1, repoName, chartName, chartVersion), "chart resource Links.Latest field value")
 }
 
 func TestGetLatestChartVersion(t *testing.T) {
@@ -169,7 +177,7 @@ func TestStrToPtr(t *testing.T) {
 
 func getTestRepoYAML() []byte {
 	return []byte(fmt.Sprintf(`
-apiVersion: v1
+apiVersion: %s
 entries:
   apache:
     - created: %s
@@ -182,5 +190,5 @@ entries:
       urls:
         - %s
       version: %s
-generated: 2016-10-06T16:23:20.499029981-06:00`, chartCreated, chartDescription, chartDigest, chartHome, chartName, chartSource, chartURL, chartVersion))
+generated: 2016-10-06T16:23:20.499029981-06:00`, apiVer1, chartCreated, chartDescription, chartDigest, chartHome, chartName, chartSource, chartURL, chartVersion))
 }
