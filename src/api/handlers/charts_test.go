@@ -48,6 +48,38 @@ func TestGetChart404(t *testing.T) {
 	AssertErrBodyData(t, http.StatusNotFound, "chart", httpBody)
 }
 
+func TestGetChartVersions200(t *testing.T) {
+	charts, err := chartsImplementation.ChartVersionsFromRepo(testutil.RepoName, testutil.ChartName)
+	assert.NoErr(t, err)
+	w := httptest.NewRecorder()
+	params := operations.GetChartVersionsParams{
+		Repo:      testutil.RepoName,
+		ChartName: testutil.ChartName,
+	}
+	resp := GetChartVersions(params, chartsImplementation)
+	assert.NotNil(t, resp, "GetChartVersions response")
+	resp.WriteResponse(w, runtime.JSONProducer())
+	assert.Equal(t, w.Code, http.StatusOK, "expect a 200 response code")
+	var httpBody models.ResourceArrayData
+	assert.NoErr(t, testutil.ResourceArrayDataFromJSON(w.Body, &httpBody))
+	assert.Equal(t, len(charts), len(httpBody.Data), "number of charts returned")
+}
+
+func TestGetChartVersions404(t *testing.T) {
+	w := httptest.NewRecorder()
+	params := operations.GetChartVersionsParams{
+		Repo:      testutil.BogusRepo,
+		ChartName: testutil.ChartName,
+	}
+	resp := GetChartVersions(params, chartsImplementation)
+	assert.NotNil(t, resp, "GetChartVersions response")
+	resp.WriteResponse(w, runtime.JSONProducer())
+	assert.Equal(t, w.Code, http.StatusNotFound, "expect a 404 response code")
+	var httpBody models.Error
+	assert.NoErr(t, testutil.ErrorModelFromJSON(w.Body, &httpBody))
+	AssertErrBodyData(t, http.StatusNotFound, "chart", httpBody)
+}
+
 func TestGetAllCharts200(t *testing.T) {
 	charts, err := chartsImplementation.All()
 	assert.NoErr(t, err)

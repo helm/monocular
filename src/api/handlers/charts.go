@@ -23,6 +23,17 @@ func GetChart(params operations.GetChartParams, c data.Charts) middleware.Respon
 	return chartHTTPBody(chartResource)
 }
 
+// GetChartVersions is the handler for the /charts/{repo}/{name}/versions endpoint
+func GetChartVersions(params operations.GetChartVersionsParams, c data.Charts) middleware.Responder {
+	charts, err := c.ChartVersionsFromRepo(params.Repo, params.ChartName)
+	if err != nil {
+		log.Printf("data.Charts.ChartVersionsFromRepo(%s, %s) error (%s)", params.Repo, params.ChartName, err)
+		return notFound(chartResourceName)
+	}
+	chartsResource := helpers.MakeChartsResource(charts, params.Repo)
+	return chartsHTTPBody(chartsResource)
+}
+
 // GetAllCharts is the handler for the /charts endpoint
 func GetAllCharts(params operations.GetAllChartsParams, c data.Charts) middleware.Responder {
 	charts, err := c.All()
@@ -40,11 +51,7 @@ func GetChartsInRepo(params operations.GetChartsInRepoParams, c data.Charts) mid
 		log.Printf("data.Charts AllFromRepo(%s) error (%s)", params.Repo, err)
 		return notFound(chartResourceName + "s")
 	}
-	var chartsResource []*models.Resource
-	for _, chart := range charts {
-		resource := helpers.MakeChartResource(chart, params.Repo)
-		chartsResource = append(chartsResource, resource)
-	}
+	chartsResource := helpers.MakeChartsResource(charts, params.Repo)
 	return chartsHTTPBody(chartsResource)
 }
 

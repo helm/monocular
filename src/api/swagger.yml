@@ -40,6 +40,28 @@ paths:
           description: unexpected error
           schema:
             $ref: "#/definitions/error"
+  /v1/charts/{repo}/{chartName}/versions:
+    get:
+      operationId: getChartVersions
+      summary: "get all chart versions by repo/name"
+      parameters:
+        - name: repo
+          in: path
+          type: string
+          required: true
+        - name: chartName
+          in: path
+          type: string
+          required: true
+      responses:
+        200:
+          description: charts response
+          schema:
+            $ref: "#/definitions/resourceArrayData"
+        default:
+          description: unexpected error
+          schema:
+            $ref: "#/definitions/error"
   /v1/charts:
     get:
       operationId: getAllCharts

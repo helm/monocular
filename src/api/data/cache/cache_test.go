@@ -29,6 +29,17 @@ func TestCachedChartsChartFromRepo(t *testing.T) {
 	assert.ExistsErr(t, err, "sent bogus chart name to Charts.ChartFromRepo()")
 }
 
+func TestCachedChartsChartVersionsFromRepo(t *testing.T) {
+	err := chartsImplementation.Refresh()
+	assert.NoErr(t, err)
+	charts, err := chartsImplementation.ChartVersionsFromRepo(testutil.RepoName, testutil.ChartName)
+	assert.NoErr(t, err)
+	assert.True(t, len(charts) > 0, "returned charts")
+	noCharts, err := chartsImplementation.ChartVersionsFromRepo(testutil.BogusRepo, testutil.ChartName)
+	assert.ExistsErr(t, err, "sent bogus repo name to GetChartsInRepo")
+	assert.True(t, len(noCharts) == 0, "empty charts slice")
+}
+
 func TestCachedChartsAll(t *testing.T) {
 	err := chartsImplementation.Refresh()
 	assert.NoErr(t, err)

@@ -12,9 +12,10 @@ import (
 
 // constants
 const (
-	RepoName  = "stable"
-	BogusRepo = "bogon"
-	ChartName = "apache"
+	RepoName        = "stable"
+	BogusRepo       = "bogon"
+	ChartName       = "apache"
+	UnparseableRepo = "unparseable"
 )
 
 // AssertErrBodyData asserts expected HTTP error response body data

@@ -42,6 +42,21 @@ func (c *cachedCharts) ChartFromRepo(repo, name string) (*models.ChartVersion, e
 	return nil, fmt.Errorf("no charts found for repo %s\n", repo)
 }
 
+// ChartVersionsFromRepo is the interface implementation for data.Charts
+// It returns the reference to a single versioned chart (the most recently published version)
+func (c *cachedCharts) ChartVersionsFromRepo(repo, name string) ([]*models.ChartVersion, error) {
+	c.rwm.RLock()
+	defer c.rwm.RUnlock()
+	if c.allCharts[repo] != nil {
+		charts, err := helpers.GetChartVersions(c.allCharts[repo], name)
+		if err != nil {
+			return nil, err
+		}
+		return charts, nil
+	}
+	return nil, fmt.Errorf("no charts found for repo %s\n", repo)
+}
+
 // AllFromRepo is the interface implementation for data.Charts
 // It returns the reference to a slice of all versions of all charts in a repo
 func (c *cachedCharts) AllFromRepo(repo string) ([]*models.ChartVersion, error) {
