@@ -61,6 +61,20 @@ func TestMakeChartResource(t *testing.T) {
 	assert.Equal(t, *chartResource.Attributes.(*models.ChartResourceAttributes).Home, chartHome, "chart resource Attributes.Home field value")
 }
 
+func TestMakeChartsResource(t *testing.T) {
+	charts, err := ParseYAMLRepo(getTestRepoYAML())
+	assert.NoErr(t, err)
+	chartsResource := MakeChartsResource(charts, repoName)
+	assert.Equal(t, *chartsResource[0].Type, "chart", "chart resource type field value")
+	assert.Equal(t, *chartsResource[0].ID, repoName+"/"+chartName, "chart resource ID field value")
+	assert.Equal(t, *chartsResource[0].Links.(*models.ChartResourceLinks).Latest, fmt.Sprintf("/v1/charts/%s/%s/%s", repoName, chartName, chartVersion), "chart resource Links.Latest field value")
+	assert.Equal(t, *chartsResource[0].Attributes.(*models.ChartResourceAttributes).Repo, repoName, "chart resource Attributes.Repo field value")
+	assert.Equal(t, *chartsResource[0].Attributes.(*models.ChartResourceAttributes).Name, chartName, "chart resource Attributes.Name field value")
+	assert.Equal(t, *chartsResource[0].Attributes.(*models.ChartResourceAttributes).Description, chartDescription, "chart resource Attributes.Description field value")
+	assert.Equal(t, *chartsResource[0].Attributes.(*models.ChartResourceAttributes).Created, chartCreated, "chart resource Attributes.Created field value")
+	assert.Equal(t, *chartsResource[0].Attributes.(*models.ChartResourceAttributes).Home, chartHome, "chart resource Attributes.Home field value")
+}
+
 func TestGetLatestChartVersion(t *testing.T) {
 	charts, err := ParseYAMLRepo(getTestRepoYAML())
 	assert.NoErr(t, err)
@@ -78,6 +92,16 @@ func TestGetLatestChartVersion(t *testing.T) {
 	*chartsBadVersion[0].Version = "this is not semver"
 	latest, err = GetLatestChartVersion(chartsBadVersion, chartName)
 	assert.ExistsErr(t, err, "sent chart with bogus version to GetLatestChartVersion")
+}
+
+func TestGetChartVersions(t *testing.T) {
+	charts, err := ParseYAMLRepo(getTestRepoYAML())
+	assert.NoErr(t, err)
+	versionedCharts, err := GetChartVersions(charts, chartName)
+	assert.NoErr(t, err)
+	assert.Equal(t, *versionedCharts[0].Name, chartName, "chart name")
+	_, err = GetChartVersions(charts, "noname")
+	assert.ExistsErr(t, err, "requested versions of non-existent chart name")
 }
 
 func TestNewestSemVer(t *testing.T) {

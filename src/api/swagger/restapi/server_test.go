@@ -106,6 +106,36 @@ func TestGetChartInRepo404(t *testing.T) {
 	testutil.AssertErrBodyData(t, http.StatusNotFound, "chart", httpBody)
 }
 
+// tests the GET /{:apiVersion}/charts/{:repo}/{:chart}/version endpoint 200 response
+func TestGetChartVersions200(t *testing.T) {
+	srv, err := newServer()
+	assert.NoErr(t, err)
+	defer srv.Close()
+	charts, err := chartsImplementation.ChartVersionsFromRepo(testutil.RepoName, testutil.ChartName)
+	assert.NoErr(t, err)
+	resp, err := httpGet(srv, urlPath("v1", "charts", testutil.RepoName, testutil.ChartName, "versions"))
+	assert.NoErr(t, err)
+	defer resp.Body.Close()
+	assert.Equal(t, resp.StatusCode, http.StatusOK, "response code")
+	var httpBody models.ResourceArrayData
+	assert.NoErr(t, testutil.ResourceArrayDataFromJSON(resp.Body, &httpBody))
+	assert.Equal(t, len(charts), len(httpBody.Data), "number of charts returned")
+}
+
+// tests the GET /{:apiVersion}/charts/{:repo}/{:chart}/version endpoint 404 response
+func TestGetChartVersions404(t *testing.T) {
+	srv, err := newServer()
+	assert.NoErr(t, err)
+	defer srv.Close()
+	resp, err := httpGet(srv, urlPath("v1", "charts", testutil.BogusRepo, testutil.ChartName, "versions"))
+	assert.NoErr(t, err)
+	defer resp.Body.Close()
+	assert.Equal(t, resp.StatusCode, http.StatusNotFound, "response code")
+	var httpBody models.Error
+	assert.NoErr(t, testutil.ErrorModelFromJSON(resp.Body, &httpBody))
+	testutil.AssertErrBodyData(t, http.StatusNotFound, "chart", httpBody)
+}
+
 func newServer() (*httptest.Server, error) {
 	swaggerSpec, err := loads.Analyzed(SwaggerJSON, "")
 	if err != nil {

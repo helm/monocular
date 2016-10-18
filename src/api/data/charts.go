@@ -6,6 +6,8 @@ import "github.com/helm/monocular/src/api/swagger/models"
 type Charts interface {
 	// ChartFromRepo retrieves a particular chart from a repo
 	ChartFromRepo(repo, name string) (*models.ChartVersion, error)
+	// ChartVersionsFromRepo retrieves all chart versions from a repo
+	ChartVersionsFromRepo(repo, name string) ([]*models.ChartVersion, error)
 	// AllFromRepo retrieves all charts from a repo
 	AllFromRepo(repo string) ([]*models.ChartVersion, error)
 	// All retrieves all charts from all repos

@@ -61,6 +61,17 @@ func MakeChartResource(chart *models.ChartVersion, repo string) *models.Resource
 	return &ret
 }
 
+// MakeChartsResource accepts a slice of repo+chart data, converts each to a Resource type
+// and then returns the slice of the converted Resource types
+func MakeChartsResource(charts []*models.ChartVersion, repo string) []*models.Resource {
+	var chartsResource []*models.Resource
+	for _, chart := range charts {
+		resource := MakeChartResource(chart, repo)
+		chartsResource = append(chartsResource, resource)
+	}
+	return chartsResource
+}
+
 // GetLatestChartVersion returns the most recent version from a slice of versioned charts
 func GetLatestChartVersion(charts []*models.ChartVersion, name string) (*models.ChartVersion, error) {
 	latest := "0.0.0"
@@ -79,6 +90,20 @@ func GetLatestChartVersion(charts []*models.ChartVersion, name string) (*models.
 	}
 	if ret == nil {
 		return ret, fmt.Errorf("chart %s not found\n", name)
+	}
+	return ret, nil
+}
+
+// GetChartVersions returns all versions of a chart
+func GetChartVersions(charts []*models.ChartVersion, name string) ([]*models.ChartVersion, error) {
+	var ret []*models.ChartVersion
+	for _, chart := range charts {
+		if *chart.Name == name {
+			ret = append(ret, chart)
+		}
+	}
+	if ret == nil {
+		return ret, fmt.Errorf("no chart versions found for %s\n", name)
 	}
 	return ret, nil
 }
