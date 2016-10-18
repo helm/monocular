@@ -94,6 +94,17 @@ func TestGetLatestChartVersion(t *testing.T) {
 	assert.ExistsErr(t, err, "sent chart with bogus version to GetLatestChartVersion")
 }
 
+func TestGetChartVersion(t *testing.T) {
+	charts, err := ParseYAMLRepo(getTestRepoYAML())
+	assert.NoErr(t, err)
+	versionedCharts, err := GetChartVersion(charts, chartName, chartVersion)
+	assert.NoErr(t, err)
+	assert.Equal(t, *versionedCharts.Name, chartName, "chart name")
+	assert.Equal(t, *versionedCharts.Version, chartVersion, "chart version")
+	_, err = GetChartVersion(charts, chartName, "99.99.99")
+	assert.ExistsErr(t, err, "requested non-existent version of chart")
+}
+
 func TestGetChartVersions(t *testing.T) {
 	charts, err := ParseYAMLRepo(getTestRepoYAML())
 	assert.NoErr(t, err)
