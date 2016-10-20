@@ -20,7 +20,7 @@ func GetChart(params operations.GetChartParams, c data.Charts) middleware.Respon
 		return notFound(chartResourceName)
 	}
 	chartResource := helpers.MakeChartResource(chart, params.Repo)
-	helpers.AddLatestLinks(chartResource, *chart.Version)
+	helpers.AddLatestRelationship(chartResource, chart)
 	return chartHTTPBody(chartResource)
 }
 
@@ -31,7 +31,7 @@ func GetChartVersion(params operations.GetChartVersionParams, c data.Charts) mid
 		log.Printf("data.Charts.ChartVersionFromRepo(%s, %s, %s) error (%s)", params.Repo, params.ChartName, params.Version, err)
 		return notFound(chartResourceName)
 	}
-	chartResource := helpers.MakeChartResource(chart, params.Repo)
+	chartResource := helpers.MakeChartVersionResource(chart, params.Repo)
 	return chartHTTPBody(chartResource)
 }
 
@@ -42,7 +42,7 @@ func GetChartVersions(params operations.GetChartVersionsParams, c data.Charts) m
 		log.Printf("data.Charts.ChartVersionsFromRepo(%s, %s) error (%s)", params.Repo, params.ChartName, err)
 		return notFound(chartResourceName)
 	}
-	chartsResource := helpers.MakeChartsResource(charts, params.Repo)
+	chartsResource := helpers.MakeChartVersionsResource(charts, params.Repo)
 	return chartsHTTPBody(chartsResource)
 }
 

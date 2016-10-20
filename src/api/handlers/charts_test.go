@@ -31,8 +31,7 @@ func TestGetChart200(t *testing.T) {
 	httpBody := new(models.ResourceData)
 	assert.NoErr(t, testutil.ResourceDataFromJSON(w.Body, httpBody))
 	chartResource := helpers.MakeChartResource(chart, testutil.RepoName)
-	AssertChartResourceBodyData(t, chartResource, httpBody)
-	AssertChartResourceLinksBodyData(t, httpBody)
+	testutil.AssertChartResourceBodyData(t, chartResource, httpBody)
 }
 
 func TestGetChart404(t *testing.T) {
@@ -46,7 +45,7 @@ func TestGetChart404(t *testing.T) {
 	assert.Equal(t, w.Code, http.StatusNotFound, "expect a 404 response code")
 	var httpBody models.Error
 	assert.NoErr(t, testutil.ErrorModelFromJSON(w.Body, &httpBody))
-	AssertErrBodyData(t, http.StatusNotFound, "chart", httpBody)
+	testutil.AssertErrBodyData(t, http.StatusNotFound, "chart", httpBody)
 }
 
 func TestGetChartVersion200(t *testing.T) {
@@ -64,8 +63,8 @@ func TestGetChartVersion200(t *testing.T) {
 	assert.Equal(t, w.Code, http.StatusOK, "expect a 200 response code")
 	httpBody := new(models.ResourceData)
 	assert.NoErr(t, testutil.ResourceDataFromJSON(w.Body, httpBody))
-	chartResource := helpers.MakeChartResource(chart, testutil.RepoName)
-	AssertChartResourceBodyData(t, chartResource, httpBody)
+	chartResource := helpers.MakeChartVersionResource(chart, testutil.RepoName)
+	testutil.AssertChartVersionResourceBodyData(t, chartResource, httpBody)
 }
 
 func TestGetChartVersion404(t *testing.T) {
@@ -80,7 +79,7 @@ func TestGetChartVersion404(t *testing.T) {
 	assert.Equal(t, w.Code, http.StatusNotFound, "expect a 404 response code")
 	var httpBody models.Error
 	assert.NoErr(t, testutil.ErrorModelFromJSON(w.Body, &httpBody))
-	AssertErrBodyData(t, http.StatusNotFound, "chart", httpBody)
+	testutil.AssertErrBodyData(t, http.StatusNotFound, "chart", httpBody)
 }
 
 func TestGetChartVersions200(t *testing.T) {
@@ -112,7 +111,7 @@ func TestGetChartVersions404(t *testing.T) {
 	assert.Equal(t, w.Code, http.StatusNotFound, "expect a 404 response code")
 	var httpBody models.Error
 	assert.NoErr(t, testutil.ErrorModelFromJSON(w.Body, &httpBody))
-	AssertErrBodyData(t, http.StatusNotFound, "chart", httpBody)
+	testutil.AssertErrBodyData(t, http.StatusNotFound, "chart", httpBody)
 }
 
 func TestGetAllCharts200(t *testing.T) {
@@ -131,6 +130,7 @@ func TestGetAllCharts200(t *testing.T) {
 
 func TestGetChartsInRepo200(t *testing.T) {
 	charts, err := chartsImplementation.AllFromRepo(testutil.RepoName)
+	numCharts := len(helpers.MakeChartsResource(charts, testutil.RepoName))
 	assert.NoErr(t, err)
 	w := httptest.NewRecorder()
 	params := operations.GetChartsInRepoParams{
@@ -142,7 +142,7 @@ func TestGetChartsInRepo200(t *testing.T) {
 	assert.Equal(t, w.Code, http.StatusOK, "expect a 200 response code")
 	var httpBody models.ResourceArrayData
 	assert.NoErr(t, testutil.ResourceArrayDataFromJSON(w.Body, &httpBody))
-	assert.Equal(t, len(charts), len(httpBody.Data), "number of charts returned")
+	assert.Equal(t, numCharts, len(httpBody.Data), "number of charts returned")
 }
 
 func TestGetChartsInRepo404(t *testing.T) {
@@ -156,7 +156,7 @@ func TestGetChartsInRepo404(t *testing.T) {
 	assert.Equal(t, w.Code, http.StatusNotFound, "expect a 404 response code")
 	var httpBody models.Error
 	assert.NoErr(t, testutil.ErrorModelFromJSON(w.Body, &httpBody))
-	AssertErrBodyData(t, http.StatusNotFound, "charts", httpBody)
+	testutil.AssertErrBodyData(t, http.StatusNotFound, "charts", httpBody)
 }
 
 func TestChartHTTPBody(t *testing.T) {
@@ -170,7 +170,7 @@ func TestChartHTTPBody(t *testing.T) {
 	assert.Equal(t, w.Code, http.StatusOK, "expect a 200 response code")
 	httpBody := new(models.ResourceData)
 	assert.NoErr(t, testutil.ResourceDataFromJSON(w.Body, httpBody))
-	AssertChartResourceBodyData(t, chartResource, httpBody)
+	testutil.AssertChartResourceBodyData(t, chartResource, httpBody)
 }
 
 func TestChartsHTTPBody(t *testing.T) {

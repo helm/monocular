@@ -93,25 +93,27 @@ func (g *mockCharts) AllFromRepo(repo string) ([]*models.ChartVersion, error) {
 
 // All method for mockCharts
 func (g *mockCharts) All() ([]*models.Resource, error) {
-	var ret []*models.Resource
+	var allCharts []*models.Resource
 	repos := []string{"stable", "incubator"}
 	for _, repo := range repos {
 		y, err := getMockRepo(repo)
 		if err != nil {
 			log.Printf("couldn't load mock repo %s!\n", repo)
-			return ret, err
+			return nil, err
 		}
 		charts, err := helpers.ParseYAMLRepo(y)
 		if err != nil {
 			log.Printf("couldn't parse mock repo %s!\n", repo)
-			return ret, err
+			return nil, err
 		}
+		var chartVersions []*models.ChartVersion
 		for _, chart := range charts {
-			resource := helpers.MakeChartResource(chart, repo)
-			ret = append(ret, resource)
+			chartVersions = append(chartVersions, chart)
 		}
+		resources := helpers.MakeChartsResource(chartVersions, repo)
+		allCharts = append(allCharts, resources...)
 	}
-	return ret, nil
+	return allCharts, nil
 }
 
 func (g *mockCharts) Refresh() error {

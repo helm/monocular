@@ -92,10 +92,12 @@ func (c *cachedCharts) All() ([]*models.Resource, error) {
 	// TODO: parallellize this, it won't scale well with lots of repos
 	for _, repo := range c.knownRepos {
 		for repoName := range repo {
+			var chartVersions []*models.ChartVersion
 			for _, chart := range c.allCharts[repoName] {
-				resource := helpers.MakeChartResource(chart, repoName)
-				allCharts = append(allCharts, resource)
+				chartVersions = append(chartVersions, chart)
 			}
+			resources := helpers.MakeChartsResource(chartVersions, repoName)
+			allCharts = append(allCharts, resources...)
 		}
 	}
 	return allCharts, nil

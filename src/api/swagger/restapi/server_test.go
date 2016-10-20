@@ -51,6 +51,7 @@ func TestGetChartsInRepo200(t *testing.T) {
 	assert.NoErr(t, err)
 	defer srv.Close()
 	charts, err := chartsImplementation.AllFromRepo(testutil.RepoName)
+	numCharts := len(helpers.MakeChartsResource(charts, testutil.RepoName))
 	assert.NoErr(t, err)
 	resp, err := httpGet(srv, urlPath("v1", "charts", testutil.RepoName))
 	assert.NoErr(t, err)
@@ -58,7 +59,7 @@ func TestGetChartsInRepo200(t *testing.T) {
 	assert.Equal(t, resp.StatusCode, http.StatusOK, "response code")
 	var httpBody models.ResourceArrayData
 	assert.NoErr(t, testutil.ResourceArrayDataFromJSON(resp.Body, &httpBody))
-	assert.Equal(t, len(charts), len(httpBody.Data), "number of charts returned")
+	assert.Equal(t, numCharts, len(httpBody.Data), "number of charts returned")
 }
 
 // tests the GET /{:apiVersion}/charts/{:repo} endpoint 404 response
@@ -119,8 +120,8 @@ func TestGetChartVersion200(t *testing.T) {
 	assert.Equal(t, resp.StatusCode, http.StatusOK, "response code")
 	httpBody := new(models.ResourceData)
 	assert.NoErr(t, testutil.ResourceDataFromJSON(resp.Body, httpBody))
-	chartResource := helpers.MakeChartResource(chart, testutil.RepoName)
-	testutil.AssertChartResourceBodyData(t, chartResource, httpBody)
+	chartResource := helpers.MakeChartVersionResource(chart, testutil.RepoName)
+	testutil.AssertChartVersionResourceBodyData(t, chartResource, httpBody)
 }
 
 // tests the GET /{:apiVersion}/charts/{:repo}/{:chart}/version endpoint 404 response

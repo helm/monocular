@@ -16,19 +16,19 @@ swagger:model chartResourceLinks
 */
 type ChartResourceLinks struct {
 
-	/* latest
+	/* canonical
 
 	Required: true
 	Min Length: 1
 	*/
-	Latest *string `json:"latest"`
+	Canonical *string `json:"canonical"`
 }
 
 // Validate validates this chart resource links
 func (m *ChartResourceLinks) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateLatest(formats); err != nil {
+	if err := m.validateCanonical(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
@@ -39,13 +39,13 @@ func (m *ChartResourceLinks) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *ChartResourceLinks) validateLatest(formats strfmt.Registry) error {
+func (m *ChartResourceLinks) validateCanonical(formats strfmt.Registry) error {
 
-	if err := validate.Required("latest", "body", m.Latest); err != nil {
+	if err := validate.Required("canonical", "body", m.Canonical); err != nil {
 		return err
 	}
 
-	if err := validate.MinLength("latest", "body", string(*m.Latest), 1); err != nil {
+	if err := validate.MinLength("canonical", "body", string(*m.Canonical), 1); err != nil {
 		return err
 	}
 

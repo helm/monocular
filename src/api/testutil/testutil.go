@@ -14,8 +14,8 @@ import (
 const (
 	RepoName        = "stable"
 	BogusRepo       = "bogon"
-	ChartName       = "apache"
-	ChartVersion    = "0.0.1"
+	ChartName       = "drupal"
+	ChartVersion    = "0.3.4"
 	UnparseableRepo = "unparseable"
 )
 
@@ -32,11 +32,24 @@ func AssertChartResourceBodyData(t *testing.T, chart *models.Resource, body *mod
 	assert.NoErr(t, err)
 	assert.Equal(t, *chart.ID, *body.Data.ID, "chart ID data in HTTP body data")
 	assert.Equal(t, *chart.Type, *body.Data.Type, "chart type data in HTTP body data")
-	assert.Equal(t, *chart.Attributes.(*models.ChartResourceAttributes).Created, *attributes.Created, "chart created data in HTTP body data")
 	assert.Equal(t, *chart.Attributes.(*models.ChartResourceAttributes).Description, *attributes.Description, "chart descripion data in HTTP body data")
 	assert.Equal(t, *chart.Attributes.(*models.ChartResourceAttributes).Home, *attributes.Home, "chart home data in HTTP body data")
 	assert.Equal(t, *chart.Attributes.(*models.ChartResourceAttributes).Name, *attributes.Name, "chart name data in HTTP body data")
 	assert.Equal(t, *chart.Attributes.(*models.ChartResourceAttributes).Repo, *attributes.Repo, "chart repo data in HTTP body data")
+}
+
+// AssertChartVersionResourceBodyData asserts expected HTTP "chart version" resource body data
+func AssertChartVersionResourceBodyData(t *testing.T, chart *models.Resource, body *models.ResourceData) {
+	attributes, err := ChartVersionResourceAttributesFromHTTPResponse(body)
+	assert.NoErr(t, err)
+	assert.NoErr(t, err)
+	assert.Equal(t, *chart.ID, *body.Data.ID, "chart ID data in HTTP body data")
+	assert.Equal(t, *chart.Type, *body.Data.Type, "chart type data in HTTP body data")
+	assert.Equal(t, *chart.Attributes.(*models.ChartVersionResourceAttributes).Created, *attributes.Created, "chart created data in HTTP body data")
+	assert.Equal(t, *chart.Attributes.(*models.ChartVersionResourceAttributes).Description, *attributes.Description, "chart descripion data in HTTP body data")
+	assert.Equal(t, *chart.Attributes.(*models.ChartVersionResourceAttributes).Home, *attributes.Home, "chart home data in HTTP body data")
+	assert.Equal(t, *chart.Attributes.(*models.ChartVersionResourceAttributes).Name, *attributes.Name, "chart name data in HTTP body data")
+	assert.Equal(t, *chart.Attributes.(*models.ChartVersionResourceAttributes).Repo, *attributes.Repo, "chart repo data in HTTP body data")
 }
 
 // ResourceArrayDataFromJSON is a convenience that converts JSON to a models.ResourceArrayData
@@ -58,6 +71,18 @@ func ErrorModelFromJSON(r io.Reader, errorModel *models.Error) error {
 // a chart resource in generic models.ResourceData form and converts to a models.ChartResourceAttributes
 func ChartResourceAttributesFromHTTPResponse(body *models.ResourceData) (*models.ChartResourceAttributes, error) {
 	attributes := new(models.ChartResourceAttributes)
+	b, err := json.Marshal(body.Data.Attributes.(map[string]interface{}))
+	if err != nil {
+		return attributes, err
+	}
+	err = json.Unmarshal(b, attributes)
+	return attributes, err
+}
+
+// ChartVersionResourceAttributesFromHTTPResponse is a convenience that grabs the Attributes interface from
+// a chart resource in generic models.ResourceData form and converts to a models.ChartVersionResourceAttributes
+func ChartVersionResourceAttributesFromHTTPResponse(body *models.ResourceData) (*models.ChartVersionResourceAttributes, error) {
+	attributes := new(models.ChartVersionResourceAttributes)
 	b, err := json.Marshal(body.Data.Attributes.(map[string]interface{}))
 	if err != nil {
 		return attributes, err

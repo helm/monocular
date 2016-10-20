@@ -50,32 +50,87 @@ func MakeChartResource(chart *models.ChartVersion, repo string) *models.Resource
 	ret.Attributes = &models.ChartResourceAttributes{
 		Repo:        &repo,
 		Name:        chart.Name,
-		Version:     *chart.Version,
+		Description: chart.Description,
+		Home:        chart.Home,
+		Sources:     chart.Sources,
+		Keywords:    chart.Keywords,
+		Maintainers: chart.Maintainers,
+		Icon:        chart.Icon,
+	}
+	return &ret
+}
+
+// MakeChartsResource accepts a slice of versioned repo+chart data, converts each to a Resource type
+// and then returns the slice of the converted Resource types (throwing away version information,
+// and collapsing all chart+version records into a single resource representation for each chart)
+func MakeChartsResource(charts []*models.ChartVersion, repo string) []*models.Resource {
+	var chartsResource []*models.Resource
+	found := make(map[string]bool)
+	for _, chart := range charts {
+		if !found[*chart.Name] {
+			found[*chart.Name] = true
+			resource := MakeChartResource(chart, repo)
+			AddCanonicalLink(resource)
+			chartsResource = append(chartsResource, resource)
+		}
+	}
+	return chartsResource
+}
+
+// MakeChartVersionResource composes a Resource type that represents a repo+chart
+func MakeChartVersionResource(chart *models.ChartVersion, repo string) *models.Resource {
+	var ret models.Resource
+	ret.Type = StrToPtr("chartVersion")
+	ret.ID = StrToPtr(fmt.Sprintf("%s/%s:%s", repo, *chart.Name, *chart.Version))
+	ret.Attributes = &models.ChartVersionResourceAttributes{
+		Repo:        &repo,
+		Name:        chart.Name,
+		Version:     chart.Version,
 		Description: chart.Description,
 		Created:     chart.Created,
 		Digest:      chart.Digest,
 		Home:        chart.Home,
 		Sources:     chart.Sources,
 		Urls:        chart.Urls,
+		Keywords:    chart.Keywords,
+		Maintainers: chart.Maintainers,
+		Icon:        chart.Icon,
 	}
 	return &ret
 }
 
-// MakeChartsResource accepts a slice of repo+chart data, converts each to a Resource type
-// and then returns the slice of the converted Resource types
-func MakeChartsResource(charts []*models.ChartVersion, repo string) []*models.Resource {
+// MakeChartVersionsResource accepts a slice of versioned repo+chart data, converts each to a Resource type
+// and then returns the slice of the converted Resource types (retaining version info)
+func MakeChartVersionsResource(charts []*models.ChartVersion, repo string) []*models.Resource {
 	var chartsResource []*models.Resource
 	for _, chart := range charts {
-		resource := MakeChartResource(chart, repo)
+		resource := MakeChartVersionResource(chart, repo)
 		chartsResource = append(chartsResource, resource)
 	}
 	return chartsResource
 }
 
-// AddLatestLinks adds a "latest" reference to the resource's "links" object
-func AddLatestLinks(resource *models.Resource, version string) {
+// AddLatestRelationship adds a "relationships" reference to the resource's latest chartVersion release
+func AddLatestRelationship(resource *models.Resource, chartVersion *models.ChartVersion) {
+	resource.Relationships = &models.ChartLatestRelationships{
+		ChartVersionLatest: &models.ChartVersionRelationshipAttributes{
+			Links: &models.ChartLatestLinks{
+				Related: StrToPtr(fmt.Sprintf("/%s/charts/%s/%s/versions/%s", apiVer1, *resource.Attributes.(*models.ChartResourceAttributes).Repo, *resource.Attributes.(*models.ChartResourceAttributes).Name, *chartVersion.Version)),
+			},
+			Data: &models.ChartVersionLatestResourceAttributes{
+				Created: chartVersion.Created,
+				Digest:  chartVersion.Digest,
+				Urls:    chartVersion.Urls,
+				Version: chartVersion.Version,
+			},
+		},
+	}
+}
+
+// AddCanonicalLink adds a "canonical" reference to the resource's "links" object
+func AddCanonicalLink(resource *models.Resource) {
 	resource.Links = &models.ChartResourceLinks{
-		Latest: StrToPtr(fmt.Sprintf("/%s/charts/%s/%s/versions/%s", apiVer1, *resource.Attributes.(*models.ChartResourceAttributes).Repo, *resource.Attributes.(*models.ChartResourceAttributes).Name, version)),
+		Canonical: StrToPtr(fmt.Sprintf("/%s/charts/%s/%s", apiVer1, *resource.Attributes.(*models.ChartResourceAttributes).Repo, *resource.Attributes.(*models.ChartResourceAttributes).Name)),
 	}
 }
 
