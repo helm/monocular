@@ -123,7 +123,7 @@ paths:
           schema:
             $ref: "#/definitions/error"
 definitions:
-  resource:
+  resource: # a data type that describes a json-api-like resource
     type: object
     required:
       - type
@@ -142,14 +142,14 @@ definitions:
         type: object
       relationships:
         type: object
-  resourceData:
+  resourceData: # a data type that includes a "data" property that contains a json-api-like resource
     type: object
     required:
       - data
     properties:
       data:
         $ref: "#/definitions/resource"
-  resourceArrayData:
+  resourceArrayData: # a data type that includes a "data" property that contains an array of json-api-like resources
     type: object
     required:
       - data
@@ -158,7 +158,7 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/resource"
-  maintainer:
+  maintainer: # a data type that describes chart maintainer metadata
     type: object
     required:
       - email
@@ -170,7 +170,7 @@ definitions:
       name:
         type: string
         minLength: 1
-  chartVersion:
+  chartPackage: # a data type that closely conforms to a repo's index.yaml chart entry format
     type: object
     required:
       - name
@@ -183,6 +183,8 @@ definitions:
       - urls
       - version
     properties:
+      repo:
+        type: string
       name:
         type: string
         minLength: 1
@@ -220,7 +222,65 @@ definitions:
         type: array
         items:
           type: string
-  chartResourceLinks:
+  chart: # a data type that describes a "chart"
+    type: object
+    required:
+      - name
+      - description
+      - home
+      - repo
+      - sources
+      - maintainers
+    properties:
+      name:
+        type: string
+        minLength: 1
+      description:
+        type: string
+        minLength: 1
+      repo:
+        type: string
+        minLenth: 1
+      home:
+        type: string
+        minLength: 1
+      sources:
+        type: array
+        items:
+          type: string
+      maintainers:
+        type: array
+        items:
+          $ref: "#/definitions/maintainer"
+      keywords:
+        type: array
+        items:
+          type: string
+      icon:
+        type: string
+        minLenth: 1
+  chartVersion: # a data type that describes version metadata about a "chart"
+    type: object
+    required:
+      - created
+      - digest
+      - urls
+      - version
+    properties:
+      created:
+        type: string
+        minLength: 1
+      digest:
+        type: string
+        minLength: 1
+      urls:
+        type: array
+        items:
+          type: string
+      version:
+        type: string
+        minLength: 1
+  chartResourceLinks: # a data type that describes a "canonical" link to a resource
     type: object
     required:
       - canonical
@@ -228,119 +288,7 @@ definitions:
       canonical:
         type: string
         minLength: 1
-  chartResourceAttributes:
-    type: object
-    required:
-      - name
-      - description
-      - repo
-      - home
-      - sources
-      - maintainers
-    properties:
-      name:
-        type: string
-        minLength: 1
-      description:
-        type: string
-        minLength: 1
-      repo:
-        type: string
-        minLenth: 1
-      home:
-        type: string
-        minLength: 1
-      sources:
-        type: array
-        items:
-          type: string
-      maintainers:
-        type: array
-        items:
-          $ref: "#/definitions/maintainer"
-      keywords:
-        type: array
-        items:
-          type: string
-      icon:
-        type: string
-        minLenth: 1
-  chartVersionResourceAttributes:
-    type: object
-    required:
-      - name
-      - description
-      - created
-      - digest
-      - repo
-      - home
-      - sources
-      - urls
-      - maintainers
-      - version
-    properties:
-      name:
-        type: string
-        minLength: 1
-      version:
-        type: string
-        minLength: 1
-      description:
-        type: string
-        minLength: 1
-      created:
-        type: string
-        minLength: 1
-      digest:
-        type: string
-        minLength: 1
-      repo:
-        type: string
-        minLenth: 1
-      home:
-        type: string
-        minLength: 1
-      sources:
-        type: array
-        items:
-          type: string
-      urls:
-        type: array
-        items:
-          type: string
-      maintainers:
-        type: array
-        items:
-          $ref: "#/definitions/maintainer"
-      keywords:
-        type: array
-        items:
-          type: string
-      icon:
-        type: string
-        minLenth: 1
-  chartVersionLatestResourceAttributes:
-    type: object
-    required:
-      - version
-      - created
-      - digest
-      - urls
-    properties:
-      version:
-        type: string
-        minLength: 1
-      created:
-        type: string
-        minLength: 1
-      digest:
-        type: string
-        minLength: 1
-      urls:
-        type: array
-        items:
-          type: string
-  chartLatestLinks:
+  chartLinks: # a data type that describes a "related" link to a resource
     type: object
     required:
       - related
@@ -348,23 +296,40 @@ definitions:
       related:
         type: string
         minLength: 1
-  chartVersionRelationshipAttributes:
+  chartAsRelationship: # a data type that describes a "chart" as a json-api-like "relationship"
     type: object
     required:
       - links
       - data
     properties:
       links:
-        $ref: "#/definitions/chartLatestLinks"
+        $ref: "#/definitions/chartLinks"
       data:
-        $ref: "#/definitions/chartVersionLatestResourceAttributes"
-  chartLatestRelationships:
+        $ref: "#/definitions/chart"
+  chartVersionAsRelationship: # a data type that describes a "chartVersion" as a json-api-like "relationship"
     type: object
     required:
-      - chartVersionLatest
+      - links
+      - data
     properties:
-      chartVersionLatest:
-        $ref: "#/definitions/chartVersionRelationshipAttributes"
+      links:
+        $ref: "#/definitions/chartLinks"
+      data:
+        $ref: "#/definitions/chartVersion"
+  chartRelationship: # a data type that describes a json-api-like "relationship" to a "chart" type
+    type: object
+    required:
+      - chart
+    properties:
+      chart:
+        $ref: "#/definitions/chartAsRelationship"
+  chartVersionRelationship: # a data type that describes a json-api-like "relationship" to a "chartVersion" type
+    type: object
+    required:
+      - chartVersion
+    properties:
+      chartVersion:
+        $ref: "#/definitions/chartVersionAsRelationship"
   error:
     type: object
     required:

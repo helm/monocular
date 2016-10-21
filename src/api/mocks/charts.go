@@ -18,13 +18,13 @@ func NewMockCharts() data.Charts {
 }
 
 // ChartFromRepo method for mockCharts
-func (g *mockCharts) ChartFromRepo(repo, name string) (*models.ChartVersion, error) {
+func (g *mockCharts) ChartFromRepo(repo, name string) (*models.ChartPackage, error) {
 	y, err := getMockRepo(repo)
 	if err != nil {
 		log.Printf("couldn't load mock repo %s!\n", repo)
 		return nil, err
 	}
-	charts, err := helpers.ParseYAMLRepo(y)
+	charts, err := helpers.ParseYAMLRepo(y, repo)
 	if err != nil {
 		log.Printf("couldn't parse mock repo %s!\n", repo)
 		return nil, err
@@ -38,13 +38,13 @@ func (g *mockCharts) ChartFromRepo(repo, name string) (*models.ChartVersion, err
 
 // ChartVersionFromRepo is the interface implementation for data.Charts
 // It returns the reference to a single versioned chart
-func (g *mockCharts) ChartVersionFromRepo(repo, name, version string) (*models.ChartVersion, error) {
+func (g *mockCharts) ChartVersionFromRepo(repo, name, version string) (*models.ChartPackage, error) {
 	y, err := getMockRepo(repo)
 	if err != nil {
 		log.Printf("couldn't load mock repo %s!\n", repo)
 		return nil, err
 	}
-	allCharts, err := helpers.ParseYAMLRepo(y)
+	allCharts, err := helpers.ParseYAMLRepo(y, repo)
 	if err != nil {
 		log.Printf("couldn't parse mock repo %s!\n", repo)
 		return nil, err
@@ -58,13 +58,13 @@ func (g *mockCharts) ChartVersionFromRepo(repo, name, version string) (*models.C
 
 // ChartVersionsFromRepo is the interface implementation for data.Charts
 // It returns the reference to a slice of all versions of a particular chart in a repo
-func (g *mockCharts) ChartVersionsFromRepo(repo, name string) ([]*models.ChartVersion, error) {
+func (g *mockCharts) ChartVersionsFromRepo(repo, name string) ([]*models.ChartPackage, error) {
 	y, err := getMockRepo(repo)
 	if err != nil {
 		log.Printf("couldn't load mock repo %s!\n", repo)
 		return nil, err
 	}
-	allCharts, err := helpers.ParseYAMLRepo(y)
+	allCharts, err := helpers.ParseYAMLRepo(y, repo)
 	if err != nil {
 		log.Printf("couldn't parse mock repo %s!\n", repo)
 		return nil, err
@@ -77,13 +77,13 @@ func (g *mockCharts) ChartVersionsFromRepo(repo, name string) ([]*models.ChartVe
 }
 
 // AllFromRepo method for mockCharts
-func (g *mockCharts) AllFromRepo(repo string) ([]*models.ChartVersion, error) {
+func (g *mockCharts) AllFromRepo(repo string) ([]*models.ChartPackage, error) {
 	y, err := getMockRepo(repo)
 	if err != nil {
 		log.Printf("couldn't load mock repo %s!\n", repo)
 		return nil, err
 	}
-	charts, err := helpers.ParseYAMLRepo(y)
+	charts, err := helpers.ParseYAMLRepo(y, repo)
 	if err != nil {
 		log.Printf("couldn't parse mock repo %s!\n", repo)
 		return nil, err
@@ -92,8 +92,8 @@ func (g *mockCharts) AllFromRepo(repo string) ([]*models.ChartVersion, error) {
 }
 
 // All method for mockCharts
-func (g *mockCharts) All() ([]*models.Resource, error) {
-	var allCharts []*models.Resource
+func (g *mockCharts) All() ([]*models.ChartPackage, error) {
+	var allCharts []*models.ChartPackage
 	repos := []string{"stable", "incubator"}
 	for _, repo := range repos {
 		y, err := getMockRepo(repo)
@@ -101,17 +101,16 @@ func (g *mockCharts) All() ([]*models.Resource, error) {
 			log.Printf("couldn't load mock repo %s!\n", repo)
 			return nil, err
 		}
-		charts, err := helpers.ParseYAMLRepo(y)
+		charts, err := helpers.ParseYAMLRepo(y, repo)
 		if err != nil {
 			log.Printf("couldn't parse mock repo %s!\n", repo)
 			return nil, err
 		}
-		var chartVersions []*models.ChartVersion
+		var chartPackages []*models.ChartPackage
 		for _, chart := range charts {
-			chartVersions = append(chartVersions, chart)
+			chartPackages = append(chartPackages, chart)
 		}
-		resources := helpers.MakeChartsResource(chartVersions, repo)
-		allCharts = append(allCharts, resources...)
+		allCharts = append(allCharts, chartPackages...)
 	}
 	return allCharts, nil
 }

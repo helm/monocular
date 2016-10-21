@@ -10,27 +10,27 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-/*ChartVersionRelationshipAttributes chart version relationship attributes
+/*ChartAsRelationship chart as relationship
 
-swagger:model chartVersionRelationshipAttributes
+swagger:model chartAsRelationship
 */
-type ChartVersionRelationshipAttributes struct {
+type ChartAsRelationship struct {
 
 	/* data
 
 	Required: true
 	*/
-	Data *ChartVersionLatestResourceAttributes `json:"data"`
+	Data *Chart `json:"data"`
 
 	/* links
 
 	Required: true
 	*/
-	Links *ChartLatestLinks `json:"links"`
+	Links *ChartLinks `json:"links"`
 }
 
-// Validate validates this chart version relationship attributes
-func (m *ChartVersionRelationshipAttributes) Validate(formats strfmt.Registry) error {
+// Validate validates this chart as relationship
+func (m *ChartAsRelationship) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateData(formats); err != nil {
@@ -49,7 +49,7 @@ func (m *ChartVersionRelationshipAttributes) Validate(formats strfmt.Registry) e
 	return nil
 }
 
-func (m *ChartVersionRelationshipAttributes) validateData(formats strfmt.Registry) error {
+func (m *ChartAsRelationship) validateData(formats strfmt.Registry) error {
 
 	if err := validate.Required("data", "body", m.Data); err != nil {
 		return err
@@ -65,7 +65,7 @@ func (m *ChartVersionRelationshipAttributes) validateData(formats strfmt.Registr
 	return nil
 }
 
-func (m *ChartVersionRelationshipAttributes) validateLinks(formats strfmt.Registry) error {
+func (m *ChartAsRelationship) validateLinks(formats strfmt.Registry) error {
 
 	if err := validate.Required("links", "body", m.Links); err != nil {
 		return err

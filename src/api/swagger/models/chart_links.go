@@ -10,11 +10,11 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-/*ChartLatestLinks chart latest links
+/*ChartLinks chart links
 
-swagger:model chartLatestLinks
+swagger:model chartLinks
 */
-type ChartLatestLinks struct {
+type ChartLinks struct {
 
 	/* related
 
@@ -24,8 +24,8 @@ type ChartLatestLinks struct {
 	Related *string `json:"related"`
 }
 
-// Validate validates this chart latest links
-func (m *ChartLatestLinks) Validate(formats strfmt.Registry) error {
+// Validate validates this chart links
+func (m *ChartLinks) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateRelated(formats); err != nil {
@@ -39,7 +39,7 @@ func (m *ChartLatestLinks) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *ChartLatestLinks) validateRelated(formats strfmt.Registry) error {
+func (m *ChartLinks) validateRelated(formats strfmt.Registry) error {
 
 	if err := validate.Required("related", "body", m.Related); err != nil {
 		return err

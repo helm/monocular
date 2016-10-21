@@ -14,7 +14,7 @@ var mockCharts = mocks.NewMockCharts()
 
 type cachedCharts struct {
 	knownRepos []map[string]string
-	allCharts  map[string][]*models.ChartVersion
+	allCharts  map[string][]*models.ChartPackage
 	rwm        *sync.RWMutex
 }
 
@@ -23,13 +23,13 @@ func NewCachedCharts(repos []map[string]string) data.Charts {
 	return &cachedCharts{
 		knownRepos: repos,
 		rwm:        new(sync.RWMutex),
-		allCharts:  make(map[string][]*models.ChartVersion),
+		allCharts:  make(map[string][]*models.ChartPackage),
 	}
 }
 
 // ChartFromRepo is the interface implementation for data.Charts
 // It returns the reference to a single versioned chart (the most recently published version)
-func (c *cachedCharts) ChartFromRepo(repo, name string) (*models.ChartVersion, error) {
+func (c *cachedCharts) ChartFromRepo(repo, name string) (*models.ChartPackage, error) {
 	c.rwm.RLock()
 	defer c.rwm.RUnlock()
 	if c.allCharts[repo] != nil {
@@ -44,7 +44,7 @@ func (c *cachedCharts) ChartFromRepo(repo, name string) (*models.ChartVersion, e
 
 // ChartVersionFromRepo is the interface implementation for data.Charts
 // It returns the reference to a single versioned chart
-func (c *cachedCharts) ChartVersionFromRepo(repo, name, version string) (*models.ChartVersion, error) {
+func (c *cachedCharts) ChartVersionFromRepo(repo, name, version string) (*models.ChartPackage, error) {
 	c.rwm.RLock()
 	defer c.rwm.RUnlock()
 	if c.allCharts[repo] != nil {
@@ -59,7 +59,7 @@ func (c *cachedCharts) ChartVersionFromRepo(repo, name, version string) (*models
 
 // ChartVersionsFromRepo is the interface implementation for data.Charts
 // It returns the reference to a slice of all versions of a particular chart in a repo
-func (c *cachedCharts) ChartVersionsFromRepo(repo, name string) ([]*models.ChartVersion, error) {
+func (c *cachedCharts) ChartVersionsFromRepo(repo, name string) ([]*models.ChartPackage, error) {
 	c.rwm.RLock()
 	defer c.rwm.RUnlock()
 	if c.allCharts[repo] != nil {
@@ -74,7 +74,7 @@ func (c *cachedCharts) ChartVersionsFromRepo(repo, name string) ([]*models.Chart
 
 // AllFromRepo is the interface implementation for data.Charts
 // It returns the reference to a slice of all versions of all charts in a repo
-func (c *cachedCharts) AllFromRepo(repo string) ([]*models.ChartVersion, error) {
+func (c *cachedCharts) AllFromRepo(repo string) ([]*models.ChartPackage, error) {
 	c.rwm.RLock()
 	defer c.rwm.RUnlock()
 	if c.allCharts[repo] != nil {
@@ -85,19 +85,18 @@ func (c *cachedCharts) AllFromRepo(repo string) ([]*models.ChartVersion, error) 
 
 // All is the interface implementation for data.Charts
 // It returns the reference to a slice of all versions of all charts in all repos
-func (c *cachedCharts) All() ([]*models.Resource, error) {
+func (c *cachedCharts) All() ([]*models.ChartPackage, error) {
 	c.rwm.RLock()
 	defer c.rwm.RUnlock()
-	var allCharts []*models.Resource
+	var allCharts []*models.ChartPackage
 	// TODO: parallellize this, it won't scale well with lots of repos
 	for _, repo := range c.knownRepos {
 		for repoName := range repo {
-			var chartVersions []*models.ChartVersion
+			var charts []*models.ChartPackage
 			for _, chart := range c.allCharts[repoName] {
-				chartVersions = append(chartVersions, chart)
+				charts = append(charts, chart)
 			}
-			resources := helpers.MakeChartsResource(chartVersions, repoName)
-			allCharts = append(allCharts, resources...)
+			allCharts = append(allCharts, charts...)
 		}
 	}
 	return allCharts, nil
@@ -114,8 +113,9 @@ func (c *cachedCharts) Refresh() error {
 			if err != nil {
 				return err
 			}
-			c.allCharts[repoName] = []*models.ChartVersion{}
+			c.allCharts[repoName] = []*models.ChartPackage{}
 			for _, chart := range charts {
+				chart.Repo = repoName
 				c.allCharts[repoName] = append(c.allCharts[repoName], chart)
 			}
 		}

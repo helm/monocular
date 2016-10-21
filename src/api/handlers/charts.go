@@ -10,40 +10,46 @@ import (
 	"github.com/helm/monocular/src/api/swagger/restapi/operations"
 )
 
-const chartResourceName = "chart"
+const (
+	// ChartResourceName is the resource type string for a chart
+	ChartResourceName = "chart"
+	// ChartVersionResourceName is the resource type string for a chart version
+	ChartVersionResourceName = "chartVersion"
+)
 
 // GetChart is the handler for the /charts/{repo}/{name} endpoint
 func GetChart(params operations.GetChartParams, c data.Charts) middleware.Responder {
-	chart, err := c.ChartFromRepo(params.Repo, params.ChartName)
+	chartPackage, err := c.ChartFromRepo(params.Repo, params.ChartName)
 	if err != nil {
 		log.Printf("data.Charts.ChartFromRepo(%s, %s) error (%s)", params.Repo, params.ChartName, err)
-		return notFound(chartResourceName)
+		return notFound(ChartResourceName)
 	}
-	chartResource := helpers.MakeChartResource(chart, params.Repo)
-	helpers.AddLatestRelationship(chartResource, chart)
+	chartResource := helpers.MakeChartResource(chartPackage)
+	helpers.AddChartVersionRelationship(chartResource, chartPackage)
 	return chartHTTPBody(chartResource)
 }
 
-// GetChartVersion is the handler for the /charts/{repo}/{name}/versions endpoint
+// GetChartVersion is the handler for the /charts/{repo}/{name}/versions/{version} endpoint
 func GetChartVersion(params operations.GetChartVersionParams, c data.Charts) middleware.Responder {
-	chart, err := c.ChartVersionFromRepo(params.Repo, params.ChartName, params.Version)
+	chartPackage, err := c.ChartVersionFromRepo(params.Repo, params.ChartName, params.Version)
 	if err != nil {
 		log.Printf("data.Charts.ChartVersionFromRepo(%s, %s, %s) error (%s)", params.Repo, params.ChartName, params.Version, err)
-		return notFound(chartResourceName)
+		return notFound(ChartVersionResourceName)
 	}
-	chartResource := helpers.MakeChartVersionResource(chart, params.Repo)
-	return chartHTTPBody(chartResource)
+	chartVersionResource := helpers.MakeChartVersionResource(chartPackage)
+	helpers.AddChartRelationship(chartVersionResource, chartPackage)
+	return chartHTTPBody(chartVersionResource)
 }
 
 // GetChartVersions is the handler for the /charts/{repo}/{name}/versions endpoint
 func GetChartVersions(params operations.GetChartVersionsParams, c data.Charts) middleware.Responder {
-	charts, err := c.ChartVersionsFromRepo(params.Repo, params.ChartName)
+	chartPackages, err := c.ChartVersionsFromRepo(params.Repo, params.ChartName)
 	if err != nil {
 		log.Printf("data.Charts.ChartVersionsFromRepo(%s, %s) error (%s)", params.Repo, params.ChartName, err)
-		return notFound(chartResourceName)
+		return notFound(ChartVersionResourceName)
 	}
-	chartsResource := helpers.MakeChartVersionsResource(charts, params.Repo)
-	return chartsHTTPBody(chartsResource)
+	chartVersionResources := helpers.MakeChartVersionResources(chartPackages)
+	return chartsHTTPBody(chartVersionResources)
 }
 
 // GetAllCharts is the handler for the /charts endpoint
@@ -51,9 +57,10 @@ func GetAllCharts(params operations.GetAllChartsParams, c data.Charts) middlewar
 	charts, err := c.All()
 	if err != nil {
 		log.Printf("data.Charts All() error (%s)", err)
-		return notFound(chartResourceName + "s")
+		return notFound(ChartResourceName + "s")
 	}
-	return chartsHTTPBody(charts)
+	resources := helpers.MakeChartResources(charts)
+	return chartsHTTPBody(resources)
 }
 
 // GetChartsInRepo is the handler for the /charts/{repo} endpoint
@@ -61,9 +68,9 @@ func GetChartsInRepo(params operations.GetChartsInRepoParams, c data.Charts) mid
 	charts, err := c.AllFromRepo(params.Repo)
 	if err != nil {
 		log.Printf("data.Charts AllFromRepo(%s) error (%s)", params.Repo, err)
-		return notFound(chartResourceName + "s")
+		return notFound(ChartResourceName + "s")
 	}
-	chartsResource := helpers.MakeChartsResource(charts, params.Repo)
+	chartsResource := helpers.MakeChartResources(charts)
 	return chartsHTTPBody(chartsResource)
 }
 

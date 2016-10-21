@@ -11,18 +11,11 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-/*ChartVersionResourceAttributes chart version resource attributes
+/*Chart chart
 
-swagger:model chartVersionResourceAttributes
+swagger:model chart
 */
-type ChartVersionResourceAttributes struct {
-
-	/* created
-
-	Required: true
-	Min Length: 1
-	*/
-	Created *string `json:"created"`
+type Chart struct {
 
 	/* description
 
@@ -30,13 +23,6 @@ type ChartVersionResourceAttributes struct {
 	Min Length: 1
 	*/
 	Description *string `json:"description"`
-
-	/* digest
-
-	Required: true
-	Min Length: 1
-	*/
-	Digest *string `json:"digest"`
 
 	/* home
 
@@ -77,36 +63,13 @@ type ChartVersionResourceAttributes struct {
 	Required: true
 	*/
 	Sources []string `json:"sources"`
-
-	/* urls
-
-	Required: true
-	*/
-	Urls []string `json:"urls"`
-
-	/* version
-
-	Required: true
-	Min Length: 1
-	*/
-	Version *string `json:"version"`
 }
 
-// Validate validates this chart version resource attributes
-func (m *ChartVersionResourceAttributes) Validate(formats strfmt.Registry) error {
+// Validate validates this chart
+func (m *Chart) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateCreated(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
 	if err := m.validateDescription(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
-	if err := m.validateDigest(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
@@ -141,36 +104,13 @@ func (m *ChartVersionResourceAttributes) Validate(formats strfmt.Registry) error
 		res = append(res, err)
 	}
 
-	if err := m.validateUrls(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
-	if err := m.validateVersion(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
 	return nil
 }
 
-func (m *ChartVersionResourceAttributes) validateCreated(formats strfmt.Registry) error {
-
-	if err := validate.Required("created", "body", m.Created); err != nil {
-		return err
-	}
-
-	if err := validate.MinLength("created", "body", string(*m.Created), 1); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *ChartVersionResourceAttributes) validateDescription(formats strfmt.Registry) error {
+func (m *Chart) validateDescription(formats strfmt.Registry) error {
 
 	if err := validate.Required("description", "body", m.Description); err != nil {
 		return err
@@ -183,20 +123,7 @@ func (m *ChartVersionResourceAttributes) validateDescription(formats strfmt.Regi
 	return nil
 }
 
-func (m *ChartVersionResourceAttributes) validateDigest(formats strfmt.Registry) error {
-
-	if err := validate.Required("digest", "body", m.Digest); err != nil {
-		return err
-	}
-
-	if err := validate.MinLength("digest", "body", string(*m.Digest), 1); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *ChartVersionResourceAttributes) validateHome(formats strfmt.Registry) error {
+func (m *Chart) validateHome(formats strfmt.Registry) error {
 
 	if err := validate.Required("home", "body", m.Home); err != nil {
 		return err
@@ -209,7 +136,7 @@ func (m *ChartVersionResourceAttributes) validateHome(formats strfmt.Registry) e
 	return nil
 }
 
-func (m *ChartVersionResourceAttributes) validateKeywords(formats strfmt.Registry) error {
+func (m *Chart) validateKeywords(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.Keywords) { // not required
 		return nil
@@ -218,7 +145,7 @@ func (m *ChartVersionResourceAttributes) validateKeywords(formats strfmt.Registr
 	return nil
 }
 
-func (m *ChartVersionResourceAttributes) validateMaintainers(formats strfmt.Registry) error {
+func (m *Chart) validateMaintainers(formats strfmt.Registry) error {
 
 	if err := validate.Required("maintainers", "body", m.Maintainers); err != nil {
 		return err
@@ -242,7 +169,7 @@ func (m *ChartVersionResourceAttributes) validateMaintainers(formats strfmt.Regi
 	return nil
 }
 
-func (m *ChartVersionResourceAttributes) validateName(formats strfmt.Registry) error {
+func (m *Chart) validateName(formats strfmt.Registry) error {
 
 	if err := validate.Required("name", "body", m.Name); err != nil {
 		return err
@@ -255,7 +182,7 @@ func (m *ChartVersionResourceAttributes) validateName(formats strfmt.Registry) e
 	return nil
 }
 
-func (m *ChartVersionResourceAttributes) validateRepo(formats strfmt.Registry) error {
+func (m *Chart) validateRepo(formats strfmt.Registry) error {
 
 	if err := validate.Required("repo", "body", m.Repo); err != nil {
 		return err
@@ -264,31 +191,9 @@ func (m *ChartVersionResourceAttributes) validateRepo(formats strfmt.Registry) e
 	return nil
 }
 
-func (m *ChartVersionResourceAttributes) validateSources(formats strfmt.Registry) error {
+func (m *Chart) validateSources(formats strfmt.Registry) error {
 
 	if err := validate.Required("sources", "body", m.Sources); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *ChartVersionResourceAttributes) validateUrls(formats strfmt.Registry) error {
-
-	if err := validate.Required("urls", "body", m.Urls); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *ChartVersionResourceAttributes) validateVersion(formats strfmt.Registry) error {
-
-	if err := validate.Required("version", "body", m.Version); err != nil {
-		return err
-	}
-
-	if err := validate.MinLength("version", "body", string(*m.Version), 1); err != nil {
 		return err
 	}
 
