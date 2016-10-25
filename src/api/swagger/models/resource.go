@@ -33,6 +33,10 @@ type Resource struct {
 	 */
 	Links interface{} `json:"links,omitempty"`
 
+	/* relationships
+	 */
+	Relationships interface{} `json:"relationships,omitempty"`
+
 	/* type
 
 	Required: true

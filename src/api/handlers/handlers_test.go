@@ -3,7 +3,6 @@ package handlers
 import (
 	"net/http"
 	"net/http/httptest"
-	"strconv"
 	"testing"
 
 	"github.com/arschles/assert"
@@ -31,26 +30,4 @@ func TestNotFound(t *testing.T) {
 	assert.Equal(t, w.Code, http.StatusNotFound, "expect a 404 response code")
 	assert.NoErr(t, testutil.ErrorModelFromJSON(w.Body, &httpBody2))
 	testutil.AssertErrBodyData(t, http.StatusNotFound, resource2, httpBody2)
-}
-
-func AssertErrBodyData(t *testing.T, code int64, resource string, body models.Error) {
-	assert.Equal(t, *body.Code, code, "response code in HTTP body data")
-	assert.Equal(t, *body.Message, strconv.FormatInt(code, 10)+" "+resource+" not found", "error message in HTTP body data")
-}
-
-func AssertChartResourceBodyData(t *testing.T, chart *models.Resource, body *models.ResourceData) {
-	attributes, err := testutil.ChartResourceAttributesFromHTTPResponse(body)
-	assert.NoErr(t, err)
-	assert.Equal(t, chart.ID, body.Data.ID, "chart ID data in HTTP body data")
-	assert.Equal(t, chart.Type, body.Data.Type, "chart type data in HTTP body data")
-	assert.Equal(t, chart.Attributes.(*models.ChartResourceAttributes).Created, attributes.Created, "chart created data in HTTP body data")
-	assert.Equal(t, chart.Attributes.(*models.ChartResourceAttributes).Description, attributes.Description, "chart descripion data in HTTP body data")
-	assert.Equal(t, chart.Attributes.(*models.ChartResourceAttributes).Home, attributes.Home, "chart home data in HTTP body data")
-	assert.Equal(t, chart.Attributes.(*models.ChartResourceAttributes).Name, attributes.Name, "chart name data in HTTP body data")
-	assert.Equal(t, chart.Attributes.(*models.ChartResourceAttributes).Repo, attributes.Repo, "chart repo data in HTTP body data")
-}
-
-func AssertChartResourceLinksBodyData(t *testing.T, body *models.ResourceData) {
-	_, err := testutil.ChartResourceLinksFromHTTPResponse(body)
-	assert.NoErr(t, err)
 }

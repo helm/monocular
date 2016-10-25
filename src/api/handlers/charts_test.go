@@ -30,9 +30,8 @@ func TestGetChart200(t *testing.T) {
 	assert.Equal(t, w.Code, http.StatusOK, "expect a 200 response code")
 	httpBody := new(models.ResourceData)
 	assert.NoErr(t, testutil.ResourceDataFromJSON(w.Body, httpBody))
-	chartResource := helpers.MakeChartResource(chart, testutil.RepoName)
-	AssertChartResourceBodyData(t, chartResource, httpBody)
-	AssertChartResourceLinksBodyData(t, httpBody)
+	chartResource := helpers.MakeChartResource(chart)
+	testutil.AssertChartResourceBodyData(t, chartResource, httpBody)
 }
 
 func TestGetChart404(t *testing.T) {
@@ -46,17 +45,17 @@ func TestGetChart404(t *testing.T) {
 	assert.Equal(t, w.Code, http.StatusNotFound, "expect a 404 response code")
 	var httpBody models.Error
 	assert.NoErr(t, testutil.ErrorModelFromJSON(w.Body, &httpBody))
-	AssertErrBodyData(t, http.StatusNotFound, "chart", httpBody)
+	testutil.AssertErrBodyData(t, http.StatusNotFound, ChartResourceName, httpBody)
 }
 
 func TestGetChartVersion200(t *testing.T) {
-	chart, err := chartsImplementation.ChartVersionFromRepo(testutil.RepoName, testutil.ChartName, testutil.ChartVersion)
+	chart, err := chartsImplementation.ChartVersionFromRepo(testutil.RepoName, testutil.ChartName, testutil.ChartVersionString)
 	assert.NoErr(t, err)
 	w := httptest.NewRecorder()
 	params := operations.GetChartVersionParams{
 		Repo:      testutil.RepoName,
 		ChartName: testutil.ChartName,
-		Version:   testutil.ChartVersion,
+		Version:   testutil.ChartVersionString,
 	}
 	resp := GetChartVersion(params, chartsImplementation)
 	assert.NotNil(t, resp, "GetChartVersion response")
@@ -64,8 +63,8 @@ func TestGetChartVersion200(t *testing.T) {
 	assert.Equal(t, w.Code, http.StatusOK, "expect a 200 response code")
 	httpBody := new(models.ResourceData)
 	assert.NoErr(t, testutil.ResourceDataFromJSON(w.Body, httpBody))
-	chartResource := helpers.MakeChartResource(chart, testutil.RepoName)
-	AssertChartResourceBodyData(t, chartResource, httpBody)
+	chartResource := helpers.MakeChartVersionResource(chart)
+	testutil.AssertChartVersionResourceBodyData(t, chartResource, httpBody)
 }
 
 func TestGetChartVersion404(t *testing.T) {
@@ -80,7 +79,7 @@ func TestGetChartVersion404(t *testing.T) {
 	assert.Equal(t, w.Code, http.StatusNotFound, "expect a 404 response code")
 	var httpBody models.Error
 	assert.NoErr(t, testutil.ErrorModelFromJSON(w.Body, &httpBody))
-	AssertErrBodyData(t, http.StatusNotFound, "chart", httpBody)
+	testutil.AssertErrBodyData(t, http.StatusNotFound, ChartVersionResourceName, httpBody)
 }
 
 func TestGetChartVersions200(t *testing.T) {
@@ -112,12 +111,10 @@ func TestGetChartVersions404(t *testing.T) {
 	assert.Equal(t, w.Code, http.StatusNotFound, "expect a 404 response code")
 	var httpBody models.Error
 	assert.NoErr(t, testutil.ErrorModelFromJSON(w.Body, &httpBody))
-	AssertErrBodyData(t, http.StatusNotFound, "chart", httpBody)
+	testutil.AssertErrBodyData(t, http.StatusNotFound, ChartVersionResourceName, httpBody)
 }
 
 func TestGetAllCharts200(t *testing.T) {
-	charts, err := chartsImplementation.All()
-	assert.NoErr(t, err)
 	w := httptest.NewRecorder()
 	params := operations.GetAllChartsParams{}
 	resp := GetAllCharts(params, chartsImplementation)
@@ -126,11 +123,14 @@ func TestGetAllCharts200(t *testing.T) {
 	assert.Equal(t, w.Code, http.StatusOK, "expect a 200 response code")
 	var httpBody models.ResourceArrayData
 	assert.NoErr(t, testutil.ResourceArrayDataFromJSON(w.Body, &httpBody))
-	assert.Equal(t, len(charts), len(httpBody.Data), "number of charts returned")
+	charts, err := chartsImplementation.All()
+	assert.NoErr(t, err)
+	assert.Equal(t, len(helpers.MakeChartResources(charts)), len(httpBody.Data), "number of charts returned")
 }
 
 func TestGetChartsInRepo200(t *testing.T) {
 	charts, err := chartsImplementation.AllFromRepo(testutil.RepoName)
+	numCharts := len(helpers.MakeChartResources(charts))
 	assert.NoErr(t, err)
 	w := httptest.NewRecorder()
 	params := operations.GetChartsInRepoParams{
@@ -142,7 +142,7 @@ func TestGetChartsInRepo200(t *testing.T) {
 	assert.Equal(t, w.Code, http.StatusOK, "expect a 200 response code")
 	var httpBody models.ResourceArrayData
 	assert.NoErr(t, testutil.ResourceArrayDataFromJSON(w.Body, &httpBody))
-	assert.Equal(t, len(charts), len(httpBody.Data), "number of charts returned")
+	assert.Equal(t, numCharts, len(httpBody.Data), "number of charts returned")
 }
 
 func TestGetChartsInRepo404(t *testing.T) {
@@ -156,32 +156,33 @@ func TestGetChartsInRepo404(t *testing.T) {
 	assert.Equal(t, w.Code, http.StatusNotFound, "expect a 404 response code")
 	var httpBody models.Error
 	assert.NoErr(t, testutil.ErrorModelFromJSON(w.Body, &httpBody))
-	AssertErrBodyData(t, http.StatusNotFound, "charts", httpBody)
+	testutil.AssertErrBodyData(t, http.StatusNotFound, ChartResourceName+"s", httpBody)
 }
 
 func TestChartHTTPBody(t *testing.T) {
 	w := httptest.NewRecorder()
 	chart, err := chartsImplementation.ChartFromRepo(testutil.RepoName, testutil.ChartName)
 	assert.NoErr(t, err)
-	chartResource := helpers.MakeChartResource(chart, testutil.RepoName)
+	chartResource := helpers.MakeChartResource(chart)
 	resp := chartHTTPBody(chartResource)
 	assert.NotNil(t, resp, "chartHTTPBody response")
 	resp.WriteResponse(w, runtime.JSONProducer())
 	assert.Equal(t, w.Code, http.StatusOK, "expect a 200 response code")
 	httpBody := new(models.ResourceData)
 	assert.NoErr(t, testutil.ResourceDataFromJSON(w.Body, httpBody))
-	AssertChartResourceBodyData(t, chartResource, httpBody)
+	testutil.AssertChartResourceBodyData(t, chartResource, httpBody)
 }
 
 func TestChartsHTTPBody(t *testing.T) {
 	w := httptest.NewRecorder()
 	charts, err := chartsImplementation.All()
 	assert.NoErr(t, err)
-	resp := chartsHTTPBody(charts)
+	resources := helpers.MakeChartResources(charts)
+	resp := chartsHTTPBody(resources)
 	assert.NotNil(t, resp, "chartHTTPBody response")
 	resp.WriteResponse(w, runtime.JSONProducer())
 	assert.Equal(t, w.Code, http.StatusOK, "expect a 200 response code")
 	var httpBody models.ResourceArrayData
 	assert.NoErr(t, testutil.ResourceArrayDataFromJSON(w.Body, &httpBody))
-	assert.Equal(t, len(charts), len(httpBody.Data), "number of charts returned")
+	assert.Equal(t, len(resources), len(httpBody.Data), "number of charts returned")
 }

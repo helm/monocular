@@ -23,39 +23,12 @@ type ChartVersion struct {
 	*/
 	Created *string `json:"created"`
 
-	/* description
-
-	Required: true
-	Min Length: 1
-	*/
-	Description *string `json:"description"`
-
 	/* digest
 
 	Required: true
 	Min Length: 1
 	*/
 	Digest *string `json:"digest"`
-
-	/* home
-
-	Required: true
-	Min Length: 1
-	*/
-	Home *string `json:"home"`
-
-	/* name
-
-	Required: true
-	Min Length: 1
-	*/
-	Name *string `json:"name"`
-
-	/* sources
-
-	Required: true
-	*/
-	Sources []string `json:"sources"`
 
 	/* urls
 
@@ -80,27 +53,7 @@ func (m *ChartVersion) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateDescription(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
 	if err := m.validateDigest(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
-	if err := m.validateHome(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
-	if err := m.validateName(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
-	if err := m.validateSources(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
@@ -134,19 +87,6 @@ func (m *ChartVersion) validateCreated(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *ChartVersion) validateDescription(formats strfmt.Registry) error {
-
-	if err := validate.Required("description", "body", m.Description); err != nil {
-		return err
-	}
-
-	if err := validate.MinLength("description", "body", string(*m.Description), 1); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (m *ChartVersion) validateDigest(formats strfmt.Registry) error {
 
 	if err := validate.Required("digest", "body", m.Digest); err != nil {
@@ -154,41 +94,6 @@ func (m *ChartVersion) validateDigest(formats strfmt.Registry) error {
 	}
 
 	if err := validate.MinLength("digest", "body", string(*m.Digest), 1); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *ChartVersion) validateHome(formats strfmt.Registry) error {
-
-	if err := validate.Required("home", "body", m.Home); err != nil {
-		return err
-	}
-
-	if err := validate.MinLength("home", "body", string(*m.Home), 1); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *ChartVersion) validateName(formats strfmt.Registry) error {
-
-	if err := validate.Required("name", "body", m.Name); err != nil {
-		return err
-	}
-
-	if err := validate.MinLength("name", "body", string(*m.Name), 1); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *ChartVersion) validateSources(formats strfmt.Registry) error {
-
-	if err := validate.Required("sources", "body", m.Sources); err != nil {
 		return err
 	}
 

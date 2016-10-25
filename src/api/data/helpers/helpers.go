@@ -8,7 +8,8 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-const apiVer1 = "v1"
+// APIVer1String is the API version 1 string we include in route URLs
+const APIVer1String = "v1"
 
 // IsYAML checks for valid YAML
 func IsYAML(b []byte) bool {
@@ -18,71 +19,141 @@ func IsYAML(b []byte) bool {
 }
 
 // ParseYAMLRepo converts a YAML representation of a repo
-// to a slice of versioned charts
-func ParseYAMLRepo(rawYAML []byte) ([]*models.ChartVersion, error) {
-	repo := make(map[interface{}]interface{})
-	if err := yaml.Unmarshal(rawYAML, &repo); err != nil {
+// to a slice of charts
+func ParseYAMLRepo(rawYAML []byte, repoName string) ([]*models.ChartPackage, error) {
+	var ret []*models.ChartPackage
+	repoIndex := make(map[interface{}]interface{})
+	if err := yaml.Unmarshal(rawYAML, &repoIndex); err != nil {
 		return nil, err
 	}
-	entries := repo["entries"]
+	entries := repoIndex["entries"]
 	if entries == nil {
 		return nil, fmt.Errorf("error parsing entries from YAMLified repo")
 	}
 	e, _ := yaml.Marshal(&entries)
-	chartEntries := make(map[string][]models.ChartVersion)
+	chartEntries := make(map[string][]models.ChartPackage)
 	if err := yaml.Unmarshal(e, &chartEntries); err != nil {
 		return nil, err
 	}
-	var charts []*models.ChartVersion
 	for entry := range chartEntries {
 		for i := range chartEntries[entry] {
-			charts = append(charts, &chartEntries[entry][i])
+			chartEntries[entry][i].Repo = repoName
+			ret = append(ret, &chartEntries[entry][i])
 		}
 	}
-	return charts, nil
+	return ret, nil
 }
 
 // MakeChartResource composes a Resource type that represents a repo+chart
-func MakeChartResource(chart *models.ChartVersion, repo string) *models.Resource {
+func MakeChartResource(chart *models.ChartPackage) *models.Resource {
 	var ret models.Resource
 	ret.Type = StrToPtr("chart")
-	ret.ID = StrToPtr(fmt.Sprintf("%s/%s", repo, *chart.Name))
-	ret.Attributes = &models.ChartResourceAttributes{
-		Repo:        &repo,
+	ret.ID = StrToPtr(MakeChartID(chart.Repo, *chart.Name))
+	ret.Attributes = &models.Chart{
+		Repo:        &chart.Repo,
 		Name:        chart.Name,
-		Version:     *chart.Version,
 		Description: chart.Description,
-		Created:     chart.Created,
-		Digest:      chart.Digest,
 		Home:        chart.Home,
 		Sources:     chart.Sources,
-		Urls:        chart.Urls,
+		Keywords:    chart.Keywords,
+		Maintainers: chart.Maintainers,
+		Icon:        chart.Icon,
 	}
+	AddLatestChartVersionRelationship(&ret, chart)
 	return &ret
 }
 
-// MakeChartsResource accepts a slice of repo+chart data, converts each to a Resource type
-// and then returns the slice of the converted Resource types
-func MakeChartsResource(charts []*models.ChartVersion, repo string) []*models.Resource {
+// MakeChartResources accepts a slice of repo+chart data, converts each to a Resource type
+// and then returns the slice of the converted Resource types (throwing away version information,
+// and collapsing all chart+version records into a single resource representation for each chart)
+func MakeChartResources(charts []*models.ChartPackage) []*models.Resource {
+	var chartsResource []*models.Resource
+	found := make(map[string]bool)
+	for _, chart := range charts {
+		if !found[*chart.Name] {
+			found[*chart.Name] = true
+			resource := MakeChartResource(chart)
+			AddCanonicalLink(resource)
+			AddLatestChartVersionRelationship(resource, chart)
+			chartsResource = append(chartsResource, resource)
+		}
+	}
+	return chartsResource
+}
+
+// MakeChartVersionResource composes a Resource type that represents a chartVersion
+func MakeChartVersionResource(chart *models.ChartPackage) *models.Resource {
+	var ret models.Resource
+	ret.Type = StrToPtr("chartVersion")
+	ret.ID = StrToPtr(MakeChartVersionID(chart.Repo, *chart.Name, *chart.Version))
+	ret.Attributes = &models.ChartVersion{
+		Created: chart.Created,
+		Digest:  chart.Digest,
+		Urls:    chart.Urls,
+		Version: chart.Version,
+	}
+	AddChartRelationship(&ret, chart)
+	return &ret
+}
+
+// MakeChartVersionResources accepts a slice of versioned repo+chart data, converts each to a Resource type
+// and then returns the slice of the converted Resource types (retaining version info)
+func MakeChartVersionResources(charts []*models.ChartPackage) []*models.Resource {
 	var chartsResource []*models.Resource
 	for _, chart := range charts {
-		resource := MakeChartResource(chart, repo)
+		resource := MakeChartVersionResource(chart)
 		chartsResource = append(chartsResource, resource)
 	}
 	return chartsResource
 }
 
-// AddLatestLinks adds a "latest" reference to the resource's "links" object
-func AddLatestLinks(resource *models.Resource, version string) {
-	resource.Links = &models.ChartResourceLinks{
-		Latest: StrToPtr(fmt.Sprintf("/%s/charts/%s/%s/versions/%s", apiVer1, *resource.Attributes.(*models.ChartResourceAttributes).Repo, *resource.Attributes.(*models.ChartResourceAttributes).Name, version)),
+// AddChartRelationship adds a "relationships" reference to a chartVersion resource's chart
+func AddChartRelationship(resource *models.Resource, chartPackage *models.ChartPackage) {
+	resource.Relationships = &models.ChartRelationship{
+		Chart: &models.ChartAsRelationship{
+			Links: &models.ResourceLink{
+				Self: StrToPtr(MakeRepoChartRouteURL(APIVer1String, chartPackage.Repo, *chartPackage.Name)),
+			},
+			Data: &models.Chart{
+				Name:        chartPackage.Name,
+				Description: chartPackage.Description,
+				Repo:        &chartPackage.Repo,
+				Home:        chartPackage.Home,
+				Sources:     chartPackage.Sources,
+				Maintainers: chartPackage.Maintainers,
+			},
+		},
+	}
+}
+
+// AddLatestChartVersionRelationship adds a "relationships" reference to a chart resource's latest chartVersion
+func AddLatestChartVersionRelationship(resource *models.Resource, chartPackage *models.ChartPackage) {
+	resource.Relationships = &models.LatestChartVersionRelationship{
+		LatestChartVersion: &models.ChartVersionAsRelationship{
+			Links: &models.ResourceLink{
+				Self: StrToPtr(MakeRepoChartVersionRouteURL(APIVer1String, chartPackage.Repo, *chartPackage.Name, *chartPackage.Version)),
+			},
+			Data: &models.ChartVersion{
+				Created: chartPackage.Created,
+				Digest:  chartPackage.Digest,
+				Urls:    chartPackage.Urls,
+				Version: chartPackage.Version,
+			},
+		},
+	}
+}
+
+// AddCanonicalLink adds a "self" link to a chart resource's canonical API endpoint
+func AddCanonicalLink(resource *models.Resource) {
+	resource.Links = &models.ResourceLink{
+		Self: StrToPtr(MakeRepoChartRouteURL(APIVer1String, *resource.Attributes.(*models.Chart).Repo, *resource.Attributes.(*models.Chart).Name)),
 	}
 }
 
 // GetLatestChartVersion returns the most recent version from a slice of versioned charts
-func GetLatestChartVersion(charts []*models.ChartVersion, name string) (*models.ChartVersion, error) {
+func GetLatestChartVersion(charts []*models.ChartPackage, name string) (*models.ChartPackage, error) {
 	latest := "0.0.0"
-	var ret *models.ChartVersion
+	var ret *models.ChartPackage
 	for _, chart := range charts {
 		if *chart.Name == name {
 			newest, err := newestSemVer(latest, *chart.Version)
@@ -102,8 +173,8 @@ func GetLatestChartVersion(charts []*models.ChartVersion, name string) (*models.
 }
 
 // GetChartVersion returns a specific versions of a chart
-func GetChartVersion(charts []*models.ChartVersion, name, version string) (*models.ChartVersion, error) {
-	var ret *models.ChartVersion
+func GetChartVersion(charts []*models.ChartPackage, name, version string) (*models.ChartPackage, error) {
+	var ret *models.ChartPackage
 	for _, chart := range charts {
 		if *chart.Name == name && *chart.Version == version {
 			ret = chart
@@ -116,8 +187,8 @@ func GetChartVersion(charts []*models.ChartVersion, name, version string) (*mode
 }
 
 // GetChartVersions returns all versions of a chart
-func GetChartVersions(charts []*models.ChartVersion, name string) ([]*models.ChartVersion, error) {
-	var ret []*models.ChartVersion
+func GetChartVersions(charts []*models.ChartPackage, name string) ([]*models.ChartPackage, error) {
+	var ret []*models.ChartPackage
 	for _, chart := range charts {
 		if *chart.Name == name {
 			ret = append(ret, chart)
@@ -127,6 +198,34 @@ func GetChartVersions(charts []*models.ChartVersion, name string) ([]*models.Cha
 		return ret, fmt.Errorf("no chart versions found for %s\n", name)
 	}
 	return ret, nil
+}
+
+// MakeRepoChartRouteURL returns a string that represents
+// /{:apiVersion}/charts/{:repo}/{:chart}
+func MakeRepoChartRouteURL(apiVer, repo, name string) string {
+	return fmt.Sprintf("/%s/charts/%s/%s", apiVer, repo, name)
+}
+
+// MakeRepoChartVersionRouteURL returns a string that represents
+// /{:apiVersion}/charts/{:repo}/{:chart}/versions/{:version}
+func MakeRepoChartVersionRouteURL(apiVer, repo, name, version string) string {
+	return fmt.Sprintf("/%s/charts/%s/%s/versions/%s", apiVer, repo, name, version)
+}
+
+// MakeRepoChartVersionsRouteURL returns a string that represents
+// /{:apiVersion}/charts/{:repo}/{:chart}/versions
+func MakeRepoChartVersionsRouteURL(apiVer, repo, name string) string {
+	return fmt.Sprintf("/%s/charts/%s/%s/versions", apiVer, repo, name)
+}
+
+// MakeChartID returns a chart ID in the form {:repo}/{:chart}
+func MakeChartID(repo, chart string) string {
+	return fmt.Sprintf("%s/%s", repo, chart)
+}
+
+// MakeChartVersionID returns a chartVersion ID in the form {:repo}/{:chart}:{:version}
+func MakeChartVersionID(repo, chart, version string) string {
+	return fmt.Sprintf("%s/%s:%s", repo, chart, version)
 }
 
 // newestSemVer returns the newest (largest) semver string
