@@ -9,9 +9,10 @@ import (
 
 	"github.com/arschles/assert"
 	"github.com/go-openapi/loads"
+	"github.com/helm/monocular/src/api/data"
+	"github.com/helm/monocular/src/api/data/cache"
 	"github.com/helm/monocular/src/api/data/helpers"
 	"github.com/helm/monocular/src/api/handlers"
-	"github.com/helm/monocular/src/api/mocks"
 	"github.com/helm/monocular/src/api/swagger/models"
 	"github.com/helm/monocular/src/api/swagger/restapi/operations"
 	"github.com/helm/monocular/src/api/testutil"
@@ -19,7 +20,7 @@ import (
 
 const versionsRouteString = "versions"
 
-var chartsImplementation = mocks.NewMockCharts()
+var chartsImplementation = getChartsImplementation()
 
 // tests the GET /healthz endpoint
 func TestGetHealthz(t *testing.T) {
@@ -186,4 +187,18 @@ func urlPath(ver string, remainder ...string) string {
 
 func httpGet(s *httptest.Server, route string) (*http.Response, error) {
 	return http.Get(s.URL + "/" + route)
+}
+
+func getChartsImplementation() data.Charts {
+	repos := []map[string]string{
+		map[string]string{
+			"stable": "http://storage.googleapis.com/kubernetes-charts/index.yaml",
+		},
+		map[string]string{
+			"incubator": "http://storage.googleapis.com/kubernetes-charts-incubator/index.yaml",
+		},
+	}
+	chartsImplementation := cache.NewCachedCharts(repos)
+	chartsImplementation.Refresh()
+	return chartsImplementation
 }
