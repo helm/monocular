@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	"github.com/arschles/assert"
+	"github.com/helm/monocular/src/api/data/helpers"
+	"github.com/helm/monocular/src/api/swagger/restapi/operations"
 	"github.com/helm/monocular/src/api/testutil"
 )
 
@@ -60,6 +62,17 @@ func TestCachedChartsAll(t *testing.T) {
 	assert.NoErr(t, err)
 	_, err = chartsImplementation.All()
 	assert.NoErr(t, err)
+}
+
+func TestCachedChartsSearch(t *testing.T) {
+	params := operations.SearchChartsParams{
+		Name: "drupal",
+	}
+	charts, err := chartsImplementation.Search(params)
+	assert.NoErr(t, err)
+	// flatten chart+version results into a chart resource array
+	resources := helpers.MakeChartResources(charts)
+	assert.Equal(t, len(resources), 1, "number of unique chart results")
 }
 
 func TestCachedChartsAllFromRepo(t *testing.T) {

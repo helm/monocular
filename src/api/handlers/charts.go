@@ -1,7 +1,9 @@
 package handlers
 
 import (
+	"fmt"
 	"log"
+	"net/http"
 
 	middleware "github.com/go-openapi/runtime/middleware"
 	"github.com/helm/monocular/src/api/data"
@@ -70,6 +72,20 @@ func GetChartsInRepo(params operations.GetChartsInRepoParams, c data.Charts) mid
 	}
 	chartsResource := helpers.MakeChartResources(charts)
 	return chartsHTTPBody(chartsResource)
+}
+
+// SearchCharts is the handler for the /charts/search endpoint
+func SearchCharts(params operations.SearchChartsParams, c data.Charts) middleware.Responder {
+	charts, err := c.Search(params)
+	if err != nil {
+		message := fmt.Sprintf("data.Charts Search() error (%s)", err)
+		log.Printf(message)
+		return operations.NewSearchChartsDefault(http.StatusBadRequest).WithPayload(
+			&models.Error{Code: helpers.Int64ToPtr(http.StatusNotFound), Message: &message},
+		)
+	}
+	resources := helpers.MakeChartResources(charts)
+	return chartsHTTPBody(resources)
 }
 
 // chartHTTPBody is a convenience that returns a swagger-friendly HTTP 200 response with chart body data

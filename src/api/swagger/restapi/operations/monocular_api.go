@@ -54,6 +54,8 @@ type MonocularAPI struct {
 	GetChartsInRepoHandler GetChartsInRepoHandler
 	// HealthzHandler sets the operation handler for the healthz operation
 	HealthzHandler HealthzHandler
+	// SearchChartsHandler sets the operation handler for the search charts operation
+	SearchChartsHandler SearchChartsHandler
 
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
@@ -139,6 +141,10 @@ func (o *MonocularAPI) Validate() error {
 
 	if o.HealthzHandler == nil {
 		unregistered = append(unregistered, "HealthzHandler")
+	}
+
+	if o.SearchChartsHandler == nil {
+		unregistered = append(unregistered, "SearchChartsHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -243,6 +249,11 @@ func (o *MonocularAPI) initHandlerCache() {
 		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/healthz"] = NewHealthz(o.context, o.HealthzHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v1/charts/search"] = NewSearchCharts(o.context, o.SearchChartsHandler)
 
 }
 

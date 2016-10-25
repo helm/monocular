@@ -3,10 +3,12 @@ package mocks
 import (
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/helm/monocular/src/api/data"
 	"github.com/helm/monocular/src/api/data/helpers"
 	"github.com/helm/monocular/src/api/swagger/models"
+	"github.com/helm/monocular/src/api/swagger/restapi/operations"
 )
 
 // mockCharts fulfills the data.Charts interface
@@ -18,7 +20,7 @@ func NewMockCharts() data.Charts {
 }
 
 // ChartFromRepo method for mockCharts
-func (g *mockCharts) ChartFromRepo(repo, name string) (*models.ChartPackage, error) {
+func (c *mockCharts) ChartFromRepo(repo, name string) (*models.ChartPackage, error) {
 	y, err := getMockRepo(repo)
 	if err != nil {
 		log.Printf("couldn't load mock repo %s!\n", repo)
@@ -38,7 +40,7 @@ func (g *mockCharts) ChartFromRepo(repo, name string) (*models.ChartPackage, err
 
 // ChartVersionFromRepo is the interface implementation for data.Charts
 // It returns the reference to a single versioned chart
-func (g *mockCharts) ChartVersionFromRepo(repo, name, version string) (*models.ChartPackage, error) {
+func (c *mockCharts) ChartVersionFromRepo(repo, name, version string) (*models.ChartPackage, error) {
 	y, err := getMockRepo(repo)
 	if err != nil {
 		log.Printf("couldn't load mock repo %s!\n", repo)
@@ -58,7 +60,7 @@ func (g *mockCharts) ChartVersionFromRepo(repo, name, version string) (*models.C
 
 // ChartVersionsFromRepo is the interface implementation for data.Charts
 // It returns the reference to a slice of all versions of a particular chart in a repo
-func (g *mockCharts) ChartVersionsFromRepo(repo, name string) ([]*models.ChartPackage, error) {
+func (c *mockCharts) ChartVersionsFromRepo(repo, name string) ([]*models.ChartPackage, error) {
 	y, err := getMockRepo(repo)
 	if err != nil {
 		log.Printf("couldn't load mock repo %s!\n", repo)
@@ -77,7 +79,7 @@ func (g *mockCharts) ChartVersionsFromRepo(repo, name string) ([]*models.ChartPa
 }
 
 // AllFromRepo method for mockCharts
-func (g *mockCharts) AllFromRepo(repo string) ([]*models.ChartPackage, error) {
+func (c *mockCharts) AllFromRepo(repo string) ([]*models.ChartPackage, error) {
 	y, err := getMockRepo(repo)
 	if err != nil {
 		log.Printf("couldn't load mock repo %s!\n", repo)
@@ -92,7 +94,7 @@ func (g *mockCharts) AllFromRepo(repo string) ([]*models.ChartPackage, error) {
 }
 
 // All method for mockCharts
-func (g *mockCharts) All() ([]*models.ChartPackage, error) {
+func (c *mockCharts) All() ([]*models.ChartPackage, error) {
 	var allCharts []*models.ChartPackage
 	repos := []string{"stable", "incubator"}
 	for _, repo := range repos {
@@ -115,7 +117,21 @@ func (g *mockCharts) All() ([]*models.ChartPackage, error) {
 	return allCharts, nil
 }
 
-func (g *mockCharts) Refresh() error {
+func (c *mockCharts) Search(params operations.SearchChartsParams) ([]*models.ChartPackage, error) {
+	var ret []*models.ChartPackage
+	charts, err := c.All()
+	if err != nil {
+		return nil, err
+	}
+	for _, chart := range charts {
+		if strings.Contains(*chart.Name, params.Name) {
+			ret = append(ret, chart)
+		}
+	}
+	return ret, nil
+}
+
+func (c *mockCharts) Refresh() error {
 	return nil
 }
 

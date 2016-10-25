@@ -128,6 +128,22 @@ func TestGetAllCharts200(t *testing.T) {
 	assert.Equal(t, len(helpers.MakeChartResources(charts)), len(httpBody.Data), "number of charts returned")
 }
 
+func TestSearchCharts200(t *testing.T) {
+	w := httptest.NewRecorder()
+	params := operations.SearchChartsParams{
+		Name: "drupal",
+	}
+	resp := SearchCharts(params, chartsImplementation)
+	assert.NotNil(t, resp, "SearchCharts response")
+	resp.WriteResponse(w, runtime.JSONProducer())
+	assert.Equal(t, w.Code, http.StatusOK, "expect a 200 response code")
+	var httpBody models.ResourceArrayData
+	assert.NoErr(t, testutil.ResourceArrayDataFromJSON(w.Body, &httpBody))
+	charts, err := chartsImplementation.Search(params)
+	assert.NoErr(t, err)
+	assert.Equal(t, len(helpers.MakeChartResources(charts)), len(httpBody.Data), "number of charts returned")
+}
+
 func TestGetChartsInRepo200(t *testing.T) {
 	charts, err := chartsImplementation.AllFromRepo(testutil.RepoName)
 	numCharts := len(helpers.MakeChartResources(charts))
