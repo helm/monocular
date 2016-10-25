@@ -68,6 +68,9 @@ func configureAPI(api *operations.MonocularAPI) http.Handler {
 	api.GetChartsInRepoHandler = operations.GetChartsInRepoHandlerFunc(func(params operations.GetChartsInRepoParams) middleware.Responder {
 		return handlers.GetChartsInRepo(params, chartsImplementation)
 	})
+	api.SearchChartsHandler = operations.SearchChartsHandlerFunc(func(params operations.SearchChartsParams) middleware.Responder {
+		return handlers.SearchCharts(params, chartsImplementation)
+	})
 	api.HealthzHandler = operations.HealthzHandlerFunc(func(params operations.HealthzParams) middleware.Responder {
 		return handlers.Healthz(params)
 	})

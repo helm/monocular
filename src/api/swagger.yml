@@ -122,6 +122,28 @@ paths:
           description: unexpected error
           schema:
             $ref: "#/definitions/error"
+  /v1/charts/search:
+    parameters:
+      - $ref: "#/parameters/chartNameParam"
+    get:
+      operationId: searchCharts
+      summary: "search charts"
+      responses:
+        200:
+          description: charts response
+          schema:
+            $ref: "#/definitions/resourceArrayData"
+        default:
+          description: unexpected error
+          schema:
+            $ref: "#/definitions/error"
+parameters:
+  chartNameParam:
+    name: name
+    in: query
+    type: string
+    description: chart name substring pattern match
+    required: true
 definitions:
   resource: # a data type that describes a json-api-like resource
     type: object

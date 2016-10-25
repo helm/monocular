@@ -1,6 +1,9 @@
 package data
 
-import "github.com/helm/monocular/src/api/swagger/models"
+import (
+	"github.com/helm/monocular/src/api/swagger/models"
+	"github.com/helm/monocular/src/api/swagger/restapi/operations"
+)
 
 // Charts is an interface for managing chart data sourced from a repository index
 type Charts interface {
@@ -14,6 +17,8 @@ type Charts interface {
 	AllFromRepo(repo string) ([]*models.ChartPackage, error)
 	// All retrieves all charts from all repos
 	All() ([]*models.ChartPackage, error)
+	// Search operates against all charts/repos
+	Search(params operations.SearchChartsParams) ([]*models.ChartPackage, error)
 	// Refresh freshens charts data
 	Refresh() error
 }

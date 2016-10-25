@@ -2,12 +2,14 @@ package cache
 
 import (
 	"fmt"
+	"strings"
 	"sync"
 
 	"github.com/helm/monocular/src/api/data"
 	"github.com/helm/monocular/src/api/data/helpers"
 	"github.com/helm/monocular/src/api/mocks"
 	"github.com/helm/monocular/src/api/swagger/models"
+	"github.com/helm/monocular/src/api/swagger/restapi/operations"
 )
 
 var mockCharts = mocks.NewMockCharts()
@@ -100,6 +102,22 @@ func (c *cachedCharts) All() ([]*models.ChartPackage, error) {
 		}
 	}
 	return allCharts, nil
+}
+
+func (c *cachedCharts) Search(params operations.SearchChartsParams) ([]*models.ChartPackage, error) {
+	c.rwm.RLock()
+	defer c.rwm.RUnlock()
+	var ret []*models.ChartPackage
+	charts, err := c.All()
+	if err != nil {
+		return nil, err
+	}
+	for _, chart := range charts {
+		if strings.Contains(*chart.Name, params.Name) {
+			ret = append(ret, chart)
+		}
+	}
+	return ret, nil
 }
 
 // Refresh is the interface implementation for data.Charts
