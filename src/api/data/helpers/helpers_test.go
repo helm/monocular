@@ -107,20 +107,20 @@ func TestAddChartRelationship(t *testing.T) {
 	assert.Equal(t, chartVersionResource.Relationships.(*models.ChartRelationship).Chart.Data.Maintainers, chart.Maintainers, "relationships.chart.data.maintainers array value")
 	assert.Equal(t, chartVersionResource.Relationships.(*models.ChartRelationship).Chart.Data.Sources, chart.Sources, "relationships.chart.data.sources array value")
 	assert.Equal(t, *chartVersionResource.Relationships.(*models.ChartRelationship).Chart.Data.Repo, chart.Repo, "relationships.chart.data.repo field value")
-	assert.Equal(t, *chartVersionResource.Relationships.(*models.ChartRelationship).Chart.Links.Related, MakeRepoChartRouteURL(APIVer1String, chart.Repo, *chart.Name), "relationships.chart.links.related field value")
+	assert.Equal(t, *chartVersionResource.Relationships.(*models.ChartRelationship).Chart.Links.Self, MakeRepoChartRouteURL(APIVer1String, chart.Repo, *chart.Name), "relationships.chart.links.self field value")
 }
 
-func TestAddChartVersionRelationship(t *testing.T) {
+func TestAddLatestChartVersionRelationship(t *testing.T) {
 	charts, err := ParseYAMLRepo(getTestRepoYAML(), repoName)
 	assert.NoErr(t, err)
 	chart := charts[0]
 	chartResource := MakeChartResource(chart)
-	AddChartVersionRelationship(chartResource, chart)
-	assert.Equal(t, *chartResource.Relationships.(*models.ChartVersionRelationship).ChartVersion.Data.Created, *chart.Created, "relationships.chartVersion.data.created field value")
-	assert.Equal(t, *chartResource.Relationships.(*models.ChartVersionRelationship).ChartVersion.Data.Digest, *chart.Digest, "relationships.chartVersion.data.digest field value")
-	assert.Equal(t, chartResource.Relationships.(*models.ChartVersionRelationship).ChartVersion.Data.Urls, chart.Urls, "relationships.chartVersion.data.Urls field value")
-	assert.Equal(t, *chartResource.Relationships.(*models.ChartVersionRelationship).ChartVersion.Data.Version, *chart.Version, "relationships.chartVersion.data.digest field value")
-	assert.Equal(t, *chartResource.Relationships.(*models.ChartVersionRelationship).ChartVersion.Links.Related, MakeRepoChartVersionRouteURL(APIVer1String, chart.Repo, *chart.Name, *chart.Version), "relationships.chartVersion.links.related field value")
+	AddLatestChartVersionRelationship(chartResource, chart)
+	assert.Equal(t, *chartResource.Relationships.(*models.LatestChartVersionRelationship).LatestChartVersion.Data.Created, *chart.Created, "relationships.latestChartVersion.data.created field value")
+	assert.Equal(t, *chartResource.Relationships.(*models.LatestChartVersionRelationship).LatestChartVersion.Data.Digest, *chart.Digest, "relationships.latestChartVersion.data.digest field value")
+	assert.Equal(t, chartResource.Relationships.(*models.LatestChartVersionRelationship).LatestChartVersion.Data.Urls, chart.Urls, "relationships.latestChartVersion.data.Urls field value")
+	assert.Equal(t, *chartResource.Relationships.(*models.LatestChartVersionRelationship).LatestChartVersion.Data.Version, *chart.Version, "relationships.latestChartVersion.data.digest field value")
+	assert.Equal(t, *chartResource.Relationships.(*models.LatestChartVersionRelationship).LatestChartVersion.Links.Self, MakeRepoChartVersionRouteURL(APIVer1String, chart.Repo, *chart.Name, *chart.Version), "relationships.chartVersion.links.self field value")
 }
 
 func TestAddCanonicalLink(t *testing.T) {
@@ -128,7 +128,7 @@ func TestAddCanonicalLink(t *testing.T) {
 	assert.NoErr(t, err)
 	chartResource := MakeChartResource(charts[0])
 	AddCanonicalLink(chartResource)
-	assert.Equal(t, *chartResource.Links.(*models.ChartResourceLinks).Canonical, fmt.Sprintf("/%s/charts/%s/%s", APIVer1String, repoName, chartName), "chart resource Links.Latest field value")
+	assert.Equal(t, *chartResource.Links.(*models.ResourceLink).Self, MakeRepoChartRouteURL(APIVer1String, repoName, chartName), "chart resource Links.Self field value")
 }
 
 func TestGetLatestChartVersion(t *testing.T) {

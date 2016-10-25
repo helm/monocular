@@ -26,7 +26,7 @@ type ChartAsRelationship struct {
 
 	Required: true
 	*/
-	Links *ChartLinks `json:"links"`
+	Links *ResourceLink `json:"links"`
 }
 
 // Validate validates this chart as relationship

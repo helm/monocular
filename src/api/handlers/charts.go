@@ -25,7 +25,6 @@ func GetChart(params operations.GetChartParams, c data.Charts) middleware.Respon
 		return notFound(ChartResourceName)
 	}
 	chartResource := helpers.MakeChartResource(chartPackage)
-	helpers.AddChartVersionRelationship(chartResource, chartPackage)
 	return chartHTTPBody(chartResource)
 }
 
@@ -37,7 +36,6 @@ func GetChartVersion(params operations.GetChartVersionParams, c data.Charts) mid
 		return notFound(ChartVersionResourceName)
 	}
 	chartVersionResource := helpers.MakeChartVersionResource(chartPackage)
-	helpers.AddChartRelationship(chartVersionResource, chartPackage)
 	return chartHTTPBody(chartVersionResource)
 }
 

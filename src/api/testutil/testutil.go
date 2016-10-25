@@ -89,15 +89,3 @@ func ChartVersionResourceAttributesFromHTTPResponse(body *models.ResourceData) (
 	err = json.Unmarshal(b, attributes)
 	return attributes, err
 }
-
-// ChartResourceLinksFromHTTPResponse is a convenience that grabs the Links interface from
-// a chart resource in generic models.ResourceData form and converts to a models.ChartResourceLinks
-func ChartResourceLinksFromHTTPResponse(body *models.ResourceData) (*models.ChartResourceLinks, error) {
-	links := new(models.ChartResourceLinks)
-	b, err := json.Marshal(body.Data.Links.(map[string]interface{}))
-	if err != nil {
-		return nil, err
-	}
-	err = json.Unmarshal(b, links)
-	return links, err
-}

@@ -280,20 +280,12 @@ definitions:
       version:
         type: string
         minLength: 1
-  chartResourceLinks: # a data type that describes a "canonical" link to a resource
+  resourceLink: # a data type that describes the "canonical" API endpoint to a resource
     type: object
     required:
-      - canonical
+      - self
     properties:
-      canonical:
-        type: string
-        minLength: 1
-  chartLinks: # a data type that describes a "related" link to a resource
-    type: object
-    required:
-      - related
-    properties:
-      related:
+      self:
         type: string
         minLength: 1
   chartAsRelationship: # a data type that describes a "chart" as a json-api-like "relationship"
@@ -303,7 +295,7 @@ definitions:
       - data
     properties:
       links:
-        $ref: "#/definitions/chartLinks"
+        $ref: "#/definitions/resourceLink"
       data:
         $ref: "#/definitions/chart"
   chartVersionAsRelationship: # a data type that describes a "chartVersion" as a json-api-like "relationship"
@@ -313,7 +305,7 @@ definitions:
       - data
     properties:
       links:
-        $ref: "#/definitions/chartLinks"
+        $ref: "#/definitions/resourceLink"
       data:
         $ref: "#/definitions/chartVersion"
   chartRelationship: # a data type that describes a json-api-like "relationship" to a "chart" type
@@ -323,12 +315,12 @@ definitions:
     properties:
       chart:
         $ref: "#/definitions/chartAsRelationship"
-  chartVersionRelationship: # a data type that describes a json-api-like "relationship" to a "chartVersion" type
+  latestChartVersionRelationship: # a data type that describes a json-api-like "relationship" to a "chartVersion" type
     type: object
     required:
-      - chartVersion
+      - latestChartVersion
     properties:
-      chartVersion:
+      latestChartVersion:
         $ref: "#/definitions/chartVersionAsRelationship"
   error:
     type: object

@@ -10,25 +10,25 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-/*ChartLinks chart links
+/*ResourceLink resource link
 
-swagger:model chartLinks
+swagger:model resourceLink
 */
-type ChartLinks struct {
+type ResourceLink struct {
 
-	/* related
+	/* self
 
 	Required: true
 	Min Length: 1
 	*/
-	Related *string `json:"related"`
+	Self *string `json:"self"`
 }
 
-// Validate validates this chart links
-func (m *ChartLinks) Validate(formats strfmt.Registry) error {
+// Validate validates this resource link
+func (m *ResourceLink) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateRelated(formats); err != nil {
+	if err := m.validateSelf(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
@@ -39,13 +39,13 @@ func (m *ChartLinks) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *ChartLinks) validateRelated(formats strfmt.Registry) error {
+func (m *ResourceLink) validateSelf(formats strfmt.Registry) error {
 
-	if err := validate.Required("related", "body", m.Related); err != nil {
+	if err := validate.Required("self", "body", m.Self); err != nil {
 		return err
 	}
 
-	if err := validate.MinLength("related", "body", string(*m.Related), 1); err != nil {
+	if err := validate.MinLength("self", "body", string(*m.Self), 1); err != nil {
 		return err
 	}
 

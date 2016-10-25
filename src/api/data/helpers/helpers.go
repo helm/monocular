@@ -59,6 +59,7 @@ func MakeChartResource(chart *models.ChartPackage) *models.Resource {
 		Maintainers: chart.Maintainers,
 		Icon:        chart.Icon,
 	}
+	AddLatestChartVersionRelationship(&ret, chart)
 	return &ret
 }
 
@@ -73,6 +74,7 @@ func MakeChartResources(charts []*models.ChartPackage) []*models.Resource {
 			found[*chart.Name] = true
 			resource := MakeChartResource(chart)
 			AddCanonicalLink(resource)
+			AddLatestChartVersionRelationship(resource, chart)
 			chartsResource = append(chartsResource, resource)
 		}
 	}
@@ -90,6 +92,7 @@ func MakeChartVersionResource(chart *models.ChartPackage) *models.Resource {
 		Urls:    chart.Urls,
 		Version: chart.Version,
 	}
+	AddChartRelationship(&ret, chart)
 	return &ret
 }
 
@@ -99,7 +102,6 @@ func MakeChartVersionResources(charts []*models.ChartPackage) []*models.Resource
 	var chartsResource []*models.Resource
 	for _, chart := range charts {
 		resource := MakeChartVersionResource(chart)
-		AddChartLink(resource, chart)
 		chartsResource = append(chartsResource, resource)
 	}
 	return chartsResource
@@ -109,8 +111,8 @@ func MakeChartVersionResources(charts []*models.ChartPackage) []*models.Resource
 func AddChartRelationship(resource *models.Resource, chartPackage *models.ChartPackage) {
 	resource.Relationships = &models.ChartRelationship{
 		Chart: &models.ChartAsRelationship{
-			Links: &models.ChartLinks{
-				Related: StrToPtr(MakeRepoChartRouteURL(APIVer1String, chartPackage.Repo, *chartPackage.Name)),
+			Links: &models.ResourceLink{
+				Self: StrToPtr(MakeRepoChartRouteURL(APIVer1String, chartPackage.Repo, *chartPackage.Name)),
 			},
 			Data: &models.Chart{
 				Name:        chartPackage.Name,
@@ -124,12 +126,12 @@ func AddChartRelationship(resource *models.Resource, chartPackage *models.ChartP
 	}
 }
 
-// AddChartVersionRelationship adds a "relationships" reference to a chart resource's latest chartVersion
-func AddChartVersionRelationship(resource *models.Resource, chartPackage *models.ChartPackage) {
-	resource.Relationships = &models.ChartVersionRelationship{
-		ChartVersion: &models.ChartVersionAsRelationship{
-			Links: &models.ChartLinks{
-				Related: StrToPtr(MakeRepoChartVersionRouteURL(APIVer1String, chartPackage.Repo, *chartPackage.Name, *chartPackage.Version)),
+// AddLatestChartVersionRelationship adds a "relationships" reference to a chart resource's latest chartVersion
+func AddLatestChartVersionRelationship(resource *models.Resource, chartPackage *models.ChartPackage) {
+	resource.Relationships = &models.LatestChartVersionRelationship{
+		LatestChartVersion: &models.ChartVersionAsRelationship{
+			Links: &models.ResourceLink{
+				Self: StrToPtr(MakeRepoChartVersionRouteURL(APIVer1String, chartPackage.Repo, *chartPackage.Name, *chartPackage.Version)),
 			},
 			Data: &models.ChartVersion{
 				Created: chartPackage.Created,
@@ -141,17 +143,10 @@ func AddChartVersionRelationship(resource *models.Resource, chartPackage *models
 	}
 }
 
-// AddCanonicalLink adds a "canonical" reference to the resource's "links" object
+// AddCanonicalLink adds a "self" link to a chart resource's canonical API endpoint
 func AddCanonicalLink(resource *models.Resource) {
-	resource.Links = &models.ChartResourceLinks{
-		Canonical: StrToPtr(MakeRepoChartRouteURL(APIVer1String, *resource.Attributes.(*models.Chart).Repo, *resource.Attributes.(*models.Chart).Name)),
-	}
-}
-
-// AddChartLink adds a "related" link to a chartVersion resource's main chart
-func AddChartLink(resource *models.Resource, chart *models.ChartPackage) {
-	resource.Links = &models.ChartLinks{
-		Related: StrToPtr(MakeRepoChartRouteURL(APIVer1String, chart.Repo, *chart.Name)),
+	resource.Links = &models.ResourceLink{
+		Self: StrToPtr(MakeRepoChartRouteURL(APIVer1String, *resource.Attributes.(*models.Chart).Repo, *resource.Attributes.(*models.Chart).Name)),
 	}
 }
 
@@ -215,6 +210,12 @@ func MakeRepoChartRouteURL(apiVer, repo, name string) string {
 // /{:apiVersion}/charts/{:repo}/{:chart}/versions/{:version}
 func MakeRepoChartVersionRouteURL(apiVer, repo, name, version string) string {
 	return fmt.Sprintf("/%s/charts/%s/%s/versions/%s", apiVer, repo, name, version)
+}
+
+// MakeRepoChartVersionsRouteURL returns a string that represents
+// /{:apiVersion}/charts/{:repo}/{:chart}/versions
+func MakeRepoChartVersionsRouteURL(apiVer, repo, name string) string {
+	return fmt.Sprintf("/%s/charts/%s/%s/versions", apiVer, repo, name)
 }
 
 // MakeChartID returns a chart ID in the form {:repo}/{:chart}

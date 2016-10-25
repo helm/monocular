@@ -31,8 +31,3 @@ func TestNotFound(t *testing.T) {
 	assert.NoErr(t, testutil.ErrorModelFromJSON(w.Body, &httpBody2))
 	testutil.AssertErrBodyData(t, http.StatusNotFound, resource2, httpBody2)
 }
-
-func AssertChartResourceLinksBodyData(t *testing.T, body *models.ResourceData) {
-	_, err := testutil.ChartResourceLinksFromHTTPResponse(body)
-	assert.NoErr(t, err)
-}
