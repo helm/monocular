@@ -4,13 +4,13 @@ import (
 	"testing"
 
 	"github.com/arschles/assert"
+	"github.com/helm/monocular/src/api/data"
 	"github.com/helm/monocular/src/api/data/helpers"
-	"github.com/helm/monocular/src/api/mocks"
 	"github.com/helm/monocular/src/api/swagger/restapi/operations"
 	"github.com/helm/monocular/src/api/testutil"
 )
 
-var chartsImplementation = mocks.NewMockCharts()
+var chartsImplementation = getChartsImplementation()
 
 func TestCachedChartsChartFromRepo(t *testing.T) {
 	// TODO: validate chart data
@@ -73,4 +73,18 @@ func TestCachedChartsAllFromRepo(t *testing.T) {
 func TestCachedChartsRefresh(t *testing.T) {
 	err := chartsImplementation.Refresh()
 	assert.NoErr(t, err)
+}
+
+func getChartsImplementation() data.Charts {
+	repos := []map[string]string{
+		map[string]string{
+			"stable": "http://storage.googleapis.com/kubernetes-charts/index.yaml",
+		},
+		map[string]string{
+			"incubator": "http://storage.googleapis.com/kubernetes-charts-incubator/index.yaml",
+		},
+	}
+	chartsImplementation := NewCachedCharts(repos)
+	chartsImplementation.Refresh()
+	return chartsImplementation
 }
