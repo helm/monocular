@@ -2,19 +2,19 @@ package cache
 
 import (
 	"fmt"
+	"io/ioutil"
+	"net/http"
 	"strings"
 	"sync"
 
 	"github.com/helm/monocular/src/api/data"
 	"github.com/helm/monocular/src/api/data/helpers"
-	"github.com/helm/monocular/src/api/mocks"
 	"github.com/helm/monocular/src/api/swagger/models"
 	"github.com/helm/monocular/src/api/swagger/restapi/operations"
 )
 
-var mockCharts = mocks.NewMockCharts()
-
 type cachedCharts struct {
+	// knownRepos is a slice of maps, each of which looks like this: "reponame": "https://repo.url/index.yaml"
 	knownRepos []map[string]string
 	allCharts  map[string][]*models.ChartPackage
 	rwm        *sync.RWMutex
@@ -127,7 +127,16 @@ func (c *cachedCharts) Refresh() error {
 	defer c.rwm.Unlock()
 	for _, repo := range c.knownRepos {
 		for repoName := range repo {
-			charts, err := mockCharts.AllFromRepo(repoName)
+			resp, err := http.Get(repo[repoName])
+			if err != nil {
+				return err
+			}
+			defer resp.Body.Close()
+			body, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				return err
+			}
+			charts, err := helpers.ParseYAMLRepo(body, repoName)
 			if err != nil {
 				return err
 			}

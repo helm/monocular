@@ -4,26 +4,17 @@ import (
 	"testing"
 
 	"github.com/arschles/assert"
+	"github.com/helm/monocular/src/api/data"
 	"github.com/helm/monocular/src/api/data/helpers"
 	"github.com/helm/monocular/src/api/swagger/restapi/operations"
 	"github.com/helm/monocular/src/api/testutil"
 )
 
-var repos = []map[string]string{
-	map[string]string{
-		"stable": "https://github.com/kubernetes/charts",
-	},
-	map[string]string{
-		"incubator": "https://github.com/kubernetes/charts/tree/master/incubator",
-	},
-}
-var chartsImplementation = NewCachedCharts(repos)
+var chartsImplementation = getChartsImplementation()
 
 func TestCachedChartsChartFromRepo(t *testing.T) {
-	err := chartsImplementation.Refresh()
-	assert.NoErr(t, err)
 	// TODO: validate chart data
-	_, err = chartsImplementation.ChartFromRepo(testutil.RepoName, testutil.ChartName)
+	_, err := chartsImplementation.ChartFromRepo(testutil.RepoName, testutil.ChartName)
 	assert.NoErr(t, err)
 	_, err = chartsImplementation.ChartFromRepo(testutil.BogusRepo, testutil.ChartName)
 	assert.ExistsErr(t, err, "sent bogus repo name to Charts.ChartFromRepo()")
@@ -32,8 +23,6 @@ func TestCachedChartsChartFromRepo(t *testing.T) {
 }
 
 func TestCachedChartsChartVersionFromRepo(t *testing.T) {
-	err := chartsImplementation.Refresh()
-	assert.NoErr(t, err)
 	chart, err := chartsImplementation.ChartVersionFromRepo(testutil.RepoName, testutil.ChartName, testutil.ChartVersionString)
 	assert.NoErr(t, err)
 	assert.Equal(t, *chart.Name, testutil.ChartName, "chart name")
@@ -47,8 +36,6 @@ func TestCachedChartsChartVersionFromRepo(t *testing.T) {
 }
 
 func TestCachedChartsChartVersionsFromRepo(t *testing.T) {
-	err := chartsImplementation.Refresh()
-	assert.NoErr(t, err)
 	charts, err := chartsImplementation.ChartVersionsFromRepo(testutil.RepoName, testutil.ChartName)
 	assert.NoErr(t, err)
 	assert.True(t, len(charts) > 0, "returned charts")
@@ -58,9 +45,7 @@ func TestCachedChartsChartVersionsFromRepo(t *testing.T) {
 }
 
 func TestCachedChartsAll(t *testing.T) {
-	err := chartsImplementation.Refresh()
-	assert.NoErr(t, err)
-	_, err = chartsImplementation.All()
+	_, err := chartsImplementation.All()
 	assert.NoErr(t, err)
 }
 
@@ -76,8 +61,7 @@ func TestCachedChartsSearch(t *testing.T) {
 }
 
 func TestCachedChartsAllFromRepo(t *testing.T) {
-	err := chartsImplementation.Refresh()
-	assert.NoErr(t, err)
+
 	charts, err := chartsImplementation.AllFromRepo(testutil.RepoName)
 	assert.NoErr(t, err)
 	assert.True(t, len(charts) > 0, "returned charts")
@@ -89,4 +73,18 @@ func TestCachedChartsAllFromRepo(t *testing.T) {
 func TestCachedChartsRefresh(t *testing.T) {
 	err := chartsImplementation.Refresh()
 	assert.NoErr(t, err)
+}
+
+func getChartsImplementation() data.Charts {
+	repos := []map[string]string{
+		map[string]string{
+			"stable": "http://storage.googleapis.com/kubernetes-charts/index.yaml",
+		},
+		map[string]string{
+			"incubator": "http://storage.googleapis.com/kubernetes-charts-incubator/index.yaml",
+		},
+	}
+	chartsImplementation := NewCachedCharts(repos)
+	chartsImplementation.Refresh()
+	return chartsImplementation
 }
