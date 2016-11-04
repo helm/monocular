@@ -41,8 +41,11 @@ Running `docker-compose up` from the root directory will expose:
 * API backend endpoint via `http://{your-docker-machine-ip-address}:8080`
 * UI frontend via `http://{your-docker-machine-ip-address}:4200`  
 
-**IMPORTANT**: If your Docker Machine hostname is different than *localhost*, you need to change
+**IMPORTANT**: 
+* If your Docker Machine hostname is different than *localhost*, you need to change
 the `backendHostname` value in the file `src/ui/src/app/config.ts`.
+* Run `docker pull bitnami/angular:2.0.0` OR Run `docker login` which will cache your docker hub credentials. 
+Angular:2.0.0 image is required during `docker-compose up` and docker will search local cache or pull image from docker hub.
 
 You can restart individual services doing `docker-compose restart api|ui`
 
