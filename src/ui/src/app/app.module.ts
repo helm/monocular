@@ -4,6 +4,9 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { routing, appRoutingProviders } from './app.routing';
 
+/* Material library */
+import { MaterialModule } from '@angular/material';
+
 /* Components */
 import { AppComponent } from './app.component';
 import { ChartIndexComponent } from './chart-index/chart-index.component';
@@ -14,14 +17,16 @@ import { ChartDetailsComponent } from './chart-details/chart-details.component';
 
 /* Services */
 import { ChartsService } from './charts.service';
-import { ChartSearchInputComponent } from './page-header-bar/chart-search-input/chart-search-input.component';
+import { ChartSearchInputComponent } from './header-bar/chart-search-input/chart-search-input.component';
 import { ChartSearchComponent } from './chart-search/chart-search.component';
-import { PageHeaderBarComponent } from './page-header-bar/page-header-bar.component';
+import { HeaderBarComponent } from './header-bar/header-bar.component';
 import { ChartDetailsHeaderComponent } from './chart-details/chart-details-header/chart-details-header.component';
 import { ChartDetailsUsageComponent } from './chart-details/chart-details-usage/chart-details-usage.component';
-import { ChartDetailsReadmeComponent } from './chart-details/chart-details-readme/chart-details-readme.component'
+import { ChartDetailsReadmeComponent } from './chart-details/chart-details-readme/chart-details-readme.component';
+import { PanelComponent } from './panel/panel.component';
+import { MainHeaderComponent } from './main-header/main-header.component';
 
-require('bootstrap-loader');
+require('hammerjs');
 
 @NgModule({
   declarations: [
@@ -33,12 +38,15 @@ require('bootstrap-loader');
     ChartDetailsComponent,
     ChartSearchInputComponent,
     ChartSearchComponent,
-    PageHeaderBarComponent,
+    HeaderBarComponent,
     ChartDetailsHeaderComponent,
     ChartDetailsUsageComponent,
-    ChartDetailsReadmeComponent
+    ChartDetailsReadmeComponent,
+    PanelComponent,
+    MainHeaderComponent
   ],
   imports: [
+    MaterialModule.forRoot(),
     BrowserModule,
     FormsModule,
     HttpModule,

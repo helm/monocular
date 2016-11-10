@@ -1,0 +1,51 @@
+// Imports
+@import '~@angular/material/core/theming/theming';
+// Import your custom theme
+@import '../../theme.scss';
+
+// Variables
+$main-header-height: 400px;
+
+.main-header {
+  height: $main-header-height;
+  background-color: $layout_base;
+
+  &-content {
+    width: 80%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+
+    > div {
+      width: 47%;
+    }
+
+    &__slogan {
+      padding: 2rem 0;
+      color: $layout_light;
+      font-size: 3em;
+      font-weight: 100;
+
+      p {
+        margin: 0;
+      }
+    }
+
+  }
+
+  &-search {
+    padding-top: 4em;
+
+    md-input {
+      margin: 0 auto 5px;
+    }
+
+    &__summary {
+      font-size: .9em;
+      font-style: italic;
+      margin: 0;
+      text-align: center;
+      color: lighten(md-color($monocular-app-primary), 10%);
+    }
+  }
+}

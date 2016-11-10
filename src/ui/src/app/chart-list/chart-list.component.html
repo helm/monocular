@@ -1,3 +1,5 @@
-<div *ngFor="let chart of charts">
-  <app-chart-item [chart]=chart></app-chart-item>
-</div>
+<app-panel class="app-panel--offset-up">
+  <div *ngFor="let chart of charts">
+    <app-chart-item [chart]=chart></app-chart-item>
+  </div>
+</app-panel>

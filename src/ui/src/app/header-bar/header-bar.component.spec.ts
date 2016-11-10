@@ -1,11 +1,11 @@
 /* tslint:disable:no-unused-variable */
 
 import { TestBed, async } from '@angular/core/testing';
-import { PageHeaderBarComponent } from './page-header-bar.component';
+import { HeaderBarComponent } from './header-bar.component';
 
-describe('Component: PageHeaderBar', () => {
+describe('Component: HeaderBar', () => {
   it('should create an instance', () => {
-    let component = new PageHeaderBarComponent();
+    let component = new HeaderBarComponent();
     expect(component).toBeTruthy();
   });
 });
