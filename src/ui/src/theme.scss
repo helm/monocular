@@ -1,0 +1,51 @@
+@import '~@angular/material/core/theming/all-theme';
+// Plus imports for other components in your app.
+
+// Include the base styles for Angular Material core. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+@include md-core();
+
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// hue.
+$monocular-app-primary: md-palette($md-blue);
+$monocular-app-accent:  md-palette($md-deep-purple);
+
+// The warn palette is optional (defaults to red).
+$monocular-app-warn:    md-palette($md-deep-orange);
+
+// Create the theme object (a Sass map containing all of the palettes).
+$monocular-app-theme: md-light-theme($monocular-app-primary, $monocular-app-accent, $monocular-app-warn);
+
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+@include angular-material-theme($monocular-app-theme);
+
+// Base palette for the project
+$layout_dark: #333239;
+$layout_base: #38383F;
+$layout_light: #ECEFF1;
+
+// Add more classes to Material2 components
+.md-input {
+  &--full {
+    width: 100%;
+  }
+
+  &--reverse {
+    .md-input-placeholder:not(.md-focused) {
+      color: darken($layout_light, 20%);
+    }
+    .md-input-underline {
+      border-color: $layout_light;
+    }
+    .md-input-element {
+      color: $layout_light;
+    }
+  }
+
+  &--big {
+    font-size: 1.5em;
+  }
+}
