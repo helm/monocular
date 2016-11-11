@@ -13,28 +13,41 @@ $main-header-height: 400px;
   &-content {
     width: 80%;
     margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
 
-    > div {
-      width: 47%;
+    @include mappy-bp(medium) {
+      display: flex;
+      justify-content: space-between;
+
+      & > div {
+        width: 47%;
+      }
     }
 
     &__slogan {
-      padding: 2rem 0;
       color: $layout_light;
-      font-size: 3em;
+      padding: 2em 0 1em;
       font-weight: 100;
 
       p {
+        font-size: 2em;
         margin: 0;
+
+        @include mappy-bp(medium) {
+          font-size: 2.5em;
+        }
+
+        @include mappy-bp(large) {
+          font-size: 3em;
+        }
       }
     }
 
   }
 
   &-search {
-    padding-top: 4em;
+    @include mappy-bp(medium) {
+      padding-top: 4em;
+    }
 
     md-input {
       margin: 0 auto 5px;

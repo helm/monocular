@@ -8,8 +8,21 @@ $chart-item-content-height: 70px;
 
 :host {
   display: block;
-  width: 32%;
-  margin-bottom: (100% - (32% * 3)) / 2;
+  width: 100%;
+  margin-bottom: 1em;
+
+  @include mappy-bp(medium) {
+    width: 48%;
+    margin-bottom: 2%;
+  }
+
+  @include mappy-bp(large) {
+    width: 32%;
+  }
+
+  @include mappy-bp(xlarge) {
+    width: 23.5%;
+  }
 
   .chart-item {
     min-height: 11em;

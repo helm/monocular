@@ -28,6 +28,24 @@ $layout_base: #38383F;
 $layout_light: #ECEFF1;
 $layout_text: #38383F;
 
+// Responsive. They represents the min width of every display.
+$breakpoints: (
+  small: 480px,
+  medium: 860px,
+  large: 1100px,
+  xlarge: 1366px
+);
+
+$mappy-queries: (
+  phone: mappy-bp(w max-width small),
+  tablet: mappy-bp(small medium),
+  desktop: mappy-bp(medium large),
+  wide: mappy-bp(xlarge)
+);
+
+// Import the library. I need to import it after the breakpoints definition
+@import '~mappy-breakpoints/mappy-breakpoints';
+
 // Add more classes to Material2 components
 .md-input {
   &--full {
