@@ -15,6 +15,9 @@ import { ChartItemComponent } from './chart-list/chart-item/chart-item.component
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { ChartDetailsComponent } from './chart-details/chart-details.component';
 
+/* Pipes */
+import { TruncatePipe } from './pipes/truncate.pipe';
+
 /* Services */
 import { ChartsService } from './charts.service';
 import { ChartSearchInputComponent } from './header-bar/chart-search-input/chart-search-input.component';
@@ -43,7 +46,8 @@ require('hammerjs');
     ChartDetailsUsageComponent,
     ChartDetailsReadmeComponent,
     PanelComponent,
-    MainHeaderComponent
+    MainHeaderComponent,
+    TruncatePipe
   ],
   imports: [
     MaterialModule.forRoot(),

@@ -1,12 +1,5 @@
 @import '../../theme.scss';
 
-.panel {
-  margin: 1em auto;
-  width: 80%;
-  padding: 1em;
-  background-color: $layout_light;
-}
-
 :host {
   display: block;
 
@@ -14,5 +7,16 @@
     &--offset-up {
       margin-top: -70px;
     }
+  }
+}
+
+.panel {
+  margin: 1em auto;
+  width: 80%;
+  padding: 2em;
+  background-color: $layout_light;
+
+  &__title {
+    margin-top: 0;
   }
 }

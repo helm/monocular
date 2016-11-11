@@ -1,19 +1,19 @@
-<div class='chart-item col-md-6'>
-  <div class='content'>
-    <div class='header row'>
-      <div class='col-md-6'>
-        <a (click)="goToDetail(chart)" href="javascript:void(0)">{{ chart.attributes.name | uppercase }}</a>
-      </div>
-      <div class='col-md-6 text-right'>
-        <span class="label label-primary"> {{ chart.attributes.repo }}</span>
-      </div>
+<div class="chart-item">
+  <div class="chart-item-content">
+    <img alt="{{ chart.attributes.name }}'s logo" src='assets/images/k8s-icon.png'/>
+    <div class="chart-item-info">
+      <h2 class="chart-item-info__title" (click)="goToDetail(chart)">
+        {{ chart.attributes.name }}</h2>
+      <p>
+        <span class="chart-item-info__repo">{{ chart.attributes.repo }}</span>
+        <span class="chart-item-info__version">
+          v{{ chart.relationships.latestChartVersion.data.version }}</span>
+      </p>
     </div>
-    <div class='extra-info'>
-      <a (click)="goToDetail(chart)" href="javascript:void(0)">
-        <div class="col-sm-3 thumbnail"><img src='assets/images/k8s-icon.png'/></div>
-      </a>
-      <div class='col-sm-9'>{{chart.attributes.description}}</div>
+  </div>
+  <div class="chart-item-description">
+    <div class="chart-item-description__text">
+      {{ chart.attributes.description | truncate }}
     </div>
-    <div class='clearfix'>
   </div>
 </div>

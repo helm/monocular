@@ -1,4 +1,6 @@
-/* Because of fixed header bar */
+// Imports
+@import './theme.scss';
+
 body {
   // Use system font-families now
   font-family: -apple-system, BlinkMacSystemFont, 'avenir next', avenir,
@@ -9,8 +11,36 @@ body {
   // reset
   margin: 0;
   padding: 0;
+  color: $layout_text;
 }
 
 * {
   box-sizing: border-box;
+}
+
+// Text
+h1, h2, h3, h4, h5, h6 {
+  color: lighten($layout_base, 10%);
+}
+
+// Animations
+
+@keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+// Main loader
+.loader {
+  height: 100vh;
+  background-color: $layout_base;
+  animation: fadein .3s;
+
+  p {
+    text-align: center;
+    font-size: 3em;
+    margin: 0;
+    color: $layout_light;
+    padding-top: 2em;
+  }
 }
