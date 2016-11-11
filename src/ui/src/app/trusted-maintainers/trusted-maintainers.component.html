@@ -1,0 +1,7 @@
+<app-panel [title]="'Trusted Maintainers'">
+  <section class="trusted-maintainers">
+    <article class="trusted-maintainers-maintainer" *ngFor="let maintainer of maintainers">
+      <img alt="{{ maintainer.name }}'s logo" src="{{ maintainer.logo }}" />
+    </article>
+  </section>
+</app-panel>

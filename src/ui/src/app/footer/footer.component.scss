@@ -1,0 +1,11 @@
+// Theme
+@import '../../theme.scss';
+
+.footer {
+  padding: 2em;
+  background-color: $layout_base;
+
+  &-content {
+    width: 80%;
+  }
+}

@@ -28,6 +28,8 @@ import { ChartDetailsUsageComponent } from './chart-details/chart-details-usage/
 import { ChartDetailsReadmeComponent } from './chart-details/chart-details-readme/chart-details-readme.component';
 import { PanelComponent } from './panel/panel.component';
 import { MainHeaderComponent } from './main-header/main-header.component';
+import { TrustedMaintainersComponent } from './trusted-maintainers/trusted-maintainers.component';
+import { FooterComponent } from './footer/footer.component';
 
 require('hammerjs');
 
@@ -47,7 +49,9 @@ require('hammerjs');
     ChartDetailsReadmeComponent,
     PanelComponent,
     MainHeaderComponent,
-    TruncatePipe
+    TruncatePipe,
+    TrustedMaintainersComponent,
+    FooterComponent
   ],
   imports: [
     MaterialModule.forRoot(),
