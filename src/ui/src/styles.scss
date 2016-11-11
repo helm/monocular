@@ -23,6 +23,30 @@ h1, h2, h3, h4, h5, h6 {
   color: lighten($layout_base, 10%);
 }
 
+// Anchors
+a {
+  text-decoration: none;
+  transition: color .3s ease-out;
+  color: md-color($monocular-app-primary);
+  cursor: pointer;
+
+  &:hover {
+    color: darken(md-color($monocular-app-primary), 10%);
+  }
+
+  &.reverse {
+    color: $layout_light;
+
+    &:hover {
+      color: lighten(md-color($monocular-app-primary), 10%);
+    }
+
+    &.active {
+      color: md-color($monocular-app-primary);
+    }
+  }
+}
+
 // Animations
 
 @keyframes fadein {

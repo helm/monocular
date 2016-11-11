@@ -30,6 +30,7 @@ import { PanelComponent } from './panel/panel.component';
 import { MainHeaderComponent } from './main-header/main-header.component';
 import { TrustedMaintainersComponent } from './trusted-maintainers/trusted-maintainers.component';
 import { FooterComponent } from './footer/footer.component';
+import { FooterListComponent } from './footer-list/footer-list.component';
 
 require('hammerjs');
 
@@ -51,7 +52,8 @@ require('hammerjs');
     MainHeaderComponent,
     TruncatePipe,
     TrustedMaintainersComponent,
-    FooterComponent
+    FooterComponent,
+    FooterListComponent
   ],
   imports: [
     MaterialModule.forRoot(),

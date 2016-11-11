@@ -29,17 +29,6 @@ $header-bar-logo-height: 35px;
 
         a {
           padding: 1em;
-          text-decoration: none;
-          color: $layout_light;
-          transition: color .3s ease-out;
-
-          &:hover {
-            color: lighten(md-color($monocular-app-primary), 10%);
-          }
-
-          &.active {
-            color: md-color($monocular-app-primary);
-          }
         }
       }
     }
