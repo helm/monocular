@@ -1,0 +1,17 @@
+
+$trusted-maintainers-width: 180px;
+
+.trusted-maintainers {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+
+  &-maintainer {
+    padding: 1em;
+    width: $trusted-maintainers-width;
+
+    img {
+      width: 100%;
+    }
+  }
+}

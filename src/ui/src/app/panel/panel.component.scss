@@ -1,0 +1,22 @@
+@import '../../theme.scss';
+
+:host {
+  display: block;
+
+  &.app-panel {
+    &--offset-up {
+      margin-top: -70px;
+    }
+  }
+}
+
+.panel {
+  margin: 1em auto 2em;
+  width: 80%;
+  padding: 2em;
+  background-color: $layout_light;
+
+  &__title {
+    margin-top: 0;
+  }
+}
