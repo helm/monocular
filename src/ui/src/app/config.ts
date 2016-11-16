@@ -3,5 +3,5 @@
  supported in angular-cli https://github.com/angular/angular-cli/issues/1656
 */
 export const CONFIG = {
-  backendHostname: "http://me.docker:8080"
+  backendHostname: "http://localhost:8080"
 }
