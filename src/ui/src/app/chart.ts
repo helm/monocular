@@ -3,6 +3,7 @@ export class Chart {
   type: String
   links: String[]
   attributes: ChartAttributes
+  relationships: ChartRelationships
 }
 
 class ChartAttributes {
@@ -10,4 +11,21 @@ class ChartAttributes {
   name: String
   repo: String
   home: String
+  sources: String[]
+}
+
+class ChartRelationships {
+  latestChartVersion: ChartVersion
+}
+
+class ChartVersion {
+  data: {
+    created: String,
+    digest: String,
+    version: String,
+    urls: String[]
+  }
+  links: {
+    self: String
+  }
 }

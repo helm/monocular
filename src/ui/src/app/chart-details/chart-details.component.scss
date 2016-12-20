@@ -1,0 +1,29 @@
+// Import your custom theme
+@import '../../theme.scss';
+
+.chart-details {
+  width: 100%;
+  margin: 1em 0;
+  padding: 0 2em;
+
+  &__info {
+    padding-top: 1em;
+  }
+
+  @include mappy-bp(medium) {
+    display: flex;
+
+    &__info,
+    &__docs {
+      padding: 1em;
+    }
+
+    &__info {
+      flex: 1;
+    }
+
+    &__docs {
+      flex: 3;
+    }
+  }
+}

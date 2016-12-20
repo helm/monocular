@@ -1,6 +1,15 @@
-<h2 *ngIf="!chart">Chart version not found</h2>
-<div *ngIf="chart">
-  <app-chart-details-header [chart]=chart></app-chart-details-header>
-  <app-chart-details-usage [chart]=chart></app-chart-details-usage>
-  <app-chart-details-readme [chart]=chart></app-chart-details-readme>
+<app-header-bar></app-header-bar>
+<div>
+  <app-panel *ngIf="!chart" class="app-panel--container">
+    <h2>Sorry, we couldn't find the chart</h2>
+  </app-panel>
+  <section class="chart-details" *ngIf="chart">
+    <aside class="chart-details__info">
+      <app-chart-details-info [chart]=chart></app-chart-details-info>
+    </aside>
+    <article class="chart-details__docs">
+      <app-chart-details-usage [chart]=chart></app-chart-details-usage>
+      <app-chart-details-readme [chart]=chart></app-chart-details-readme>
+    </article>
+  </section>
 </div>
