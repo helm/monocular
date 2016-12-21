@@ -32,6 +32,7 @@ import { FooterComponent } from './footer/footer.component';
 import { FooterListComponent } from './footer-list/footer-list.component';
 import { ChartDetailsInfoComponent } from './chart-details/chart-details-info/chart-details-info.component';
 import { ChartListItemComponent } from './chart-list/chart-list-item/chart-list-item.component';
+import { ChartsComponent } from './charts/charts.component';
 
 require('hammerjs');
 
@@ -55,7 +56,8 @@ require('hammerjs');
     FooterComponent,
     FooterListComponent,
     ChartDetailsInfoComponent,
-    ChartListItemComponent
+    ChartListItemComponent,
+    ChartsComponent
   ],
   imports: [
     MaterialModule.forRoot(),

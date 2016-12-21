@@ -34,7 +34,11 @@ export class ChartSearchComponent implements OnInit {
 		this.chartsService.searchCharts(q).subscribe(charts => this.charts = charts);
   }
 
-  hasResults(): boolean {
-    return this.charts.length > 0
+  resultMessage(): String {
+    if (this.charts.length > 0) {
+      return this.charts.length + " results found for \"" + this.query + "\"";
+    } else {
+      return "\"" + this.query + "\" did not return any results";
+    }
   }
 }
