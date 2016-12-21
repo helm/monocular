@@ -6,6 +6,8 @@ import { routing, appRoutingProviders } from './app.routing';
 
 /* Material library */
 import { MaterialModule } from '@angular/material';
+// This is a temporary library. We should replace it with the md-select component
+import { Ng2SelectModule } from 'ng2-material-select';
 
 /* Pipes */
 import { TruncatePipe } from './pipes/truncate.pipe';
@@ -33,6 +35,7 @@ import { FooterListComponent } from './footer-list/footer-list.component';
 import { ChartDetailsInfoComponent } from './chart-details/chart-details-info/chart-details-info.component';
 import { ChartListItemComponent } from './chart-list/chart-list-item/chart-list-item.component';
 import { ChartsComponent } from './charts/charts.component';
+import { ChartsFiltersComponent } from './charts-filters/charts-filters.component';
 
 require('hammerjs');
 
@@ -57,10 +60,13 @@ require('hammerjs');
     FooterListComponent,
     ChartDetailsInfoComponent,
     ChartListItemComponent,
-    ChartsComponent
+    ChartsComponent,
+    ChartsFiltersComponent
   ],
   imports: [
     MaterialModule.forRoot(),
+    // This is a temporary library. We should replace it with the md-select component
+    Ng2SelectModule,
     BrowserModule,
     FormsModule,
     HttpModule,

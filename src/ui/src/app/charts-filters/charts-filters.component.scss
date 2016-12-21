@@ -1,0 +1,30 @@
+// Imports
+@import '~@angular/material/core/theming/theming';
+// Import your custom theme
+@import '../../theme.scss';
+
+.charts-filters {
+  text-align: center;
+
+  .charts-filter {
+    display: inline-block;
+    margin-right: 2em;
+
+    &__title {
+      display: inline-block;
+      color: md-color($monocular-app-primary);
+      margin-bottom: .5em;
+      font-weight: bold;
+    }
+
+    &__select {
+      display: inline-block;
+      margin-left: 1em;
+      width: 235px;
+    }
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+}

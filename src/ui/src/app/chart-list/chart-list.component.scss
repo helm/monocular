@@ -1,6 +1,54 @@
+// Import your custom theme
+@import '../../theme.scss';
 
 .chart-list {
   display: flex;
-  flex-wrap: wrap;
+  flex-flow: row wrap;
   justify-content: space-between;
+
+  &:after {
+    content: "";
+    flex: auto;
+  }
+
+  app-chart-list-item {
+    display: block;
+    width: 100%;
+    margin-bottom: 1em;
+
+    // Responsive
+    @include mappy-bp(small) {
+      margin: 0 0 2% 2%;
+    }
+  }
+
+  @include mappy-bp(small medium) {
+    app-chart-list-item {
+      width: 48%;
+
+      &:nth-child(2n+1) {
+        margin-left: 0;
+      }
+    }
+  }
+
+  @include mappy-bp(medium xlarge) {
+    app-chart-list-item {
+      width: 32%;
+
+      &:nth-child(3n+1) {
+        margin-left: 0;
+      }
+    }
+  }
+
+  @include mappy-bp(xlarge) {
+    app-chart-list-item {
+      width: 23.5%;
+
+      &:nth-child(4n+1) {
+        margin-left: 0;
+      }
+    }
+  }
 }
