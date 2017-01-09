@@ -1,0 +1,31 @@
+<div class="chartInfo">
+  <div class="chartInfo__chart">
+    <app-panel>
+      <app-chart-item [chart]=chart [showVersion]=false [truncateDescription]=false>
+      </app-chart-item>
+    </app-panel>
+  </div>
+  <div class="chartInfo__maintainers">
+    <app-panel [title]="'Maintainers'">
+      <div *ngFor="let maintainer of chart.attributes.maintainers">
+        <a href="mailto:{{ maintainer.email }}">{{ maintainer.name }}</a>
+      </div>
+    </app-panel>
+  </div>
+  <div class="chartInfo__versions">
+    <app-panel [title]="'Versions'">
+      <div>
+        <a target="_blank" rel="noopener" href="{{ lastVersion.data.urls[0] }}">
+          {{ lastVersion.data.version }}
+        </a>
+      </div>
+    </app-panel>
+  </div>
+  <div class="chartInfo__sources">
+    <app-panel [title]="'Sources'">
+      <div *ngFor="let source of sources">
+        <a href="{{ source }}">{{ source }}</a>
+      </div>
+    </app-panel>
+  </div>
+</div>

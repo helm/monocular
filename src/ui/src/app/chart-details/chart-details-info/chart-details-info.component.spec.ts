@@ -1,11 +1,11 @@
 /* tslint:disable:no-unused-variable */
 
 import { TestBed, async } from '@angular/core/testing';
-import { ChartDetailsHeaderComponent } from './chart-details-header.component';
+import { ChartDetailsInfoComponent } from './chart-details-info.component';
 
-describe('Component: ChartDetailsHeader', () => {
+describe('Component: ChartDetailsInfo', () => {
   it('should create an instance', () => {
-    let component = new ChartDetailsHeaderComponent();
+    let component = new ChartDetailsInfoComponent();
     expect(component).toBeTruthy();
   });
 });

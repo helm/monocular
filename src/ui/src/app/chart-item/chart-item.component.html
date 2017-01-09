@@ -1,4 +1,4 @@
-<div class="chart-item">
+<div class="chart-item {{ fixHeight ? 'chart-item--fixHeight' : '' }}">
   <div class="chart-item-content">
     <img alt="{{ chart.attributes.name }}'s logo" src='assets/images/k8s-icon.png'/>
     <div class="chart-item-info">
@@ -6,14 +6,13 @@
         {{ chart.attributes.name }}</h2>
       <p>
         <span class="chart-item-info__repo">{{ chart.attributes.repo }}</span>
-        <span class="chart-item-info__version">
+        <span class="chart-item-info__version" *ngIf="showVersion">
           v{{ chart.relationships.latestChartVersion.data.version }}</span>
       </p>
     </div>
   </div>
   <div class="chart-item-description">
-    <div class="chart-item-description__text">
-      {{ chart.attributes.description | truncate }}
-    </div>
+    {{ truncateDescription ? (chart.attributes.description | truncate) :
+                             chart.attributes.description }}
   </div>
 </div>

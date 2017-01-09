@@ -1,0 +1,18 @@
+// Imports
+@import '~@angular/material/core/theming/theming';
+// Import your custom theme
+@import '../../../theme.scss';
+
+.chart-details-usage {
+  background-color: $layout_base;
+  color: $layout_light;
+  margin-top: 1em;
+  padding: 2em;
+
+  label {
+    color: md-color($monocular-app-primary);
+    display: inline-block;
+    margin-right: .5em;
+    font-weight: bold;
+  }
+}

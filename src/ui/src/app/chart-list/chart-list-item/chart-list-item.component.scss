@@ -1,0 +1,27 @@
+// Import your custom theme
+@import '../../../theme.scss';
+
+:host {
+  display: block;
+  width: 100%;
+  margin-bottom: 1em;
+
+  @include mappy-bp(medium) {
+    width: 48%;
+    margin-bottom: 2%;
+  }
+
+  @include mappy-bp(large) {
+    width: 32%;
+  }
+
+  @include mappy-bp(xlarge) {
+    width: 23.5%;
+  }
+
+  .chart-list-item {
+    padding: 1em;
+    background-color: white;
+    border: 1px solid darken($layout_light, 10%);
+  }
+}

@@ -1,5 +1,5 @@
-<app-panel [title]="'Featured charts'" class="app-panel--offset-up">
+<app-panel [title]="'Featured charts'" class="app-panel--container app-panel--offset-up">
   <section class="chart-list">
-    <app-chart-item *ngFor="let chart of charts" [chart]=chart></app-chart-item>
+    <app-chart-list-item *ngFor="let chart of charts" [chart]=chart></app-chart-list-item>
   </section>
 </app-panel>

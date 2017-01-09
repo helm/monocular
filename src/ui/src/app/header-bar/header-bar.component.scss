@@ -9,12 +9,21 @@ $header-bar-logo-height: 35px;
 
 .header-bar {
   padding: $header-bar-padding;
+  background-color: $layout_base;
 
   &__logo {
     display: inline-block;
 
     img {
       height: $header-bar-logo-height;
+    }
+  }
+
+  &__search {
+    float: right;
+
+    .md-input-wrapper {
+      margin: .4em 0;
     }
   }
 
