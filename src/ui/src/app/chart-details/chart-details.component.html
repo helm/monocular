@@ -4,12 +4,12 @@
     <h2>Sorry, we couldn't find the chart</h2>
   </app-panel>
   <section class="chart-details" *ngIf="chart">
-    <aside class="chart-details__info">
-      <app-chart-details-info [chart]=chart></app-chart-details-info>
-    </aside>
     <article class="chart-details__docs">
       <app-chart-details-usage [chart]=chart></app-chart-details-usage>
       <app-chart-details-readme [chart]=chart></app-chart-details-readme>
     </article>
+    <aside class="chart-details__info">
+      <app-chart-details-info [chart]=chart></app-chart-details-info>
+    </aside>
   </section>
 </div>
