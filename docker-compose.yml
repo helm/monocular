@@ -8,7 +8,7 @@ services:
       - 4200:4200
     volumes:
       - ./src/ui:/app
-    command: "ng serve -h 0.0.0.0"
+    command: "ng serve --host 0.0.0.0"
   api:
     tty: true
     build: ./dev_env/api
