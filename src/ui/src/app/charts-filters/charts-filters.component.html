@@ -1,0 +1,26 @@
+<app-panel class="app-panel--container">
+  <section class="charts-filters">
+    <div class="charts-filter">
+      <label class="charts-filter__title">Repository</label>
+      <span class="charts-filter__select">
+        <md-select placeholder="" [(ngModel)]="repositoryType"
+          (onClose)="onChangeFilter('repositoryType', repositoryType)">
+          <md-option *ngFor="let repo of repositoryElements" [value]="repo.value">
+            {{ repo.name }}
+          </md-option>
+        </md-select>
+      </span>
+    </div>
+    <div class="charts-filter">
+      <label class="charts-filter__title">Order by</label>
+      <span class="charts-filter__select">
+        <md-select placeholder="" [(ngModel)]="orderBy"
+          (onClose)="onChangeFilter('orderBy', orderBy)">
+          <md-option *ngFor="let order of orderElements" [value]="order.value">
+            {{ order.name }}
+          </md-option>
+        </md-select>
+      </span>
+    </div>
+  </section>
+</app-panel>

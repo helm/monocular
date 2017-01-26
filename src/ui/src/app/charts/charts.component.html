@@ -1,0 +1,9 @@
+<app-header-bar></app-header-bar>
+
+<div class="charts__filters">
+  <app-charts-filters (onChange)="onChangeFilter($event)"></app-charts-filters>
+</div>
+
+<app-panel [title]="'Helm Charts'" class="app-panel--container">
+  <app-chart-list [charts]="orderedCharts"></app-chart-list>
+</app-panel>

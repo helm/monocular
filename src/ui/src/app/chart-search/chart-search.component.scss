@@ -1,3 +1,9 @@
-.query-string {
-  font-weight: bold;
+.chart-search {
+  &__result {
+    margin-top: 2em;
+  }
+
+  &__title {
+    margin: 0;
+  }
 }

@@ -1,5 +1,7 @@
-<div>
-  <app-main-header></app-main-header>
-  <app-chart-list [charts]="charts"></app-chart-list>
-  <app-trusted-maintainers></app-trusted-maintainers>
-</div>
+<app-main-header></app-main-header>
+<section class="chart-index__list">
+  <app-panel [title]="'Featured charts'" class="app-panel--container">
+    <app-chart-list [charts]="charts"></app-chart-list>
+  </app-panel>
+</section>
+<app-trusted-maintainers></app-trusted-maintainers>
