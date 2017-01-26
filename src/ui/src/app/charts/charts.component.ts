@@ -14,8 +14,8 @@ export class ChartsComponent implements OnInit {
 
   // Default filters
   filters = {
-    order_by: 'title',
-    repository_type: 'all'
+    orderBy: 'title',
+    repositoryType: 'all'
   }
 
   ngOnInit() {
@@ -41,9 +41,9 @@ export class ChartsComponent implements OnInit {
   filterCharts(charts): Chart[] {
     let filteredCharts = charts;
     // Check if we need to apply a filter
-    if (this.filters.repository_type !== 'all') {
+    if (this.filters.repositoryType !== 'all') {
       filteredCharts = charts.filter(c =>
-        c.attributes.repo === this.filters.repository_type);
+        c.attributes.repo === this.filters.repositoryType);
     }
 
     return filteredCharts;
@@ -51,7 +51,7 @@ export class ChartsComponent implements OnInit {
 
   // Sort charts
   orderCharts(charts): Chart[] {
-    switch(this.filters.order_by) {
+    switch(this.filters.orderBy) {
       case 'repository': {
         return charts.sort((a, b) =>
           a.attributes.repo.localeCompare(b.attributes.repo));

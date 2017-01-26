@@ -3,25 +3,23 @@
     <div class="charts-filter">
       <label class="charts-filter__title">Repository</label>
       <span class="charts-filter__select">
-        <ng2-select [options]="repositoryElements"
-                    [displayBy]="'name'"
-                    [selectedDisplayBy]="'name'"
-                    [identifyBy]="'value'"
-                    [(ngModel)]="repository_type"
-                    (onChange)="onChangeFilter('repository_type', $event.value)">
-        </ng2-select>
+        <md-select placeholder="" [(ngModel)]="repositoryType"
+          (onClose)="onChangeFilter('repositoryType', repositoryType)">
+          <md-option *ngFor="let repo of repositoryElements" [value]="repo.value">
+            {{ repo.name }}
+          </md-option>
+        </md-select>
       </span>
     </div>
     <div class="charts-filter">
       <label class="charts-filter__title">Order by</label>
       <span class="charts-filter__select">
-        <ng2-select [options]="orderElements"
-                    [displayBy]="'name'"
-                    [selectedDisplayBy]="'name'"
-                    [identifyBy]="'value'"
-                    [(ngModel)]="order_by"
-                    (onChange)="onChangeFilter('order_by', $event.value)">
-        </ng2-select>
+        <md-select placeholder="" [(ngModel)]="orderBy"
+          (onClose)="onChangeFilter('orderBy', orderBy)">
+          <md-option *ngFor="let order of orderElements" [value]="order.value">
+            {{ order.name }}
+          </md-option>
+        </md-select>
       </span>
     </div>
   </section>

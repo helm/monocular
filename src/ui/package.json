@@ -25,7 +25,6 @@
     "hammerjs": "^2.0.8",
     "markdown": "^0.5.0",
     "rxjs": "5.0.3",
-    "ng2-material-select": "^0.1.4",
     "ts-helpers": "^1.1.1",
     "zone.js": "^0.7.4"
   },

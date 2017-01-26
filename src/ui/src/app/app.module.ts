@@ -6,8 +6,6 @@ import { routing, appRoutingProviders } from './app.routing';
 
 /* Material library */
 import { MaterialModule } from '@angular/material';
-// This is a temporary library. We should replace it with the md-select component
-import { Ng2SelectModule } from 'ng2-material-select';
 
 /* Pipes */
 import { TruncatePipe } from './pipes/truncate.pipe';
@@ -65,8 +63,6 @@ require('hammerjs');
   ],
   imports: [
     MaterialModule.forRoot(),
-    // This is a temporary library. We should replace it with the md-select component
-    Ng2SelectModule,
     BrowserModule,
     FormsModule,
     HttpModule,
