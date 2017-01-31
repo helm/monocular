@@ -50,7 +50,6 @@ func configureAPI(api *operations.MonocularAPI) http.Handler {
 	// s.api.Logger = log.Printf
 
 	api.JSONConsumer = runtime.JSONConsumer()
-
 	api.JSONProducer = runtime.JSONProducer()
 
 	api.GetChartHandler = operations.GetChartHandlerFunc(func(params operations.GetChartParams) middleware.Responder {
@@ -73,6 +72,10 @@ func configureAPI(api *operations.MonocularAPI) http.Handler {
 	})
 	api.HealthzHandler = operations.HealthzHandlerFunc(func(params operations.HealthzParams) middleware.Responder {
 		return handlers.Healthz(params)
+	})
+
+	api.GetChartVersionReadmeHandler = operations.GetChartVersionReadmeHandlerFunc(func(params operations.GetChartVersionReadmeParams) middleware.Responder {
+		return handlers.GetChartVersionReadme(params, chartsImplementation)
 	})
 
 	api.ServerShutdown = func() {}

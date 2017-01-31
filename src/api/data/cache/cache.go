@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"strings"
 	"sync"
 
@@ -141,11 +142,35 @@ func (c *cachedCharts) Refresh() error {
 				return err
 			}
 			c.allCharts[repoName] = []*models.ChartPackage{}
+			fmt.Printf("Using cache directory %s\n", dataDirBase())
 			for _, chart := range charts {
-				chart.Repo = repoName
+				// Extra files. Skipped if the directory exists
+				dataExists, err := chartDataExists(chart)
+				if err != nil {
+					return err
+				}
+				if !dataExists {
+					fmt.Printf("Local cache missing for %s:%s\n", *chart.Name, *chart.Version)
+
+					err := downloadAndExtractChartTarball(chart)
+					if err != nil {
+						return err
+					}
+				}
 				c.allCharts[repoName] = append(c.allCharts[repoName], chart)
 			}
 		}
 	}
 	return nil
+}
+
+var chartDataExists = func(chart *models.ChartPackage) (bool, error) {
+	_, err := os.Stat(chartDataDir(chart))
+	if err == nil {
+		return true, nil
+	} else if os.IsNotExist(err) {
+		return false, nil
+	} else {
+		return false, err
+	}
 }

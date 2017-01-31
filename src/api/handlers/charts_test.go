@@ -7,6 +7,7 @@ import (
 
 	"github.com/arschles/assert"
 	"github.com/go-openapi/runtime"
+	"github.com/helm/monocular/src/api/data/cache"
 	"github.com/helm/monocular/src/api/data/helpers"
 	"github.com/helm/monocular/src/api/mocks"
 	"github.com/helm/monocular/src/api/swagger/models"
@@ -75,6 +76,49 @@ func TestGetChartVersion404(t *testing.T) {
 		Version:   "99.99.99",
 	}
 	errResp := GetChartVersion(bogonParams, chartsImplementation)
+	errResp.WriteResponse(w, runtime.JSONProducer())
+	assert.Equal(t, w.Code, http.StatusNotFound, "expect a 404 response code")
+	var httpBody models.Error
+	assert.NoErr(t, testutil.ErrorModelFromJSON(w.Body, &httpBody))
+	testutil.AssertErrBodyData(t, http.StatusNotFound, ChartVersionResourceName, httpBody)
+}
+
+func TestGetChartVersionReadme200(t *testing.T) {
+	// Stub readme file content
+	readFromCacheOrig := cache.ReadFromCache
+	cache.ReadFromCache = func(chart *models.ChartPackage, filename string) (string, error) {
+		return "mycontent", nil
+	}
+	defer func() { cache.ReadFromCache = readFromCacheOrig }()
+
+	chart, err := chartsImplementation.ChartVersionFromRepo(testutil.RepoName, testutil.ChartName, testutil.ChartVersionString)
+	assert.NoErr(t, err)
+	w := httptest.NewRecorder()
+	params := operations.GetChartVersionReadmeParams{
+		Repo:      testutil.RepoName,
+		ChartName: testutil.ChartName,
+		Version:   testutil.ChartVersionString,
+	}
+	resp := GetChartVersionReadme(params, chartsImplementation)
+	assert.NotNil(t, resp, "GetChartVersionReadme response")
+	resp.WriteResponse(w, runtime.JSONProducer())
+	assert.Equal(t, w.Code, http.StatusOK, "expect a 200 response code")
+	httpBody := new(models.ResourceData)
+	assert.NoErr(t, testutil.ResourceDataFromJSON(w.Body, httpBody))
+	// It returns the readme file
+	content := "mycontent"
+	readmeResource := helpers.MakeChartVersionReadmeResource(chart, &content)
+	testutil.AssertChartVersionReadmeResourceBodyData(t, readmeResource, httpBody)
+}
+
+func TestGetChartVersionReadme404(t *testing.T) {
+	w := httptest.NewRecorder()
+	bogonParams := operations.GetChartVersionReadmeParams{
+		Repo:      testutil.RepoName,
+		ChartName: testutil.ChartName,
+		Version:   "99.99.99",
+	}
+	errResp := GetChartVersionReadme(bogonParams, chartsImplementation)
 	errResp.WriteResponse(w, runtime.JSONProducer())
 	assert.Equal(t, w.Code, http.StatusNotFound, "expect a 404 response code")
 	var httpBody models.Error

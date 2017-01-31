@@ -88,6 +88,32 @@ paths:
           description: unexpected error
           schema:
             $ref: "#/definitions/error"
+  /v1/charts/{repo}/{chartName}/versions/{version}/readme:
+    get:
+      operationId: getChartVersionReadme
+      summary: "get Readme.md file for specific chart version"
+      parameters:
+        - name: repo
+          in: path
+          type: string
+          required: true
+        - name: chartName
+          in: path
+          type: string
+          required: true
+        - name: version
+          in: path
+          type: string
+          required: true
+      responses:
+        200:
+          description: Readme.md file content
+          schema:
+            $ref: "#/definitions/resourceData"
+        default:
+          description: unexpected error
+          schema:
+            $ref: "#/definitions/error"
   /v1/charts:
     get:
       operationId: getAllCharts
@@ -281,7 +307,15 @@ definitions:
       icon:
         type: string
         minLenth: 1
-  chartVersion: # a data type that describes version metadata about a "chart"
+  chartVersionReadme:
+    type: object
+    required:
+      - content
+    properties:
+      content:
+        type: string
+        minLength: 1
+  chartVersion: # a data type that describes version metadata about a "chart version"
     type: object
     required:
       - created

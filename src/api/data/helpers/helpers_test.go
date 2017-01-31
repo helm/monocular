@@ -83,6 +83,16 @@ func TestMakeChartVersionResource(t *testing.T) {
 	assert.Equal(t, *chartVersionResource.Attributes.(*models.ChartVersion).Version, chartVersion, "chartVersion resource Attributes.Version field value")
 }
 
+func TestMakeChartVersionReadmeResource(t *testing.T) {
+	charts, err := ParseYAMLRepo(getTestRepoYAML(), repoName)
+	assert.NoErr(t, err)
+	readmeContent := "mocked readme content"
+	chartVersionReadmeResource := MakeChartVersionReadmeResource(charts[0], &readmeContent)
+	assert.Equal(t, *chartVersionReadmeResource.Type, "chartVersionReadme", "chart version readme resource type field value")
+	assert.Equal(t, *chartVersionReadmeResource.ID, "stable/apache:0.0.1/readme", "chart readme resource ID field value")
+	assert.Equal(t, *chartVersionReadmeResource.Attributes.(*models.ChartVersionReadme).Content, readmeContent, "chartVersionReadme Attributes.Content field value")
+}
+
 func TestMakeChartVersionResources(t *testing.T) {
 	charts, err := ParseYAMLRepo(getTestRepoYAML(), repoName)
 	assert.NoErr(t, err)

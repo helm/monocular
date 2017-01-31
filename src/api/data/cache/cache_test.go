@@ -6,6 +6,7 @@ import (
 	"github.com/arschles/assert"
 	"github.com/helm/monocular/src/api/data"
 	"github.com/helm/monocular/src/api/data/helpers"
+	"github.com/helm/monocular/src/api/swagger/models"
 	"github.com/helm/monocular/src/api/swagger/restapi/operations"
 	"github.com/helm/monocular/src/api/testutil"
 )
@@ -71,11 +72,22 @@ func TestCachedChartsAllFromRepo(t *testing.T) {
 }
 
 func TestCachedChartsRefresh(t *testing.T) {
+	chartDataExistsOrig := chartDataExists
+	defer func() { chartDataExists = chartDataExistsOrig }()
+	chartDataExists = func(chart *models.ChartPackage) (bool, error) {
+		return true, nil
+	}
 	err := chartsImplementation.Refresh()
 	assert.NoErr(t, err)
 }
 
 func getChartsImplementation() data.Charts {
+	// Stub chartDataExists to avoid downloading extra data
+	chartDataExistsOrig := chartDataExists
+	defer func() { chartDataExists = chartDataExistsOrig }()
+	chartDataExists = func(chart *models.ChartPackage) (bool, error) {
+		return true, nil
+	}
 	repos := []map[string]string{
 		map[string]string{
 			"stable": "http://storage.googleapis.com/kubernetes-charts/index.yaml",

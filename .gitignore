@@ -1,4 +1,5 @@
 vendor/
+repo-data/
 monocular
 coverage.txt
 *.log
