@@ -65,7 +65,7 @@ paths:
   /v1/charts/{repo}/{chartName}/versions/{version}:
     get:
       operationId: getChartVersion
-      summary: "get all chart versions by repo/name"
+      summary: "get specific chart version by repo/name"
       parameters:
         - name: repo
           in: path
