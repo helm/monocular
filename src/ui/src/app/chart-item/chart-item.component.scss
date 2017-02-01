@@ -16,11 +16,12 @@ $chart-item-content-height: 70px;
     height: $chart-item-content-height;
     position: relative;
     margin-bottom: 1em;
+  }
 
-    img {
-      position: absolute;
-      width: $chart-item-content-height;
-    }
+  &-logo {
+    position: absolute;
+    max-width: $chart-item-content-height;
+    max-height: $chart-item-content-height;
   }
 
   &-info {

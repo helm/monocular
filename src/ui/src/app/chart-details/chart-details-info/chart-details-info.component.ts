@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Chart } from '../../chart';
+import { Chart } from '../../shared/models/chart';
 
 @Component({
   selector: 'app-chart-details-info',

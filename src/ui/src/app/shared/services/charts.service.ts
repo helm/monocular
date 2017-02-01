@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Chart } from './chart';
-import { CONFIG } from './config';
+import { Chart } from '../models/chart';
+import { CONFIG } from '../../config';
 
 // To get the Mocked Readme file
 import { Observable } from 'rxjs';

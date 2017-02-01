@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Chart } from '../chart';
+import { Chart } from '../shared/models/chart';
 
 @Component({
   selector: 'app-chart-item',
@@ -26,5 +26,19 @@ export class ChartItemComponent implements OnInit {
 	goToDetail(chart: Chart): void {
     let link = ['/charts', chart.attributes.repo, chart.attributes.name];
     this.router.navigate(link);
+  }
+
+  /**
+   * Display the icon of the application if it's provided. In the other case,
+   * It will return an string for a placeholder.
+   *
+   * @return {String} The URL of the icon or a placeholder
+   */
+  getIconUrl(chart: Chart): String {
+    if (chart.attributes.icon !== undefined) {
+      return chart.attributes.icon;
+    } else {
+      return '/assets/images/placeholder.png';
+    }
   }
 }
