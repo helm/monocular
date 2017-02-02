@@ -8,12 +8,45 @@ import { ChartSearchComponent } from './chart-search/chart-search.component';
 import { ChartsComponent } from './charts/charts.component';
 
 const appRoutes: Routes = [
-  { path: '', component: ChartIndexComponent },
-  { path: 'charts', component: ChartsComponent },
-  { path: 'charts/search', component: ChartSearchComponent },
-  { path: 'charts/:repo/:chartName', component: ChartDetailsComponent },
-  { path: 'charts/:repo/:chartName/:version', component: ChartDetailsComponent },
-  { path: '**', component: PageNotFoundComponent }
+  {
+    path: '',
+    component: ChartIndexComponent,
+    data: {
+      meta: {
+        title: 'Monocular'
+      }
+    }
+  },
+  {
+    path: 'charts',
+    component: ChartsComponent,
+    data: {
+      meta: {
+        title: 'All charts'
+      }
+    }
+  },
+  {
+    path: 'charts/search',
+    component: ChartSearchComponent
+  },
+  {
+    path: 'charts/:repo/:chartName',
+    component: ChartDetailsComponent
+  },
+  {
+    path: 'charts/:repo/:chartName/:version',
+    component: ChartDetailsComponent
+  },
+  {
+    path: '**',
+    component: PageNotFoundComponent,
+    data: {
+      meta: {
+        title: 'Not Found'
+      }
+    }
+  }
 ];
 
 export const appRoutingProviders: any[] = [

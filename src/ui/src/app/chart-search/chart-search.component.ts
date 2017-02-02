@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ChartsService } from '../shared/services/charts.service';
+import { MetaService } from 'ng2-meta';
 import { Chart } from '../shared/models/chart';
 
 import { ActivatedRoute } from '@angular/router';
@@ -12,22 +13,28 @@ import 'rxjs/add/operator/map';
   styleUrls: ['./chart-search.component.scss']
 })
 export class ChartSearchComponent implements OnInit {
-  query: String;
+  query: string;
 	charts: Chart[] = []
 
   constructor(
     private route: ActivatedRoute,
-    private chartsService: ChartsService
+    private chartsService: ChartsService,
+    private metaService: MetaService
   ) { }
 
   ngOnInit() {
     this.route
       .queryParams
       .forEach(params => {
-        let q: String = params['q']
-        this.query = q
-        this.searchCharts(q)
-      })
+        let q: string = params['q']
+        this.query = q;
+        this.searchCharts(q);
+      });
+
+    // Update meta tags
+    setTimeout(() => {
+      this.updateMetaTags();
+    }, 10);
   }
 
   searchCharts(q: String): void {
@@ -36,9 +43,18 @@ export class ChartSearchComponent implements OnInit {
 
   resultMessage(): String {
     if (this.charts.length > 0) {
-      return this.charts.length + " results found for \"" + this.query + "\"";
+      return `${this.charts.length} results found for "${this.query}"`;
     } else {
-      return "\"" + this.query + "\" did not return any results";
+      return `"${this.query}" did not return any results`;
     }
+  }
+
+  /**
+   * Update the metatags with the string we are looking for.
+   */
+  updateMetaTags(): void {
+    let title: string = `Results for "${this.query}"`;
+    this.metaService.setTitle(title);
+    this.metaService.setTag('og:title', title);
   }
 }

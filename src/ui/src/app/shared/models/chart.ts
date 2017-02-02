@@ -1,19 +1,20 @@
 import { ChartVersionAttributes } from "./chart-version"
 export class Chart {
-  id: String;
-  type: String;
-  links: String[];
+  id: string;
+  type: string;
+  links: string[];
   attributes: ChartAttributes;
   relationships: ChartRelationships;
 }
 
+
 export class ChartAttributes {
-  description: String;
-  name: String;
-  icon: String;
-  repo: String;
-  home: String;
-  sources: String[];
+  description: string;
+  name: string;
+  icon: string;
+  repo: string;
+  home: string;
+  sources: string[];
 }
 
 class ChartRelationships {
@@ -23,6 +24,6 @@ class ChartRelationships {
 class ChartVersionRelationship {
   data: ChartVersionAttributes
   links: {
-    self: String
+    self: string
   }
 }
