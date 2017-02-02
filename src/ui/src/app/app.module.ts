@@ -11,7 +11,7 @@ import { MaterialModule } from '@angular/material';
 import { TruncatePipe } from './pipes/truncate.pipe';
 
 /* Services */
-import { ChartsService } from './charts.service';
+import { ChartsService } from './shared/services/charts.service';
 
 /* Components */
 import { AppComponent } from './app.component';

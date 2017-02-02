@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
-import { ChartsService } from '../charts.service';
-import { Chart } from '../chart';
+import { ChartsService } from '../shared/services/charts.service';
+import { Chart } from '../shared/models/chart';
 
 @Component({
   selector: 'app-chart-details',
