@@ -16,7 +16,7 @@ import (
 
 // Downloads the chart tar file linked by metadata.Urls and store
 // the wanted files (i.e README.md) under chartDataDir
-func downloadAndExtractChartTarball(chart *models.ChartPackage) error {
+var downloadAndExtractChartTarball = func(chart *models.ChartPackage) error {
 	if err := ensureChartDataDir(chart); err != nil {
 		return err
 	}
@@ -58,6 +58,11 @@ var downloadTarball = func(chart *models.ChartPackage) error {
 	if err != nil {
 		return err
 	}
+
+	if resp.StatusCode != 200 {
+		return fmt.Errorf("Error downloading %s, %d", source, resp.StatusCode)
+	}
+
 	defer resp.Body.Close()
 	_, err = io.Copy(out, resp.Body)
 	if err != nil {
@@ -209,4 +214,14 @@ var ReadFromCache = func(chart *models.ChartPackage, filename string) (string, e
 	}
 
 	return string(dat), nil
+}
+
+var chartDataExists = func(chart *models.ChartPackage) (bool, error) {
+	_, err := os.Stat(chartDataDir(chart))
+	if err == nil {
+		return true, nil
+	} else if os.IsNotExist(err) {
+		return false, nil
+	}
+	return false, err
 }

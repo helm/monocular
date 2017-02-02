@@ -1,6 +1,7 @@
 package mocks
 
 import (
+	"errors"
 	"path/filepath"
 	"testing"
 
@@ -83,4 +84,16 @@ func TestMockedtarballTmpPath(t *testing.T) {
 	res, err := MockedtarballTmpPath()
 	assert.NoErr(t, err)
 	assert.Equal(t, res, expected, "returns the path based on test data")
+}
+
+func TestGetMockRepoPathError(t *testing.T) {
+	getTestDataWdOrig := getTestDataWd
+	defer func() { getTestDataWd = getTestDataWdOrig }()
+	knownErr := errors.New("myError")
+	getTestDataWd = func() (string, error) {
+		return "", knownErr
+	}
+
+	_, err := MockedtarballTmpPath()
+	assert.Err(t, err, knownErr)
 }

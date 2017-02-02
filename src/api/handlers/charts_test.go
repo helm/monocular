@@ -126,6 +126,21 @@ func TestGetChartVersionReadme404(t *testing.T) {
 	testutil.AssertErrBodyData(t, http.StatusNotFound, ChartVersionResourceName, httpBody)
 }
 
+func TestGetChartVersionReadmeCantLoadFile(t *testing.T) {
+	w := httptest.NewRecorder()
+	params := operations.GetChartVersionReadmeParams{
+		Repo:      testutil.RepoName,
+		ChartName: testutil.ChartName,
+		Version:   testutil.ChartVersionString,
+	}
+	errResp := GetChartVersionReadme(params, chartsImplementation)
+	errResp.WriteResponse(w, runtime.JSONProducer())
+	assert.Equal(t, w.Code, http.StatusNotFound, "expect a 404 response code")
+	var httpBody models.Error
+	assert.NoErr(t, testutil.ErrorModelFromJSON(w.Body, &httpBody))
+	testutil.AssertErrBodyData(t, http.StatusNotFound, "Cant read Readme file", httpBody)
+}
+
 func TestGetChartVersions200(t *testing.T) {
 	charts, err := chartsImplementation.ChartVersionsFromRepo(testutil.RepoName, testutil.ChartName)
 	assert.NoErr(t, err)

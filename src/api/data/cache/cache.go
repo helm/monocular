@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"os"
 	"strings"
 	"sync"
 
@@ -150,7 +149,7 @@ func (c *cachedCharts) Refresh() error {
 					return err
 				}
 				if !dataExists {
-					fmt.Printf("Local cache missing for %s:%s\n", *chart.Name, *chart.Version)
+					fmt.Printf("Local cache missing for %s-%s\n", *chart.Name, *chart.Version)
 
 					err := downloadAndExtractChartTarball(chart)
 					if err != nil {
@@ -162,15 +161,4 @@ func (c *cachedCharts) Refresh() error {
 		}
 	}
 	return nil
-}
-
-var chartDataExists = func(chart *models.ChartPackage) (bool, error) {
-	_, err := os.Stat(chartDataDir(chart))
-	if err == nil {
-		return true, nil
-	} else if os.IsNotExist(err) {
-		return false, nil
-	} else {
-		return false, err
-	}
 }

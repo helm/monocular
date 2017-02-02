@@ -2,6 +2,7 @@ package cache
 
 import (
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -79,6 +80,27 @@ func TestDownloadTarballCreatesFileInDestination(t *testing.T) {
 	assert.NoErr(t, err)
 	_, err = os.Stat(tarballTmpPath(chart))
 	assert.NoErr(t, err)
+}
+
+func TestDownloadTarballErrorDownloading(t *testing.T) {
+	chart, err := getTestChart()
+	assert.NoErr(t, err)
+	randomPath, _ := ioutil.TempDir(os.TempDir(), "test")
+	tarballTmpPathOrig := tarballTmpPath
+	defer func() { tarballTmpPath = tarballTmpPathOrig }()
+	tarballTmpPath = func(chart *models.ChartPackage) string {
+		return filepath.Join(randomPath, "myFile.tar.gz")
+	}
+	// Invald protocol
+	chart.Urls[0] = "./invalid-protocol/bogusUrl"
+	err = downloadTarball(chart)
+	assert.ExistsErr(t, err, "Invalid protocol")
+
+	// 404
+	chart.Urls[0] = "http://localhost/bogusUrl"
+	err = downloadTarball(chart)
+	fmt.Printf("HII%s", err)
+	assert.ExistsErr(t, err, "Cant copy")
 }
 
 func TestExtractFilesFromTarballOk(t *testing.T) {
@@ -196,6 +218,38 @@ func TestChartDataExist(t *testing.T) {
 	// Directory does not exist
 	exists, _ = chartDataExists(chart)
 	assert.Equal(t, exists, false, "the directory does not exist")
+}
+
+func TestCopyFile(t *testing.T) {
+	src, _ := ioutil.TempFile(os.TempDir(), "")
+	dest, _ := ioutil.TempFile(os.TempDir(), "")
+	err := copyFile(dest.Name(), src.Name())
+	assert.NoErr(t, err)
+	// Src does not exist
+	err = copyFile(dest.Name(), "/does-not-exist")
+	assert.ExistsErr(t, err, "SRC does not exist")
+	// Dest is not valid
+	err = copyFile(os.TempDir(), src.Name())
+	assert.ExistsErr(t, err, "Destination not valid")
+}
+
+func TestUntar(t *testing.T) {
+	src, _ := mocks.MockedtarballTmpPath()
+	dest, _ := ioutil.TempDir(os.TempDir(), "")
+	err := untar(src, dest)
+	assert.NoErr(t, err)
+	files, _ := ioutil.ReadDir(dest)
+	assert.Equal(t, len(files), 1, "only contains the parent dir")
+
+	// Cant read the tar file
+	err = untar("does-not-exist.tar.gz", dest)
+	assert.ExistsErr(t, err, "SRC does not exist")
+
+	// It is not valid gzip file
+	notValidFile, _ := ioutil.TempFile(os.TempDir(), "")
+	err = untar(notValidFile.Name(), dest)
+	assert.ExistsErr(t, err, "SRC does not exist")
+
 }
 
 // Auxiliar
