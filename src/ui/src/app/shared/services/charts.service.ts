@@ -17,21 +17,29 @@ export class ChartsService {
 
   constructor(private http: Http) { }
 
+  /**
+   * Get all charts from the API
+   *
+   * @return {Observable} An observable that will an array with all Charts
+   */
   getCharts(): Observable<Chart[]> {
-    return this.http.get(this.hostname + "/v1/charts")
+    return this.http.get(`${this.hostname}/v1/charts`)
                   .map(this.extractData)
                   .catch(this.handleError);
   }
 
-  /* TODO: We will call to an specific resource URL so
-  no mapping nor transformation will be required */
+  /**
+   * Get a chart using the API
+   *
+   * @param {String} repo Repository name
+   * @param {String} chartName Chart name
+   * @return {Observable} An observable that will a chart instance
+   */
   getChart(repo: String, chartName: String): Observable<Chart> {
     // Transform Observable<Chart[]> into Observable<Chart>[]
-    return this.getCharts().switchMap(charts => {
-      return charts
-    }).find(chart => {
-      return chart.attributes.repo == repo && chart.attributes.name == chartName;
-    });
+    return this.http.get(`${this.hostname}/v1/charts/${repo}/${chartName}`)
+                  .map(this.extractData)
+                  .catch(this.handleError);
   }
 
   /* TODO, use backend search API endpoint */

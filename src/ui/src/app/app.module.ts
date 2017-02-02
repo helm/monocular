@@ -8,7 +8,7 @@ import { routing, appRoutingProviders } from './app.routing';
 import { MaterialModule } from '@angular/material';
 
 /* Pipes */
-import { TruncatePipe } from './pipes/truncate.pipe';
+import { TruncatePipe } from './shared/pipes/truncate.pipe';
 
 /* Services */
 import { ChartsService } from './shared/services/charts.service';
