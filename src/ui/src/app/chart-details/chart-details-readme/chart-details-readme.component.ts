@@ -11,7 +11,7 @@ import { ActivatedRoute, Params } from '@angular/router';
 export class ChartDetailsReadmeComponent implements OnInit {
   @Input() chart: Chart
   readmeContent: String
-  markdown = require( "markdown" ).markdown;
+  markdown = require('marked')
 
   constructor(
     private route: ActivatedRoute,
@@ -29,7 +29,7 @@ export class ChartDetailsReadmeComponent implements OnInit {
       let latestVersion = this.chart.relationships.latestChartVersion.data.version
       this.chartsService.getChartReadme(repo, chartName, latestVersion)
         .subscribe(chart => {
-          this.readmeContent = this.markdown.toHTML(chart.attributes.content)
+          this.readmeContent = this.markdown(chart.attributes.content)
         })
       })
   }
