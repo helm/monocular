@@ -5,11 +5,11 @@
   </app-panel>
   <section class="chart-details" *ngIf="chart">
     <article class="chart-details__docs">
-      <app-chart-details-usage [chart]=chart></app-chart-details-usage>
-      <app-chart-details-readme [chart]=chart></app-chart-details-readme>
+      <app-chart-details-usage [chart]=chart [currentVersion]=currentVersion></app-chart-details-usage>
+      <app-chart-details-readme [chart]=chart [currentVersion]=currentVersion></app-chart-details-readme>
     </article>
     <aside class="chart-details__info">
-      <app-chart-details-info [chart]=chart></app-chart-details-info>
+      <app-chart-details-info [chart]=chart [currentVersion]=currentVersion></app-chart-details-info>
     </aside>
   </section>
 </div>

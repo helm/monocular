@@ -1,5 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { ChartsService } from '../../shared/services/charts.service';
 import { Chart } from '../../shared/models/chart';
+import { ChartVersion } from '../../shared/models/chart-version';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-chart-details-info',
@@ -8,17 +11,23 @@ import { Chart } from '../../shared/models/chart';
 })
 export class ChartDetailsInfoComponent implements OnInit {
   @Input() chart: Chart
-  constructor() { }
+  @Input() currentVersion: String
+  versions: ChartVersion[]
+  constructor(
+    private chartsService: ChartsService,
+    private router: Router
+  ) { }
 
   ngOnInit() {
-  }
-
-  get lastVersion() {
-    return this.chart.relationships.latestChartVersion;
+    this.loadVersions(this.chart)
   }
 
   get sources() {
     return this.chart.attributes.sources || [];
   }
 
+  loadVersions(chart: Chart): void {
+    this.chartsService.getVersions(chart.attributes.repo, chart.attributes.name)
+      .subscribe(versions => { this.versions = versions })
+  }
 }

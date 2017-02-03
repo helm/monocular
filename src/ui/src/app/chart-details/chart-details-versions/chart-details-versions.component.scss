@@ -1,0 +1,11 @@
+.version {
+  display: block;
+  .creation-date {
+    color: grey;
+  }
+  .number {
+    &.selected {
+      font-weight: bold;
+    }
+  }
+}

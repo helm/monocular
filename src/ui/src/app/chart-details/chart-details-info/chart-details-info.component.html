@@ -13,13 +13,7 @@
     </app-panel>
   </div>
   <div class="chartInfo__versions">
-    <app-panel [title]="'Versions'">
-      <div>
-        <a target="_blank" rel="noopener" href="{{ lastVersion.data.urls[0] }}">
-          {{ lastVersion.data.version }}
-        </a>
-      </div>
-    </app-panel>
+    <app-chart-details-versions [versions]=versions [currentVersion]=currentVersion></app-chart-details-versions>
   </div>
   <div class="chartInfo__sources">
     <app-panel [title]="'Sources'">

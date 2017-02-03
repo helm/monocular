@@ -1,3 +1,4 @@
+import { ChartVersionAttributes } from "./chart-version"
 export class Chart {
   id: String;
   type: String;
@@ -6,7 +7,7 @@ export class Chart {
   relationships: ChartRelationships;
 }
 
-class ChartAttributes {
+export class ChartAttributes {
   description: String;
   name: String;
   icon: String;
@@ -16,16 +17,11 @@ class ChartAttributes {
 }
 
 class ChartRelationships {
-  latestChartVersion: ChartVersion;
+  latestChartVersion: ChartVersionRelationship;
 }
 
-class ChartVersion {
-  data: {
-    created: String,
-    digest: String,
-    version: String,
-    urls: String[]
-  }
+class ChartVersionRelationship {
+  data: ChartVersionAttributes
   links: {
     self: String
   }

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Chart } from '../models/chart';
 import { ChartReadme } from '../models/chart-readme';
+import { ChartVersion } from '../models/chart-version';
 import { CONFIG } from '../../config';
 
 // To get the Mocked Readme file
@@ -54,7 +55,7 @@ export class ChartsService {
   }
 
   /**
-   * Get a chart using the API
+   * Get a chart Readme using the API
    *
    * @param {String} repo Repository name
    * @param {String} chartName Chart name
@@ -66,6 +67,18 @@ export class ChartsService {
     return this.http.get(`${this.hostname}/v1/charts/${repo}/${chartName}/versions/${version}/readme`)
                   .map(this.extractData)
                   .catch(this.handleError);
+  }
+  /**
+   * Get chart versions using the API
+   *
+   * @param {String} repo Repository name
+   * @param {String} chartName Chart name
+   * @return {Observable} An observable containing an array of ChartVersions
+   */
+  getVersions(repo: String, chartName: String): Observable<ChartVersion[]> {
+    return this.http.get(`${this.hostname}/v1/charts/${repo}/${chartName}/versions`)
+      .map(this.extractData)
+      .catch(this.handleError);
   }
 
   /* TODO, get remote README */
