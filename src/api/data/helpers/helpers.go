@@ -44,6 +44,17 @@ func ParseYAMLRepo(rawYAML []byte, repoName string) ([]*models.ChartPackage, err
 	return ret, nil
 }
 
+// MakeChartVersionReadmeResource composes a Resource type that represents a repo+chart+versionReadme
+func MakeChartVersionReadmeResource(chart *models.ChartPackage, readmeContent *string) *models.Resource {
+	var ret models.Resource
+	ret.Type = StrToPtr("chartVersionReadme")
+	ret.ID = StrToPtr(fmt.Sprintf("%s/%s", MakeChartVersionID(chart.Repo, *chart.Name, *chart.Version), "readme"))
+	ret.Attributes = &models.ChartVersionReadme{
+		Content: readmeContent,
+	}
+	return &ret
+}
+
 // MakeChartResource composes a Resource type that represents a repo+chart
 func MakeChartResource(chart *models.ChartPackage) *models.Resource {
 	var ret models.Resource

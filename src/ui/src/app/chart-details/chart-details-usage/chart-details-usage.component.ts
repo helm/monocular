@@ -9,13 +9,12 @@ import { Chart } from '../../shared/models/chart';
 export class ChartDetailsUsageComponent implements OnInit {
   @Input() chart: Chart
   installCommand: String
-  // TODO, remove
-  latestVersion: String = '1.2.3-mocked'
 
   constructor() { }
 
   ngOnInit() {
-    this.installCommand = `helm install ${ this.chart.id }-${ this.latestVersion }.tgz`
+    let latestVersion: String = this.chart.relationships.latestChartVersion.data.version
+    this.installCommand = `helm install ${ this.chart.id } --version ${ latestVersion }`
   }
 
 }

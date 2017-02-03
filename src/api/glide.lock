@@ -1,5 +1,5 @@
-hash: a2ac040c9c67340ae87f47498de3c56eb4f4f2d7ecb813d892a3d025e909142b
-updated: 2016-10-04T19:28:40.831167384+02:00
+hash: bfea84b78338d62dd2309799d4a7143483ed4cd968a33ae786e89e385fbc61f5
+updated: 2017-02-02T01:19:08.439069984Z
 imports:
 - name: github.com/arschles/assert
   version: fc2da9844984ce5093111298174706e14d4c0c47
@@ -37,16 +37,6 @@ imports:
   version: 08b5f424b9271eedf6f9f0ce86cb9396ed337a42
 - name: github.com/gorilla/mux
   version: 757bef944d0f21880861c2dd9c871ca543023cba
-- name: github.com/helm/monocular
-  version: 1b01e10270dfd78da9834ae4b8dfce0b1d106d83
-  subpackages:
-  - src/api/swagger/restapi
-  - src/api/swagger/restapi/operations
-  - src/api/mocks
-  - src/api/swagger/models
-  - src/api/data
-  - src/api/data/helpers
-  - src/api/handlers
 - name: github.com/imdario/mergo
   version: 3e95a51e0639b4cf372f2ccf74c86749d747fbdc
 - name: github.com/jessevdk/go-flags
@@ -56,9 +46,9 @@ imports:
 - name: github.com/mailru/easyjson
   version: 34560e358dc05e2c28f6fda2f5c9e7494a4b9b19
   subpackages:
-  - buffer
   - jlexer
   - jwriter
+  - buffer
 - name: github.com/PuerkitoBio/purell
   version: 8a290539e2e8629dbc4e6bad948158f790ec31f4
 - name: github.com/PuerkitoBio/urlesc
@@ -77,16 +67,18 @@ imports:
 - name: golang.org/x/text
   version: 098f51fb687dbaba1f6efabeafbb6461203f9e21
   subpackages:
+  - secure/precis
+  - unicode/norm
   - cases
-  - internal/tag
-  - language
   - runes
   - secure/bidirule
-  - secure/precis
   - transform
-  - unicode/bidi
-  - unicode/norm
   - width
+  - language
+  - unicode/bidi
+  - internal/tag
+- name: gopkg.in/jarcoal/httpmock.v1
+  version: 6aa33143427f6eb0bebcc0af42e8db85e39a42c0
 - name: gopkg.in/yaml.v2
   version: e4d366fc3c7938e2958e662b4258c7a89e1f0e3e
 testImports: []

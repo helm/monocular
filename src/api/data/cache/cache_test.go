@@ -1,11 +1,13 @@
 package cache
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/arschles/assert"
 	"github.com/helm/monocular/src/api/data"
 	"github.com/helm/monocular/src/api/data/helpers"
+	"github.com/helm/monocular/src/api/swagger/models"
 	"github.com/helm/monocular/src/api/swagger/restapi/operations"
 	"github.com/helm/monocular/src/api/testutil"
 )
@@ -71,11 +73,61 @@ func TestCachedChartsAllFromRepo(t *testing.T) {
 }
 
 func TestCachedChartsRefresh(t *testing.T) {
+	chartDataExistsOrig := chartDataExists
+	defer func() { chartDataExists = chartDataExistsOrig }()
+	chartDataExists = func(chart *models.ChartPackage) (bool, error) { return false, nil }
+	downloadAndExtractChartTarballOrig := downloadAndExtractChartTarball
+	defer func() { downloadAndExtractChartTarball = downloadAndExtractChartTarballOrig }()
+	downloadAndExtractChartTarball = func(chart *models.ChartPackage) error { return nil }
 	err := chartsImplementation.Refresh()
 	assert.NoErr(t, err)
 }
 
+func TestCachedChartsRefreshErrorPropagation(t *testing.T) {
+	// Invalid repo URL
+	repos := []map[string]string{
+		map[string]string{"stable": "./localhost/index.yaml"},
+	}
+	chImplementation := NewCachedCharts(repos)
+	err := chImplementation.Refresh()
+	assert.ExistsErr(t, err, "Invalid Repo URL")
+	// Repo does not exist
+	repos = []map[string]string{
+		map[string]string{"stable": "http://localhost/index.yaml"},
+	}
+	chImplementation = NewCachedCharts(repos)
+	err = chImplementation.Refresh()
+	assert.ExistsErr(t, err, "Repo does not exist")
+}
+
+func TestCachedChartsRefreshErrorDownloadingPackage(t *testing.T) {
+	chartDataExistsOrig := chartDataExists
+	defer func() { chartDataExists = chartDataExistsOrig }()
+	chartDataExists = func(chart *models.ChartPackage) (bool, error) { return false, nil }
+	downloadAndExtractChartTarballOrig := downloadAndExtractChartTarball
+	defer func() { downloadAndExtractChartTarball = downloadAndExtractChartTarballOrig }()
+	knownError := errors.New("error on downloadAndExtractChartTarball")
+	downloadAndExtractChartTarball = func(chart *models.ChartPackage) error {
+		return knownError
+	}
+
+	repos := []map[string]string{
+		map[string]string{
+			"stable": "http://storage.googleapis.com/kubernetes-charts/index.yaml",
+		},
+	}
+	chImplementation := NewCachedCharts(repos)
+	err := chImplementation.Refresh()
+	assert.Err(t, err, knownError)
+}
+
 func getChartsImplementation() data.Charts {
+	// Stub chartDataExists to avoid downloading extra data
+	chartDataExistsOrig := chartDataExists
+	defer func() { chartDataExists = chartDataExistsOrig }()
+	chartDataExists = func(chart *models.ChartPackage) (bool, error) {
+		return true, nil
+	}
 	repos := []map[string]string{
 		map[string]string{
 			"stable": "http://storage.googleapis.com/kubernetes-charts/index.yaml",
@@ -84,7 +136,7 @@ func getChartsImplementation() data.Charts {
 			"incubator": "http://storage.googleapis.com/kubernetes-charts-incubator/index.yaml",
 		},
 	}
-	chartsImplementation := NewCachedCharts(repos)
-	chartsImplementation.Refresh()
-	return chartsImplementation
+	chImplementation := NewCachedCharts(repos)
+	chImplementation.Refresh()
+	return chImplementation
 }

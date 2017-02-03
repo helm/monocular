@@ -26,7 +26,7 @@ func getYAML(filepath string) ([]byte, error) {
 // getTestDataWd returns the full local pathname of the monocular API mocks/testdata directory, including a trailing "/"
 // The purpose is for various sub-packages to load filesystem-derived mocks from their cwd
 // Requires a cwd of either the monocular git repo root, or somewhere inside 'src/api', inclusive
-func getTestDataWd() (string, error) {
+var getTestDataWd = func() (string, error) {
 	const apiDir = "/src/api"
 	const testdataDir = "/mocks/testdata/"
 	cwd, err := os.Getwd()
