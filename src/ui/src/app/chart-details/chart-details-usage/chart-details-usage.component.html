@@ -1,6 +1,7 @@
 <div class="chart-details-usage">
   <label>Usage</label>
   <code>
-    {{ installCommand }}
+    <p>{{ repoAddInstructions }}</p>
+    <p>helm install {{ cmdChartId }} --version {{ currentVersion }}</p>
   </code>
 </div>

@@ -8,13 +8,21 @@ import { Chart } from '../../shared/models/chart';
 })
 export class ChartDetailsUsageComponent implements OnInit {
   @Input() chart: Chart
-  installCommand: String
+  @Input() currentVersion: String
 
   constructor() { }
 
-  ngOnInit() {
-    let latestVersion: String = this.chart.relationships.latestChartVersion.data.version
-    this.installCommand = `helm install ${ this.chart.id } --version ${ latestVersion }`
+  ngOnInit() {}
+
+  // Deletes /stable prefix not needed for stable repos
+  get cmdChartId(): string {
+    return this.chart.id.replace("stable/", "")
   }
 
+  // TODO, remove hardcoded code once https://github.com/helm/monocular/issues/86 is implemented
+  get repoAddInstructions(): string {
+    if (this.chart.attributes.repo == "incubator") {
+      return "helm repo add incubator https://kubernetes-charts-incubator.storage.googleapis.com/"
+    }
+  }
 }

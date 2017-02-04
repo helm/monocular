@@ -12,6 +12,7 @@ const appRoutes: Routes = [
   { path: 'charts', component: ChartsComponent },
   { path: 'charts/search', component: ChartSearchComponent },
   { path: 'charts/:repo/:chartName', component: ChartDetailsComponent },
+  { path: 'charts/:repo/:chartName/:version', component: ChartDetailsComponent },
   { path: '**', component: PageNotFoundComponent }
 ];
 
