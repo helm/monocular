@@ -3,19 +3,15 @@
 
 .chart-details {
   width: 100%;
-  margin: 1em 0;
+  margin: 2em 0;
   padding: 0 2em;
-
-  &__info {
-    padding-top: 1em;
-  }
 
   @include mappy-bp(medium) {
     display: flex;
 
     &__info,
     &__docs {
-      padding: 1em;
+      padding: 0 1em;
     }
 
     &__info {
@@ -23,6 +19,7 @@
     }
 
     &__docs {
+      min-width: 0;
       flex: 3;
     }
   }
