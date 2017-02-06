@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { ChartsService } from '../shared/services/charts.service';
 import { Chart } from '../shared/models/chart';
+import { MetaService } from 'ng2-meta';
 
 @Component({
   selector: 'app-chart-details',
@@ -10,12 +11,14 @@ import { Chart } from '../shared/models/chart';
 })
 export class ChartDetailsComponent implements OnInit {
   /* This resource will be different, probably ChartVersion */
-  chart: Chart
-  currentVersion: String
+  chart: Chart;
+  currentVersion: string;
+  titleVersion: string;
 
   constructor(
     private route: ActivatedRoute,
-    private chartsService: ChartsService
+    private chartsService: ChartsService,
+    private metaService: MetaService
   ) { }
 
   ngOnInit() {
@@ -24,9 +27,35 @@ export class ChartDetailsComponent implements OnInit {
       let chartName = params['chartName']
       this.chartsService.getChart(repo, chartName)
         .subscribe(chart => {
-          this.chart = chart
-          this.currentVersion = params['version'] || this.chart.relationships.latestChartVersion.data.version
-        })
-      })
+          this.chart = chart;
+          this.currentVersion = params['version'] || this.chart.relationships.latestChartVersion.data.version;
+          this.titleVersion = params['version'] || '';
+          this.updateMetaTags();
+        });
+    });
+  }
+
+  /**
+   * Content for the title version tag
+   *
+   * @return {string} Title to display in the site
+   */
+  contentTitleVersion(): string {
+    if (this.titleVersion.length > 0) {
+      return `${this.chart.attributes.name} ${this.titleVersion}`;
+    } else {
+      return this.chart.attributes.name;
+    }
+  }
+
+  /**
+   * Update the metatags with the name and the description of the application.
+   */
+  updateMetaTags(): void {
+    let title: string = this.contentTitleVersion();
+    this.metaService.setTitle(title);
+    this.metaService.setTag('description', this.chart.attributes.description);
+    this.metaService.setTag('og:title', title);
+    this.metaService.setTag('og:description', this.chart.attributes.description);
   }
 }
