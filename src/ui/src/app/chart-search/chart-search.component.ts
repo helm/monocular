@@ -32,9 +32,7 @@ export class ChartSearchComponent implements OnInit {
       });
 
     // Update meta tags
-    setTimeout(() => {
-      this.updateMetaTags();
-    }, 10);
+    this.updateMetaTags();
   }
 
   searchCharts(q: String): void {
