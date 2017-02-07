@@ -5,9 +5,9 @@
       <h2 class="chart-item-info__title" (click)="goToDetail(chart)">
         {{ chart.attributes.name }}</h2>
       <p>
-        <span class="chart-item-info__repo">{{ chart.attributes.repo }}</span>
         <span class="chart-item-info__version" *ngIf="showVersion">
           v{{ chart.relationships.latestChartVersion.data.version }}</span>
+        <span class="chart-item-info__repo repo-{{chart.attributes.repo}}">{{ chart.attributes.repo }}</span>
       </p>
     </div>
   </div>
