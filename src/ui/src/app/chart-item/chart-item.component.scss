@@ -43,19 +43,24 @@ $chart-item-content-height: 70px;
     &__repo {
       color: white;
       padding: 2px 5px;
-      border: 1px solid darken(md-color($monocular-app-accent), 10%);
+      border: 1px solid md-color($monocular-app-accent, 600);
       background-color: md-color($monocular-app-accent);
       border-radius: 5px;
       font-size: .8em;
       position: relative;
       top: -1px;
+
+      &.repo-incubator {
+        border-color: md-color($monocular-app-warn, 600);
+        background-color: md-color($monocular-app-warn);
+      }
     }
 
     &__version {
       color: lighten($layout_text, 20%);
-      margin-left: 5px;
-      padding-left: 7px;
-      border-left: 1px solid darken($layout_light, 10%);
+      margin-right: 5px;
+      padding-right: 7px;
+      border-right: 1px solid darken($layout_light, 10%);
     }
   }
 }
