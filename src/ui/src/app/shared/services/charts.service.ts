@@ -1,10 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Chart } from '../models/chart';
-import { ChartReadme } from '../models/chart-readme';
 import { ChartVersion } from '../models/chart-version';
 import { CONFIG } from '../../config';
 
-// To get the Mocked Readme file
 import { Observable } from 'rxjs';
 import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/find';
@@ -15,7 +13,7 @@ import { Http, Response } from '@angular/http';
 /* TODO, This is a mocked class. */
 @Injectable()
 export class ChartsService {
-  hostname: String = CONFIG.backendHostname
+  hostname: string = CONFIG.backendHostname
 
   constructor(private http: Http) { }
 
@@ -33,11 +31,11 @@ export class ChartsService {
   /**
    * Get a chart using the API
    *
-   * @param {String} repo Repository name
-   * @param {String} chartName Chart name
+   * @param {string} repo Repository name
+   * @param {string} chartName Chart name
    * @return {Observable} An observable that will a chart instance
    */
-  getChart(repo: String, chartName: String): Observable<Chart> {
+  getChart(repo: string, chartName: string): Observable<Chart> {
     // Transform Observable<Chart[]> into Observable<Chart>[]
     return this.http.get(`${this.hostname}/v1/charts/${repo}/${chartName}`)
                   .map(this.extractData)
@@ -57,34 +55,38 @@ export class ChartsService {
   /**
    * Get a chart Readme using the API
    *
-   * @param {String} repo Repository name
-   * @param {String} chartName Chart name
-   * @param {String} version Chart version
+   * @param {string} repo Repository name
+   * @param {string} chartName Chart name
+   * @param {string} version Chart version
    * @return {Observable} An observable that will be a chartReadme
    */
-  getChartReadme(repo: String, chartName: String, version: String): Observable<ChartReadme> {
-    // Transform Observable<Chart[]> into Observable<ChartReadme>[]
-    return this.http.get(`${this.hostname}/v1/charts/${repo}/${chartName}/versions/${version}/readme`)
-                  .map(this.extractData)
-                  .catch(this.handleError);
+  getChartReadme(chartVersion: ChartVersion): Observable<Response> {
+    return this.http.get(`${this.hostname}${chartVersion.attributes.readme}`)
   }
   /**
    * Get chart versions using the API
    *
-   * @param {String} repo Repository name
-   * @param {String} chartName Chart name
+   * @param {string} repo Repository name
+   * @param {string} chartName Chart name
    * @return {Observable} An observable containing an array of ChartVersions
    */
-  getVersions(repo: String, chartName: String): Observable<ChartVersion[]> {
+  getVersions(repo: string, chartName: string): Observable<ChartVersion[]> {
     return this.http.get(`${this.hostname}/v1/charts/${repo}/${chartName}/versions`)
       .map(this.extractData)
       .catch(this.handleError);
   }
 
-  /* TODO, get remote README */
-  getMockedReadme(): Observable<Response> {
-    let readmeUrl = '/assets/mock_readme.md'
-    return this.http.get(readmeUrl)
+  /**
+   * Get chart version using the API
+   *
+   * @param {string} repo Repository name
+   * @param {string} chartName Chart name
+   * @return {Observable} An observable containing an array of ChartVersions
+   */
+  getVersion(repo: string, chartName: string, version: string): Observable<ChartVersion> {
+    return this.http.get(`${this.hostname}/v1/charts/${repo}/${chartName}/versions/${version}`)
+      .map(this.extractData)
+      .catch(this.handleError);
   }
 
   private extractData(res: Response) {

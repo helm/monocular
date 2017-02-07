@@ -1,22 +1,26 @@
-hash: bfea84b78338d62dd2309799d4a7143483ed4cd968a33ae786e89e385fbc61f5
-updated: 2017-02-02T01:19:08.439069984Z
+hash: 01526d77bb8266f844ea79d991a20137b480a3e2afeee64498c62f0d4de1543c
+updated: 2017-02-07T15:21:09.281261848-08:00
 imports:
 - name: github.com/arschles/assert
-  version: fc2da9844984ce5093111298174706e14d4c0c47
+  version: bb58b908265b5931732079df03f2818bf2167ba0
 - name: github.com/asaskevich/govalidator
-  version: 593d64559f7600f29581a3ee42177f5dbded27a9
+  version: fdf19785fd3558d619ef81212f5edf1d6c2a5911
+- name: github.com/disintegration/imaging
+  version: 243d2d8673c1225a6afceeb9b3b4423d485dc8df
 - name: github.com/go-openapi/analysis
-  version: b44dc874b601d9e4e2f6e19140e794ba24bead3b
+  version: d5a75b7d751ca3f11ad5d93cfe97405f2c3f6a47
 - name: github.com/go-openapi/errors
-  version: 4178436c9f2430cdd945c50301cfb61563b56573
+  version: fc3f73a224499b047eda7191e5d22e1e9631e86f
 - name: github.com/go-openapi/jsonpointer
-  version: 46af16f9f7b149af66e5d1bd010e3574dc06de98
+  version: 779f45308c19820f1a69e9a4cd965f496e0da10f
 - name: github.com/go-openapi/jsonreference
-  version: 13c6e3589ad90f49bd3e3bbe2c2cb3d7a4142272
+  version: 36d33bfe519efae5632669801b180bf1a245da3b
 - name: github.com/go-openapi/loads
-  version: 18441dfa706d924a39a030ee2c3b1d8d81917b38
+  version: 6bb6486231e079ea125c0f39994ed3d0c53399ed
+  subpackages:
+  - fmts
 - name: github.com/go-openapi/runtime
-  version: 18efe8c11921c0ddabc8e91554971d6db1f91c7c
+  version: 9d874dfae14238a34a7263c7278ce5663acb5fa8
   subpackages:
   - middleware
   - middleware/denco
@@ -24,33 +28,35 @@ imports:
   - middleware/untyped
   - security
 - name: github.com/go-openapi/spec
-  version: 6aced65f8501fe1217321abf0749d354824ba2ff
+  version: 02fb9cd3430ed0581e0ceb4804d5d4b3cc702694
 - name: github.com/go-openapi/strfmt
-  version: d65c7fdb29eca313476e529628176fe17e58c488
+  version: 2f6a212b831aaebcff386048b604cac998fd730e
 - name: github.com/go-openapi/swag
-  version: 0e04f5e499b19bf51031c01a00f098f25067d8dc
+  version: d5f8ebc3b1c55a4cf6489eeae7354f338cfe299e
 - name: github.com/go-openapi/validate
-  version: 03d947b0268e1c2bb5c74ac4095447f140c9a112
+  version: 035dcd74f1f61e83debe1c22950dc53556e7e4b2
 - name: github.com/go-swagger/go-swagger
   version: 4c101d534a9bc418b0c47c4e017153f317304ca4
 - name: github.com/gorilla/context
   version: 08b5f424b9271eedf6f9f0ce86cb9396ed337a42
 - name: github.com/gorilla/mux
-  version: 757bef944d0f21880861c2dd9c871ca543023cba
+  version: 392c28fe23e1c45ddba891b0320b3b5df220beea
 - name: github.com/imdario/mergo
   version: 3e95a51e0639b4cf372f2ccf74c86749d747fbdc
 - name: github.com/jessevdk/go-flags
-  version: a8cab0163d48558ffd77076c9c99388529766f63
+  version: 4e64e4a4e2552194cf594243e23aa9baf3b4297e
 - name: github.com/kelseyhightower/envconfig
-  version: 13674b2d056fb658a00ba3f36e78043ced07c924
+  version: 8bf4bbfc795e2c7c8a5ea47b707453ed019e2ad4
 - name: github.com/mailru/easyjson
-  version: 34560e358dc05e2c28f6fda2f5c9e7494a4b9b19
+  version: 99e922cf9de1bc0ab38310c277cff32c2147e747
   subpackages:
+  - buffer
   - jlexer
   - jwriter
-  - buffer
+- name: github.com/mitchellh/mapstructure
+  version: db1efb556f84b25a0a13a04aad883943538ad2e0
 - name: github.com/PuerkitoBio/purell
-  version: 8a290539e2e8629dbc4e6bad948158f790ec31f4
+  version: 0bcb03f4b4d0a9428594752bd2a3b9aa0a9d4bd4
 - name: github.com/PuerkitoBio/urlesc
   version: 5bd2802263f21d8788851d5305584c82a5c75d7e
 - name: github.com/rs/cors
@@ -58,27 +64,26 @@ imports:
 - name: github.com/rs/xhandler
   version: d9d9599b6aaf6a058cb7b1f48291ded2cbd13390
 - name: github.com/tylerb/graceful
-  version: 50a48b6e73fcc75b45e22c05b79629a67c79e938
+  version: 4654dfbb6ad53cb5e27f37d99b02e16c1872fbbb
+- name: golang.org/x/image
+  version: 05f0a469d9f7c77399b53a6bab80983eb856b52e
+  subpackages:
+  - bmp
+  - tiff
+  - tiff/lzw
 - name: golang.org/x/net
-  version: ffe101cce3477a6c6d8f0754d103bb0a84ec1266
+  version: 236b8f043b920452504e263bc21d354427127473
   subpackages:
   - context
   - idna
 - name: golang.org/x/text
-  version: 098f51fb687dbaba1f6efabeafbb6461203f9e21
+  version: dafb3384ad25363d928a9e97ce4ad3a2f0667e34
   subpackages:
-  - secure/precis
-  - unicode/norm
-  - cases
-  - runes
-  - secure/bidirule
   - transform
+  - unicode/norm
   - width
-  - language
-  - unicode/bidi
-  - internal/tag
 - name: gopkg.in/jarcoal/httpmock.v1
   version: 6aa33143427f6eb0bebcc0af42e8db85e39a42c0
 - name: gopkg.in/yaml.v2
-  version: e4d366fc3c7938e2958e662b4258c7a89e1f0e3e
+  version: 4c78c975fe7c825c6d1466c42be594d1d6f3aba6
 testImports: []

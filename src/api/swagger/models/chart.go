@@ -31,10 +31,6 @@ type Chart struct {
 	*/
 	Home *string `json:"home"`
 
-	/* icon
-	 */
-	Icon string `json:"icon,omitempty"`
-
 	/* keywords
 	 */
 	Keywords []string `json:"keywords,omitempty"`

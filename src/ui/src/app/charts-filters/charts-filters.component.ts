@@ -8,8 +8,8 @@ import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 export class ChartsFiltersComponent implements OnInit {
   // Order elements
   orderElements: {
-    name: String,
-    value: String
+    name: string,
+    value: string
   }[] = [
     {
       name: 'Title',
@@ -22,8 +22,8 @@ export class ChartsFiltersComponent implements OnInit {
   ];
   // Repository Types
   repositoryElements: {
-    name: String,
-    value: String
+    name: string,
+    value: string
   }[] = [
     {
       name: 'All',
@@ -40,8 +40,8 @@ export class ChartsFiltersComponent implements OnInit {
   ]
 
   // Order of the elements
-  orderBy: String = this.orderElements[0].value;
-  repositoryType: String = this.repositoryElements[0].value;
+  orderBy: string = this.orderElements[0].value;
+  repositoryType: string = this.repositoryElements[0].value;
 
   @Output() onChange = new EventEmitter();
 

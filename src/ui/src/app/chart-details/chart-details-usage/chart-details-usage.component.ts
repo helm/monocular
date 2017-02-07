@@ -8,7 +8,7 @@ import { Chart } from '../../shared/models/chart';
 })
 export class ChartDetailsUsageComponent implements OnInit {
   @Input() chart: Chart
-  @Input() currentVersion: String
+  @Input() currentVersion: string
 
   constructor() { }
 

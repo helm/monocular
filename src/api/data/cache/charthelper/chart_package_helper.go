@@ -1,4 +1,4 @@
-package cache
+package charthelper
 
 import (
 	"archive/tar"
@@ -14,9 +14,9 @@ import (
 	"github.com/helm/monocular/src/api/swagger/models"
 )
 
-// Downloads the chart tar file linked by metadata.Urls and store
+// DownloadAndExtractChartTarball the chart tar file linked by metadata.Urls and store
 // the wanted files (i.e README.md) under chartDataDir
-var downloadAndExtractChartTarball = func(chart *models.ChartPackage) error {
+var DownloadAndExtractChartTarball = func(chart *models.ChartPackage) error {
 	if err := ensureChartDataDir(chart); err != nil {
 		return err
 	}
@@ -120,15 +120,15 @@ var tarballTmpPath = func(chart *models.ChartPackage) string {
 	return filepath.Join("/tmp", splitTarURL[len(splitTarURL)-1])
 }
 
-// Directory used to store cached data like readme files
+// DataDirBase is the directory used to store cached data like readme files
 // Variable so it can be mocked
-var dataDirBase = func() string {
+var DataDirBase = func() string {
 	return filepath.Join(os.Getenv("HOME"), "repo-data")
 }
 
 // Data directory with cached content for the current ChartPackage
 var chartDataDir = func(chart *models.ChartPackage) string {
-	return filepath.Join(dataDirBase(), chart.Repo, *chart.Name, *chart.Version)
+	return filepath.Join(DataDirBase(), chart.Repo, *chart.Name, *chart.Version)
 }
 
 // Credit https://github.com/kubernetes/helm/blob/8120508c1bd73f6f49d1f16f7a6eacbb4e707655/pkg/chartutil/expand.go#L28
@@ -216,7 +216,8 @@ var ReadFromCache = func(chart *models.ChartPackage, filename string) (string, e
 	return string(dat), nil
 }
 
-var chartDataExists = func(chart *models.ChartPackage) (bool, error) {
+// ChartDataExists checks if the chart cache directory is present
+var ChartDataExists = func(chart *models.ChartPackage) (bool, error) {
 	_, err := os.Stat(chartDataDir(chart))
 	if err == nil {
 		return true, nil
@@ -224,4 +225,13 @@ var chartDataExists = func(chart *models.ChartPackage) (bool, error) {
 		return false, nil
 	}
 	return false, err
+}
+
+// ReadmeStaticUrl returns the static path for the README.md file
+func ReadmeStaticUrl(chart *models.ChartPackage, prefix string) string {
+	path := filepath.Join(chartDataDir(chart), "README.md")
+	return staticUrl(path, prefix)
+}
+func staticUrl(path, prefix string) string {
+	return strings.Replace(path, DataDirBase(), prefix, 1)
 }

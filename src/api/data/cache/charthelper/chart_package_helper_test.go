@@ -1,4 +1,4 @@
-package cache
+package charthelper
 
 import (
 	"errors"
@@ -10,15 +10,13 @@ import (
 	httpmock "gopkg.in/jarcoal/httpmock.v1"
 
 	"github.com/arschles/assert"
-	"github.com/helm/monocular/src/api/mocks"
 	"github.com/helm/monocular/src/api/swagger/models"
-	"github.com/helm/monocular/src/api/testutil"
 )
 
 func TestDownloadAndExtractChartTarballOk(t *testing.T) {
 	chart, err := getTestChart()
 	assert.NoErr(t, err)
-	assert.NoErr(t, downloadAndExtractChartTarball(chart))
+	assert.NoErr(t, DownloadAndExtractChartTarball(chart))
 }
 
 func TestDownloadAndExtractChartTarballErrorCantWrite(t *testing.T) {
@@ -28,7 +26,7 @@ func TestDownloadAndExtractChartTarballErrorCantWrite(t *testing.T) {
 
 	chart, err := getTestChart()
 	assert.NoErr(t, err)
-	err = downloadAndExtractChartTarball(chart)
+	err = DownloadAndExtractChartTarball(chart)
 	assert.ExistsErr(t, err, "trying to create a non valid directory")
 }
 
@@ -43,7 +41,7 @@ func TestDownloadAndExtractChartTarballErrorDownload(t *testing.T) {
 	// EO stubs
 	chart, err := getTestChart()
 	assert.NoErr(t, err)
-	err = downloadAndExtractChartTarball(chart)
+	err = DownloadAndExtractChartTarball(chart)
 	assert.ExistsErr(t, err, "Error downloading the tar file")
 }
 
@@ -53,7 +51,7 @@ func TestDownloadAndExtractChartTarballErrorExtract(t *testing.T) {
 	extractFilesFromTarball = func(chart *models.ChartPackage) error { return errors.New("Can't download") }
 	chart, err := getTestChart()
 	assert.NoErr(t, err)
-	err = downloadAndExtractChartTarball(chart)
+	err = DownloadAndExtractChartTarball(chart)
 	assert.ExistsErr(t, err, "Error extracting tar file content")
 }
 
@@ -65,7 +63,7 @@ func TestDownloadTarballCreatesFileInDestination(t *testing.T) {
 	// Disable remote URL download
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
-	httpmock.RegisterResponder("GET", "https://kubernetes-charts.storage.googleapis.com/drupal-0.4.1.tgz",
+	httpmock.RegisterResponder("GET", "http://storage.googleapis.com/kubernetes-charts/drupal-0.3.0.tgz",
 		httpmock.NewStringResponder(200, "Mocked Response"))
 
 	// Mock download path
@@ -103,12 +101,13 @@ func TestDownloadTarballErrorDownloading(t *testing.T) {
 
 func TestExtractFilesFromTarballOk(t *testing.T) {
 	chart, err := getTestChart()
+	ensureChartDataDir(chart)
 	assert.NoErr(t, err)
 	// Stubs
 	tarballTmpPathOrig := tarballTmpPath
 	defer func() { tarballTmpPath = tarballTmpPathOrig }()
 	tarballTmpPath = func(chart *models.ChartPackage) string {
-		path, _ := mocks.MockedtarballTmpPath()
+		path := MockedtarballTmpPath()
 		return path
 	}
 	err = extractFilesFromTarball(chart)
@@ -144,7 +143,7 @@ func TestExtractFilesFromTarballCantCopy(t *testing.T) {
 	copyFileOrig := copyFile
 	defer func() { tarballTmpPath = tarballTmpPathOrig; copyFile = copyFileOrig }()
 	tarballTmpPath = func(chart *models.ChartPackage) string {
-		path, _ := mocks.MockedtarballTmpPath()
+		path := MockedtarballTmpPath()
 		return path
 	}
 
@@ -161,9 +160,10 @@ func TestReadFromCacheOk(t *testing.T) {
 	tarballTmpPathOrig := tarballTmpPath
 	defer func() { tarballTmpPath = tarballTmpPathOrig }()
 	tarballTmpPath = func(chart *models.ChartPackage) string {
-		path, _ := mocks.MockedtarballTmpPath()
+		path := MockedtarballTmpPath()
 		return path
 	}
+	ensureChartDataDir(chart)
 	err = extractFilesFromTarball(chart)
 	assert.NoErr(t, err)
 	for _, fileName := range filesToKeep {
@@ -184,9 +184,9 @@ func TestEnsureChartDataDir(t *testing.T) {
 	chart, err := getTestChart()
 	assert.NoErr(t, err)
 	randomPath, _ := ioutil.TempDir(os.TempDir(), "chart")
-	dataDirBaseOrig := dataDirBase
-	defer func() { dataDirBase = dataDirBaseOrig }()
-	dataDirBase = func() string {
+	DataDirBaseOrig := DataDirBase
+	defer func() { DataDirBase = DataDirBaseOrig }()
+	DataDirBase = func() string {
 		return randomPath
 	}
 	chartPath := chartDataDir(chart)
@@ -208,13 +208,13 @@ func TestChartDataExist(t *testing.T) {
 		return pathExists
 	}
 	// Directory exists
-	exists, _ := chartDataExists(chart)
+	exists, _ := ChartDataExists(chart)
 	assert.Equal(t, exists, true, "the directory exists")
 	chartDataDir = func(c *models.ChartPackage) string {
 		return "/does-not-exist"
 	}
 	// Directory does not exist
-	exists, _ = chartDataExists(chart)
+	exists, _ = ChartDataExists(chart)
 	assert.Equal(t, exists, false, "the directory does not exist")
 }
 
@@ -232,7 +232,7 @@ func TestCopyFile(t *testing.T) {
 }
 
 func TestUntar(t *testing.T) {
-	src, _ := mocks.MockedtarballTmpPath()
+	src := MockedtarballTmpPath()
 	dest, _ := ioutil.TempDir(os.TempDir(), "")
 	err := untar(src, dest)
 	assert.NoErr(t, err)
@@ -252,5 +252,22 @@ func TestUntar(t *testing.T) {
 
 // Auxiliar
 func getTestChart() (*models.ChartPackage, error) {
-	return chartsImplementation.ChartFromRepo(testutil.RepoName, testutil.ChartName)
+	randomPath, _ := ioutil.TempDir(os.TempDir(), "chart")
+	DataDirBase = func() string {
+		return randomPath
+	}
+	url := "http://storage.googleapis.com/kubernetes-charts/drupal-0.3.0.tgz"
+	version := "0.3.0"
+	name := "drupal"
+	return &models.ChartPackage{
+		Urls:    []string{url},
+		Version: &version,
+		Name:    &name,
+		Repo:    "stable",
+	}, nil
+}
+
+// Returns the test tarball path
+func MockedtarballTmpPath() string {
+	return filepath.Join("testdata", "drupal-0.3.0.tgz")
 }

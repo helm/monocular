@@ -4,6 +4,7 @@ import (
 	"crypto/tls"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	errors "github.com/go-openapi/errors"
@@ -12,6 +13,7 @@ import (
 
 	"github.com/helm/monocular/src/api/config"
 	"github.com/helm/monocular/src/api/data/cache"
+	"github.com/helm/monocular/src/api/data/cache/charthelper"
 	"github.com/helm/monocular/src/api/handlers"
 	"github.com/helm/monocular/src/api/jobs"
 	"github.com/helm/monocular/src/api/swagger/restapi/operations"
@@ -74,10 +76,6 @@ func configureAPI(api *operations.MonocularAPI) http.Handler {
 		return handlers.Healthz(params)
 	})
 
-	api.GetChartVersionReadmeHandler = operations.GetChartVersionReadmeHandlerFunc(func(params operations.GetChartVersionReadmeParams) middleware.Responder {
-		return handlers.GetChartVersionReadme(params, chartsImplementation)
-	})
-
 	api.ServerShutdown = func() {}
 
 	return setupGlobalMiddleware(api.Serve(setupMiddlewares))
@@ -97,8 +95,23 @@ func setupMiddlewares(handler http.Handler) http.Handler {
 // The middleware configuration happens before anything, this middleware also applies to serving the swagger.json document.
 // So this is a good place to plug in a panic handling middleware, logging and metrics
 func setupGlobalMiddleware(handler http.Handler) http.Handler {
+	handler = setupStaticFilesMiddleware(handler)
 	handler = setupCorsMiddleware(handler)
 	return handler
+}
+
+// This middleware serves the files existing under cache.DataDirBase
+func setupStaticFilesMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Returns static files under /static
+		if strings.Index(r.URL.Path, "/assets/") == 0 {
+			fs := http.StripPrefix("/assets/", http.FileServer(http.Dir(charthelper.DataDirBase())))
+			fs.ServeHTTP(w, r)
+		} else {
+			// Fallbacks to chained hander
+			next.ServeHTTP(w, r)
+		}
+	})
 }
 
 func setupCorsMiddleware(handler http.Handler) http.Handler {

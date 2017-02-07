@@ -5,6 +5,7 @@ package models
 
 import (
 	strfmt "github.com/go-openapi/strfmt"
+	"github.com/go-openapi/swag"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/validate"
@@ -30,6 +31,17 @@ type ChartVersion struct {
 	*/
 	Digest *string `json:"digest"`
 
+	/* icons
+	 */
+	Icons []*Icon `json:"icons,omitempty"`
+
+	/* readme
+
+	Required: true
+	Min Length: 1
+	*/
+	Readme *string `json:"readme"`
+
 	/* urls
 
 	Required: true
@@ -54,6 +66,16 @@ func (m *ChartVersion) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateDigest(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
+	if err := m.validateIcons(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
+	if err := m.validateReadme(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
@@ -94,6 +116,43 @@ func (m *ChartVersion) validateDigest(formats strfmt.Registry) error {
 	}
 
 	if err := validate.MinLength("digest", "body", string(*m.Digest), 1); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *ChartVersion) validateIcons(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Icons) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.Icons); i++ {
+
+		if swag.IsZero(m.Icons[i]) { // not required
+			continue
+		}
+
+		if m.Icons[i] != nil {
+
+			if err := m.Icons[i].Validate(formats); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *ChartVersion) validateReadme(formats strfmt.Registry) error {
+
+	if err := validate.Required("readme", "body", m.Readme); err != nil {
+		return err
+	}
+
+	if err := validate.MinLength("readme", "body", string(*m.Readme), 1); err != nil {
 		return err
 	}
 

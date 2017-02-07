@@ -50,15 +50,6 @@ func AssertChartVersionResourceBodyData(t *testing.T, chart *models.Resource, bo
 	assert.Equal(t, *chart.Attributes.(*models.ChartVersion).Version, *attributes.Version, "chartVersion version data in HTTP body data")
 }
 
-// AssertChartVersionReadmeResourceBodyData asserts expected HTTP "chart version readme" resource body data
-func AssertChartVersionReadmeResourceBodyData(t *testing.T, chart *models.Resource, body *models.ResourceData) {
-	attributes, err := chartVersionReadmeResourceAttributesFromHTTPResponse(body)
-	assert.NoErr(t, err)
-	assert.Equal(t, *chart.ID, *body.Data.ID, "chartReadme ID data in HTTP body data")
-	assert.Equal(t, *chart.Type, *body.Data.Type, "chartReadme type data in HTTP body data")
-	assert.Equal(t, *chart.Attributes.(*models.ChartVersionReadme).Content, *attributes.Content, "chartReadme created data in HTTP body data")
-}
-
 // ResourceArrayDataFromJSON is a convenience that converts JSON to a models.ResourceArrayData
 func ResourceArrayDataFromJSON(r io.Reader, resource *models.ResourceArrayData) error {
 	return json.NewDecoder(r).Decode(resource)
@@ -90,16 +81,6 @@ func ChartResourceAttributesFromHTTPResponse(body *models.ResourceData) (*models
 // a chart resource in generic models.ResourceData form and converts to a models.ChartPackage
 func ChartVersionResourceAttributesFromHTTPResponse(body *models.ResourceData) (*models.ChartVersion, error) {
 	attributes := new(models.ChartVersion)
-	b, err := json.Marshal(body.Data.Attributes.(map[string]interface{}))
-	if err != nil {
-		return attributes, err
-	}
-	err = json.Unmarshal(b, attributes)
-	return attributes, err
-}
-
-func chartVersionReadmeResourceAttributesFromHTTPResponse(body *models.ResourceData) (*models.ChartVersionReadme, error) {
-	attributes := new(models.ChartVersionReadme)
 	b, err := json.Marshal(body.Data.Attributes.(map[string]interface{}))
 	if err != nil {
 		return attributes, err

@@ -6,6 +6,7 @@ import (
 
 	"github.com/arschles/assert"
 	"github.com/helm/monocular/src/api/data"
+	"github.com/helm/monocular/src/api/data/cache/charthelper"
 	"github.com/helm/monocular/src/api/data/helpers"
 	"github.com/helm/monocular/src/api/swagger/models"
 	"github.com/helm/monocular/src/api/swagger/restapi/operations"
@@ -73,12 +74,17 @@ func TestCachedChartsAllFromRepo(t *testing.T) {
 }
 
 func TestCachedChartsRefresh(t *testing.T) {
-	chartDataExistsOrig := chartDataExists
-	defer func() { chartDataExists = chartDataExistsOrig }()
-	chartDataExists = func(chart *models.ChartPackage) (bool, error) { return false, nil }
-	downloadAndExtractChartTarballOrig := downloadAndExtractChartTarball
-	defer func() { downloadAndExtractChartTarball = downloadAndExtractChartTarballOrig }()
-	downloadAndExtractChartTarball = func(chart *models.ChartPackage) error { return nil }
+	// Stubs Download and processing
+	DownloadAndExtractChartTarballOrig := charthelper.DownloadAndExtractChartTarball
+	defer func() { charthelper.DownloadAndExtractChartTarball = DownloadAndExtractChartTarballOrig }()
+	charthelper.DownloadAndExtractChartTarball = func(chart *models.ChartPackage) error { return nil }
+
+	DownloadAndProcessChartIconOrig := charthelper.DownloadAndProcessChartIcon
+	defer func() { charthelper.DownloadAndProcessChartIcon = DownloadAndProcessChartIconOrig }()
+	charthelper.DownloadAndProcessChartIcon = func(chart *models.ChartPackage) error { return nil }
+
+	// EO stubs
+
 	err := chartsImplementation.Refresh()
 	assert.NoErr(t, err)
 }
@@ -101,13 +107,14 @@ func TestCachedChartsRefreshErrorPropagation(t *testing.T) {
 }
 
 func TestCachedChartsRefreshErrorDownloadingPackage(t *testing.T) {
-	chartDataExistsOrig := chartDataExists
-	defer func() { chartDataExists = chartDataExistsOrig }()
-	chartDataExists = func(chart *models.ChartPackage) (bool, error) { return false, nil }
-	downloadAndExtractChartTarballOrig := downloadAndExtractChartTarball
-	defer func() { downloadAndExtractChartTarball = downloadAndExtractChartTarballOrig }()
-	knownError := errors.New("error on downloadAndExtractChartTarball")
-	downloadAndExtractChartTarball = func(chart *models.ChartPackage) error {
+	ChartDataExistsOrig := charthelper.ChartDataExists
+	defer func() { charthelper.ChartDataExists = ChartDataExistsOrig }()
+	charthelper.ChartDataExists = func(chart *models.ChartPackage) (bool, error) { return false, nil }
+
+	DownloadAndExtractChartTarballOrig := charthelper.DownloadAndExtractChartTarball
+	defer func() { charthelper.DownloadAndExtractChartTarball = DownloadAndExtractChartTarballOrig }()
+	knownError := errors.New("error on DownloadAndExtractChartTarball")
+	charthelper.DownloadAndExtractChartTarball = func(chart *models.ChartPackage) error {
 		return knownError
 	}
 
@@ -117,15 +124,16 @@ func TestCachedChartsRefreshErrorDownloadingPackage(t *testing.T) {
 		},
 	}
 	chImplementation := NewCachedCharts(repos)
+	// It does not return error
 	err := chImplementation.Refresh()
-	assert.Err(t, err, knownError)
+	assert.NoErr(t, err)
 }
 
 func getChartsImplementation() data.Charts {
-	// Stub chartDataExists to avoid downloading extra data
-	chartDataExistsOrig := chartDataExists
-	defer func() { chartDataExists = chartDataExistsOrig }()
-	chartDataExists = func(chart *models.ChartPackage) (bool, error) {
+	// Stub ChartDataExists to avoid downloading extra data
+	ChartDataExistsOrig := charthelper.ChartDataExists
+	defer func() { charthelper.ChartDataExists = ChartDataExistsOrig }()
+	charthelper.ChartDataExists = func(chart *models.ChartPackage) (bool, error) {
 		return true, nil
 	}
 	repos := []map[string]string{

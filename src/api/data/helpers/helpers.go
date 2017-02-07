@@ -6,6 +6,8 @@ import (
 
 	"github.com/helm/monocular/src/api/swagger/models"
 	"gopkg.in/yaml.v2"
+
+	"github.com/helm/monocular/src/api/data/cache/charthelper"
 )
 
 // APIVer1String is the API version 1 string we include in route URLs
@@ -44,17 +46,6 @@ func ParseYAMLRepo(rawYAML []byte, repoName string) ([]*models.ChartPackage, err
 	return ret, nil
 }
 
-// MakeChartVersionReadmeResource composes a Resource type that represents a repo+chart+versionReadme
-func MakeChartVersionReadmeResource(chart *models.ChartPackage, readmeContent *string) *models.Resource {
-	var ret models.Resource
-	ret.Type = StrToPtr("chartVersionReadme")
-	ret.ID = StrToPtr(fmt.Sprintf("%s/%s", MakeChartVersionID(chart.Repo, *chart.Name, *chart.Version), "readme"))
-	ret.Attributes = &models.ChartVersionReadme{
-		Content: readmeContent,
-	}
-	return &ret
-}
-
 // MakeChartResource composes a Resource type that represents a repo+chart
 func MakeChartResource(chart *models.ChartPackage) *models.Resource {
 	var ret models.Resource
@@ -68,7 +59,6 @@ func MakeChartResource(chart *models.ChartPackage) *models.Resource {
 		Sources:     chart.Sources,
 		Keywords:    chart.Keywords,
 		Maintainers: chart.Maintainers,
-		Icon:        chart.Icon,
 	}
 	AddLatestChartVersionRelationship(&ret, chart)
 	return &ret
@@ -102,6 +92,8 @@ func MakeChartVersionResource(chart *models.ChartPackage) *models.Resource {
 		Digest:  chart.Digest,
 		Urls:    chart.Urls,
 		Version: chart.Version,
+		Icons:   makeAvailableIcons(chart),
+		Readme:  makeReadmeURL(chart),
 	}
 	AddChartRelationship(&ret, chart)
 	return &ret
@@ -149,6 +141,8 @@ func AddLatestChartVersionRelationship(resource *models.Resource, chartPackage *
 				Digest:  chartPackage.Digest,
 				Urls:    chartPackage.Urls,
 				Version: chartPackage.Version,
+				Icons:   makeAvailableIcons(chartPackage),
+				Readme:  makeReadmeURL(chartPackage),
 			},
 		},
 	}
@@ -272,4 +266,18 @@ func Int64ToPtr(n int64) *int64 {
 // StrToPtr converts a string to a *string
 func StrToPtr(s string) *string {
 	return &s
+}
+
+func makeAvailableIcons(chart *models.ChartPackage) []*models.Icon {
+	var res []*models.Icon
+	icons := charthelper.AvailableIcons(chart, "/assets")
+	for _, icon := range icons {
+		res = append(res, &models.Icon{Name: &icon.Name, Path: &icon.Path})
+	}
+	return res
+}
+
+func makeReadmeURL(chart *models.ChartPackage) *string {
+	res := charthelper.ReadmeStaticUrl(chart, "/assets")
+	return &res
 }

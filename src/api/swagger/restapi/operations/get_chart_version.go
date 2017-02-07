@@ -29,7 +29,7 @@ func NewGetChartVersion(ctx *middleware.Context, handler GetChartVersionHandler)
 
 /*GetChartVersion swagger:route GET /v1/charts/{repo}/{chartName}/versions/{version} getChartVersion
 
-get all chart versions by repo/name
+get specific chart version by repo/name
 
 */
 type GetChartVersion struct {

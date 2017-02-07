@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/arschles/assert"
+	"github.com/helm/monocular/src/api/data/cache/charthelper"
 	"github.com/helm/monocular/src/api/swagger/models"
 )
 
@@ -81,16 +82,6 @@ func TestMakeChartVersionResource(t *testing.T) {
 	assert.Equal(t, *chartVersionResource.Attributes.(*models.ChartVersion).Digest, chartDigest, "chartVersion resource Attributes.Digest field value")
 	assert.Equal(t, chartVersionResource.Attributes.(*models.ChartVersion).Urls[0], chartURL, "chartVersion resource Attributes.Urls field value")
 	assert.Equal(t, *chartVersionResource.Attributes.(*models.ChartVersion).Version, chartVersion, "chartVersion resource Attributes.Version field value")
-}
-
-func TestMakeChartVersionReadmeResource(t *testing.T) {
-	charts, err := ParseYAMLRepo(getTestRepoYAML(), repoName)
-	assert.NoErr(t, err)
-	readmeContent := "mocked readme content"
-	chartVersionReadmeResource := MakeChartVersionReadmeResource(charts[0], &readmeContent)
-	assert.Equal(t, *chartVersionReadmeResource.Type, "chartVersionReadme", "chart version readme resource type field value")
-	assert.Equal(t, *chartVersionReadmeResource.ID, "stable/apache:0.0.1/readme", "chart readme resource ID field value")
-	assert.Equal(t, *chartVersionReadmeResource.Attributes.(*models.ChartVersionReadme).Content, readmeContent, "chartVersionReadme Attributes.Content field value")
 }
 
 func TestMakeChartVersionResources(t *testing.T) {
@@ -249,4 +240,24 @@ entries:
         - %s
       version: %s
 generated: 2016-10-06T16:23:20.499029981-06:00`, APIVer1String, chartCreated, chartDescription, chartDigest, chartHome, chartName, chartSource, chartURL, chartVersion))
+}
+
+func TestMakeAvailableIcons(t *testing.T) {
+	charts, err := ParseYAMLRepo(getTestRepoYAML(), repoName)
+	assert.NoErr(t, err)
+	chart := charts[0]
+	AvailableIconsOrig := charthelper.AvailableIcons
+	defer func() { charthelper.AvailableIcons = AvailableIconsOrig }()
+	charthelper.AvailableIcons = func(chart *models.ChartPackage, prefix string) []*charthelper.IconOutput {
+		return []*charthelper.IconOutput{
+			{"format1", "/myPath1"},
+			{"format2", "mypath2"},
+		}
+	}
+	iconOutputs := makeAvailableIcons(chart)
+
+	for i, icon := range charthelper.AvailableIcons(chart, "prefix") {
+		assert.Equal(t, *iconOutputs[i].Name, icon.Name, "Same name")
+		assert.Equal(t, *iconOutputs[i].Path, icon.Path, "Same path")
+	}
 }

@@ -16,3 +16,5 @@ import:
 - package: github.com/imdario/mergo
   version: ~0.2.2
 - package: gopkg.in/jarcoal/httpmock.v1
+- package: github.com/disintegration/imaging
+- package: golang.org/x/image
