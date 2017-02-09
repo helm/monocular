@@ -2,7 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
-import { MetaModule, MetaConfig } from 'ng2-meta';
+//import { MetaModule, MetaConfig } from 'ng2-meta';
 import { routing, appRoutingProviders } from './app.routing';
 
 /* Material library */
@@ -39,16 +39,16 @@ import { ChartsFiltersComponent } from './charts-filters/charts-filters.componen
 
 require('hammerjs');
 
-const metaConfig: MetaConfig = {
-  //Append a title suffix such as a site name to all titles
-  //Defaults to false
-  useTitleSuffix: true,
-  defaults: {
-    title: 'Monocular',
-    titleSuffix: ' | Monocular',
-    description: 'Find the Helm chart you need or share your own Kubernetes apps'
-  }
-};
+//const metaConfig: MetaConfig = {
+//  //Append a title suffix such as a site name to all titles
+//  //Defaults to false
+//  useTitleSuffix: true,
+//  defaults: {
+//    title: 'Monocular',
+//    titleSuffix: ' | Monocular',
+//    description: 'Find the Helm chart you need or share your own Kubernetes apps'
+//  }
+//};
 
 @NgModule({
   declarations: [
@@ -81,7 +81,7 @@ const metaConfig: MetaConfig = {
     FormsModule,
     HttpModule,
 		routing,
-    MetaModule.forRoot(metaConfig)
+    //MetaModule.forRoot(metaConfig)
   ],
   providers: [
     appRoutingProviders,

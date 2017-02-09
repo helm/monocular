@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { ChartsService } from '../shared/services/charts.service';
 import { Chart } from '../shared/models/chart';
-import { MetaService } from 'ng2-meta';
+//import { MetaService } from 'ng2-meta';
 
 @Component({
   selector: 'app-chart-details',
@@ -17,8 +17,8 @@ export class ChartDetailsComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private chartsService: ChartsService,
-    private metaService: MetaService
+    private chartsService: ChartsService
+    // private metaService: MetaService
   ) { }
 
   ngOnInit() {
@@ -30,7 +30,7 @@ export class ChartDetailsComponent implements OnInit {
           this.chart = chart;
           this.currentVersion = params['version'] || this.chart.relationships.latestChartVersion.data.version;
           this.titleVersion = params['version'] || '';
-          this.updateMetaTags();
+          // this.updateMetaTags();
         });
     });
   }
@@ -51,11 +51,11 @@ export class ChartDetailsComponent implements OnInit {
   /**
    * Update the metatags with the name and the description of the application.
    */
-  updateMetaTags(): void {
-    let title: string = this.contentTitleVersion();
-    this.metaService.setTitle(title);
-    this.metaService.setTag('description', this.chart.attributes.description);
-    this.metaService.setTag('og:title', title);
-    this.metaService.setTag('og:description', this.chart.attributes.description);
-  }
+  // updateMetaTags(): void {
+  //   let title: string = this.contentTitleVersion();
+  //   this.metaService.setTitle(title);
+  //   this.metaService.setTag('description', this.chart.attributes.description);
+  //   this.metaService.setTag('og:title', title);
+  //   this.metaService.setTag('og:description', this.chart.attributes.description);
+  // }
 }
