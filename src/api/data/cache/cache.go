@@ -8,6 +8,7 @@ import (
 	"sync"
 
 	"github.com/helm/monocular/src/api/data"
+	"github.com/helm/monocular/src/api/data/cache/charthelper"
 	"github.com/helm/monocular/src/api/data/helpers"
 	"github.com/helm/monocular/src/api/swagger/models"
 	"github.com/helm/monocular/src/api/swagger/restapi/operations"
@@ -141,20 +142,23 @@ func (c *cachedCharts) Refresh() error {
 				return err
 			}
 			c.allCharts[repoName] = []*models.ChartPackage{}
-			fmt.Printf("Using cache directory %s\n", dataDirBase())
+			fmt.Printf("Using cache directory %s\n", charthelper.DataDirBase())
 			for _, chart := range charts {
 				// Extra files. Skipped if the directory exists
-				dataExists, err := chartDataExists(chart)
+				dataExists, err := charthelper.ChartDataExists(chart)
 				if err != nil {
 					return err
 				}
 				if !dataExists {
 					fmt.Printf("Local cache missing for %s-%s\n", *chart.Name, *chart.Version)
 
-					err := downloadAndExtractChartTarball(chart)
+					err := charthelper.DownloadAndExtractChartTarball(chart)
 					if err != nil {
-						return err
+						// Skip chart if error extracting the tarball
+						continue
 					}
+					// If we have a problem processing an image it will fallback to the default one
+					charthelper.DownloadAndProcessChartIcon(chart)
 				}
 				c.allCharts[repoName] = append(c.allCharts[repoName], chart)
 			}

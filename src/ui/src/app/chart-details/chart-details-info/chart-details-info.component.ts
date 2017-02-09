@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
 })
 export class ChartDetailsInfoComponent implements OnInit {
   @Input() chart: Chart
-  @Input() currentVersion: String
+  @Input() currentVersion: string
   versions: ChartVersion[]
   constructor(
     private chartsService: ChartsService,

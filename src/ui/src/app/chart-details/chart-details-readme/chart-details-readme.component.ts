@@ -9,8 +9,8 @@ import { ChartsService } from '../../shared/services/charts.service';
 })
 export class ChartDetailsReadmeComponent implements OnChanges {
   @Input() chart: Chart
-  @Input() currentVersion: String
-  readmeContent: String
+  @Input() currentVersion: string
+  readmeContent: string
   markdown = require('marked')
 
   constructor(
@@ -22,10 +22,14 @@ export class ChartDetailsReadmeComponent implements OnChanges {
     this.getReadme()
   }
 
+  // TODO. This should not require loading the specific version and then the readme
   getReadme(): void {
-    this.chartsService.getChartReadme(this.chart.attributes.repo, this.chart.attributes.name, this.currentVersion)
-      .subscribe(chart => {
-        this.readmeContent = this.markdown(chart.attributes.content)
+    this.chartsService.getVersion(this.chart.attributes.repo, this.chart.attributes.name, this.currentVersion)
+      .subscribe(chartVersion => {
+        this.chartsService.getChartReadme(chartVersion)
+          .subscribe(resp => {
+            this.readmeContent = this.markdown(resp.text())
+          })
       })
   }
 }

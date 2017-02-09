@@ -88,32 +88,6 @@ paths:
           description: unexpected error
           schema:
             $ref: "#/definitions/error"
-  /v1/charts/{repo}/{chartName}/versions/{version}/readme:
-    get:
-      operationId: getChartVersionReadme
-      summary: "get Readme.md file for specific chart version"
-      parameters:
-        - name: repo
-          in: path
-          type: string
-          required: true
-        - name: chartName
-          in: path
-          type: string
-          required: true
-        - name: version
-          in: path
-          type: string
-          required: true
-      responses:
-        200:
-          description: Readme.md file content
-          schema:
-            $ref: "#/definitions/resourceData"
-        default:
-          description: unexpected error
-          schema:
-            $ref: "#/definitions/error"
   /v1/charts:
     get:
       operationId: getAllCharts
@@ -304,17 +278,6 @@ definitions:
         type: array
         items:
           type: string
-      icon:
-        type: string
-        minLenth: 1
-  chartVersionReadme:
-    type: object
-    required:
-      - content
-    properties:
-      content:
-        type: string
-        minLength: 1
   chartVersion: # a data type that describes version metadata about a "chart version"
     type: object
     required:
@@ -322,8 +285,12 @@ definitions:
       - digest
       - urls
       - version
+      - readme
     properties:
       created:
+        type: string
+        minLength: 1
+      readme:
         type: string
         minLength: 1
       digest:
@@ -333,6 +300,10 @@ definitions:
         type: array
         items:
           type: string
+      icons:
+        type: array
+        items:
+          $ref: "#/definitions/icon"
       version:
         type: string
         minLength: 1
@@ -388,4 +359,14 @@ definitions:
         type: integer
         format: int64
       message:
+        type: string
+  icon:
+    type: object
+    required:
+      - name
+      - path
+    properties:
+      name:
+        type: string
+      path:
         type: string

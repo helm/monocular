@@ -1,4 +1,4 @@
-package cache
+package handlers
 
 import (
 	"math/rand"
@@ -6,10 +6,11 @@ import (
 	"testing"
 
 	"github.com/arschles/assert"
+	"github.com/helm/monocular/src/api/mocks"
 )
 
 func TestSortedByName(t *testing.T) {
-	chartsImplementation := getChartsImplementation()
+	chartsImplementation := mocks.NewMockCharts()
 	charts, err := chartsImplementation.All()
 	assert.NoErr(t, err)
 	// Randomize slice before sorting

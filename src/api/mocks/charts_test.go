@@ -1,8 +1,6 @@
 package mocks
 
 import (
-	"errors"
-	"path/filepath"
 	"testing"
 
 	"github.com/arschles/assert"
@@ -76,24 +74,4 @@ func TestMockChartsAllFromRepo(t *testing.T) {
 	noCharts, err := chartsImplementation.AllFromRepo(testutil.BogusRepo)
 	assert.ExistsErr(t, err, "sent bogus repo name to GetChartsInRepo")
 	assert.True(t, len(noCharts) == 0, "empty charts slice")
-}
-
-func TestMockedtarballTmpPath(t *testing.T) {
-	base, _ := getTestDataWd()
-	expected := filepath.Join(base, "drupal-0.3.0.tgz")
-	res, err := MockedtarballTmpPath()
-	assert.NoErr(t, err)
-	assert.Equal(t, res, expected, "returns the path based on test data")
-}
-
-func TestGetMockRepoPathError(t *testing.T) {
-	getTestDataWdOrig := getTestDataWd
-	defer func() { getTestDataWd = getTestDataWdOrig }()
-	knownErr := errors.New("myError")
-	getTestDataWd = func() (string, error) {
-		return "", knownErr
-	}
-
-	_, err := MockedtarballTmpPath()
-	assert.Err(t, err, knownErr)
 }

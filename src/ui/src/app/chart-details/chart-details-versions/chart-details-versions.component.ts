@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
 })
 export class ChartDetailsVersionsComponent implements OnInit {
   @Input() versions: ChartVersion[]
-  @Input() currentVersion: String
+  @Input() currentVersion: string
   constructor(
     private router: Router,
   ) { }

@@ -8,7 +8,6 @@ import (
 
 	middleware "github.com/go-openapi/runtime/middleware"
 	"github.com/helm/monocular/src/api/data"
-	"github.com/helm/monocular/src/api/data/cache"
 	"github.com/helm/monocular/src/api/data/helpers"
 	"github.com/helm/monocular/src/api/swagger/models"
 	"github.com/helm/monocular/src/api/swagger/restapi/operations"
@@ -43,28 +42,6 @@ func GetChartVersion(params operations.GetChartVersionParams, c data.Charts) mid
 	return chartHTTPBody(chartVersionResource)
 }
 
-// GetChartVersionReadme is the handler for the /charts/{repo}/{name}/versions/{version}/readme endpoint
-func GetChartVersionReadme(params operations.GetChartVersionReadmeParams, c data.Charts) middleware.Responder {
-	// We check that the chart exists before load the readme
-	chartPackage, err := c.ChartVersionFromRepo(params.Repo, params.ChartName, params.Version)
-	if err != nil {
-		log.Printf("data.Charts.ChartVersionFromRepo(%s, %s, %s) error (%s)", params.Repo, params.ChartName, params.Version, err)
-		return notFound(ChartVersionResourceName)
-	}
-
-	filename := "README.md"
-	readmeContent, err := cache.ReadFromCache(chartPackage, filename)
-	if err != nil {
-		log.Printf("cache.ReadFromCache(%s, %s) error (%s)", *chartPackage.Name, filename, err)
-		return notFound("Cant read Readme file")
-	}
-
-	readmeResource := helpers.MakeChartVersionReadmeResource(chartPackage, &readmeContent)
-	// Reusing chartHTTPBody for consistency with other methods
-	// although we should use its own ResposeOk struct
-	return chartHTTPBody(readmeResource)
-}
-
 // GetChartVersions is the handler for the /charts/{repo}/{name}/versions endpoint
 func GetChartVersions(params operations.GetChartVersionsParams, c data.Charts) middleware.Responder {
 	chartPackages, err := c.ChartVersionsFromRepo(params.Repo, params.ChartName)
@@ -85,7 +62,7 @@ func GetAllCharts(params operations.GetAllChartsParams, c data.Charts) middlewar
 	}
 
 	// For now we only sort by name
-	sort.Sort(cache.ByName(charts))
+	sort.Sort(ByName(charts))
 	resources := helpers.MakeChartResources(charts)
 	return chartsHTTPBody(resources)
 }
@@ -98,7 +75,7 @@ func GetChartsInRepo(params operations.GetChartsInRepoParams, c data.Charts) mid
 		return notFound(ChartResourceName + "s")
 	}
 	// For now we only sort by name
-	sort.Sort(cache.ByName(charts))
+	sort.Sort(ByName(charts))
 	chartsResource := helpers.MakeChartResources(charts)
 	return chartsHTTPBody(chartsResource)
 }

@@ -3,7 +3,6 @@ package mocks
 import (
 	"fmt"
 	"log"
-	"path/filepath"
 	"strings"
 
 	"github.com/helm/monocular/src/api/data"
@@ -149,14 +148,4 @@ func getMockRepo(repo string) ([]byte, error) {
 		return nil, err
 	}
 	return y, nil
-}
-
-// Returns the test tarball path
-func MockedtarballTmpPath() (string, error) {
-	path, err := getTestDataWd()
-	if err != nil {
-		return "", err
-	}
-
-	return filepath.Join(path, "drupal-0.3.0.tgz"), nil
 }

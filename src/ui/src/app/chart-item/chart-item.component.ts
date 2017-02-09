@@ -32,9 +32,9 @@ export class ChartItemComponent implements OnInit {
    * Display the icon of the application if it's provided. In the other case,
    * It will return an string for a placeholder.
    *
-   * @return {String} The URL of the icon or a placeholder
+   * @return {string} The URL of the icon or a placeholder
    */
-  getIconUrl(chart: Chart): String {
+  getIconUrl(chart: Chart): string {
     if (chart.attributes.icon !== undefined) {
       return chart.attributes.icon;
     } else {

@@ -1,4 +1,4 @@
-package cache
+package handlers
 
 import "github.com/helm/monocular/src/api/swagger/models"
 

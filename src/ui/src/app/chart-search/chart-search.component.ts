@@ -35,11 +35,11 @@ export class ChartSearchComponent implements OnInit {
     this.updateMetaTags();
   }
 
-  searchCharts(q: String): void {
+  searchCharts(q: string): void {
 		this.chartsService.searchCharts(q).subscribe(charts => this.charts = charts);
   }
 
-  resultMessage(): String {
+  resultMessage(): string {
     if (this.charts.length > 0) {
       return `${this.charts.length} results found for "${this.query}"`;
     } else {
