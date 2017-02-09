@@ -29,6 +29,11 @@ export class ChartItemComponent implements OnInit {
     this.router.navigate(link);
   }
 
+  goToRepo(repo: string): void {
+    let link = ['/charts', repo];
+    this.router.navigate(link);
+  }
+
   /**
    * Display the icon of the application if it's provided. In the other case,
    * It will return an string for a placeholder.
