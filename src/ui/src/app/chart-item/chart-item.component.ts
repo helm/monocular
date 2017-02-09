@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Chart } from '../shared/models/chart';
+import { CONFIG } from '../config';
 
 @Component({
   selector: 'app-chart-item',
@@ -37,7 +38,7 @@ export class ChartItemComponent implements OnInit {
   getIconUrl(chart: Chart): string {
     let icons = chart.relationships.latestChartVersion.data.icons;
     if (icons !== undefined && icons.length > 0) {
-      return icons.find(icon => icon.name === '160x160-fit').path;
+      return CONFIG.backendHostname + icons.find(icon => icon.name === '160x160-fit').path;
     } else {
       return '/assets/images/placeholder.png';
     }
