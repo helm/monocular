@@ -7,11 +7,17 @@ export class ChartVersion {
 }
 
 export class ChartVersionAttributes {
-  created: Date
-  digest: string
-  readme: string
-  version: string
-  urls: string[]
+  created: Date;
+  digest: string;
+  icons: ChartVersionIcon[];
+  readme: string;
+  version: string;
+  urls: string[];
+}
+
+class ChartVersionIcon {
+  name: string;
+  path: string;
 }
 
 class ChartVersionRelationships {

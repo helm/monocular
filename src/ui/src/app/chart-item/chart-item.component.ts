@@ -35,8 +35,9 @@ export class ChartItemComponent implements OnInit {
    * @return {string} The URL of the icon or a placeholder
    */
   getIconUrl(chart: Chart): string {
-    if (chart.attributes.icon !== undefined) {
-      return chart.attributes.icon;
+    let icons = chart.relationships.latestChartVersion.data.icons;
+    if (icons !== undefined && icons.length > 0) {
+      return icons.find(icon => icon.name === '160x160-fit').path;
     } else {
       return '/assets/images/placeholder.png';
     }
