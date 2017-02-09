@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"sort"
 
 	middleware "github.com/go-openapi/runtime/middleware"
 	"github.com/helm/monocular/src/api/data"
@@ -82,6 +83,9 @@ func GetAllCharts(params operations.GetAllChartsParams, c data.Charts) middlewar
 		log.Printf("data.Charts All() error (%s)", err)
 		return notFound(ChartResourceName + "s")
 	}
+
+	// For now we only sort by name
+	sort.Sort(cache.ByName(charts))
 	resources := helpers.MakeChartResources(charts)
 	return chartsHTTPBody(resources)
 }
@@ -93,6 +97,8 @@ func GetChartsInRepo(params operations.GetChartsInRepoParams, c data.Charts) mid
 		log.Printf("data.Charts AllFromRepo(%s) error (%s)", params.Repo, err)
 		return notFound(ChartResourceName + "s")
 	}
+	// For now we only sort by name
+	sort.Sort(cache.ByName(charts))
 	chartsResource := helpers.MakeChartResources(charts)
 	return chartsHTTPBody(chartsResource)
 }

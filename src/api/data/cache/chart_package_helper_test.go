@@ -2,7 +2,6 @@ package cache
 
 import (
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -99,7 +98,6 @@ func TestDownloadTarballErrorDownloading(t *testing.T) {
 	// 404
 	chart.Urls[0] = "http://localhost/bogusUrl"
 	err = downloadTarball(chart)
-	fmt.Printf("HII%s", err)
 	assert.ExistsErr(t, err, "Cant copy")
 }
 
