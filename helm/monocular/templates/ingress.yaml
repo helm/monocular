@@ -19,6 +19,6 @@ spec:
           servicePort: {{ .Values.ui.service.externalPort }}
         path: /
       - backend:
-          serviceName: {{ template "fullname" . }}-ap
+          serviceName: {{ template "fullname" . }}-api
           servicePort: {{ .Values.api.service.externalPort }}
         path: /api/
