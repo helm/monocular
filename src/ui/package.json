@@ -1,7 +1,7 @@
 {
   "name": "Monocular",
   "version": "0.0.1",
-  "license": "Apache",
+  "license": "Apache-2.0",
   "angular-cli": {},
   "scripts": {
     "start": "ng serve",
