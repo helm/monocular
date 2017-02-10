@@ -2,6 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
+import { Angulartics2Module, Angulartics2GoogleAnalytics } from 'angulartics2';
 //import { MetaModule, MetaConfig } from 'ng2-meta';
 import { routing, appRoutingProviders } from './app.routing';
 
@@ -81,6 +82,7 @@ require('hammerjs');
     FormsModule,
     HttpModule,
 		routing,
+    Angulartics2Module.forRoot([Angulartics2GoogleAnalytics])
     //MetaModule.forRoot(metaConfig)
   ],
   providers: [
