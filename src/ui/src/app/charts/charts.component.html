@@ -1,7 +1,7 @@
 <app-header-bar></app-header-bar>
 
 <div class="charts__filters">
-  <app-charts-filters (onChange)="onChangeFilter($event)"></app-charts-filters>
+  <app-charts-filters (onChange)="onChangeFilter($event)" [currentRepo]="currentRepo"></app-charts-filters>
 </div>
 
 <app-panel [title]="'Helm Charts'" class="app-panel--container">

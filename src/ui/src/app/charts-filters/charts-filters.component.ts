@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-charts-filters',
@@ -6,18 +6,21 @@ import { Component, OnInit, Output, EventEmitter } from '@angular/core';
   styleUrls: ['./charts-filters.component.scss']
 })
 export class ChartsFiltersComponent implements OnInit {
+  @Input() currentRepo: string
+  @Output() onChange = new EventEmitter();
+
   // Order elements
   orderElements: {
     name: string,
     value: string
   }[] = [
     {
-      name: 'Title',
-      value: 'title'
+      name: 'Name',
+      value: 'name'
     },
     {
-      name: 'Repository',
-      value: 'repository'
+      name: 'Creation date',
+      value: 'created'
     }
   ];
   // Repository Types
@@ -41,13 +44,12 @@ export class ChartsFiltersComponent implements OnInit {
 
   // Order of the elements
   orderBy: string = this.orderElements[0].value;
-  repositoryType: string = this.repositoryElements[0].value;
+  repositoryType: string
 
-  @Output() onChange = new EventEmitter();
-
-  constructor() { }
+  constructor() {}
 
   ngOnInit() {
+    this.repositoryType = this.currentRepo || this.repositoryElements[0].value;
   }
 
   // Emit the changes of the filters

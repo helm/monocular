@@ -27,6 +27,15 @@ const appRoutes: Routes = [
     }
   },
   {
+    path: 'charts/:repo',
+    component: ChartsComponent,
+    data: {
+      meta: {
+        title: 'All charts by repository'
+      }
+    }
+  },
+  {
     path: 'charts/search',
     component: ChartSearchComponent
   },

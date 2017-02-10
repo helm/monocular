@@ -54,6 +54,10 @@ $chart-item-content-height: 70px;
         border-color: md-color($monocular-app-warn, 600);
         background-color: md-color($monocular-app-warn);
       }
+
+      a {
+        color: inherit;
+      }
     }
 
     &__version {

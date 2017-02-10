@@ -22,8 +22,18 @@ export class ChartsService {
    *
    * @return {Observable} An observable that will an array with all Charts
    */
-  getCharts(): Observable<Chart[]> {
-    return this.http.get(`${this.hostname}/v1/charts`)
+  getCharts(repo: string = "all"): Observable<Chart[]> {
+    let url: string
+    switch(repo) {
+      case 'all' : {
+        url = `${this.hostname}/v1/charts`
+        break
+      }
+      default: {
+        url = `${this.hostname}/v1/charts/${repo}`
+      }
+    }
+    return this.http.get(url)
                   .map(this.extractData)
                   .catch(this.handleError);
   }
