@@ -15,6 +15,7 @@ export class ChartAttributes {
   repo: string;
   home: string;
   sources: string[];
+  keywords: string[];
 }
 
 class ChartRelationships {

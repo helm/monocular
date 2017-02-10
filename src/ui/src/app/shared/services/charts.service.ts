@@ -47,8 +47,17 @@ export class ChartsService {
     let re = new RegExp(query, 'i');
     return this.getCharts().map(charts => {
       return charts.filter(chart => {
-        return chart.attributes.name.match(re) || chart.attributes.description.match(re)
+        return chart.attributes.name.match(re) || chart.attributes.description.match(re) || this.keywordsMatch(chart, re)
       })
+    })
+  }
+
+  keywordsMatch(chart: Chart, re): boolean {
+    let keywords: string[] = chart.attributes.keywords
+    if(!keywords) return false
+
+    return keywords.some((keyword) => {
+      return !!keyword.match(re)
     })
   }
 
