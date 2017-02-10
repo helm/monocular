@@ -34,7 +34,6 @@ glideup:
 build:
 	${DEV_ENV_PREFIX} -e CGO_ENABLED=0 ${DEV_ENV_IMAGE} go build -a -installsuffix cgo -ldflags ${LDFLAGS} -o ${BINARY_DEST_DIR}/${SHORT_NAME} *.go || exit 1
 	@$(call check-static-binary,$(BINARY_DEST_DIR)/${SHORT_NAME})
-	${DEV_ENV_PREFIX} ${DEV_ENV_IMAGE} upx -9 ${BINARY_DEST_DIR}/${SHORT_NAME} || exit 1
 
 swagger-serverstub:
 	${SWAGGER_CMD} generate server -A ${SHORT_NAME} -t ${SWAGGER_GEN_DIR} -f ${SWAGGER_SPEC}

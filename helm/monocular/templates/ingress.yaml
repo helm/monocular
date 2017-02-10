@@ -1,0 +1,24 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+ name: {{ template "fullname" . }}
+ annotations:
+  kubernetes.io/ingress.class: nginx
+  ingress.kubernetes.io/rewrite-target: /
+ labels:
+    app: {{ template "fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  rules:
+  - http:
+      paths:
+      - backend:
+          serviceName: {{ template "fullname" . }}-ui
+          servicePort: {{ .Values.ui.service.externalPort }}
+        path: /
+      - backend:
+          serviceName: {{ template "fullname" . }}-api
+          servicePort: {{ .Values.api.service.externalPort }}
+        path: /api/

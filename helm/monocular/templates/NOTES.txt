@@ -1,0 +1,4 @@
+The Monocular chart sets up an Ingress to serve the API and UI on the same
+domain. You can get the address to access Monocular from this Ingress endpoint.
+
+Visit https://github.com/helm/monocular for more information.

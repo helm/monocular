@@ -1,0 +1,4 @@
+apiVersion: v1
+description: Monocular is a search and discovery front end for Helm Charts Repositories.
+name: monocular
+version: 0.1.0
