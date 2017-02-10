@@ -27,6 +27,10 @@ const appRoutes: Routes = [
     }
   },
   {
+    path: 'charts/search',
+    component: ChartSearchComponent
+  },
+  {
     path: 'charts/:repo',
     component: ChartsComponent,
     data: {
@@ -34,10 +38,6 @@ const appRoutes: Routes = [
         title: 'All charts by repository'
       }
     }
-  },
-  {
-    path: 'charts/search',
-    component: ChartSearchComponent
   },
   {
     path: 'charts/:repo/:chartName',
