@@ -3,4 +3,6 @@ codecov:
   status:
     project:
       default:
-        paths: "src/api"
+        paths:
+          - src/api
+          - src/ui
