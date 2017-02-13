@@ -14,6 +14,7 @@ import 'rxjs/add/operator/map';
 })
 export class ChartSearchComponent implements OnInit {
   query: string;
+  loading: boolean = true;
 	charts: Chart[] = []
 
   constructor(
@@ -36,7 +37,10 @@ export class ChartSearchComponent implements OnInit {
   }
 
   searchCharts(q: string): void {
-		this.chartsService.searchCharts(q).subscribe(charts => this.charts = charts);
+		this.chartsService.searchCharts(q).subscribe(charts => {
+      this.loading = false;
+      this.charts = charts;
+    });
   }
 
   resultMessage(): string {

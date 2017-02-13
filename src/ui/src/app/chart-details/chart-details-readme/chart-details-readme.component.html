@@ -1,3 +1,5 @@
 <app-panel class="chart-details-readme">
-  <div [innerHTML]=readmeContent class="markdown-body"></div>
+  <app-loader [loading]="loading">
+    <div [innerHTML]=readmeContent class="markdown-body"></div>
+  </app-loader>
 </app-panel>

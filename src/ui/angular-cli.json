@@ -41,6 +41,8 @@
   "defaults": {
     "styleExt": "scss",
     "prefixInterfaces": false,
-    "lazyRoutePrefix": "+"
+    "lazyRoutePrefix": "+",
+    "viewEncapsulation": "Emulated",
+    "changeDetection": "Default"
   }
 }

@@ -4,6 +4,8 @@
   <app-charts-filters (onChange)="onChangeFilter($event)" [currentRepo]="currentRepo"></app-charts-filters>
 </div>
 
-<app-panel [title]="'Helm Charts'" class="app-panel--container">
-  <app-chart-list [charts]="orderedCharts"></app-chart-list>
-</app-panel>
+<app-loader [loading]="loading">
+  <app-panel [title]="'Helm Charts'" class="app-panel--container">
+    <app-chart-list [charts]="orderedCharts"></app-chart-list>
+  </app-panel>
+</app-loader>

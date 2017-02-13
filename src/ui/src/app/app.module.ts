@@ -36,6 +36,7 @@ import { ChartDetailsVersionsComponent } from './chart-details/chart-details-ver
 import { ChartListItemComponent } from './chart-list/chart-list-item/chart-list-item.component';
 import { ChartsComponent } from './charts/charts.component';
 import { ChartsFiltersComponent } from './charts-filters/charts-filters.component';
+import { LoaderComponent } from './loader/loader.component';
 
 require('hammerjs');
 
@@ -73,7 +74,8 @@ require('hammerjs');
     ChartDetailsInfoComponent,
     ChartListItemComponent,
     ChartsComponent,
-    ChartsFiltersComponent
+    ChartsFiltersComponent,
+    LoaderComponent
   ],
   imports: [
     MaterialModule.forRoot(),
