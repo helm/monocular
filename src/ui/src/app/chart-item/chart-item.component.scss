@@ -4,38 +4,50 @@
 @import '../../theme.scss';
 
 // Vars
-$chart-item-content-height: 70px;
+$chart-item-content-height: 80px;
 
 .chart-item {
   // Useful to display the elements as a grid
   &.chart-item--fixHeight {
     min-height: 9em;
+    margin: 1.5em 0;
   }
 
   &-content {
-    height: $chart-item-content-height;
-    position: relative;
-    margin-bottom: 1em;
+    text-align: center;
   }
 
   &-logo {
-    position: absolute;
-    max-width: $chart-item-content-height;
-    max-height: $chart-item-content-height;
+    height: $chart-item-content-height;
+    display: table;
+    width: 100%;
+    text-align: center;
+
+    &__center {
+      display: table-cell;
+      vertical-align: middle;
+      width: 100%;
+    }
+
+    img {
+      max-height: $chart-item-content-height;
+    }
   }
 
   &-info {
-    margin-left: $chart-item-content-height + 16px;
-    padding-top: .3em;
+    margin-top: 1.5em;
+    padding-top: 1.5em;
+    position: relative;
 
     &__title {
       color: md-color($monocular-app-primary);
       margin: 0 0 .5em;
+      font-weight: 300;
       cursor: pointer;
     }
 
     p {
-      margin-top: 0;
+      margin: 0;
     }
 
     // Remove this when chips are ready:
@@ -66,5 +78,18 @@ $chart-item-content-height: 70px;
       padding-right: 7px;
       border-right: 1px solid darken($layout_light, 10%);
     }
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      border-bottom: 1px solid darken($layout_light, 10%);
+      width: 50%;
+      left: 25%;
+    }
+  }
+
+  &-description {
+    margin-top: 1em;
   }
 }
