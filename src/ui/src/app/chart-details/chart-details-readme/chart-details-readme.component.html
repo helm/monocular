@@ -1,4 +1,5 @@
 <app-panel class="chart-details-readme">
-  <app-loader *ngIf="loading"></app-loader>
-  <div [innerHTML]=readmeContent *ngIf="!loading" class="markdown-body"></div>
+  <app-loader [loading]="loading">
+    <div [innerHTML]=readmeContent class="markdown-body"></div>
+  </app-loader>
 </app-panel>
