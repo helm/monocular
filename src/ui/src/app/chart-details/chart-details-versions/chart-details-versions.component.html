@@ -3,6 +3,6 @@
     <span class='number' [class.selected]="isSelected(version)">
       <a (click)="goToVersion(version)">{{ version.attributes.version }}</a>
     </span> -
-    <span class='creation-date'>{{ version.attributes.created | date: 'mediumDate'}}</span>
+    <span class='creation-date'>{{ version.attributes.created | date: 'MMM d, y' }}</span>
   </div>
 </app-panel>
