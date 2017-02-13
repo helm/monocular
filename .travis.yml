@@ -3,7 +3,7 @@ node_js:
   - '6.9.5'
 cache:
   directories:
-    - src/api/
+    - src/api/vendor
     - src/ui/node_modules
 services:
   - docker
