@@ -2,7 +2,7 @@
 // https://karma-runner.github.io/0.13/config/configuration-file.html
 
 module.exports = function (config) {
-  config.set({
+  var configuration = {
     basePath: './',
     frameworks: ['jasmine', 'angular-cli'],
     plugins: [
@@ -11,6 +11,9 @@ module.exports = function (config) {
       require('karma-remap-istanbul'),
       require('angular-cli/plugins/karma')
     ],
+    mime: {
+      'text/x-typescript': ['ts','tsx']
+    },
     files: [
       { pattern: './src/test.ts', watched: false }
     ],
@@ -23,13 +26,30 @@ module.exports = function (config) {
         lcovonly: './coverage/coverage.lcov'
       }
     },
-    angularCliConfig: './angular-cli.json',
+    angularCli: {
+      config: './angular-cli.json'
+    },
     reporters: ['progress', 'karma-remap-istanbul'],
     port: 9876,
     colors: true,
     logLevel: config.LOG_INFO,
     autoWatch: true,
     browsers: ['Chrome'],
+    // For travis CI
+    customLaunchers: {
+      Chrome_travis_ci: {
+        base: 'Chrome',
+        flags: ['--no-sandbox']
+      }
+    },
     singleRun: false
-  });
+  };
+
+  if (process.env.TRAVIS) {
+    configuration.browsers = ['Chrome_travis_ci'];
+    configuration.singleRun = true;
+    configuration.autoWatch = false;
+  }
+
+  config.set(configuration);
 };
