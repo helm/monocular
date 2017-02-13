@@ -1,7 +1,8 @@
 <app-main-header></app-main-header>
 <section class="chart-index__list">
   <app-panel [title]="'Featured charts'" class="app-panel--container">
-    <app-chart-list [charts]="charts"></app-chart-list>
+    <app-loader *ngIf="loading"></app-loader>
+    <app-chart-list *ngIf="!loading" [charts]="charts"></app-chart-list>
   </app-panel>
 </section>
 <app-trusted-maintainers></app-trusted-maintainers>

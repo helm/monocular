@@ -1,5 +1,6 @@
 <app-header-bar></app-header-bar>
-<div class="chart-search__result">
+<app-loader *ngIf="loading"></app-loader>
+<div *ngIf="!loading" class="chart-search__result">
   <app-panel [title]="resultMessage()" class="app-panel--container">
     <app-chart-list [charts]="charts"></app-chart-list>
   </app-panel>
