@@ -7,5 +7,8 @@ test:
 test-ci:
 	npm run test-ci
 
-build:
+compile:
 	npm run compile
+
+compile-aot:
+	npm run compile-aot
