@@ -11,6 +11,8 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 export class ChartsComponent implements OnInit {
   charts: Chart[] = [];
   orderedCharts: Chart[] = [];
+  loading: boolean = true;
+
   constructor(
     private chartsService: ChartsService,
     private route: ActivatedRoute,
@@ -31,6 +33,7 @@ export class ChartsComponent implements OnInit {
     this.route.params.forEach((params: Params) => {
       this.currentRepo = params["repo"]
   		this.chartsService.getCharts(this.currentRepo).subscribe(charts => {
+        this.loading = false;
         this.charts = charts;
         this.orderedCharts = this.orderCharts(this.charts);
       });

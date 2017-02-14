@@ -29,5 +29,12 @@ spec:
             port: {{ .Values.ui.service.internalPort }}
           initialDelaySeconds: 30
           timeoutSeconds: 5
+        volumeMounts:
+          - name: vhost
+            mountPath: /bitnami/nginx/conf/vhosts
         resources:
 {{ toYaml .Values.ui.resources | indent 12 }}
+      volumes:
+      - name: vhost
+        configMap:
+          name: {{ template "fullname" . }}-ui

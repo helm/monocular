@@ -73,9 +73,10 @@ func MakeChartResources(charts []*models.ChartPackage) []*models.Resource {
 	for _, chart := range charts {
 		if !found[*chart.Name] {
 			found[*chart.Name] = true
-			resource := MakeChartResource(chart)
+			latestVersion, _ := GetLatestChartVersion(charts, *chart.Name)
+			resource := MakeChartResource(latestVersion)
 			AddCanonicalLink(resource)
-			AddLatestChartVersionRelationship(resource, chart)
+			AddLatestChartVersionRelationship(resource, latestVersion)
 			chartsResource = append(chartsResource, resource)
 		}
 	}

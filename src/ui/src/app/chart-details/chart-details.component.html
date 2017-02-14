@@ -1,15 +1,17 @@
 <app-header-bar></app-header-bar>
 <div>
-  <app-panel *ngIf="!chart" class="app-panel--container">
+  <app-panel *ngIf="!chart && !loading" class="app-panel--container">
     <h2>Sorry, we couldn't find the chart</h2>
   </app-panel>
-  <section class="chart-details" *ngIf="chart">
-    <article class="chart-details__docs">
-      <app-chart-details-usage [chart]=chart [currentVersion]=currentVersion></app-chart-details-usage>
-      <app-chart-details-readme [chart]=chart [currentVersion]=currentVersion></app-chart-details-readme>
-    </article>
-    <aside class="chart-details__info">
-      <app-chart-details-info [chart]=chart [currentVersion]=currentVersion></app-chart-details-info>
-    </aside>
-  </section>
+  <app-loader [loading]="loading">
+    <section class="chart-details" *ngIf="chart">
+      <article class="chart-details__docs">
+        <app-chart-details-usage [chart]=chart [currentVersion]=currentVersion></app-chart-details-usage>
+        <app-chart-details-readme [chart]=chart [currentVersion]=currentVersion></app-chart-details-readme>
+      </article>
+      <aside class="chart-details__info">
+        <app-chart-details-info [chart]=chart [currentVersion]=currentVersion></app-chart-details-info>
+      </aside>
+    </section>
+  </app-loader>
 </div>
