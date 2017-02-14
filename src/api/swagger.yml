@@ -207,6 +207,8 @@ definitions:
     properties:
       repo:
         type: string
+      repoURL:
+        type: string
       name:
         type: string
         minLength: 1
@@ -261,6 +263,9 @@ definitions:
         type: string
         minLength: 1
       repo:
+        type: string
+        minLenth: 1
+      repoURL:
         type: string
         minLenth: 1
       home:

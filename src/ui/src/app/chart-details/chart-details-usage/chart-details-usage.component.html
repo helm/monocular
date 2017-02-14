@@ -1,7 +1,7 @@
 <div class="chart-details-usage">
   <label>Usage</label>
   <code>
-    <p>{{ repoAddInstructions }}</p>
+    <p *ngIf="showRepoInstructions">{{ repoAddInstructions }}</p>
     <p>helm install {{ cmdChartId }} --version {{ currentVersion }}</p>
   </code>
 </div>

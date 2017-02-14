@@ -32,10 +32,10 @@ func configureAPI(api *operations.MonocularAPI) http.Handler {
 	// configure the api here
 	repos := []map[string]string{
 		map[string]string{
-			"stable": "http://storage.googleapis.com/kubernetes-charts/index.yaml",
+			"stable": "http://storage.googleapis.com/kubernetes-charts",
 		},
 		map[string]string{
-			"incubator": "http://storage.googleapis.com/kubernetes-charts-incubator/index.yaml",
+			"incubator": "http://storage.googleapis.com/kubernetes-charts-incubator",
 		},
 	}
 	chartsImplementation := cache.NewCachedCharts(repos)

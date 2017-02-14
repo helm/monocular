@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/url"
+	"path"
 	"strings"
 	"sync"
 
@@ -15,7 +17,7 @@ import (
 )
 
 type cachedCharts struct {
-	// knownRepos is a slice of maps, each of which looks like this: "reponame": "https://repo.url/index.yaml"
+	// knownRepos is a slice of maps, each of which looks like this: "reponame": "https://repo.url/"
 	knownRepos []map[string]string
 	allCharts  map[string][]*models.ChartPackage
 	rwm        *sync.RWMutex
@@ -126,9 +128,14 @@ func (c *cachedCharts) Search(params operations.SearchChartsParams) ([]*models.C
 func (c *cachedCharts) Refresh() error {
 	c.rwm.Lock()
 	defer c.rwm.Unlock()
+	fmt.Printf("Using cache directory %s\n", charthelper.DataDirBase())
 	for _, repo := range c.knownRepos {
-		for repoName := range repo {
-			resp, err := http.Get(repo[repoName])
+		for repoName, repoURL := range repo {
+			// Append index.yaml
+			u, _ := url.Parse(repoURL)
+			u.Path = path.Join(u.Path, "index.yaml")
+
+			resp, err := http.Get(u.String())
 			if err != nil {
 				return err
 			}
@@ -142,8 +149,9 @@ func (c *cachedCharts) Refresh() error {
 				return err
 			}
 			c.allCharts[repoName] = []*models.ChartPackage{}
-			fmt.Printf("Using cache directory %s\n", charthelper.DataDirBase())
 			for _, chart := range charts {
+				// Inject the repository URL
+				chart.RepoURL = repoURL
 				// Extra files. Skipped if the directory exists
 				dataExists, err := charthelper.ChartDataExists(chart)
 				if err != nil {

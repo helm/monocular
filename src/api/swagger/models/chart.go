@@ -54,6 +54,10 @@ type Chart struct {
 	*/
 	Repo *string `json:"repo"`
 
+	/* repo URL
+	 */
+	RepoURL string `json:"repoURL,omitempty"`
+
 	/* sources
 
 	Required: true

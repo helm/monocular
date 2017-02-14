@@ -92,14 +92,14 @@ func TestCachedChartsRefresh(t *testing.T) {
 func TestCachedChartsRefreshErrorPropagation(t *testing.T) {
 	// Invalid repo URL
 	repos := []map[string]string{
-		map[string]string{"stable": "./localhost/index.yaml"},
+		map[string]string{"stable": "./localhost"},
 	}
 	chImplementation := NewCachedCharts(repos)
 	err := chImplementation.Refresh()
 	assert.ExistsErr(t, err, "Invalid Repo URL")
 	// Repo does not exist
 	repos = []map[string]string{
-		map[string]string{"stable": "http://localhost/index.yaml"},
+		map[string]string{"stable": "http://localhost"},
 	}
 	chImplementation = NewCachedCharts(repos)
 	err = chImplementation.Refresh()
@@ -120,7 +120,7 @@ func TestCachedChartsRefreshErrorDownloadingPackage(t *testing.T) {
 
 	repos := []map[string]string{
 		map[string]string{
-			"stable": "http://storage.googleapis.com/kubernetes-charts/index.yaml",
+			"stable": "http://storage.googleapis.com/kubernetes-charts",
 		},
 	}
 	chImplementation := NewCachedCharts(repos)
@@ -138,10 +138,10 @@ func getChartsImplementation() data.Charts {
 	}
 	repos := []map[string]string{
 		map[string]string{
-			"stable": "http://storage.googleapis.com/kubernetes-charts/index.yaml",
+			"stable": "http://storage.googleapis.com/kubernetes-charts",
 		},
 		map[string]string{
-			"incubator": "http://storage.googleapis.com/kubernetes-charts-incubator/index.yaml",
+			"incubator": "http://storage.googleapis.com/kubernetes-charts-incubator",
 		},
 	}
 	chImplementation := NewCachedCharts(repos)

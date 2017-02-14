@@ -53,6 +53,7 @@ func MakeChartResource(chart *models.ChartPackage) *models.Resource {
 	ret.ID = StrToPtr(MakeChartID(chart.Repo, *chart.Name))
 	ret.Attributes = &models.Chart{
 		Repo:        &chart.Repo,
+		RepoURL:     chart.RepoURL,
 		Name:        chart.Name,
 		Description: chart.Description,
 		Home:        chart.Home,
@@ -122,6 +123,7 @@ func AddChartRelationship(resource *models.Resource, chartPackage *models.ChartP
 				Name:        chartPackage.Name,
 				Description: chartPackage.Description,
 				Repo:        &chartPackage.Repo,
+				RepoURL:     chartPackage.RepoURL,
 				Home:        chartPackage.Home,
 				Sources:     chartPackage.Sources,
 				Maintainers: chartPackage.Maintainers,

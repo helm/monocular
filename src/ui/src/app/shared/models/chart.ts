@@ -13,6 +13,7 @@ export class ChartAttributes {
   name: string;
   icon: string;
   repo: string;
+  repoURL: string;
   home: string;
   sources: string[];
   keywords: string[];
