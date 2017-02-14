@@ -14,6 +14,7 @@ import { ChartDetailsComponent } from './chart-details.component';
 import { ChartItemComponent } from '../chart-item/chart-item.component';
 import { PanelComponent } from '../panel/panel.component';
 import { HeaderBarComponent } from '../header-bar/header-bar.component';
+import { LoaderComponent } from '../loader/loader.component';
 import { ChartDetailsVersionsComponent } from './chart-details-versions/chart-details-versions.component';
 import { ChartDetailsInfoComponent } from './chart-details-info/chart-details-info.component';
 import { ChartDetailsReadmeComponent } from './chart-details-readme/chart-details-readme.component';
@@ -82,6 +83,7 @@ describe('ChartDetailsComponent', () => {
         ChartDetailsInfoComponent,
         ChartDetailsReadmeComponent,
         ChartDetailsUsageComponent,
+        LoaderComponent,
         PanelComponent,
         HeaderBarComponent,
         ChartItemComponent,
