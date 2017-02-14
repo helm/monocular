@@ -3,7 +3,7 @@ package config
 import (
 	"os"
 
-	"github.com/helm/monocular/src/api/data/cache"
+	"github.com/helm/monocular/src/api/data/repos"
 	"github.com/imdario/mergo"
 )
 
@@ -15,7 +15,7 @@ type configurationWithOverrides map[string]Configuration
 // For now it only includes Cors info
 type Configuration struct {
 	Cors  Cors
-	Repos cache.Repos
+	Repos repos.Repos
 }
 
 // Cors configuration used during middleware setup
@@ -57,22 +57,9 @@ func GetConfig() (Configuration, error) {
 	config := readConfigWithOverrides()
 
 	res = mergeConfig(config, currentEnvironment())
-	res.Repos = GetRepos()
+	res.Repos = repos.Enabled()
 
 	return res, nil
-}
-
-// GetRepos returns the map of repositories
-// TODO, we should be able to override this from a file
-func GetRepos() cache.Repos {
-	return cache.Repos{
-		cache.Repo{
-			"stable": "http://storage.googleapis.com/kubernetes-charts",
-		},
-		cache.Repo{
-			"incubator": "http://storage.googleapis.com/kubernetes-charts-incubator",
-		},
-	}
 }
 
 func mergeConfig(conf configurationWithOverrides, env string) Configuration {

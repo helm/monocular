@@ -25,7 +25,7 @@ export class ChartItemComponent implements OnInit {
   }
 
 	goToDetail(chart: Chart): void {
-    let link = ['/charts', chart.attributes.repo, chart.attributes.name];
+    let link = ['/charts', chart.attributes.repo.name, chart.attributes.name];
     this.router.navigate(link);
   }
 

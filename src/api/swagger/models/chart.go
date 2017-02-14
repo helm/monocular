@@ -52,7 +52,7 @@ type Chart struct {
 
 	Required: true
 	*/
-	Repo *string `json:"repo"`
+	Repo *Repo `json:"repo"`
 
 	/* repo URL
 	 */
@@ -186,6 +186,13 @@ func (m *Chart) validateRepo(formats strfmt.Registry) error {
 
 	if err := validate.Required("repo", "body", m.Repo); err != nil {
 		return err
+	}
+
+	if m.Repo != nil {
+
+		if err := m.Repo.Validate(formats); err != nil {
+			return err
+		}
 	}
 
 	return nil

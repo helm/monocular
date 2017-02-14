@@ -1,4 +1,5 @@
 import { ChartVersionAttributes } from "./chart-version"
+import { Repo } from "./repo"
 export class Chart {
   id: string;
   type: string;
@@ -12,8 +13,7 @@ export class ChartAttributes {
   description: string;
   name: string;
   icon: string;
-  repo: string;
-  repoURL: string;
+  repo: Repo;
   home: string;
   sources: string[];
   keywords: string[];

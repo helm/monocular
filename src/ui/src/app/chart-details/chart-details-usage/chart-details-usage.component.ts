@@ -20,10 +20,10 @@ export class ChartDetailsUsageComponent implements OnInit {
   }
 
   get showRepoInstructions(): boolean {
-    return this.chart.attributes.repo != 'stable'
+    return this.chart.attributes.repo.name != 'stable'
   }
 
   get repoAddInstructions(): string {
-    return `helm repo add incubator ${this.chart.attributes.repoURL}`
+    return `helm repo add incubator ${this.chart.attributes.repo.url}`
   }
 }

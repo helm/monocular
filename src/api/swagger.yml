@@ -261,8 +261,8 @@ definitions:
         type: string
         minLength: 1
       repo:
-        type: string
-        minLenth: 1
+        type: object
+        $ref: "#/definitions/repo"
       repoURL:
         type: string
         minLenth: 1

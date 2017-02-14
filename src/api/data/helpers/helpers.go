@@ -8,6 +8,7 @@ import (
 	"gopkg.in/yaml.v2"
 
 	"github.com/helm/monocular/src/api/data/cache/charthelper"
+	"github.com/helm/monocular/src/api/data/repos"
 )
 
 // APIVer1String is the API version 1 string we include in route URLs
@@ -52,8 +53,7 @@ func MakeChartResource(chart *models.ChartPackage) *models.Resource {
 	ret.Type = StrToPtr("chart")
 	ret.ID = StrToPtr(MakeChartID(chart.Repo, *chart.Name))
 	ret.Attributes = &models.Chart{
-		Repo:        &chart.Repo,
-		RepoURL:     chart.RepoURL,
+		Repo:        getRepoObject(chart),
 		Name:        chart.Name,
 		Description: chart.Description,
 		Home:        chart.Home,
@@ -122,8 +122,7 @@ func AddChartRelationship(resource *models.Resource, chartPackage *models.ChartP
 			Data: &models.Chart{
 				Name:        chartPackage.Name,
 				Description: chartPackage.Description,
-				Repo:        &chartPackage.Repo,
-				RepoURL:     chartPackage.RepoURL,
+				Repo:        getRepoObject(chartPackage),
 				Home:        chartPackage.Home,
 				Sources:     chartPackage.Sources,
 				Maintainers: chartPackage.Maintainers,
@@ -154,7 +153,7 @@ func AddLatestChartVersionRelationship(resource *models.Resource, chartPackage *
 // AddCanonicalLink adds a "self" link to a chart resource's canonical API endpoint
 func AddCanonicalLink(resource *models.Resource) {
 	resource.Links = &models.ResourceLink{
-		Self: StrToPtr(MakeRepoChartRouteURL(APIVer1String, *resource.Attributes.(*models.Chart).Repo, *resource.Attributes.(*models.Chart).Name)),
+		Self: StrToPtr(MakeRepoChartRouteURL(APIVer1String, *resource.Attributes.(*models.Chart).Repo.Name, *resource.Attributes.(*models.Chart).Name)),
 	}
 }
 
@@ -283,4 +282,19 @@ func makeAvailableIcons(chart *models.ChartPackage) []*models.Icon {
 func makeReadmeURL(chart *models.ChartPackage) *string {
 	res := charthelper.ReadmeStaticUrl(chart, "/assets")
 	return &res
+}
+
+func getRepoObject(chart *models.ChartPackage) *models.Repo {
+	var repoPayload models.Repo
+
+	for _, repo := range repos.Enabled() {
+		if repo.Name == chart.Repo {
+			repoPayload = models.Repo{
+				Name: &repo.Name,
+				URL:  &repo.URL,
+			}
+			return &repoPayload
+		}
+	}
+	return &repoPayload
 }

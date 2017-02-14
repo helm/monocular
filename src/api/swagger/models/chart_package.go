@@ -72,10 +72,6 @@ type ChartPackage struct {
 	 */
 	Repo string `json:"repo,omitempty"`
 
-	/* repo URL
-	 */
-	RepoURL string `json:"repoURL,omitempty"`
-
 	/* sources
 
 	Required: true
