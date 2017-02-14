@@ -1,6 +1,5 @@
 vendor/
 repo-data/
-monocular
 coverage.txt
 *.log
 src/api/.glide
