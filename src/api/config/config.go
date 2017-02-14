@@ -57,7 +57,7 @@ func GetConfig() (Configuration, error) {
 	config := readConfigWithOverrides()
 
 	res = mergeConfig(config, currentEnvironment())
-	res.Repos = repos.Enabled()
+	res.Repos, _ = repos.Enabled()
 
 	return res, nil
 }

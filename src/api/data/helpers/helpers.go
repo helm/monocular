@@ -287,7 +287,8 @@ func makeReadmeURL(chart *models.ChartPackage) *string {
 func getRepoObject(chart *models.ChartPackage) *models.Repo {
 	var repoPayload models.Repo
 
-	for _, repo := range repos.Enabled() {
+	repos, _ := repos.Enabled()
+	for _, repo := range repos {
 		if repo.Name == chart.Repo {
 			repoPayload = models.Repo{
 				Name: &repo.Name,

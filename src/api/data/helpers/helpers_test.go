@@ -50,11 +50,13 @@ func TestParseYAMLRepo(t *testing.T) {
 
 func TestMakeChartResource(t *testing.T) {
 	charts, err := ParseYAMLRepo(getTestRepoYAML(), repoName)
+	repo := getRepoObject(charts[0])
 	assert.NoErr(t, err)
 	chartResource := MakeChartResource(charts[0])
 	assert.Equal(t, *chartResource.Type, "chart", "chart resource type field value")
 	assert.Equal(t, *chartResource.ID, MakeChartID(repoName, chartName), "chart resource ID field value")
-	assert.Equal(t, *chartResource.Attributes.(*models.Chart).Repo, repoName, "chart resource Attributes.Repo field value")
+	assert.Equal(t, *chartResource.Attributes.(*models.Chart).Repo.Name, *repo.Name, "chart resource Attributes.Repo Name field value")
+	assert.Equal(t, *chartResource.Attributes.(*models.Chart).Repo.URL, *repo.URL, "chart resource Attributes.Repo URL field value")
 	assert.Equal(t, *chartResource.Attributes.(*models.Chart).Name, chartName, "chart resource Attributes.Name field value")
 	assert.Equal(t, *chartResource.Attributes.(*models.Chart).Description, chartDescription, "chart resource Attributes.Description field value")
 	assert.Equal(t, *chartResource.Attributes.(*models.Chart).Home, chartHome, "chart resource Attributes.Home field value")
@@ -64,9 +66,11 @@ func TestMakeChartResources(t *testing.T) {
 	charts, err := ParseYAMLRepo(getTestRepoYAML(), repoName)
 	assert.NoErr(t, err)
 	chartsResource := MakeChartResources(charts)
+	repo := getRepoObject(charts[0])
 	assert.Equal(t, *chartsResource[0].Type, "chart", "chart resource type field value")
 	assert.Equal(t, *chartsResource[0].ID, MakeChartID(repoName, chartName), "chart resource ID field value")
-	assert.Equal(t, *chartsResource[0].Attributes.(*models.Chart).Repo, repoName, "chart resource Attributes.Repo field value")
+	assert.Equal(t, *chartsResource[0].Attributes.(*models.Chart).Repo.Name, *repo.Name, "chart resource Attributes.Repo Namefield value")
+	assert.Equal(t, *chartsResource[0].Attributes.(*models.Chart).Repo.URL, *repo.URL, "chart resource Attributes.Repo URL value")
 	assert.Equal(t, *chartsResource[0].Attributes.(*models.Chart).Name, chartName, "chart resource Attributes.Name field value")
 	assert.Equal(t, *chartsResource[0].Attributes.(*models.Chart).Description, chartDescription, "chart resource Attributes.Description field value")
 	assert.Equal(t, *chartsResource[0].Attributes.(*models.Chart).Home, chartHome, "chart resource Attributes.Home field value")
@@ -107,7 +111,7 @@ func TestAddChartRelationship(t *testing.T) {
 	assert.Equal(t, *chartVersionResource.Relationships.(*models.ChartRelationship).Chart.Data.Home, *chart.Home, "relationships.chart.data.home field value")
 	assert.Equal(t, chartVersionResource.Relationships.(*models.ChartRelationship).Chart.Data.Maintainers, chart.Maintainers, "relationships.chart.data.maintainers array value")
 	assert.Equal(t, chartVersionResource.Relationships.(*models.ChartRelationship).Chart.Data.Sources, chart.Sources, "relationships.chart.data.sources array value")
-	assert.Equal(t, *chartVersionResource.Relationships.(*models.ChartRelationship).Chart.Data.Repo, chart.Repo, "relationships.chart.data.repo field value")
+	assert.Equal(t, chartVersionResource.Relationships.(*models.ChartRelationship).Chart.Data.Repo, getRepoObject(chart), "relationships.chart.data.repo field value")
 	assert.Equal(t, *chartVersionResource.Relationships.(*models.ChartRelationship).Chart.Links.Self, MakeRepoChartRouteURL(APIVer1String, chart.Repo, *chart.Name), "relationships.chart.links.self field value")
 }
 

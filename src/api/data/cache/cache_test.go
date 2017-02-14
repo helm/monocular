@@ -8,6 +8,7 @@ import (
 	"github.com/helm/monocular/src/api/data"
 	"github.com/helm/monocular/src/api/data/cache/charthelper"
 	"github.com/helm/monocular/src/api/data/helpers"
+	"github.com/helm/monocular/src/api/data/repos"
 	"github.com/helm/monocular/src/api/swagger/models"
 	"github.com/helm/monocular/src/api/swagger/restapi/operations"
 	"github.com/helm/monocular/src/api/testutil"
@@ -91,17 +92,23 @@ func TestCachedChartsRefresh(t *testing.T) {
 
 func TestCachedChartsRefreshErrorPropagation(t *testing.T) {
 	// Invalid repo URL
-	repos := []map[string]string{
-		map[string]string{"stable": "./localhost"},
+	rep := repos.Repos{
+		repos.Repo{
+			Name: "stable",
+			URL:  "./localhost",
+		},
 	}
-	chImplementation := NewCachedCharts(repos)
+	chImplementation := NewCachedCharts(rep)
 	err := chImplementation.Refresh()
 	assert.ExistsErr(t, err, "Invalid Repo URL")
 	// Repo does not exist
-	repos = []map[string]string{
-		map[string]string{"stable": "http://localhost"},
+	rep = repos.Repos{
+		repos.Repo{
+			Name: "stable",
+			URL:  "http://localhost",
+		},
 	}
-	chImplementation = NewCachedCharts(repos)
+	chImplementation = NewCachedCharts(rep)
 	err = chImplementation.Refresh()
 	assert.ExistsErr(t, err, "Repo does not exist")
 }
@@ -118,9 +125,10 @@ func TestCachedChartsRefreshErrorDownloadingPackage(t *testing.T) {
 		return knownError
 	}
 
-	repos := []map[string]string{
-		map[string]string{
-			"stable": "http://storage.googleapis.com/kubernetes-charts",
+	repos := repos.Repos{
+		repos.Repo{
+			Name: "stable",
+			URL:  "http://storage.googleapis.com/kubernetes-charts",
 		},
 	}
 	chImplementation := NewCachedCharts(repos)
@@ -136,12 +144,14 @@ func getChartsImplementation() data.Charts {
 	charthelper.ChartDataExists = func(chart *models.ChartPackage) (bool, error) {
 		return true, nil
 	}
-	repos := []map[string]string{
-		map[string]string{
-			"stable": "http://storage.googleapis.com/kubernetes-charts",
+	repos := repos.Repos{
+		repos.Repo{
+			Name: "stable",
+			URL:  "http://storage.googleapis.com/kubernetes-charts",
 		},
-		map[string]string{
-			"incubator": "http://storage.googleapis.com/kubernetes-charts-incubator",
+		repos.Repo{
+			Name: "incubator",
+			URL:  "http://storage.googleapis.com/kubernetes-charts-incubator",
 		},
 	}
 	chImplementation := NewCachedCharts(repos)
