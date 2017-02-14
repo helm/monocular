@@ -6,8 +6,9 @@
 .chart-details-usage {
   background-color: $layout_base;
   color: $layout_light;
-  margin-top: 1em;
+  margin: 2em 0;
   padding: 2em;
+  border-radius: 5px;
 
   label {
     color: md-color($monocular-app-primary);

@@ -12,6 +12,7 @@ export class ChartsComponent implements OnInit {
   charts: Chart[] = [];
   orderedCharts: Chart[] = [];
   loading: boolean = true;
+  currentRepo: string;
 
   constructor(
     private chartsService: ChartsService,
@@ -27,7 +28,6 @@ export class ChartsComponent implements OnInit {
   ngOnInit() {
 		this.loadCharts();
   }
-  currentRepo: string
 
   loadCharts(): void {
     this.route.params.forEach((params: Params) => {

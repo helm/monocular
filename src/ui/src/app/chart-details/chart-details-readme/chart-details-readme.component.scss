@@ -1,9 +1,5 @@
 @import '../../../theme.scss';
+
 .chart-details-readme {
-  margin-top: -1em;
-  /deep/ .panel {
-    background-color: inherit;
-    border: 2px solid $layout_light;
-    border-top: 0;
-  }
+  
 }

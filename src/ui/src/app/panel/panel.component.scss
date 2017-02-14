@@ -13,6 +13,11 @@
     background-color: $layout_light;
   }
 
+  &--border {
+    border-radius: 5px;
+    border: 1px solid darken($layout_light, 5);
+  }
+
   &__title {
     margin-top: 0;
   }

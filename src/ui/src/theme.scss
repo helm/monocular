@@ -61,7 +61,7 @@ $monocular-app-theme: md-light-theme($monocular-app-primary, $monocular-app-acce
 // Base palette for the project
 $layout_dark: #333239;
 $layout_base: #303030;
-$layout_light: #ECECEC;
+$layout_light: #f8f8f8;
 $layout_text: #38383F;
 
 // Responsive. They represents the min width of every display.
@@ -90,7 +90,7 @@ $mappy-queries: (
 
   &--reverse {
     .md-input-placeholder:not(.md-focused) {
-      color: darken($layout_light, 20%);
+      color: darken($layout_light, 25);
     }
     .md-input-underline {
       border-color: $layout_light;

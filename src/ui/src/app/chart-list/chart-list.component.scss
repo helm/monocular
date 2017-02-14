@@ -5,13 +5,14 @@
   display: flex;
   flex-flow: row wrap;
   justify-content: space-between;
+  margin-bottom: -2%;
 
   &:after {
     content: "";
     flex: auto;
   }
 
-  app-chart-list-item {
+  app-chart-item {
     display: block;
     width: 100%;
     margin-bottom: 1em;
@@ -23,7 +24,7 @@
   }
 
   @include mappy-bp(small medium) {
-    app-chart-list-item {
+    app-chart-item {
       width: 48%;
 
       &:nth-child(2n+1) {
@@ -33,7 +34,7 @@
   }
 
   @include mappy-bp(medium large) {
-    app-chart-list-item {
+    app-chart-item {
       width: 32%;
 
       &:nth-child(3n+1) {
@@ -43,7 +44,7 @@
   }
 
   @include mappy-bp(large xlarge) {
-    app-chart-list-item {
+    app-chart-item {
       width: 23.5%;
 
       &:nth-child(4n+1) {
@@ -53,7 +54,7 @@
   }
 
   @include mappy-bp(xlarge) {
-    app-chart-list-item {
+    app-chart-item {
       width: 18.4%;
 
       &:nth-child(5n+1) {

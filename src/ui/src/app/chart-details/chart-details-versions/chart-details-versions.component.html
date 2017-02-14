@@ -1,8 +1,9 @@
-<app-panel [title]="'Versions'" [background]=true>
+<div class="versions">
+  <h1>Versions</h1>
   <div class="version" *ngFor="let version of versions">
     <span class='number' [class.selected]="isSelected(version)">
       <a (click)="goToVersion(version)">{{ version.attributes.version }}</a>
     </span> -
     <span class='creation-date'>{{ version.attributes.created | date: 'MMM d, y' }}</span>
   </div>
-</app-panel>
+</div>
