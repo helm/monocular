@@ -32,7 +32,7 @@
     }
   }
 
-  @include mappy-bp(medium xlarge) {
+  @include mappy-bp(medium large) {
     app-chart-list-item {
       width: 32%;
 
@@ -42,11 +42,21 @@
     }
   }
 
-  @include mappy-bp(xlarge) {
+  @include mappy-bp(large xlarge) {
     app-chart-list-item {
       width: 23.5%;
 
       &:nth-child(4n+1) {
+        margin-left: 0;
+      }
+    }
+  }
+
+  @include mappy-bp(xlarge) {
+    app-chart-list-item {
+      width: 18.4%;
+
+      &:nth-child(5n+1) {
         margin-left: 0;
       }
     }

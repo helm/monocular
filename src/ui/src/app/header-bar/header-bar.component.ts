@@ -6,11 +6,13 @@ import { Router, NavigationExtras } from '@angular/router';
   templateUrl: './header-bar.component.html',
   styleUrls: ['./header-bar.component.scss'],
   encapsulation: ViewEncapsulation.None,
-  inputs: ['showSearch']
+  inputs: ['showSearch', 'transparent']
 })
 export class HeaderBarComponent implements OnInit {
   // Show search form by default
-  public showSearch:boolean = true;
+  public showSearch: boolean = true;
+  // Set the background as transparent
+  public transparent: boolean = false;
 
   constructor(private router: Router) { }
   ngOnInit() { }

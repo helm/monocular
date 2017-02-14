@@ -1,4 +1,4 @@
-<header class="header-bar">
+<header [ngClass]="{ 'header-bar': true, 'header-bar--transparent': transparent }">
   <div class="header-bar__logo">
     <a routerLink="/"><img src="/assets/images/logo.png" alt="Monocular Logo"/></a>
   </div>

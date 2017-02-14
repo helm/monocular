@@ -11,6 +11,10 @@ $header-bar-logo-height: 35px;
   padding: $header-bar-padding;
   background-color: $layout_base;
 
+  &--transparent {
+    background-color: transparent;
+  }
+
   &__logo {
     display: inline-block;
 

@@ -9,8 +9,7 @@ $chart-item-content-height: 80px;
 .chart-item {
   // Useful to display the elements as a grid
   &.chart-item--fixHeight {
-    min-height: 9em;
-    margin: 1.5em 0;
+    min-height: 10em;
   }
 
   &-content {
@@ -18,26 +17,23 @@ $chart-item-content-height: 80px;
   }
 
   &-logo {
-    height: $chart-item-content-height;
-    display: table;
-    width: 100%;
+    height: $chart-item-content-height + (16 * 2);
+    // We use this 1.5 to center images correctly
+    line-height: $chart-item-content-height + (16 * 1.5);
     text-align: center;
-
-    &__center {
-      display: table-cell;
-      vertical-align: middle;
-      width: 100%;
-    }
+    background-color: lighten($layout_light, 5);
+    border-radius: 5px 5px 0 0;
+    box-shadow: inset 0 -2px 4px rgba(0, 0, 0, .04);
+    border-bottom: 1px solid $layout_light;
 
     img {
       max-height: $chart-item-content-height;
+      vertical-align: middle;
     }
   }
 
   &-info {
-    margin-top: 1.5em;
-    padding-top: 1.5em;
-    position: relative;
+    margin: 1em 0 1.5em;
 
     &__title {
       color: md-color($monocular-app-primary);
@@ -53,18 +49,13 @@ $chart-item-content-height: 80px;
     // Remove this when chips are ready:
     // https://github.com/angular/material2/issues/120
     &__repo {
-      color: white;
-      padding: 2px 5px;
-      border: 1px solid md-color($monocular-app-accent, 600);
-      background-color: md-color($monocular-app-accent);
-      border-radius: 5px;
+      color: md-color($monocular-app-accent);
       font-size: .8em;
       position: relative;
       top: -1px;
 
       &.repo-incubator {
-        border-color: md-color($monocular-app-warn, 600);
-        background-color: md-color($monocular-app-warn);
+        color: md-color($monocular-app-warn, 600);
       }
 
       a {
@@ -78,18 +69,97 @@ $chart-item-content-height: 80px;
       padding-right: 7px;
       border-right: 1px solid darken($layout_light, 10%);
     }
-
-    &::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      border-bottom: 1px solid darken($layout_light, 10%);
-      width: 50%;
-      left: 25%;
-    }
   }
 
   &-description {
     margin-top: 1em;
   }
 }
+
+// .chart-item {
+//   // Useful to display the elements as a grid
+//   &.chart-item--fixHeight {
+//     min-height: 9em;
+//     margin: 1.5em 0;
+//   }
+//
+//   &-content {
+//     text-align: center;
+//   }
+//
+//   &-logo {
+//     height: $chart-item-content-height;
+//     display: table;
+//     width: 100%;
+//     text-align: center;
+//
+//     &__center {
+//       display: table-cell;
+//       vertical-align: middle;
+//       width: 100%;
+//     }
+//
+//     img {
+//       max-height: $chart-item-content-height;
+//     }
+//   }
+//
+//   &-info {
+//     margin-top: 1.5em;
+//     padding-top: 1.5em;
+//     position: relative;
+//
+//     &__title {
+//       color: md-color($monocular-app-primary);
+//       margin: 0 0 .5em;
+//       font-weight: 300;
+//       cursor: pointer;
+//     }
+//
+//     p {
+//       margin: 0;
+//     }
+//
+//     // Remove this when chips are ready:
+//     // https://github.com/angular/material2/issues/120
+//     &__repo {
+//       color: white;
+//       padding: 2px 5px;
+//       border: 1px solid md-color($monocular-app-accent, 600);
+//       background-color: md-color($monocular-app-accent);
+//       border-radius: 5px;
+//       font-size: .8em;
+//       position: relative;
+//       top: -1px;
+//
+//       &.repo-incubator {
+//         border-color: md-color($monocular-app-warn, 600);
+//         background-color: md-color($monocular-app-warn);
+//       }
+//
+//       a {
+//         color: inherit;
+//       }
+//     }
+//
+//     &__version {
+//       color: lighten($layout_text, 20%);
+//       margin-right: 5px;
+//       padding-right: 7px;
+//       border-right: 1px solid darken($layout_light, 10%);
+//     }
+//
+//     &::after {
+//       content: '';
+//       position: absolute;
+//       top: 0;
+//       border-bottom: 1px solid darken($layout_light, 10%);
+//       width: 50%;
+//       left: 25%;
+//     }
+//   }
+//
+//   &-description {
+//     margin-top: 1em;
+//   }
+// }

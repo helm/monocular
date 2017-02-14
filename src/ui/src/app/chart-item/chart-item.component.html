@@ -1,9 +1,7 @@
 <div class="chart-item {{ fixHeight ? 'chart-item--fixHeight' : '' }}">
   <div class="chart-item-content">
     <div class="chart-item-logo">
-      <div class="chart-item-logo__center">
-        <img alt="{{ chart.attributes.name }}'s logo" src="{{ getIconUrl(chart) }}"/>
-      </div>
+      <img alt="{{ chart.attributes.name }}'s logo" src="{{ getIconUrl(chart) }}"/>
     </div>
     <div class="chart-item-info">
       <h2 class="chart-item-info__title" (click)="goToDetail(chart)">

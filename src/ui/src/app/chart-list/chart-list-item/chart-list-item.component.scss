@@ -2,8 +2,7 @@
 @import '../../../theme.scss';
 
 .chart-list-item {
-  padding: 1em;
   background-color: white;
-  border: 1px solid darken($layout_light, 10%);
+  border: 1px solid #eaeaea;
   border-radius: 5px;
 }

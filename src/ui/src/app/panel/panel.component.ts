@@ -4,9 +4,13 @@ import { Component, Input } from '@angular/core';
   selector: 'app-panel',
   templateUrl: './panel.component.html',
   styleUrls: ['./panel.component.scss'],
-  inputs: ['title']
+  inputs: ['title', 'background', 'container']
 })
 export class PanelComponent {
   // Title of the panel
-  public title:string = '';
+  public title: string = '';
+  // Display a gray background
+  public background: boolean = false;
+  // Set the size of the panel to 80%
+  public container: boolean = false;
 }
