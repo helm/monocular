@@ -219,12 +219,6 @@ func MakeRepoChartVersionRouteURL(apiVer, repo, name, version string) string {
 	return fmt.Sprintf("/%s/charts/%s/%s/versions/%s", apiVer, repo, name, version)
 }
 
-// MakeRepoChartVersionsRouteURL returns a string that represents
-// /{:apiVersion}/charts/{:repo}/{:chart}/versions
-func MakeRepoChartVersionsRouteURL(apiVer, repo, name string) string {
-	return fmt.Sprintf("/%s/charts/%s/%s/versions", apiVer, repo, name)
-}
-
 // MakeChartID returns a chart ID in the form {:repo}/{:chart}
 func MakeChartID(repo, chart string) string {
 	return fmt.Sprintf("%s/%s", repo, chart)

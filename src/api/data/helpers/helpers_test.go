@@ -153,6 +153,8 @@ func TestGetLatestChartVersion(t *testing.T) {
 	*chartsBadVersion[0].Version = "this is not semver"
 	latest, err = GetLatestChartVersion(chartsBadVersion, chartName)
 	assert.ExistsErr(t, err, "sent chart with bogus version to GetLatestChartVersion")
+	latest, err = GetLatestChartVersion(charts, "no name")
+	assert.ExistsErr(t, err, "Chart not found")
 }
 
 func TestGetChartVersion(t *testing.T) {
@@ -263,5 +265,20 @@ func TestMakeAvailableIcons(t *testing.T) {
 	for i, icon := range charthelper.AvailableIcons(chart, "prefix") {
 		assert.Equal(t, *iconOutputs[i].Name, icon.Name, "Same name")
 		assert.Equal(t, *iconOutputs[i].Path, icon.Path, "Same path")
+	}
+}
+
+func TestGetRepoObject(t *testing.T) {
+	charts, err := ParseYAMLRepo(getTestRepoYAML(), repoName)
+	assert.NoErr(t, err)
+	chart := charts[0]
+	repo := getRepoObject(chart)
+	assert.Equal(t, repo.Name, &chart.Repo, "Same repo Name")
+
+	// Returns empty Repo if does not exist
+	chart.Repo = "does-not-exist"
+	repo = getRepoObject(chart)
+	if repo.Name != nil || repo.URL != nil {
+		t.Errorf("Repo Name and URL should be nil")
 	}
 }
