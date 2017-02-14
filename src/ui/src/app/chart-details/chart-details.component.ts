@@ -12,6 +12,7 @@ import { Chart } from '../shared/models/chart';
 export class ChartDetailsComponent implements OnInit {
   /* This resource will be different, probably ChartVersion */
   chart: Chart;
+  loading: boolean = true;
   currentVersion: string;
   titleVersion: string;
 
@@ -27,6 +28,7 @@ export class ChartDetailsComponent implements OnInit {
       let chartName = params['chartName']
       this.chartsService.getChart(repo, chartName)
         .subscribe(chart => {
+          this.loading = false;
           this.chart = chart;
           this.currentVersion = params['version'] || this.chart.relationships.latestChartVersion.data.version;
           this.titleVersion = params['version'] || '';

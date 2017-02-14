@@ -20,7 +20,7 @@ api:
       cpu: 100m
       memory: 128Mi
 ui:
-  replicaCount: 2
+  replicaCount: 1
   image:
     repository: gcr.io/helm-ui/monocular-ui
     tag: latest
@@ -34,6 +34,23 @@ ui:
     limits:
       cpu: 100m
       memory: 128Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+prerender:
+  replicaCount: 1
+  image:
+    repository: migmartri/prerender
+    tag: 0.1
+    pullPolicy: IfNotPresent
+  cacheEnabled: true
+  service:
+    name: prerender
+    type: NodePort
+    externalPort: 80
+    internalPort: 3000
+  resources:
     requests:
       cpu: 100m
       memory: 128Mi

@@ -8,10 +8,12 @@ import { ChartsService } from '../../shared/services/charts.service';
   styleUrls: ['./chart-details-readme.component.scss']
 })
 export class ChartDetailsReadmeComponent implements OnChanges {
-  @Input() chart: Chart
-  @Input() currentVersion: string
-  readmeContent: string
-  markdown = require('marked')
+  @Input() chart: Chart;
+  @Input() currentVersion: string;
+
+  loading: boolean = true;
+  readmeContent: string;
+  markdown = require('marked');
 
   constructor(
     private chartsService: ChartsService,
@@ -19,7 +21,7 @@ export class ChartDetailsReadmeComponent implements OnChanges {
 
   // Detect if input changed
   ngOnChanges() {
-    this.getReadme()
+    this.getReadme();
   }
 
   // TODO. This should not require loading the specific version and then the readme
@@ -28,6 +30,7 @@ export class ChartDetailsReadmeComponent implements OnChanges {
       .subscribe(chartVersion => {
         this.chartsService.getChartReadme(chartVersion)
           .subscribe(resp => {
+            this.loading = false;
             this.readmeContent = this.markdown(resp.text())
           })
       })

@@ -9,6 +9,8 @@ import { Chart } from '../shared/models/chart';
 })
 export class ChartIndexComponent implements OnInit {
 	charts: Chart[]
+  loading: boolean = true;
+
   constructor(private chartsService: ChartsService) { }
 
   ngOnInit() {
@@ -16,6 +18,9 @@ export class ChartIndexComponent implements OnInit {
   }
 
   loadCharts(): void {
-		this.chartsService.getCharts().subscribe(charts => this.charts = charts);
+		this.chartsService.getCharts().subscribe(charts => {
+      this.loading = false;
+      this.charts = charts;
+    });
   }
 }
