@@ -16,15 +16,21 @@ import (
 	"github.com/helm/monocular/src/api/swagger/restapi/operations"
 )
 
+// Repos is an array of Repo
+type Repos []Repo
+
+// Repo is a map name => URL
+type Repo map[string]string
+
 type cachedCharts struct {
 	// knownRepos is a slice of maps, each of which looks like this: "reponame": "https://repo.url/"
-	knownRepos []map[string]string
+	knownRepos Repos
 	allCharts  map[string][]*models.ChartPackage
 	rwm        *sync.RWMutex
 }
 
 // NewCachedCharts returns a new data.Charts implementation
-func NewCachedCharts(repos []map[string]string) data.Charts {
+func NewCachedCharts(repos Repos) data.Charts {
 	return &cachedCharts{
 		knownRepos: repos,
 		rwm:        new(sync.RWMutex),

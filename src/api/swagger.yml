@@ -207,8 +207,6 @@ definitions:
     properties:
       repo:
         type: string
-      repoURL:
-        type: string
       name:
         type: string
         minLength: 1
@@ -364,6 +362,16 @@ definitions:
         type: integer
         format: int64
       message:
+        type: string
+  repo:
+    type: object
+    required:
+      - name
+      - url
+    properties:
+      name:
+        type: string
+      url:
         type: string
   icon:
     type: object
