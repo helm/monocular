@@ -15,7 +15,7 @@ import 'rxjs/add/operator/map';
 export class ChartSearchComponent implements OnInit {
   query: string;
   loading: boolean = true;
-	charts: Chart[] = []
+	charts: Chart[] = [];
 
   constructor(
     private route: ActivatedRoute,

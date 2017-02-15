@@ -1,21 +1,22 @@
 @import '../../theme.scss';
 
-:host {
-  display: block;
-
-  &.app-panel {
-    &--container {
-      width: 80%;
-      margin-left: auto;
-      margin-right: auto;
-    }
-  }
-}
-
 .panel {
-  margin: 1em auto 2em;
   padding: 2em;
-  background-color: $layout_light;
+
+  &--container {
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  &--background {
+    background-color: $layout_light;
+  }
+
+  &--border {
+    border-radius: $border-radius;
+    border: 1px solid darken($layout_light, 5);
+  }
 
   &__title {
     margin-top: 0;

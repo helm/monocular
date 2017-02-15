@@ -1,6 +1,8 @@
 <div class="chart-item {{ fixHeight ? 'chart-item--fixHeight' : '' }}">
   <div class="chart-item-content">
-    <img class="chart-item-logo" alt="{{ chart.attributes.name }}'s logo" src="{{ getIconUrl(chart) }}"/>
+    <div class="chart-item-logo">
+      <img alt="{{ chart.attributes.name }}'s logo" src="{{ getIconUrl(chart) }}"/>
+    </div>
     <div class="chart-item-info">
       <h2 class="chart-item-info__title" (click)="goToDetail(chart)">
         {{ chart.attributes.name }}</h2>
@@ -12,9 +14,8 @@
         </span>
       </p>
     </div>
-  </div>
-  <div class="chart-item-description">
-    {{ truncateDescription ? (chart.attributes.description | truncate) :
-                             chart.attributes.description }}
+    <div class="chart-item-description" *ngIf="showDescription">
+      {{ chart.attributes.description }}
+    </div>
   </div>
 </div>

@@ -8,11 +8,13 @@ $main-header-height: 400px;
 
 .main-header {
   height: $main-header-height;
-  background-color: $layout_base;
+  //background-color: $layout_base;
+  background: linear-gradient(to left, $layout_base, md-color($monocular-app-primary, 900));
+  border-bottom: 3px solid black;
 
   &-content {
     width: 80%;
-    margin: 0 auto;
+    margin: 1.5em auto 0;
 
     @include mappy-bp(medium) {
       display: flex;
@@ -25,7 +27,7 @@ $main-header-height: 400px;
 
     &__slogan {
       color: $layout_light;
-      padding: 2em 0 1em;
+      padding: 3em 0 1em;
       font-weight: 100;
 
       p {
