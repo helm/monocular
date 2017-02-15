@@ -64,6 +64,9 @@ $layout_base: #303030;
 $layout_light: #f8f8f8;
 $layout_text: #38383F;
 
+// Other common sizes
+$border-radius: 5px;
+
 // Responsive. They represents the min width of every display.
 $breakpoints: (
   small: 480px,

@@ -8,7 +8,7 @@
   color: $layout_light;
   margin: 2em 0;
   padding: 2em;
-  border-radius: 5px;
+  border-radius: $border-radius;
 
   label {
     color: md-color($monocular-app-primary);

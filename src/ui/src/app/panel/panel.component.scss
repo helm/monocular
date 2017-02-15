@@ -14,7 +14,7 @@
   }
 
   &--border {
-    border-radius: 5px;
+    border-radius: $border-radius;
     border: 1px solid darken($layout_light, 5);
   }
 
