@@ -1,5 +1,5 @@
-hash: 01526d77bb8266f844ea79d991a20137b480a3e2afeee64498c62f0d4de1543c
-updated: 2017-02-07T15:21:09.281261848-08:00
+hash: ba8fb689cb8579d9dea38d978ed578210cefe7687954cd1f417694cf98c61b53
+updated: 2017-02-15T02:11:09.469627804Z
 imports:
 - name: github.com/arschles/assert
   version: bb58b908265b5931732079df03f2818bf2167ba0
@@ -53,6 +53,8 @@ imports:
   - buffer
   - jlexer
   - jwriter
+- name: github.com/Masterminds/semver
+  version: 59c29afe1a994eacb71c833025ca7acf874bb1da
 - name: github.com/mitchellh/mapstructure
   version: db1efb556f84b25a0a13a04aad883943538ad2e0
 - name: github.com/PuerkitoBio/purell

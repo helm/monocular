@@ -7,6 +7,7 @@ import (
 	"sort"
 
 	middleware "github.com/go-openapi/runtime/middleware"
+	"github.com/helm/monocular/src/api/chartpackagesort"
 	"github.com/helm/monocular/src/api/data"
 	"github.com/helm/monocular/src/api/data/helpers"
 	"github.com/helm/monocular/src/api/swagger/models"
@@ -49,6 +50,10 @@ func GetChartVersions(params operations.GetChartVersionsParams, c data.Charts) m
 		log.Printf("data.Charts.ChartVersionsFromRepo(%s, %s) error (%s)", params.Repo, params.ChartName, err)
 		return notFound(ChartVersionResourceName)
 	}
+
+	// Sort by semver reverse order
+	sort.Sort(sort.Reverse(chartpackagesort.BySemver(chartPackages)))
+
 	chartVersionResources := helpers.MakeChartVersionResources(chartPackages)
 	return chartsHTTPBody(chartVersionResources)
 }
@@ -62,7 +67,7 @@ func GetAllCharts(params operations.GetAllChartsParams, c data.Charts) middlewar
 	}
 
 	// For now we only sort by name
-	sort.Sort(ByName(charts))
+	sort.Sort(chartpackagesort.ByName(charts))
 	resources := helpers.MakeChartResources(charts)
 	return chartsHTTPBody(resources)
 }
@@ -75,7 +80,7 @@ func GetChartsInRepo(params operations.GetChartsInRepoParams, c data.Charts) mid
 		return notFound(ChartResourceName + "s")
 	}
 	// For now we only sort by name
-	sort.Sort(ByName(charts))
+	sort.Sort(chartpackagesort.ByName(charts))
 	chartsResource := helpers.MakeChartResources(charts)
 	return chartsHTTPBody(chartsResource)
 }

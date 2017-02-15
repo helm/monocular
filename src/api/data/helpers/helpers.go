@@ -2,8 +2,8 @@ package helpers
 
 import (
 	"fmt"
-	"strings"
 
+	"github.com/Masterminds/semver"
 	"github.com/helm/monocular/src/api/swagger/models"
 	"gopkg.in/yaml.v2"
 
@@ -231,27 +231,20 @@ func MakeChartVersionID(repo, chart, version string) string {
 
 // newestSemVer returns the newest (largest) semver string
 func newestSemVer(v1 string, v2 string) (string, error) {
-	v1Slice := strings.Split(v1, ".")
-	if len(v1Slice) != 3 {
-		return "", semverStringError(v1)
+	v1Semver, err := semver.NewVersion(v1)
+	if err != nil {
+		return "", err
 	}
-	v2Slice := strings.Split(v2, ".")
-	if len(v2Slice) != 3 {
-		return "", semverStringError(v2)
+
+	v2Semver, err := semver.NewVersion(v2)
+	if err != nil {
+		return "", err
 	}
-	for i, subVer1 := range v1Slice {
-		if v2Slice[i] > subVer1 {
-			return v2, nil
-		} else if subVer1 > v2Slice[i] {
-			return v1, nil
-		}
+
+	if v1Semver.LessThan(v2Semver) {
+		return v2, nil
 	}
 	return v1, nil
-}
-
-// semverStringError returns a bad semver string error
-func semverStringError(v string) error {
-	return fmt.Errorf("%s is not a semver-compatible string", v)
 }
 
 // Int64ToPtr converts an int64 to an *int64
