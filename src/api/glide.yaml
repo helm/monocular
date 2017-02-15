@@ -18,3 +18,5 @@ import:
 - package: gopkg.in/jarcoal/httpmock.v1
 - package: github.com/disintegration/imaging
 - package: golang.org/x/image
+- package: github.com/Masterminds/semver
+  version: ~1.2.2
