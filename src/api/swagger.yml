@@ -261,6 +261,9 @@ definitions:
         type: string
         minLength: 1
       repo:
+        type: object
+        $ref: "#/definitions/repo"
+      repoURL:
         type: string
         minLenth: 1
       home:
@@ -359,6 +362,16 @@ definitions:
         type: integer
         format: int64
       message:
+        type: string
+  repo:
+    type: object
+    required:
+      - name
+      - url
+    properties:
+      name:
+        type: string
+      url:
         type: string
   icon:
     type: object

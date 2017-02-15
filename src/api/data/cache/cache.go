@@ -4,25 +4,28 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/url"
+	"path"
 	"strings"
 	"sync"
 
 	"github.com/helm/monocular/src/api/data"
 	"github.com/helm/monocular/src/api/data/cache/charthelper"
 	"github.com/helm/monocular/src/api/data/helpers"
+	"github.com/helm/monocular/src/api/data/repos"
 	"github.com/helm/monocular/src/api/swagger/models"
 	"github.com/helm/monocular/src/api/swagger/restapi/operations"
 )
 
 type cachedCharts struct {
-	// knownRepos is a slice of maps, each of which looks like this: "reponame": "https://repo.url/index.yaml"
-	knownRepos []map[string]string
+	// knownRepos is a slice of maps, each of which looks like this: "reponame": "https://repo.url/"
+	knownRepos repos.Repos
 	allCharts  map[string][]*models.ChartPackage
 	rwm        *sync.RWMutex
 }
 
 // NewCachedCharts returns a new data.Charts implementation
-func NewCachedCharts(repos []map[string]string) data.Charts {
+func NewCachedCharts(repos repos.Repos) data.Charts {
 	return &cachedCharts{
 		knownRepos: repos,
 		rwm:        new(sync.RWMutex),
@@ -94,13 +97,11 @@ func (c *cachedCharts) All() ([]*models.ChartPackage, error) {
 	var allCharts []*models.ChartPackage
 	// TODO: parallellize this, it won't scale well with lots of repos
 	for _, repo := range c.knownRepos {
-		for repoName := range repo {
-			var charts []*models.ChartPackage
-			for _, chart := range c.allCharts[repoName] {
-				charts = append(charts, chart)
-			}
-			allCharts = append(allCharts, charts...)
+		var charts []*models.ChartPackage
+		for _, chart := range c.allCharts[repo.Name] {
+			charts = append(charts, chart)
 		}
+		allCharts = append(allCharts, charts...)
 	}
 	return allCharts, nil
 }
@@ -126,42 +127,44 @@ func (c *cachedCharts) Search(params operations.SearchChartsParams) ([]*models.C
 func (c *cachedCharts) Refresh() error {
 	c.rwm.Lock()
 	defer c.rwm.Unlock()
+	fmt.Printf("Using cache directory %s\n", charthelper.DataDirBase())
 	for _, repo := range c.knownRepos {
-		for repoName := range repo {
-			resp, err := http.Get(repo[repoName])
-			if err != nil {
-				return err
-			}
-			defer resp.Body.Close()
-			body, err := ioutil.ReadAll(resp.Body)
-			if err != nil {
-				return err
-			}
-			charts, err := helpers.ParseYAMLRepo(body, repoName)
-			if err != nil {
-				return err
-			}
-			c.allCharts[repoName] = []*models.ChartPackage{}
-			fmt.Printf("Using cache directory %s\n", charthelper.DataDirBase())
-			for _, chart := range charts {
-				// Extra files. Skipped if the directory exists
-				dataExists, err := charthelper.ChartDataExists(chart)
-				if err != nil {
-					return err
-				}
-				if !dataExists {
-					fmt.Printf("Local cache missing for %s-%s\n", *chart.Name, *chart.Version)
+		// Append index.yaml
+		u, _ := url.Parse(repo.URL)
+		u.Path = path.Join(u.Path, "index.yaml")
 
-					err := charthelper.DownloadAndExtractChartTarball(chart)
-					if err != nil {
-						// Skip chart if error extracting the tarball
-						continue
-					}
-					// If we have a problem processing an image it will fallback to the default one
-					charthelper.DownloadAndProcessChartIcon(chart)
-				}
-				c.allCharts[repoName] = append(c.allCharts[repoName], chart)
+		resp, err := http.Get(u.String())
+		if err != nil {
+			return err
+		}
+		defer resp.Body.Close()
+		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return err
+		}
+		charts, err := helpers.ParseYAMLRepo(body, repo.Name)
+		if err != nil {
+			return err
+		}
+		c.allCharts[repo.Name] = []*models.ChartPackage{}
+		for _, chart := range charts {
+			// Extra files. Skipped if the directory exists
+			dataExists, err := charthelper.ChartDataExists(chart)
+			if err != nil {
+				return err
 			}
+			if !dataExists {
+				fmt.Printf("Local cache missing for %s-%s\n", *chart.Name, *chart.Version)
+
+				err := charthelper.DownloadAndExtractChartTarball(chart)
+				if err != nil {
+					// Skip chart if error extracting the tarball
+					continue
+				}
+				// If we have a problem processing an image it will fallback to the default one
+				charthelper.DownloadAndProcessChartIcon(chart)
+			}
+			c.allCharts[repo.Name] = append(c.allCharts[repo.Name], chart)
 		}
 	}
 	return nil

@@ -12,6 +12,7 @@ import (
 	"github.com/helm/monocular/src/api/data"
 	"github.com/helm/monocular/src/api/data/cache"
 	"github.com/helm/monocular/src/api/data/helpers"
+	"github.com/helm/monocular/src/api/data/repos"
 	"github.com/helm/monocular/src/api/handlers"
 	"github.com/helm/monocular/src/api/swagger/models"
 	"github.com/helm/monocular/src/api/swagger/restapi/operations"
@@ -190,12 +191,14 @@ func httpGet(s *httptest.Server, route string) (*http.Response, error) {
 }
 
 func getChartsImplementation() data.Charts {
-	repos := []map[string]string{
-		map[string]string{
-			"stable": "http://storage.googleapis.com/kubernetes-charts/index.yaml",
+	repos := repos.Repos{
+		repos.Repo{
+			Name: "stable",
+			URL:  "http://storage.googleapis.com/kubernetes-charts",
 		},
-		map[string]string{
-			"incubator": "http://storage.googleapis.com/kubernetes-charts-incubator/index.yaml",
+		repos.Repo{
+			Name: "incubator",
+			URL:  "http://storage.googleapis.com/kubernetes-charts-incubator",
 		},
 	}
 	chartsImplementation := cache.NewCachedCharts(repos)

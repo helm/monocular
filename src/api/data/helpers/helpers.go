@@ -8,6 +8,7 @@ import (
 	"gopkg.in/yaml.v2"
 
 	"github.com/helm/monocular/src/api/data/cache/charthelper"
+	"github.com/helm/monocular/src/api/data/repos"
 )
 
 // APIVer1String is the API version 1 string we include in route URLs
@@ -52,7 +53,7 @@ func MakeChartResource(chart *models.ChartPackage) *models.Resource {
 	ret.Type = StrToPtr("chart")
 	ret.ID = StrToPtr(MakeChartID(chart.Repo, *chart.Name))
 	ret.Attributes = &models.Chart{
-		Repo:        &chart.Repo,
+		Repo:        getRepoObject(chart),
 		Name:        chart.Name,
 		Description: chart.Description,
 		Home:        chart.Home,
@@ -121,7 +122,7 @@ func AddChartRelationship(resource *models.Resource, chartPackage *models.ChartP
 			Data: &models.Chart{
 				Name:        chartPackage.Name,
 				Description: chartPackage.Description,
-				Repo:        &chartPackage.Repo,
+				Repo:        getRepoObject(chartPackage),
 				Home:        chartPackage.Home,
 				Sources:     chartPackage.Sources,
 				Maintainers: chartPackage.Maintainers,
@@ -152,7 +153,7 @@ func AddLatestChartVersionRelationship(resource *models.Resource, chartPackage *
 // AddCanonicalLink adds a "self" link to a chart resource's canonical API endpoint
 func AddCanonicalLink(resource *models.Resource) {
 	resource.Links = &models.ResourceLink{
-		Self: StrToPtr(MakeRepoChartRouteURL(APIVer1String, *resource.Attributes.(*models.Chart).Repo, *resource.Attributes.(*models.Chart).Name)),
+		Self: StrToPtr(MakeRepoChartRouteURL(APIVer1String, *resource.Attributes.(*models.Chart).Repo.Name, *resource.Attributes.(*models.Chart).Name)),
 	}
 }
 
@@ -218,12 +219,6 @@ func MakeRepoChartVersionRouteURL(apiVer, repo, name, version string) string {
 	return fmt.Sprintf("/%s/charts/%s/%s/versions/%s", apiVer, repo, name, version)
 }
 
-// MakeRepoChartVersionsRouteURL returns a string that represents
-// /{:apiVersion}/charts/{:repo}/{:chart}/versions
-func MakeRepoChartVersionsRouteURL(apiVer, repo, name string) string {
-	return fmt.Sprintf("/%s/charts/%s/%s/versions", apiVer, repo, name)
-}
-
 // MakeChartID returns a chart ID in the form {:repo}/{:chart}
 func MakeChartID(repo, chart string) string {
 	return fmt.Sprintf("%s/%s", repo, chart)
@@ -281,4 +276,20 @@ func makeAvailableIcons(chart *models.ChartPackage) []*models.Icon {
 func makeReadmeURL(chart *models.ChartPackage) *string {
 	res := charthelper.ReadmeStaticUrl(chart, "/assets")
 	return &res
+}
+
+func getRepoObject(chart *models.ChartPackage) *models.Repo {
+	var repoPayload models.Repo
+
+	repos, _ := repos.Enabled()
+	for _, repo := range repos {
+		if repo.Name == chart.Repo {
+			repoPayload = models.Repo{
+				Name: &repo.Name,
+				URL:  &repo.URL,
+			}
+			return &repoPayload
+		}
+	}
+	return &repoPayload
 }

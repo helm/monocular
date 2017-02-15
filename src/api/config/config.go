@@ -3,6 +3,7 @@ package config
 import (
 	"os"
 
+	"github.com/helm/monocular/src/api/data/repos"
 	"github.com/imdario/mergo"
 )
 
@@ -13,7 +14,8 @@ type configurationWithOverrides map[string]Configuration
 // Configuration is the the resulting environment based Configuration
 // For now it only includes Cors info
 type Configuration struct {
-	Cors
+	Cors  Cors
+	Repos repos.Repos
 }
 
 // Cors configuration used during middleware setup
@@ -34,13 +36,13 @@ func currentEnvironment() string {
 func readConfigWithOverrides() configurationWithOverrides {
 	var config = configurationWithOverrides{
 		"default": Configuration{
-			Cors{
+			Cors: Cors{
 				AllowedOrigins: []string{"my-api-server"},
 				AllowedHeaders: []string{"access-control-allow-headers", "x-xsrf-token"},
 			},
 		},
 		"development": Configuration{
-			Cors{
+			Cors: Cors{
 				AllowedOrigins: []string{"*"},
 			},
 		},
@@ -51,12 +53,11 @@ func readConfigWithOverrides() configurationWithOverrides {
 
 // GetConfig returns the environment specific configuration
 func GetConfig() (Configuration, error) {
-	config := configurationWithOverrides{}
 	res := Configuration{}
-
-	config = readConfigWithOverrides()
+	config := readConfigWithOverrides()
 
 	res = mergeConfig(config, currentEnvironment())
+	res.Repos, _ = repos.Enabled()
 
 	return res, nil
 }

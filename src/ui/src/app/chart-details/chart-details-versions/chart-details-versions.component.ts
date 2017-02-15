@@ -19,7 +19,7 @@ export class ChartDetailsVersionsComponent implements OnInit {
 
 	goToVersion(version: ChartVersion): void {
     var chart: ChartAttributes = version.relationships.chart.data
-    let link = ['/charts', chart.repo, chart.name, version.attributes.version];
+    let link = ['/charts', chart.repo.name, chart.name, version.attributes.version];
     this.router.navigate(link);
   }
 
