@@ -57,13 +57,17 @@ export class ChartsService {
     let re = new RegExp(query, 'i');
     return this.getCharts().map(charts => {
       return charts.filter(chart => {
-        return chart.attributes.name.match(re) || chart.attributes.description.match(re) || this.keywordsMatch(chart, re)
+        return chart.attributes.name.match(re) ||
+         chart.attributes.description.match(re) ||
+         chart.attributes.repo.name.match(re) ||
+         this.arrayMatch(chart.attributes.keywords, re) ||
+         this.arrayMatch(chart.attributes.maintainers.map((m)=> { return m.name }), re) ||
+         this.arrayMatch(chart.attributes.sources, re)
       })
     })
   }
 
-  keywordsMatch(chart: Chart, re): boolean {
-    let keywords: string[] = chart.attributes.keywords
+  arrayMatch(keywords: string[], re): boolean {
     if(!keywords) return false
 
     return keywords.some((keyword) => {
