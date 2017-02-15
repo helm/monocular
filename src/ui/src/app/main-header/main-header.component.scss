@@ -14,7 +14,7 @@ $main-header-height: 400px;
 
   &-content {
     width: 80%;
-    margin: 1em auto 0;
+    margin: 1.5em auto 0;
 
     @include mappy-bp(medium) {
       display: flex;
@@ -27,7 +27,7 @@ $main-header-height: 400px;
 
     &__slogan {
       color: $layout_light;
-      padding: 2em 0 1em;
+      padding: 3em 0 1em;
       font-weight: 100;
 
       p {

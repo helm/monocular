@@ -5,23 +5,17 @@
   <nav class="header-bar__navigation">
     <ul>
       <li>
-        <a routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"
-          class="reverse" routerLink="/">
-          Home
-        </a>
-      </li>
-      <li>
         <a class="reverse" routerLink="/charts" routerLinkActive="active">
           Charts
         </a>
       </li>
-      <li><a class="reverse" href="https://helm.sh/" target="_blank">Helm</a></li>
+      <li><a class="reverse" href="https://helm.sh/" target="_blank">About</a></li>
     </ul>
   </nav>
   <div class="header-bar__search" *ngIf="showSearch">
     <form (ngSubmit)="searchCharts(searchBox)">
       <md-input class="md-input--reverse md-input--full"
-        placeholder="Find your chart" #searchBox
+        placeholder="Search..." #searchBox
         floatingPlaceholder="false"></md-input>
     </form>
   </div>
