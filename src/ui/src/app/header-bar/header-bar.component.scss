@@ -5,7 +5,6 @@
 
 // Variables
 $header-bar-padding: 1.5em 2em;
-$header-bar-logo-height: 35px;
 
 .header-bar {
   padding: $header-bar-padding;
@@ -18,8 +17,12 @@ $header-bar-logo-height: 35px;
   &__logo {
     display: inline-block;
 
-    img {
-      height: $header-bar-logo-height;
+    h1 {
+      // Adjust it vertically
+      padding-top: .1em;
+      font-size: 1.5em;
+      margin: 0;
+      font-family: 'Ubuntu', sans-serif;
     }
   }
 
