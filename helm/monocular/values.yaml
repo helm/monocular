@@ -20,7 +20,7 @@ api:
       cpu: 100m
       memory: 128Mi
 ui:
-  replicaCount: 1
+  replicaCount: 2
   image:
     repository: gcr.io/helm-ui/monocular-ui
     tag: latest
