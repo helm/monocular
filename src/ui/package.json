@@ -7,8 +7,11 @@
     "start": "ng serve",
     "lint": "tslint \"src/**/*.ts\"",
     "test": "ng test",
+    "test-ci": "ng test --single-run --code-coverage",
     "pree2e": "webdriver-manager update",
-    "e2e": "protractor"
+    "e2e": "protractor",
+    "compile": "ng build --prod --progress=false",
+    "compile-aot": "ng build --prod --aot --progress=false"
   },
   "private": true,
   "dependencies": {

@@ -19,10 +19,11 @@ export class ChartDetailsUsageComponent implements OnInit {
     return this.chart.id.replace("stable/", "")
   }
 
-  // TODO, remove hardcoded code once https://github.com/helm/monocular/issues/86 is implemented
+  get showRepoInstructions(): boolean {
+    return this.chart.attributes.repo.name != 'stable'
+  }
+
   get repoAddInstructions(): string {
-    if (this.chart.attributes.repo == "incubator") {
-      return "helm repo add incubator https://kubernetes-charts-incubator.storage.googleapis.com/"
-    }
+    return `helm repo add incubator ${this.chart.attributes.repo.url}`
   }
 }

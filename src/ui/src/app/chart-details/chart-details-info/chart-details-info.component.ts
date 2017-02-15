@@ -27,7 +27,7 @@ export class ChartDetailsInfoComponent implements OnInit {
   }
 
   loadVersions(chart: Chart): void {
-    this.chartsService.getVersions(chart.attributes.repo, chart.attributes.name)
+    this.chartsService.getVersions(chart.attributes.repo.name, chart.attributes.name)
       .subscribe(versions => { this.versions = versions })
   }
 }

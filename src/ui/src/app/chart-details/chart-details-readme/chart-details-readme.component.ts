@@ -26,7 +26,7 @@ export class ChartDetailsReadmeComponent implements OnChanges {
 
   // TODO. This should not require loading the specific version and then the readme
   getReadme(): void {
-    this.chartsService.getVersion(this.chart.attributes.repo, this.chart.attributes.name, this.currentVersion)
+    this.chartsService.getVersion(this.chart.attributes.repo.name, this.chart.attributes.name, this.currentVersion)
       .subscribe(chartVersion => {
         this.chartsService.getChartReadme(chartVersion)
           .subscribe(resp => {

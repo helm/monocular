@@ -29,16 +29,13 @@ func configureFlags(api *operations.MonocularAPI) {
 }
 
 func configureAPI(api *operations.MonocularAPI) http.Handler {
-	// configure the api here
-	repos := []map[string]string{
-		map[string]string{
-			"stable": "http://storage.googleapis.com/kubernetes-charts/index.yaml",
-		},
-		map[string]string{
-			"incubator": "http://storage.googleapis.com/kubernetes-charts-incubator/index.yaml",
-		},
+	config, err := config.GetConfig()
+
+	if err != nil {
+		log.Fatalf("Can not load configuration %v\n", err)
 	}
-	chartsImplementation := cache.NewCachedCharts(repos)
+	// configure the api here
+	chartsImplementation := cache.NewCachedCharts(config.Repos)
 	freshness := time.Duration(3600) * time.Second
 	periodicRefresh := cache.NewRefreshChartsData(chartsImplementation, freshness, "refresh-charts")
 	toDo := []jobs.Periodic{periodicRefresh}
