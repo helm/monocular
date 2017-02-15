@@ -41,7 +41,6 @@ spec:
       - name: vhost
         configMap:
           name: {{ template "fullname" . }}-ui-vhost
-      volumes:
       - name: config
         configMap:
           name: {{ template "fullname" . }}-ui-config
