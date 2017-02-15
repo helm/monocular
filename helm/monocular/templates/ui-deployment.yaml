@@ -32,9 +32,16 @@ spec:
         volumeMounts:
           - name: vhost
             mountPath: /bitnami/nginx/conf/vhosts
+        volumeMounts:
+          - name: config
+            mountPath: /app/assets/js
         resources:
 {{ toYaml .Values.ui.resources | indent 12 }}
       volumes:
       - name: vhost
         configMap:
-          name: {{ template "fullname" . }}-ui
+          name: {{ template "fullname" . }}-ui-vhost
+      volumes:
+      - name: config
+        configMap:
+          name: {{ template "fullname" . }}-ui-config

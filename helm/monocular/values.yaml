@@ -37,6 +37,7 @@ ui:
     requests:
       cpu: 100m
       memory: 128Mi
+  googleAnalyticsId: UA-XXXXXX-X
 
 prerender:
   replicaCount: 1
