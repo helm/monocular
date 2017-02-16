@@ -32,7 +32,7 @@ export class HeaderBarComponent implements OnInit {
       let navigationExtras: NavigationExtras = {
         queryParams: { 'q': input.value }
       };
-      this.router.navigate(["/charts/search"], navigationExtras);
+      this.router.navigate(['/charts/search'], navigationExtras);
     }
   }
 }

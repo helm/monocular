@@ -1,7 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ChartVersion } from '../../shared/models/chart-version';
 import { ChartAttributes } from '../../shared/models/chart';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-chart-details-versions',
@@ -11,16 +10,13 @@ import { Router } from '@angular/router';
 export class ChartDetailsVersionsComponent implements OnInit {
   @Input() versions: ChartVersion[]
   @Input() currentVersion: string
-  constructor(
-    private router: Router,
-  ) { }
+  constructor() { }
 
   ngOnInit() { }
 
-	goToVersion(version: ChartVersion): void {
-    var chart: ChartAttributes = version.relationships.chart.data
-    let link = ['/charts', chart.repo.name, chart.name, version.attributes.version];
-    this.router.navigate(link);
+  goToVersionUrl(version: ChartVersion): string {
+    let chart: ChartAttributes = version.relationships.chart.data
+    return `/charts/${chart.repo.name}/${chart.name}/${version.attributes.version}`;
   }
 
   isSelected(version: ChartVersion): boolean {
