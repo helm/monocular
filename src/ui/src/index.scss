@@ -10,13 +10,20 @@
 * the app is not loaded so I can't use the component.
 */
 
+// Github ribbon
+.github-corner {
+  position: fixed;
+  top: 0;
+  right: 0;
+}
+
 // Main loader
 .main-loader {
   h1 {
     text-align: center;
     font-family: 'Ubuntu', Arial, sans-serif;
     font-size: 3em;
-    margin: 2em 0 .5em;
+    margin: 1.5em 0 .5em;
   }
 
   .spinner {
