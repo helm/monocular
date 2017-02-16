@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { Router, NavigationExtras } from '@angular/router';
 
 @Component({
@@ -7,6 +7,7 @@ import { Router, NavigationExtras } from '@angular/router';
   styleUrls: ['./main-header.component.scss']
 })
 export class MainHeaderComponent implements OnInit {
+  @Input() totalChartsNumber: number
   // Store the router
   constructor(private router: Router) { }
   ngOnInit() { }
