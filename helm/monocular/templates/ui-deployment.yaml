@@ -32,7 +32,6 @@ spec:
         volumeMounts:
           - name: vhost
             mountPath: /bitnami/nginx/conf/vhosts
-        volumeMounts:
           - name: config
             mountPath: /app/assets/js
         resources:
