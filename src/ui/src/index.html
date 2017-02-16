@@ -17,7 +17,12 @@
   <div class='container'>
     <app-root>
       <div class="main-loader">
-        <p>Loading...</p>
+        <h1 id="app-name"></h1>
+        <div class="spinner">
+          <svg class="circular" viewBox="25 25 50 50">
+            <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="5" stroke-miterlimit="10"/>
+          </svg>
+        </div>
       </div>
     </app-root>
   </div>
@@ -30,6 +35,14 @@
     // Set the last param to 'none' for development!
     // Remember to replace the correct identifier for your project
     ga('create', window.monocular.overrides.googleAnalyticsId, 'auto');
+  </script>
+  <script type="text/javascript">
+    /**
+     * TODO: We must use a template system to include custom variables to the project
+     * I'm not happy defining this code.
+     */
+    var title = document.getElementById('app-name');
+    if (title) { title.innerHTML = window.monocular.overrides.appName; }
   </script>
 </body>
 </html>
