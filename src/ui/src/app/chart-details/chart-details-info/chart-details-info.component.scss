@@ -3,4 +3,10 @@
   &__maintainers {
     margin-bottom: 2em;
   }
+
+  &__sources {
+    a {
+      word-break: break-all;
+    }
+  }
 }
