@@ -14,7 +14,7 @@ export class ChartDetailsVersionsComponent implements OnInit {
 
   ngOnInit() { }
 
-	goToVersionUrl(version: ChartVersion): string {
+  goToVersionUrl(version: ChartVersion): string {
     let chart: ChartAttributes = version.relationships.chart.data
     return `/charts/${chart.repo.name}/${chart.name}/${version.attributes.version}`;
   }

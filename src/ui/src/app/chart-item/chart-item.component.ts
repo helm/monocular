@@ -25,7 +25,7 @@ export class ChartItemComponent implements OnInit {
   ngOnInit() {
   }
 
-	goToDetailUrl(): string {
+  goToDetailUrl(): string {
     return `/charts/${this.chart.attributes.repo.name}/${this.chart.attributes.name}`;
   }
 
