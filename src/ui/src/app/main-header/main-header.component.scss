@@ -17,8 +17,8 @@ $main-header-height: 400px;
     padding: 1.5em;
 
     @include mappy-bp(small) {
-      width: 80%;
-      margin: 1.5em auto 0;
+      width: 85%;
+      margin: 1.2em auto 0;
     }
 
     @include mappy-bp(medium) {
