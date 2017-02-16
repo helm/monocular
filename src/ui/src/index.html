@@ -45,7 +45,11 @@
      * I'm not happy defining this code.
      */
     var title = document.getElementById('app-name');
-    if (title) { title.innerHTML = window.monocular.overrides.appName; }
+    if (title) {
+      var appName = window.monocular.overrides.appName;
+      title.innerHTML = appName;
+      document.title = appName;
+    }
   </script>
 </body>
 </html>
