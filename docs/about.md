@@ -27,9 +27,10 @@ Learn more about charts at https://github.com/kubernetes/helm/blob/master/docs/c
 Monocular is a part of the Helm project and aims to provide a way to search for and discover apps that have been packaged in Helm 
 Charts. Monocular includes a scanning back-end for indexing charts and their metadata and a simple user interface.
 
-Learn more about monocular at https://github.com/helm/monocular/blob/master/README.md and TODO-Blog post link.
-The process for contributing new Charts can be found at: https://github.com/kubernetes/charts#contributing-a-chart 
+Learn more about monocular at https://github.com/helm/monocular/blob/master/README.md
 
 The Charts indexed by Monocular are from the official Kubernetes Helm Chart repository. 
+
+The process for contributing new Charts can be found at: https://github.com/kubernetes/charts#contributing-a-chart 
 
 *Coming soon: Point Monocular to a Helm Chart registry of your choice.*
