@@ -10,11 +10,6 @@ $chart-item-content-height: 80px;
   border: 1px solid #eaeaea;
   border-radius: $border-radius;
 
-  // Useful to display the elements as a grid
-  &.chart-item--fixHeight {
-    min-height: 10em;
-  }
-
   &-content {
     text-align: center;
   }

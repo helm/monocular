@@ -5,6 +5,7 @@
 
 // Variables
 $header-bar-padding: 1.5em 2em;
+$header-bar-padding-small: 1.5em;
 
 .header-bar {
   padding: $header-bar-padding;
@@ -27,8 +28,8 @@ $header-bar-padding: 1.5em 2em;
   }
 
   &__search {
-    float: right;
-
+    margin-top: .5em;
+    
     .md-input-wrapper {
       margin: .4em 0;
     }
@@ -47,6 +48,17 @@ $header-bar-padding: 1.5em 2em;
           padding: 1em;
         }
       }
+    }
+  }
+
+  @include mappy-bp(max-width small) {
+    padding: $header-bar-padding-small;
+  }
+
+  @include mappy-bp(small) {
+    &__search {
+      margin-top: 0;
+      float: right;
     }
   }
 }

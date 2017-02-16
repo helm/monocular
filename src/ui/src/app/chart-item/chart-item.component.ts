@@ -7,7 +7,7 @@ import { ConfigService } from '../shared/services/config.service';
   selector: 'app-chart-item',
   templateUrl: './chart-item.component.html',
   styleUrls: ['./chart-item.component.scss'],
-  inputs: ['chart', 'showVersion', 'showDescription', 'fixHeight']
+  inputs: ['chart', 'showVersion', 'showDescription']
 })
 export class ChartItemComponent implements OnInit {
   // Chart to represent
@@ -16,8 +16,6 @@ export class ChartItemComponent implements OnInit {
   public showVersion: boolean = true;
   // Truncate the description
   public showDescription: boolean = true;
-  // Fix the height of the elements
-  public fixHeight: boolean = false;
 
   constructor(
     private router: Router,

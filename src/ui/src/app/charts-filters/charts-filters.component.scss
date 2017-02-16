@@ -15,17 +15,27 @@
       color: md-color($monocular-app-primary);
       margin-bottom: .5em;
       font-weight: bold;
+      display: block;
     }
 
     &__select {
       display: inline-block;
-      margin-left: 1em;
-      width: 235px;
       vertical-align: middle;
     }
 
     &:last-child {
       margin-right: 0;
+    }
+
+    @include mappy-bp(medium) {
+      &__title {
+        display: inline-block;
+      }
+
+      &__select {
+        width: 235px;
+        margin-left: 1em;
+      }
     }
   }
 }

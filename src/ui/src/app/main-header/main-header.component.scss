@@ -13,8 +13,13 @@ $main-header-height: 400px;
   border-bottom: 3px solid black;
 
   &-content {
-    width: 80%;
-    margin: 1.5em auto 0;
+    width: 100%;
+    padding: 1.5em;
+
+    @include mappy-bp(small) {
+      width: 80%;
+      margin: 1.5em auto 0;
+    }
 
     @include mappy-bp(medium) {
       display: flex;

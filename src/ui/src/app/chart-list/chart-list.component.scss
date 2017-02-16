@@ -5,7 +5,7 @@
   display: flex;
   flex-flow: row wrap;
   justify-content: space-between;
-  margin-bottom: -2%;
+  margin-bottom: -2vw;
 
   &:after {
     content: "";
@@ -19,13 +19,13 @@
 
     // Responsive
     @include mappy-bp(small) {
-      margin: 0 0 2% 2%;
+      margin: 0 0 2vw 2%;
     }
   }
 
   @include mappy-bp(small medium) {
     app-chart-item {
-      width: 48%;
+      width: 49%;
 
       &:nth-child(2n+1) {
         margin-left: 0;
