@@ -11,8 +11,8 @@
         <md-input class="md-input--reverse md-input--full md-input--big"
           placeholder="Search..." floatingPlaceholder="false" #searchBox></md-input>
       </form>
-      <p class="main-header-search__summary">
-        <b>35</b> Charts ready to deploy
+      <p class="main-header-search__summary" *ngIf="totalChartsNumber">
+        <b>{{ totalChartsNumber }}</b> charts ready to deploy
       </p>
     </div>
   </div>

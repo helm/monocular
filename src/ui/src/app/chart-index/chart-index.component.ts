@@ -10,6 +10,7 @@ import { Chart } from '../shared/models/chart';
 export class ChartIndexComponent implements OnInit {
 	charts: Chart[]
   loading: boolean = true;
+  totalChartsNumber: number
 
   constructor(private chartsService: ChartsService) { }
 
@@ -21,6 +22,7 @@ export class ChartIndexComponent implements OnInit {
 		this.chartsService.getCharts().subscribe(charts => {
       this.loading = false;
       this.charts = charts;
+      this.totalChartsNumber = charts.length;
     });
   }
 }
