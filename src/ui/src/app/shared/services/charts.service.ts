@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Chart } from '../models/chart';
 import { ChartVersion } from '../models/chart-version';
-import { CONFIG } from '../../config';
+import { ConfigService } from './config.service';
 
 import { Observable } from 'rxjs';
 import 'rxjs/add/operator/switchMap';
@@ -13,9 +13,14 @@ import { Http, Response } from '@angular/http';
 /* TODO, This is a mocked class. */
 @Injectable()
 export class ChartsService {
-  hostname: string = CONFIG.backendHostname
+  hostname: string
 
-  constructor(private http: Http) { }
+  constructor(
+    private http: Http,
+    private config: ConfigService
+  ) {
+      this.hostname = config.backendHostname
+    }
 
   /**
    * Get all charts from the API

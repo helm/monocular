@@ -14,6 +14,7 @@ import { TruncatePipe } from './shared/pipes/truncate.pipe';
 
 /* Services */
 import { ChartsService } from './shared/services/charts.service';
+import { ConfigService } from './shared/services/config.service';
 
 /* Components */
 import { AppComponent } from './app.component';
@@ -87,7 +88,8 @@ require('hammerjs');
   ],
   providers: [
     appRoutingProviders,
-    ChartsService
+    ChartsService,
+    ConfigService
   ],
   bootstrap: [AppComponent]
 })
