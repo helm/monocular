@@ -8,6 +8,8 @@ import { AppComponent } from './app.component';
 import { FooterComponent } from './footer/footer.component';
 import { FooterListComponent } from './footer-list/footer-list.component';
 
+import { Angulartics2GoogleAnalytics } from 'angulartics2';
+
 describe('AppComponent', () => {
   let component: AppComponent;
   let fixture: ComponentFixture<AppComponent>;
@@ -17,6 +19,9 @@ describe('AppComponent', () => {
       declarations: [ AppComponent, FooterComponent, FooterListComponent ],
       imports: [
         RouterTestingModule
+      ],
+      providers: [
+        { provide: Angulartics2GoogleAnalytics }
       ]
     })
     .compileComponents();

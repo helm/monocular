@@ -1,3 +1,4 @@
+import { Angulartics2GoogleAnalytics } from 'angulartics2';
 import { Component } from '@angular/core';
 // import { MetaService } from 'ng2-meta';
 
@@ -8,5 +9,5 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   // constructor(private metaService: MetaService) {}
-  constructor() {}
+  constructor(angulartics2GoogleAnalytics: Angulartics2GoogleAnalytics) {}
 }
