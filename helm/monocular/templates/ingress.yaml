@@ -14,18 +14,22 @@ metadata:
     heritage: "{{ .Release.Service }}"
 spec:
   rules:
+  {{- range .Values.ingress.hosts }}
   - http:
       paths:
       - backend:
-          serviceName: {{ template "fullname" . }}-ui
-          servicePort: {{ .Values.ui.service.externalPort }}
+          serviceName: {{ template "fullname" $ }}-ui
+          servicePort: {{ $.Values.ui.service.externalPort }}
         path: /
       - backend:
-          serviceName: {{ template "fullname" . }}-api
-          servicePort: {{ .Values.api.service.externalPort }}
+          serviceName: {{ template "fullname" $ }}-api
+          servicePort: {{ $.Values.api.service.externalPort }}
         path: /api/
-    host: {{ .Values.ingress.hostname | quote }}
+    host: {{ . | quote }}
+  {{- end }}
 {{- if .Values.ingress.tls }}
   tls:
-{{ toYaml .Values.ingress.tls | indent 4 -}}
+  - secretName: {{ .Values.ingress.tls.secretName }}
+    hosts:
+{{ toYaml .Values.ingress.hosts | indent 4 }}
 {{- end -}}

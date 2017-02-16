@@ -56,11 +56,14 @@ prerender:
       memory: 128Mi
 
 ingress:
-  hostname: monocular.local
+  hosts:
+  # Wildcard
+  -
+  # - monocular.local
 
   ## Ingress annotations
   ##
-  # annotations:
+  annotations:
   #   kubernetes.io/ingress.class: nginx
   #   kubernetes.io/tls-acme: 'true'
 
@@ -68,6 +71,4 @@ ingress:
   ## Secrets must be manually created in the namespace
   ##
   # tls:
-  # - secretName: monocular.local-tls
-  #   hosts:
-  #   - monocular.local
+  #   secretName: monocular.local-tls

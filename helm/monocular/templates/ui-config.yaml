@@ -45,3 +45,10 @@ data:
         }
       }
     }
+
+    # Redirect www to non-www
+    # Taken from https://easyengine.io/tutorials/nginx/www-non-www-redirection/
+    server {
+      server_name "~^www\.(.*)$" ;
+      return 301 $scheme://$1$request_uri ;
+    }
