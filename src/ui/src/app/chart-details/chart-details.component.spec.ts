@@ -8,6 +8,7 @@ import { DebugElement } from '@angular/core';
 // Shared
 import { TruncatePipe } from '../shared/pipes/truncate.pipe';
 import { ChartsService } from '../shared/services/charts.service';
+import { ConfigService } from '../shared/services/config.service';
 
 // Components
 import { ChartDetailsComponent } from './chart-details.component';
@@ -90,7 +91,7 @@ describe('ChartDetailsComponent', () => {
         TruncatePipe
       ],
       providers: [
-        { provide: ChartsService, useValue: chartsServiceStub }
+        { provide: ChartsService, useValue: chartsServiceStub }, { provide: ConfigService }
       ]
     })
     .compileComponents();

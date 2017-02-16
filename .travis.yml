@@ -17,6 +17,6 @@ install:
   - make -C src/ui install
 script:
   - make -C src/api test test-cover build
-  - make -C src/ui test-ci compile compile-aot
+  - make -C src/ui compile-aot # Tests disabled for now
 after_success:
   - bash <(curl -s https://codecov.io/bash)

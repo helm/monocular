@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router, NavigationExtras } from '@angular/router';
+import { ConfigService } from '../shared/services/config.service';
 
 @Component({
   selector: 'app-header-bar',
@@ -14,7 +15,13 @@ export class HeaderBarComponent implements OnInit {
   // Set the background as transparent
   public transparent: boolean = false;
 
-  constructor(private router: Router) { }
+  appName: string
+  constructor(
+    private router: Router,
+    private config: ConfigService
+  ) {
+    this.appName = config.appName
+  }
   ngOnInit() { }
 
   searchCharts(input: HTMLInputElement): void {

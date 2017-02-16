@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Chart } from '../shared/models/chart';
-import { CONFIG } from '../config';
+import { ConfigService } from '../shared/services/config.service';
 
 @Component({
   selector: 'app-chart-item',
@@ -19,7 +19,10 @@ export class ChartItemComponent implements OnInit {
   // Fix the height of the elements
   public fixHeight: boolean = false;
 
-  constructor(private router: Router) { }
+  constructor(
+    private router: Router,
+    private config: ConfigService
+  ) {}
 
   ngOnInit() {
   }
@@ -43,7 +46,7 @@ export class ChartItemComponent implements OnInit {
   getIconUrl(chart: Chart): string {
     let icons = chart.relationships.latestChartVersion.data.icons;
     if (icons !== undefined && icons.length > 0) {
-      return CONFIG.backendHostname + icons.find(icon => icon.name === '160x160-fit').path;
+      return this.config.backendHostname + icons.find(icon => icon.name === '160x160-fit').path;
     } else {
       return '/assets/images/placeholder.png';
     }

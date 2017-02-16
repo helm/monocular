@@ -1,5 +1,6 @@
 window.monocular = {
   overrides: {
-    googleAnalyticsId: 'UA-XXXXXXXX-X'
+    googleAnalyticsId: 'UA-XXXXXXXX-X',
+    appName: "KubeApps"
   }
 };

@@ -37,7 +37,9 @@ ui:
     requests:
       cpu: 100m
       memory: 128Mi
+  # ui-config populate
   googleAnalyticsId: UA-XXXXXX-X
+  appName: Monocular
 
 prerender:
   replicaCount: 1
