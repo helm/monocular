@@ -55,9 +55,8 @@ export class ChartsComponent implements OnInit {
   }
 
   goToRepo(repo: string) {
-    if(repo == "all") repo = ""
-    let link = ['/charts', repo]
-    this.router.navigate(link);
+    repo = repo === 'all' ? '' : repo;
+    this.router.navigate(['/charts', repo]);
   }
 
   // Sort charts

@@ -1,16 +1,21 @@
 <div class="chart-item {{ fixHeight ? 'chart-item--fixHeight' : '' }}">
   <div class="chart-item-content">
     <div class="chart-item-logo">
-      <img alt="{{ chart.attributes.name }}'s logo" src="{{ getIconUrl(chart) }}"/>
+      <a [href]="goToDetailUrl()" [routerLink]="goToDetailUrl()">
+        <img alt="{{ chart.attributes.name }}'s logo" src="{{ getIconUrl() }}"/>
+      </a>
     </div>
     <div class="chart-item-info">
-      <h2 class="chart-item-info__title" (click)="goToDetail(chart)">
-        {{ chart.attributes.name }}</h2>
+      <h2 class="chart-item-info__title">
+        <a [href]="goToDetailUrl()" [routerLink]="goToDetailUrl()">
+          {{ chart.attributes.name }}</a>
+      </h2>
       <p>
         <span class="chart-item-info__version" *ngIf="showVersion">
           v{{ chart.relationships.latestChartVersion.data.version }}</span>
         <span class="chart-item-info__repo repo-{{chart.attributes.repo.name}}">
-          <a (click)="goToRepo(chart.attributes.repo.name)">{{ chart.attributes.repo.name }}</a>
+          <a [href]="goToRepoUrl()" [routerLink]="goToRepoUrl()">
+            {{ chart.attributes.repo.name }}</a>
         </span>
       </p>
     </div>
