@@ -1,7 +1,8 @@
-import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, Input, ViewEncapsulation, ChangeDetectionStrategy } from '@angular/core';
 import { Chart } from '../../shared/models/chart';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MdIconRegistry } from '@angular/material';
+import {MdSnackBar} from '@angular/material';
 
 @Component({
   selector: 'app-chart-details-usage',
@@ -16,7 +17,8 @@ export class ChartDetailsUsageComponent implements OnInit {
 
   constructor(
     mdIconRegistry: MdIconRegistry,
-    sanitizer: DomSanitizer
+    sanitizer: DomSanitizer,
+    public snackBar: MdSnackBar
   ) {
     mdIconRegistry
       .addSvgIcon('content-copy',
@@ -24,6 +26,13 @@ export class ChartDetailsUsageComponent implements OnInit {
   }
 
   ngOnInit() {}
+
+  // Show an snack bar to confirm the user that the code has been copied
+  showSnackBar(): void {
+    this.snackBar.open('Copied to the clipboard', '', {
+      duration: 1500,
+    });
+  }
 
   // Deletes /stable prefix not needed for stable repos
   get cmdChartId(): string {
