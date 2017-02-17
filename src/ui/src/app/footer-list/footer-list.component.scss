@@ -6,25 +6,35 @@
 .footer-list {
   padding: 0 2em;
   margin-bottom: 2em;
-  display: inline-block;
 
   &__title {
     color: md-color($monocular-app-primary);
     font-weight: bold;
-    display: inline-block;
     vertical-align: top;
+    margin-bottom: 1em;
   }
 
   &__list {
-    display: inline-block;
-
     ul {
       list-style: none;
+      padding: 0;
       margin: 0;
 
       li {
         padding: 0;
         margin-bottom: .5em;
+      }
+    }
+  }
+
+  @include mappy-bp(small) {
+    &, &__title, &__list {
+      display: inline-block;
+    }
+
+    &__list {
+      ul {
+        padding-left: 2em;
       }
     }
   }
