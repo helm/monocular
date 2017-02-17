@@ -76,7 +76,7 @@ $breakpoints: (
 );
 
 $mappy-queries: (
-  phone: mappy-bp(w max-width small),
+  phone: mappy-bp(max-width small),
   tablet: mappy-bp(small medium),
   desktop: mappy-bp(medium xlarge),
   wide: mappy-bp(xlarge)

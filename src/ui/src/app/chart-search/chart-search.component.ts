@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ChartsService } from '../shared/services/charts.service';
-// import { MetaService } from 'ng2-meta';
+import { MetaService } from 'ng2-meta';
 import { Chart } from '../shared/models/chart';
 
 import { ActivatedRoute } from '@angular/router';
@@ -20,7 +20,7 @@ export class ChartSearchComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private chartsService: ChartsService,
-    // private metaService: MetaService
+    private metaService: MetaService
   ) { }
 
   ngOnInit() {
@@ -33,7 +33,7 @@ export class ChartSearchComponent implements OnInit {
       });
 
     // Update meta tags
-    // this.updateMetaTags();
+    this.updateMetaTags();
   }
 
   searchCharts(q: string): void {
@@ -54,9 +54,9 @@ export class ChartSearchComponent implements OnInit {
   /**
    * Update the metatags with the string we are looking for.
    */
-  // updateMetaTags(): void {
-  //   let title: string = `Results for "${this.query}"`;
-  //   this.metaService.setTitle(title);
-  //   this.metaService.setTag('og:title', title);
-  // }
+  updateMetaTags(): void {
+    let title: string = `Results for "${this.query}"`;
+    this.metaService.setTitle(title);
+    this.metaService.setTag('og:title', title);
+  }
 }
