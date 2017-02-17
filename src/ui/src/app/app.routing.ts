@@ -10,12 +10,7 @@ import { ChartsComponent } from './charts/charts.component';
 const appRoutes: Routes = [
   {
     path: '',
-    component: ChartIndexComponent,
-    data: {
-      meta: {
-        title: 'Monocular'
-      }
-    }
+    component: ChartIndexComponent
   },
   {
     path: 'charts',
