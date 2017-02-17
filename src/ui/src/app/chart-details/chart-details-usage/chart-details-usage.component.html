@@ -1,6 +1,6 @@
 <app-panel class="chart-details-usage" [border]=true>
   <div *ngIf=showRepoInstructions class="chart-details-usage__repository">
-    <h2 class="chart-details-usage__label">Add incubator repository</h2>
+    <h2 class="chart-details-usage__label">Add {{ chart.attributes.repo.name }} repository</h2>
     <md-input floatingPlaceholder=false [value]=repoAddInstructions></md-input>
     <button md-button ngxClipboard [cbContent]="repoAddInstructions" (cbOnSuccess)="showSnackBar()"
       angulartics2On="click" angularticsEvent="RepositoryCopy" angularticsCategory="{{ cmdChartId }}"
