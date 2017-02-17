@@ -1,1 +1,1 @@
-Documentation moved [here](/docs/deployment.md)
+Documentation moved (/docs/deployment.md)
