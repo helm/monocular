@@ -6,7 +6,7 @@ Monocular is packaged as a Helm Chart that can be found in the `/deployment/mono
 
 > **Prerequisites**
 >
-> The chart is configured and tested to be used alongside an Nginx Ingress controller. Please be sure that you have a running instance in your cluster before proceeding. More information  [here](https://github.com/kubernetes/ingress/tree/master/controllers/nginx).
+> The chart is configured and tested to be used alongside an NGINX Ingress controller. Please be sure that you have a running instance in your cluster before proceeding. More information  [here](https://github.com/kubernetes/ingress/tree/master/controllers/nginx).
 
 Install the chart:
 
