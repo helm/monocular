@@ -6,6 +6,9 @@ import { ChartIndexComponent } from './chart-index/chart-index.component';
 import { ChartDetailsComponent } from './chart-details/chart-details.component';
 import { ChartSearchComponent } from './chart-search/chart-search.component';
 import { ChartsComponent } from './charts/charts.component';
+import { ConfigService } from './shared/services/config.service';
+
+var config = new ConfigService()
 
 const appRoutes: Routes = [
   {
@@ -13,7 +16,7 @@ const appRoutes: Routes = [
     component: ChartIndexComponent,
     data: {
       meta: {
-        title: 'Monocular'
+        title: config.appName
       }
     }
   },

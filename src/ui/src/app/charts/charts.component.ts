@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ChartsService } from '../shared/services/charts.service';
 import { Chart } from '../shared/models/chart';
 import { ActivatedRoute, Params, Router } from '@angular/router';
+import { MetaService } from 'ng2-meta';
 
 @Component({
   selector: 'app-charts',
@@ -17,7 +18,8 @@ export class ChartsComponent implements OnInit {
   constructor(
     private chartsService: ChartsService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private metaService: MetaService
   ) { }
 
   // Default filters
@@ -27,6 +29,7 @@ export class ChartsComponent implements OnInit {
 
   ngOnInit() {
 		this.loadCharts();
+    this.updateMetaTags();
   }
 
   loadCharts(): void {
@@ -82,5 +85,11 @@ export class ChartsComponent implements OnInit {
         return 1
       }
       return 0
+  }
+
+  updateMetaTags(): void {
+    let title: string = `${this.currentRepo} repository charts`;
+    this.metaService.setTitle(title);
+    this.metaService.setTag('og:title', title);
   }
 }
