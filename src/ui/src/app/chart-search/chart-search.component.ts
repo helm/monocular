@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ChartsService } from '../shared/services/charts.service';
 import { MetaService } from 'ng2-meta';
 import { Chart } from '../shared/models/chart';
+import { ConfigService } from '../shared/services/config.service';
 
 import { ActivatedRoute } from '@angular/router';
 import { Observable }         from 'rxjs/Observable';
@@ -20,6 +21,7 @@ export class ChartSearchComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private chartsService: ChartsService,
+    private config: ConfigService,
     private metaService: MetaService
   ) { }
 
@@ -56,7 +58,7 @@ export class ChartSearchComponent implements OnInit {
    */
   updateMetaTags(): void {
     let title: string = `Results for "${this.query}"`;
-    this.metaService.setTitle(title);
+    this.metaService.setTitle(title, ` | ${this.config.appName}`);
     this.metaService.setTag('og:title', title);
   }
 }

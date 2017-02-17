@@ -3,6 +3,7 @@ import { ActivatedRoute, Params } from '@angular/router';
 import { ChartsService } from '../shared/services/charts.service';
 import { Chart } from '../shared/models/chart';
 import { MetaService } from 'ng2-meta';
+import { ConfigService } from '../shared/services/config.service';
 
 @Component({
   selector: 'app-chart-details',
@@ -19,6 +20,7 @@ export class ChartDetailsComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private chartsService: ChartsService,
+    private config: ConfigService,
     private metaService: MetaService
   ) { }
 
@@ -55,7 +57,7 @@ export class ChartDetailsComponent implements OnInit {
    */
   updateMetaTags(): void {
     let title: string = this.contentTitleVersion();
-    this.metaService.setTitle(title);
+    this.metaService.setTitle(title, ` | ${this.config.appName}`);
     this.metaService.setTag('description', this.chart.attributes.description);
     this.metaService.setTag('og:title', title);
     this.metaService.setTag('og:description', this.chart.attributes.description);
