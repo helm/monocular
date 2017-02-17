@@ -42,13 +42,10 @@ import { LoaderComponent } from './loader/loader.component';
 
 require('hammerjs');
 
-let config = new ConfigService()
 const metaConfig: MetaConfig = {
   //Append a title suffix such as a site name to all titles
   useTitleSuffix: true,
   defaults: {
-    title: config.appName,
-    titleSuffix: ` | ${config.appName}`,
     description: 'Discover & launch great Kubernetes-ready apps'
   }
 };

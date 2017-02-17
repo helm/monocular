@@ -88,7 +88,7 @@ export class ChartsComponent implements OnInit {
   }
 
   updateMetaTags(): void {
-    let title: string = `${this.currentRepo} repository charts`;
+    let title: string = `${this.currentRepo || "stable"} repository charts`;
     this.metaService.setTitle(title);
     this.metaService.setTag('og:title', title);
   }
