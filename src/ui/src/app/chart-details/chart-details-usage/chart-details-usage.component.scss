@@ -37,4 +37,13 @@
   svg {
     fill: md-color($monocular-app-primary);
   }
+
+  p {
+    &.help-link {
+      font-size: 0.8em;
+      text-align: center;
+      margin-top: 20px;
+      margin-bottom: 0;
+    }
+  }
 }
