@@ -16,7 +16,7 @@
         <a href="mailto:{{ maintainer.email }}">{{ maintainer.name }}</a>
       </div>
     </div>
-    <div class="chartInfo__sources">
+    <div class="chartInfo__sources" *ngIf="sources.length">
       <h1>Sources</h1>
       <div *ngFor="let source of sources">
         <a href="{{ source }}">{{ source }}</a>
