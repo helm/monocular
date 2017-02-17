@@ -1,4 +1,6 @@
 # Monocular
+[![Build
+Status](https://travis-ci.org/helm/monocular.svg?branch=master)](https://travis-ci.org/helm/monocular)
 
 Monocular is a part of the Helm project and aims to provide a way to search for and discover apps that have been packaged in Helm
 Charts. Monocular includes a scanning back-end for indexing charts and their metadata and a simple user interface.
