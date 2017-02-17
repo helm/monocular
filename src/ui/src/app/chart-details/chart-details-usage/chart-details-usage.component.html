@@ -1,7 +1,20 @@
-<div class="chart-details-usage">
-  <label>Usage</label>
-  <code>
-    <p *ngIf="showRepoInstructions">{{ repoAddInstructions }}</p>
-    <p>helm install {{ cmdChartId }} --version {{ currentVersion }}</p>
-  </code>
-</div>
+<app-panel class="chart-details-usage" [border]=true>
+  <div *ngIf=showRepoInstructions class="chart-details-usage__repository">
+    <h2 class="chart-details-usage__label">Add {{ chart.attributes.repo.name }} repository</h2>
+    <md-input floatingPlaceholder=false [value]=repoAddInstructions></md-input>
+    <button md-button ngxClipboard [cbContent]="repoAddInstructions" (cbOnSuccess)="showSnackBar()"
+      angulartics2On="click" angularticsEvent="RepositoryCopy" angularticsCategory="{{ cmdChartId }}"
+      [angularticsProperties]="{ label: currentVersion }">
+      <md-icon svgIcon="content-copy"></md-icon>
+    </button>
+  </div>
+  <div>
+    <h2 class="chart-details-usage__label">Install chart</h2>
+    <md-input readonly=true floatingPlaceholder=false [value]=installInstructions></md-input>
+    <button md-button ngxClipboard [cbContent]="installInstructions" (cbOnSuccess)="showSnackBar()"
+      angulartics2On="click" angularticsEvent="ChartInstallationCopy"
+      angularticsCategory="{{ cmdChartId }}" [angularticsProperties]="{ label: currentVersion }">
+      <md-icon svgIcon="content-copy"></md-icon>
+    </button>
+  </div>
+</app-panel>
