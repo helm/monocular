@@ -1,16 +1,27 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
 import { Chart } from '../../shared/models/chart';
+import { DomSanitizer } from '@angular/platform-browser';
+import { MdIconRegistry } from '@angular/material';
 
 @Component({
   selector: 'app-chart-details-usage',
   templateUrl: './chart-details-usage.component.html',
-  styleUrls: ['./chart-details-usage.component.scss']
+  styleUrls: ['./chart-details-usage.component.scss'],
+  viewProviders: [MdIconRegistry],
+  encapsulation: ViewEncapsulation.None
 })
 export class ChartDetailsUsageComponent implements OnInit {
   @Input() chart: Chart
   @Input() currentVersion: string
 
-  constructor() { }
+  constructor(
+    mdIconRegistry: MdIconRegistry,
+    sanitizer: DomSanitizer
+  ) {
+    mdIconRegistry
+      .addSvgIcon('content-copy',
+        sanitizer.bypassSecurityTrustResourceUrl('/assets/icons/content-copy.svg'))
+  }
 
   ngOnInit() {}
 
@@ -24,6 +35,10 @@ export class ChartDetailsUsageComponent implements OnInit {
   }
 
   get repoAddInstructions(): string {
-    return `helm repo add incubator ${this.chart.attributes.repo.url}`
+    return `helm repo add incubator ${this.chart.attributes.repo.url}`;
+  }
+
+  get installInstructions(): string {
+    return `helm install ${this.cmdChartId} --version ${this.currentVersion}`;
   }
 }

@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { Angulartics2Module, Angulartics2GoogleAnalytics } from 'angulartics2';
+import { ClipboardModule } from 'ngx-clipboard';
 //import { MetaModule, MetaConfig } from 'ng2-meta';
 import { routing, appRoutingProviders } from './app.routing';
 
@@ -83,7 +84,8 @@ require('hammerjs');
     FormsModule,
     HttpModule,
 		routing,
-    Angulartics2Module.forRoot([Angulartics2GoogleAnalytics])
+    Angulartics2Module.forRoot([Angulartics2GoogleAnalytics]),
+    ClipboardModule
     //MetaModule.forRoot(metaConfig)
   ],
   providers: [
