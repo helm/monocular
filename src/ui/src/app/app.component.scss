@@ -4,20 +4,25 @@
 @import '../theme.scss';
 
 .App {
-  display: flex;
-  min-height: 100vh;
-  flex-direction: column;
 
-  &__Content {
-    flex: 1;
-    transition: all .3s ease-out;
+  &__Wrap {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+    transition: transform .3s ease-out;
+    will-change: transform;
+
+    &__Content {
+      flex: 1;
+    }
   }
 
   &__Menu {
     position: absolute;
     top: 0;
     visibility: hidden;
-    transition: all .3s ease-out;
+    transition: transform .3s ease-out;
+    will-change: transform;
 
     ul {
       list-style: none;
@@ -33,8 +38,9 @@
 
   &--openMenu {
 
-    .App__Content {
+    .App__Wrap {
       display: block;
+      position: relative;
       transform: translateY(120px);
       box-shadow: 0px 0px 20px rgba(0, 0, 0, .3);
     }

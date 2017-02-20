@@ -37,7 +37,7 @@ $header-bar-padding-small: 1.5em;
 
   &__navigation {
     float: right;
-    margin-right: 1em;
+    margin-right: 2em;
     display: none;
 
     ul {
@@ -56,7 +56,13 @@ $header-bar-padding-small: 1.5em;
   &__open {
     color: white;
     float: right;
-    margin-right: 3em;
+    margin-right: 4em;
+
+    svg {
+      cursor: pointer;
+      width: 32px;
+      height: 32px;
+    }
   }
 
   @include mappy-bp(max-width small) {

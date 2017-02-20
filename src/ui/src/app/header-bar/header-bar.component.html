@@ -15,7 +15,10 @@
     </ul>
   </nav>
   <nav class="header-bar__open">
-    <div (click)="openMenu()">Open</div>
+    <div (click)="openMenu()">
+      <md-icon *ngIf="!openedMenu" svgIcon="menu"></md-icon>
+      <md-icon *ngIf="openedMenu" svgIcon="close"></md-icon>
+    </div>
   </nav>
   <div class="header-bar__search" *ngIf="showSearch">
     <form (ngSubmit)="searchCharts(searchBox)">
