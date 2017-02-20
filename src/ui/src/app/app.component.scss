@@ -1,3 +1,8 @@
+// Imports
+@import '~@angular/material/core/theming/theming';
+// Import your custom theme
+@import '../theme.scss';
+
 .App {
   display: flex;
   min-height: 100vh;
@@ -5,5 +10,38 @@
 
   &__Content {
     flex: 1;
+    transition: all .3s ease-out;
+  }
+
+  &__Menu {
+    position: absolute;
+    top: 0;
+    visibility: hidden;
+    transition: all .3s ease-out;
+
+    ul {
+      list-style: none;
+    }
+
+    li {
+      font-weight: bold;
+      margin-bottom: .5em;
+      font-size: 1.2em;
+      color: md-color($monocular-app-primary);
+    }
+  }
+
+  &--openMenu {
+
+    .App__Content {
+      display: block;
+      transform: translateY(120px);
+      box-shadow: 0px 0px 20px rgba(0, 0, 0, .3);
+    }
+
+    .App__Menu {
+      visibility: visible;
+      transform: translateY(1em);
+    }
   }
 }

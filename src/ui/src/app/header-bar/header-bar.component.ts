@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router, NavigationExtras } from '@angular/router';
 import { ConfigService } from '../shared/services/config.service';
+import { MenuService } from '../shared/services/menu.service';
 
 @Component({
   selector: 'app-header-bar',
@@ -18,7 +19,8 @@ export class HeaderBarComponent implements OnInit {
   appName: string
   constructor(
     private router: Router,
-    private config: ConfigService
+    private config: ConfigService,
+    private menuService: MenuService
   ) {
     this.appName = config.appName
   }
@@ -34,5 +36,11 @@ export class HeaderBarComponent implements OnInit {
       };
       this.router.navigate(['/charts/search'], navigationExtras);
     }
+  }
+
+  openMenu() {
+    // Open the menu
+    console.log('test');
+    this.menuService.toggleMenu();
   }
 }

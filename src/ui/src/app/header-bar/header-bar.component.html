@@ -14,6 +14,9 @@
       <li><a class="reverse" href="https://github.com/helm/monocular/blob/master/docs/about.md" target="_blank">About</a></li>
     </ul>
   </nav>
+  <nav class="header-bar__open">
+    <div (click)="openMenu()">Open</div>
+  </nav>
   <div class="header-bar__search" *ngIf="showSearch">
     <form (ngSubmit)="searchCharts(searchBox)">
       <md-input class="md-input--reverse md-input--full"
