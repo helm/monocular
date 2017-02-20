@@ -3,7 +3,8 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { Angulartics2Module, Angulartics2GoogleAnalytics } from 'angulartics2';
-//import { MetaModule, MetaConfig } from 'ng2-meta';
+import { ClipboardModule } from 'ngx-clipboard';
+import { MetaModule, MetaConfig } from 'ng2-meta';
 import { routing, appRoutingProviders } from './app.routing';
 
 /* Material library */
@@ -42,16 +43,13 @@ import { LoaderComponent } from './loader/loader.component';
 
 require('hammerjs');
 
-//const metaConfig: MetaConfig = {
-//  //Append a title suffix such as a site name to all titles
-//  //Defaults to false
-//  useTitleSuffix: true,
-//  defaults: {
-//    title: 'Monocular',
-//    titleSuffix: ' | Monocular',
-//    description: 'Find the Helm chart you need or share your own Kubernetes apps'
-//  }
-//};
+const metaConfig: MetaConfig = {
+  //Append a title suffix such as a site name to all titles
+  useTitleSuffix: true,
+  defaults: {
+    description: 'Discover & launch great Kubernetes-ready apps'
+  }
+};
 
 @NgModule({
   declarations: [
@@ -84,8 +82,9 @@ require('hammerjs');
     FormsModule,
     HttpModule,
 		routing,
-    Angulartics2Module.forRoot([Angulartics2GoogleAnalytics])
-    //MetaModule.forRoot(metaConfig)
+    Angulartics2Module.forRoot([Angulartics2GoogleAnalytics]),
+    ClipboardModule,
+    MetaModule.forRoot(metaConfig)
   ],
   providers: [
     appRoutingProviders,
