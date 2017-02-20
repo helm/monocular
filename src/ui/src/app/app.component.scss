@@ -1,9 +1,53 @@
-.App {
-  display: flex;
-  min-height: 100vh;
-  flex-direction: column;
+// Imports
+@import '~@angular/material/core/theming/theming';
+// Import your custom theme
+@import '../theme.scss';
 
-  &__Content {
-    flex: 1;
+.App {
+
+  &__Wrap {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+    transition: transform .3s ease-out;
+    will-change: transform;
+
+    &__Content {
+      flex: 1;
+    }
+  }
+
+  &__Menu {
+    position: absolute;
+    top: 0;
+    visibility: hidden;
+    transition: transform .3s ease-out;
+    will-change: transform;
+
+    ul {
+      list-style: none;
+    }
+
+    li {
+      font-weight: bold;
+      margin-bottom: .5em;
+      font-size: 1.2em;
+      color: md-color($monocular-app-primary);
+    }
+  }
+
+  &--openMenu {
+
+    .App__Wrap {
+      display: block;
+      position: relative;
+      transform: translateY(120px);
+      box-shadow: 0px 0px 20px rgba(0, 0, 0, .3);
+    }
+
+    .App__Menu {
+      visibility: visible;
+      transform: translateY(1em);
+    }
   }
 }

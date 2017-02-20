@@ -1,13 +1,30 @@
 import { Angulartics2GoogleAnalytics } from 'angulartics2';
 import { Component } from '@angular/core';
-// import { MetaService } from 'ng2-meta';
+import { Router } from '@angular/router';
+import { MenuService } from './shared/services/menu.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
+  providers: [MenuService]
 })
 export class AppComponent {
-  // constructor(private metaService: MetaService) {}
-  constructor(angulartics2GoogleAnalytics: Angulartics2GoogleAnalytics) {}
+  // Show the global menu
+  public showMenu: boolean = false;
+
+  constructor(
+    angulartics2GoogleAnalytics: Angulartics2GoogleAnalytics,
+    private menuService: MenuService,
+    private router: Router
+  ) {
+    menuService.menuOpen$.subscribe(show => {
+      this.showMenu = show;
+    });
+
+    // Hide menu when user changes the route
+    router.events.subscribe(() => {
+      menuService.hideMenu();
+    });
+  }
 }

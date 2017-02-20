@@ -2,7 +2,7 @@ import { Component, OnInit, Input, ViewEncapsulation, ChangeDetectionStrategy } 
 import { Chart } from '../../shared/models/chart';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MdIconRegistry } from '@angular/material';
-import {MdSnackBar} from '@angular/material';
+import { MdSnackBar } from '@angular/material';
 
 @Component({
   selector: 'app-chart-details-usage',
@@ -22,7 +22,7 @@ export class ChartDetailsUsageComponent implements OnInit {
   ) {
     mdIconRegistry
       .addSvgIcon('content-copy',
-        sanitizer.bypassSecurityTrustResourceUrl('/assets/icons/content-copy.svg'))
+        sanitizer.bypassSecurityTrustResourceUrl('/assets/icons/content-copy.svg'));
   }
 
   ngOnInit() {}
