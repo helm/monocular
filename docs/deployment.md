@@ -22,7 +22,7 @@ Once deployed, your application should be available at `https://[nginx-ingress-c
 
 The chart contains 3 tiers and one ingress resource.
 
-#### Tiers
+#### Components
 
   * UI: AngularJS web frontend.
   * API: Golang based backend API.
