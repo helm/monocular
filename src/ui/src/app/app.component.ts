@@ -2,12 +2,13 @@ import { Angulartics2GoogleAnalytics } from 'angulartics2';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { MenuService } from './shared/services/menu.service';
+import { ChartsService } from './shared/services/charts.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
-  providers: [MenuService]
+  providers: [MenuService, ChartsService]
 })
 export class AppComponent {
   // Show the global menu

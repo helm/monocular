@@ -13,14 +13,16 @@ import { Http, Response } from '@angular/http';
 /* TODO, This is a mocked class. */
 @Injectable()
 export class ChartsService {
-  hostname: string
+  hostname: string;
+  cacheCharts: any;
 
   constructor(
     private http: Http,
     private config: ConfigService
   ) {
-      this.hostname = config.backendHostname
-    }
+    this.hostname = config.backendHostname;
+    this.cacheCharts = {};
+  }
 
   /**
    * Get all charts from the API
@@ -38,9 +40,17 @@ export class ChartsService {
         url = `${this.hostname}/v1/charts/${repo}`
       }
     }
-    return this.http.get(url)
-                  .map(this.extractData)
-                  .catch(this.handleError);
+
+    if (this.cacheCharts[repo] && this.cacheCharts[repo].length > 0) {
+      return Observable.create((observer) => {
+        observer.next(this.cacheCharts[repo]);
+      });
+    } else {
+      return this.http.get(url)
+                    .map(this.extractData)
+                    .do((data) => this.storeCache(data, repo))
+                    .catch(this.handleError);
+    }
   }
 
   /**
@@ -116,6 +126,18 @@ export class ChartsService {
       .map(this.extractData)
       .catch(this.handleError);
   }
+
+  /**
+   * Store the charts in the cache
+   *
+   * @param {Chart[]} data Elements in the response
+   * @return {Chart[]} Return the same response
+   */
+  private storeCache(data: Chart[], repo: string): Chart[] {
+    this.cacheCharts[repo] = data;
+    return data;
+  }
+
 
   private extractData(res: Response) {
     let body = res.json();
