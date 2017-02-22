@@ -31,7 +31,8 @@
 
   [md-button] {
     margin-left: 1em;
-    min-width: 4em;
+    min-width: auto;
+    width: 4em;
   }
 
   svg {
