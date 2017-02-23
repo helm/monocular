@@ -20,7 +20,7 @@ A helm chart describes how to manage a specific application on Kubernetes. It co
 plus the infrastructure needed to operate it in terms of the standard Kubernetes primitives. Each chart references one or more
 (typically docker-compatible) container images that contain the application code to be run.
 
-Learn more about charts at https://github.com/kubernetes/helm/blob/master/docs/charts.md and
+Learn more about charts at https://github.com/kubernetes/helm/blob/master/docs/charts.md
 
 ## What is Monocular?
 
@@ -42,4 +42,4 @@ The process for contributing new Charts can be found at: https://github.com/kube
 
 ## Who are the maintainers of Monocular and KubeApps.com?
 
-Bitnami and DEIS are the main committers to the Monocular project. Bitnami also sponsors the [KubeApps](https://kubeapps.com) website by providing hosting on GKE and contributing to website design.
+Bitnami and Deis are the main committers to the Monocular project. Bitnami also sponsors the [KubeApps](https://kubeapps.com) website by providing hosting on GKE and contributing to website design.
