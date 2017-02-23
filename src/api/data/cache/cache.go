@@ -146,7 +146,7 @@ func (c *cachedCharts) Refresh() error {
 		if err != nil {
 			return err
 		}
-		c.allCharts[repo.Name] = []*models.ChartPackage{}
+		var chartsWithData []*models.ChartPackage
 		for _, chart := range charts {
 			// Extra files. Skipped if the directory exists
 			dataExists, err := charthelper.ChartDataExists(chart)
@@ -164,8 +164,9 @@ func (c *cachedCharts) Refresh() error {
 				// If we have a problem processing an image it will fallback to the default one
 				charthelper.DownloadAndProcessChartIcon(chart)
 			}
-			c.allCharts[repo.Name] = append(c.allCharts[repo.Name], chart)
+			chartsWithData = append(c.allCharts[repo.Name], chart)
 		}
+		c.allCharts[repo.Name] = chartsWithData
 	}
 	return nil
 }
