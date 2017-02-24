@@ -10,9 +10,12 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/helm/monocular/src/api/swagger/models"
 )
+
+const defaultTimeout time.Duration = 5 * time.Second
 
 // DownloadAndExtractChartTarball the chart tar file linked by metadata.Urls and store
 // the wanted files (i.e README.md) under chartDataDir
@@ -54,7 +57,10 @@ var downloadTarball = func(chart *models.ChartPackage) error {
 
 	fmt.Printf("Downloading metadata from %s\n", source)
 	// Download tarball
-	resp, err := http.Get(source)
+	c := &http.Client{
+		Timeout: defaultTimeout,
+	}
+	resp, err := c.Get(source)
 	if err != nil {
 		return err
 	}

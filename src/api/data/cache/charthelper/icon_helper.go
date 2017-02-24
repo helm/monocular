@@ -76,7 +76,10 @@ func downloadIcon(chart *models.ChartPackage) error {
 	fmt.Printf("Downloading icon %s into %s\n", chart.Icon, dest)
 
 	// Download
-	resp, err := http.Get(chart.Icon)
+	c := &http.Client{
+		Timeout: defaultTimeout,
+	}
+	resp, err := c.Get(chart.Icon)
 	if err != nil {
 		return err
 	}
