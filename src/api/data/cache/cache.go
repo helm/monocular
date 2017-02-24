@@ -158,6 +158,7 @@ func (c *cachedCharts) Refresh() error {
 
 				err := charthelper.DownloadAndExtractChartTarball(chart)
 				if err != nil {
+					fmt.Printf("Error on DownloadAndExtractChartTarball: %v\n", err)
 					// Skip chart if error extracting the tarball
 					continue
 				}
