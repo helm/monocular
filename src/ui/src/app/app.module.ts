@@ -32,7 +32,6 @@ import { ChartDetailsUsageComponent } from './chart-details/chart-details-usage/
 import { ChartDetailsReadmeComponent } from './chart-details/chart-details-readme/chart-details-readme.component';
 import { PanelComponent } from './panel/panel.component';
 import { MainHeaderComponent } from './main-header/main-header.component';
-import { TrustedMaintainersComponent } from './trusted-maintainers/trusted-maintainers.component';
 import { FooterComponent } from './footer/footer.component';
 import { FooterListComponent } from './footer-list/footer-list.component';
 import { ChartDetailsInfoComponent } from './chart-details/chart-details-info/chart-details-info.component';
@@ -68,7 +67,6 @@ const metaConfig: MetaConfig = {
     PanelComponent,
     MainHeaderComponent,
     TruncatePipe,
-    TrustedMaintainersComponent,
     FooterComponent,
     FooterListComponent,
     ChartDetailsInfoComponent,
