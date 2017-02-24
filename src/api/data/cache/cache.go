@@ -164,7 +164,7 @@ func (c *cachedCharts) Refresh() error {
 				// If we have a problem processing an image it will fallback to the default one
 				charthelper.DownloadAndProcessChartIcon(chart)
 			}
-			chartsWithData = append(c.allCharts[repo.Name], chart)
+			chartsWithData = append(chartsWithData, chart)
 		}
 		c.allCharts[repo.Name] = chartsWithData
 	}
