@@ -56,7 +56,8 @@ func TestMakeChartResource(t *testing.T) {
 	assert.Equal(t, *chartResource.Type, "chart", "chart resource type field value")
 	assert.Equal(t, *chartResource.ID, MakeChartID(repoName, chartName), "chart resource ID field value")
 	assert.Equal(t, *chartResource.Attributes.(*models.Chart).Repo.Name, *repo.Name, "chart resource Attributes.Repo Name field value")
-	assert.Equal(t, *chartResource.Attributes.(*models.Chart).Repo.URL, *repo.URL, "chart resource Attributes.Repo URL field value")
+	assert.Equal(t, *chartResource.Attributes.(*models.Chart).Repo.RegistryURL, *repo.RegistryURL, "chart resource Attributes.Repo URL field value")
+	assert.Equal(t, chartResource.Attributes.(*models.Chart).Repo.SourceURL, repo.SourceURL, "chart resource Attributes.SourceURL field value")
 	assert.Equal(t, *chartResource.Attributes.(*models.Chart).Name, chartName, "chart resource Attributes.Name field value")
 	assert.Equal(t, *chartResource.Attributes.(*models.Chart).Description, chartDescription, "chart resource Attributes.Description field value")
 	assert.Equal(t, *chartResource.Attributes.(*models.Chart).Home, chartHome, "chart resource Attributes.Home field value")
@@ -70,7 +71,8 @@ func TestMakeChartResources(t *testing.T) {
 	assert.Equal(t, *chartsResource[0].Type, "chart", "chart resource type field value")
 	assert.Equal(t, *chartsResource[0].ID, MakeChartID(repoName, chartName), "chart resource ID field value")
 	assert.Equal(t, *chartsResource[0].Attributes.(*models.Chart).Repo.Name, *repo.Name, "chart resource Attributes.Repo Namefield value")
-	assert.Equal(t, *chartsResource[0].Attributes.(*models.Chart).Repo.URL, *repo.URL, "chart resource Attributes.Repo URL value")
+	assert.Equal(t, *chartsResource[0].Attributes.(*models.Chart).Repo.RegistryURL, *repo.RegistryURL, "chart resource Attributes.Repo URL value")
+	assert.Equal(t, chartsResource[0].Attributes.(*models.Chart).Repo.SourceURL, repo.SourceURL, "chart resource Attributes.SourceURL value")
 	assert.Equal(t, *chartsResource[0].Attributes.(*models.Chart).Name, chartName, "chart resource Attributes.Name field value")
 	assert.Equal(t, *chartsResource[0].Attributes.(*models.Chart).Description, chartDescription, "chart resource Attributes.Description field value")
 	assert.Equal(t, *chartsResource[0].Attributes.(*models.Chart).Home, chartHome, "chart resource Attributes.Home field value")
@@ -278,7 +280,7 @@ func TestGetRepoObject(t *testing.T) {
 	// Returns empty Repo if does not exist
 	chart.Repo = "does-not-exist"
 	repo = getRepoObject(chart)
-	if repo.Name != nil || repo.URL != nil {
+	if repo.Name != nil || repo.RegistryURL != nil {
 		t.Errorf("Repo Name and URL should be nil")
 	}
 }

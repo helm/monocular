@@ -367,11 +367,15 @@ definitions:
     type: object
     required:
       - name
-      - url
+      - registryURL
     properties:
       name:
         type: string
-      url:
+        minLength: 1
+      registryURL:
+        type: string
+        minLength: 1
+      sourceURL:
         type: string
   icon:
     type: object

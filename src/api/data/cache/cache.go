@@ -130,7 +130,7 @@ func (c *cachedCharts) Refresh() error {
 	fmt.Printf("Using cache directory %s\n", charthelper.DataDirBase())
 	for _, repo := range c.knownRepos {
 		// Append index.yaml
-		u, _ := url.Parse(repo.URL)
+		u, _ := url.Parse(repo.RegistryURL)
 		u.Path = path.Join(u.Path, "index.yaml")
 
 		resp, err := http.Get(u.String())
