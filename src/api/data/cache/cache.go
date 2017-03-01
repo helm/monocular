@@ -9,10 +9,10 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/helm/monocular/src/api/config/repos"
 	"github.com/helm/monocular/src/api/data"
 	"github.com/helm/monocular/src/api/data/cache/charthelper"
 	"github.com/helm/monocular/src/api/data/helpers"
-	"github.com/helm/monocular/src/api/data/repos"
 	"github.com/helm/monocular/src/api/swagger/models"
 	"github.com/helm/monocular/src/api/swagger/restapi/operations"
 )
