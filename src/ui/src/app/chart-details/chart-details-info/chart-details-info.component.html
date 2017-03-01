@@ -10,14 +10,26 @@
     <div class="chartInfo__versions">
       <app-chart-details-versions [versions]=versions [currentVersion]=currentVersion></app-chart-details-versions>
     </div>
+    <div class="chartInfo__home" *ngIf="chart.attributes.home">
+      <h1>Home</h1>
+      <div>
+        <a href="{{ chart.attributes.home }}" target="_blank">{{chart.attributes.home}}</a>
+      </div>
+    </div>
+    <div class="chartInfo__source" *ngIf="sourceUrl">
+      <h1>Source repository</h1>
+      <div>
+        <a href="{{ sourceUrl }}" target="_blank">{{ sourceName }}</a>
+      </div>
+    </div>
     <div class="chartInfo__maintainers">
       <h1>Maintainers</h1>
       <div *ngFor="let maintainer of chart.attributes.maintainers">
         <a href="mailto:{{ maintainer.email }}">{{ maintainer.name }}</a>
       </div>
     </div>
-    <div class="chartInfo__sources" *ngIf="sources.length">
-      <h1>Sources</h1>
+    <div class="chartInfo__related" *ngIf="sources.length">
+      <h1>Related</h1>
       <div *ngFor="let source of sources">
         <a href="{{ source }}">{{ source }}</a>
       </div>

@@ -1,10 +1,5 @@
 .chartInfo {
-  &__versions,
-  &__maintainers {
-    margin-bottom: 2em;
-  }
-
-  &__sources {
+  &__source, &__related, &__home{
     a {
       word-break: break-all;
     }
