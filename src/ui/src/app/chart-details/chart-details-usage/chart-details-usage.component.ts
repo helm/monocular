@@ -44,7 +44,7 @@ export class ChartDetailsUsageComponent implements OnInit {
   }
 
   get repoAddInstructions(): string {
-    return `helm repo add incubator ${this.chart.attributes.repo.registryURL}`;
+    return `helm repo add ${this.chart.attributes.repo.name} ${this.chart.attributes.repo.registryURL}`;
   }
 
   get installInstructions(): string {
