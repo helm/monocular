@@ -34,6 +34,10 @@ The chart includes an ingress resource that is configured to route the backend A
 
 You can configure many different settings from hosts, ingress-class to tls options using the `values.yaml` file.
 
+# Configuration
+
+You can customize settings like the chart repositories to pull from by modifying the `values.yaml` file. Click [here]("configuration.md") to learn more.
+
 # CI/CD scripts
 
 In the `/deployment` directory you can find a set of convenience scripts helpful in CI/CD setups.
