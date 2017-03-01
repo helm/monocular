@@ -19,20 +19,24 @@ type Configuration struct {
 	Repos repos.Repos
 }
 
+// Cached version of the config
+var currentConfig Configuration
+
 // GetConfig returns the environment specific configuration
 func GetConfig() (Configuration, error) {
-	res := Configuration{}
 	var err error
-	res.Cors, err = cors.Config(configFile())
+	currentConfig.Cors, err = cors.Config(configFile())
 	if err != nil {
-		return res, err
+		return currentConfig, err
 	}
-	res.Repos, err = repos.Enabled(configFile())
-	if err != nil {
-		return res, err
+	if currentConfig.Repos == nil {
+		currentConfig.Repos, err = repos.Enabled(configFile())
+		if err != nil {
+			return currentConfig, err
+		}
 	}
 
-	return res, nil
+	return currentConfig, nil
 }
 
 // BaseDir returns the location of the directory

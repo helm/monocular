@@ -2,21 +2,24 @@ package repos
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
+
+	yaml "gopkg.in/yaml.v2"
 )
 
 // Repos is an array of Repo
 type Repos []Repo
 
 type reposYAML struct {
-	Repositories Repo
+	Repos Repos
 }
 
 // Repo is a map name => URL
 type Repo struct {
 	Name   string
-	URL    string `yaml:"registry"`
-	Source string `yaml:"source"`
+	URL    string
+	Source string
 }
 
 var official = Repos{
@@ -34,30 +37,27 @@ var official = Repos{
 
 // Enabled returns the map of repositories
 func Enabled(configFile string) (Repos, error) {
-	repos := official
-	fmt.Println(configFile)
 	_, err := os.Stat(configFile)
 	if os.IsNotExist(err) {
-		return repos, nil
+		return official, nil
 	}
-	//repos, err = loadReposFromConfigFile(configFile)
-	//if err != nil {
-	//	return repos, err
-	//}
+	repos, err := loadReposFromFile(configFile)
+	if err != nil {
+		return nil, err
+	}
 
 	return repos, nil
 }
 
-//func loadReposFromConfigFile(filePath string) (Repos, error) {
-//	var repos Repos
-//	var yamlStruct reposYAML
-//	bytes, err := ioutil.ReadFile(filePath)
-//	if err != nil {
-//		return nil, err
-//	}
-//	if err := yaml.Unmarshal(bytes, &yamlStruct); err != nil {
-//		return nil, err
-//	}
-//	fmt.Printf("WAPS %+v", yamlStruct.Repositories)
-//	return repos, nil
-//}
+func loadReposFromFile(filePath string) (Repos, error) {
+	fmt.Printf("Loading repos from file %s\n", filePath)
+	var yamlStruct reposYAML
+	bytes, err := ioutil.ReadFile(filePath)
+	if err != nil {
+		return nil, err
+	}
+	if err := yaml.Unmarshal(bytes, &yamlStruct); err != nil {
+		return nil, err
+	}
+	return yamlStruct.Repos, nil
+}

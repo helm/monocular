@@ -32,11 +32,37 @@ func TestEnabledFileDoesnotExist(t *testing.T) {
 
 // Use the repositories in the file
 func TestEnabledReposInFile(t *testing.T) {
-	_, err := Enabled(configFileOk)
+	repos, err := Enabled(configFileOk)
 	assert.NoErr(t, err)
+	offRepo := []Repo{
+		{
+			Name:   "repoName",
+			URL:    "http://myrepobucket",
+			Source: "http://github.com/my-repo",
+		},
+		{
+			Name: "repoName2",
+			URL:  "http://myrepobucket2",
+		},
+	}
+
+	assert.Equal(t, len(repos), 2, "Only has repos from the YAML file")
+
+	for i, repo := range repos {
+		assert.Equal(t, repo.Name, offRepo[i].Name, "Same repo name")
+		assert.Equal(t, repo.URL, offRepo[i].URL, "Same repo URL")
+		assert.Equal(t, repo.Source, offRepo[i].Source, "Same repo Source")
+	}
 }
 
 // Return err
 func TestEnabledWrongFile(t *testing.T) {
+	_, err := Enabled(configFileNotOk)
+	assert.ExistsErr(t, err, "File exist but it is not valid")
+}
 
+func TestLoadReposFromFile(t *testing.T) {
+	repos, err := loadReposFromFile("does not exist")
+	assert.ExistsErr(t, err, "Can not load the file")
+	assert.Equal(t, len(repos), 0, "Returns no repos")
 }
