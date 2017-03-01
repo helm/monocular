@@ -5,18 +5,21 @@ type Repos []Repo
 
 // Repo is a map name => URL
 type Repo struct {
-	Name string
-	URL  string
+	Name        string
+	RegistryURL string
+	SourceURL   string
 }
 
 var official = Repos{
 	Repo{
-		Name: "stable",
-		URL:  "http://storage.googleapis.com/kubernetes-charts",
+		Name:        "stable",
+		RegistryURL: "http://storage.googleapis.com/kubernetes-charts",
+		SourceURL:   "https://github.com/kubernetes/charts/tree/master/stable",
 	},
 	Repo{
-		Name: "incubator",
-		URL:  "http://storage.googleapis.com/kubernetes-charts-incubator",
+		Name:        "incubator",
+		RegistryURL: "http://storage.googleapis.com/kubernetes-charts-incubator",
+		SourceURL:   "https://github.com/kubernetes/charts/tree/master/incubator",
 	},
 }
 

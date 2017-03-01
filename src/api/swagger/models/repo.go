@@ -19,14 +19,20 @@ type Repo struct {
 	/* name
 
 	Required: true
+	Min Length: 1
 	*/
 	Name *string `json:"name"`
 
-	/* url
+	/* registry URL
 
 	Required: true
+	Min Length: 1
 	*/
-	URL *string `json:"url"`
+	RegistryURL *string `json:"registryURL"`
+
+	/* source URL
+	 */
+	SourceURL string `json:"sourceURL,omitempty"`
 }
 
 // Validate validates this repo
@@ -38,7 +44,7 @@ func (m *Repo) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateURL(formats); err != nil {
+	if err := m.validateRegistryURL(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
@@ -55,12 +61,20 @@ func (m *Repo) validateName(formats strfmt.Registry) error {
 		return err
 	}
 
+	if err := validate.MinLength("name", "body", string(*m.Name), 1); err != nil {
+		return err
+	}
+
 	return nil
 }
 
-func (m *Repo) validateURL(formats strfmt.Registry) error {
+func (m *Repo) validateRegistryURL(formats strfmt.Registry) error {
 
-	if err := validate.Required("url", "body", m.URL); err != nil {
+	if err := validate.Required("registryURL", "body", m.RegistryURL); err != nil {
+		return err
+	}
+
+	if err := validate.MinLength("registryURL", "body", string(*m.RegistryURL), 1); err != nil {
 		return err
 	}
 
