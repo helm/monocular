@@ -2,6 +2,7 @@ package config
 
 import (
 	"os"
+	"path/filepath"
 
 	"github.com/helm/monocular/src/api/data/repos"
 	"github.com/imdario/mergo"
@@ -68,4 +69,10 @@ func mergeConfig(conf configurationWithOverrides, env string) Configuration {
 
 	mergo.Merge(&custom, defaults)
 	return custom
+}
+
+// BaseDir returns the location of the directory
+// where the configuration files are stored
+func BaseDir() string {
+	return filepath.Join(os.Getenv("HOME"), "monocular")
 }

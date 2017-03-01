@@ -12,6 +12,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/helm/monocular/src/api/config"
 	"github.com/helm/monocular/src/api/swagger/models"
 )
 
@@ -129,7 +130,7 @@ var tarballTmpPath = func(chart *models.ChartPackage) string {
 // DataDirBase is the directory used to store cached data like readme files
 // Variable so it can be mocked
 var DataDirBase = func() string {
-	return filepath.Join(os.Getenv("HOME"), "repo-data")
+	return filepath.Join(config.BaseDir(), "repo-data")
 }
 
 // Data directory with cached content for the current ChartPackage
