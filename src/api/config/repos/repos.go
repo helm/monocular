@@ -50,6 +50,11 @@ func Enabled(configFile string) (Repos, error) {
 		return nil, err
 	}
 
+	if len(repos) == 0 {
+		log.Info("No repositories found, using defaults")
+		return official, nil
+	}
+
 	return repos, nil
 }
 

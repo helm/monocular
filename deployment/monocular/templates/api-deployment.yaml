@@ -29,5 +29,12 @@ spec:
             port: {{ .Values.api.service.internalPort }}
           initialDelaySeconds: 30
           timeoutSeconds: 5
+        volumeMounts:
+          - name: config
+            mountPath: /root/monocular
         resources:
 {{ toYaml .Values.api.resources | indent 12 }}
+      volumes:
+      - name: config
+        configMap:
+          name: {{ template "fullname" . }}-api-config

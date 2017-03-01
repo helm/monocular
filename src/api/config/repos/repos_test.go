@@ -9,6 +9,7 @@ import (
 
 var configFileOk = filepath.Join("..", "testdata", "config.yaml")
 var configFileNotOk = filepath.Join("..", "testdata", "bogus_config.yaml")
+var configFileNoRepos = filepath.Join("..", "testdata", "norepos_config.yaml")
 
 func TestOfficial(t *testing.T) {
 	offRepo := []Repo{
@@ -26,6 +27,12 @@ func TestOfficial(t *testing.T) {
 
 func TestEnabledFileDoesnotExist(t *testing.T) {
 	repos, err := Enabled("no-file")
+	assert.NoErr(t, err)
+	assert.Equal(t, repos, official, "It returns the official repos")
+}
+
+func TestEnabledFileWithoutRepos(t *testing.T) {
+	repos, err := Enabled(configFileNoRepos)
 	assert.NoErr(t, err)
 	assert.Equal(t, repos, official, "It returns the official repos")
 }
