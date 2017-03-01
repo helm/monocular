@@ -9,7 +9,7 @@ A monocular is a single-lensed telescope, and perhaps a twee synonym for the kin
 
 As with The Beatles, some things are better in mono.
 
-Click [here](docs/about.md) to learn more about Helm, Charts and Kubernetes.
+See Monocular in action at [KubeApps.com](https://kubeapps.com) or click [here](docs/about.md) to learn more about Helm, Charts and Kubernetes.
 
 ## Development
 
