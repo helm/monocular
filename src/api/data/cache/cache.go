@@ -9,6 +9,8 @@ import (
 	"strings"
 	"sync"
 
+	log "github.com/Sirupsen/logrus"
+
 	"github.com/helm/monocular/src/api/config/repos"
 	"github.com/helm/monocular/src/api/data"
 	"github.com/helm/monocular/src/api/data/cache/charthelper"
@@ -127,7 +129,11 @@ func (c *cachedCharts) Search(params operations.SearchChartsParams) ([]*models.C
 func (c *cachedCharts) Refresh() error {
 	c.rwm.Lock()
 	defer c.rwm.Unlock()
-	fmt.Printf("Using cache directory %s\n", charthelper.DataDirBase())
+
+	log.WithFields(log.Fields{
+		"path": charthelper.DataDirBase(),
+	}).Info("Using cache directory")
+
 	for _, repo := range c.knownRepos {
 		// Append index.yaml
 		u, _ := url.Parse(repo.URL)
@@ -154,11 +160,16 @@ func (c *cachedCharts) Refresh() error {
 				return err
 			}
 			if !dataExists {
-				fmt.Printf("Local cache missing for %s-%s\n", *chart.Name, *chart.Version)
+				log.WithFields(log.Fields{
+					"name":    *chart.Name,
+					"version": *chart.Version,
+				}).Info("Local cache missing")
 
 				err := charthelper.DownloadAndExtractChartTarball(chart)
 				if err != nil {
-					fmt.Printf("Error on DownloadAndExtractChartTarball: %v\n", err)
+					log.WithFields(log.Fields{
+						"error": err,
+					}).Error("Error on DownloadAndExtractChartTarball")
 					// Skip chart if error extracting the tarball
 					continue
 				}

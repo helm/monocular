@@ -1,9 +1,10 @@
 package repos
 
 import (
-	"fmt"
 	"io/ioutil"
 	"os"
+
+	log "github.com/Sirupsen/logrus"
 
 	yaml "gopkg.in/yaml.v2"
 )
@@ -39,8 +40,11 @@ var official = Repos{
 func Enabled(configFile string) (Repos, error) {
 	_, err := os.Stat(configFile)
 	if os.IsNotExist(err) {
+		log.Info("Loading default repositories")
 		return official, nil
 	}
+
+	log.Info("Loading repositories from config file")
 	repos, err := loadReposFromFile(configFile)
 	if err != nil {
 		return nil, err
@@ -50,7 +54,6 @@ func Enabled(configFile string) (Repos, error) {
 }
 
 func loadReposFromFile(filePath string) (Repos, error) {
-	fmt.Printf("Loading repos from file %s\n", filePath)
 	var yamlStruct reposYAML
 	bytes, err := ioutil.ReadFile(filePath)
 	if err != nil {

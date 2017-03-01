@@ -1,8 +1,9 @@
 package jobs
 
 import (
-	"log"
 	"time"
+
+	log "github.com/Sirupsen/logrus"
 )
 
 // Periodic is an interface for managing periodic job invocation
