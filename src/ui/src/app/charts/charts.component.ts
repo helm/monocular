@@ -15,6 +15,7 @@ export class ChartsComponent implements OnInit {
   orderedCharts: Chart[] = [];
   loading: boolean = true;
   currentRepo: string;
+  repositories: string[];
 
   constructor(
     private chartsService: ChartsService,
@@ -41,8 +42,25 @@ export class ChartsComponent implements OnInit {
         this.loading = false;
         this.charts = charts;
         this.orderedCharts = this.orderCharts(this.charts);
+        this.repositories = this.getAvailableRepos(charts);
       });
     })
+  }
+
+  // Get The list of repositories our charts are placed in
+  // TODO: This should be retrieved via an API call
+  getAvailableRepos(charts: Chart[]): string[] {
+    console.warn("checking repos")
+    var unique = {};
+    var repos = [];
+    charts.forEach(function (chart) {
+      if( typeof(unique[chart.attributes.repo.name]) == "undefined"){
+        repos.push(chart.attributes.repo.name);
+      }
+      unique[chart.attributes.repo.name] = 0;
+    })
+    console.warn(repos)
+    return repos;
   }
 
   // Update a filter

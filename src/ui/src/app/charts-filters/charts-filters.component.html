@@ -5,8 +5,8 @@
       <span class="charts-filter__select">
         <md-select placeholder="" [(ngModel)]="repositoryType"
           (onClose)="onChangeFilter('repositoryType', repositoryType)">
-          <md-option *ngFor="let repo of repositoryElements" [value]="repo.value">
-            {{ repo.name }}
+          <md-option *ngFor="let repo of repositoryElements" [value]="repo">
+            {{ repo }}
           </md-option>
         </md-select>
       </span>
