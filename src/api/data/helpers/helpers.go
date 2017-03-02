@@ -5,6 +5,7 @@ import (
 
 	"github.com/Masterminds/semver"
 	"github.com/helm/monocular/src/api/config"
+	"github.com/helm/monocular/src/api/config/repos"
 	"github.com/helm/monocular/src/api/swagger/models"
 	"gopkg.in/yaml.v2"
 
@@ -63,6 +64,29 @@ func MakeChartResource(chart *models.ChartPackage) *models.Resource {
 	}
 	AddLatestChartVersionRelationship(&ret, chart)
 	return &ret
+}
+
+// MakeRepoResource composes a Resource type that represents a repository
+func MakeRepoResource(repo repos.Repo) *models.Resource {
+	var ret models.Resource
+	ret.Type = StrToPtr("repo")
+	ret.ID = StrToPtr(repo.Name)
+	ret.Attributes = &models.Repo{
+		Name:   &repo.Name,
+		URL:    &repo.URL,
+		Source: repo.Source,
+	}
+	return &ret
+}
+
+// MakeRepoResources returns an array of RepoResources
+func MakeRepoResources(repos []repos.Repo) []*models.Resource {
+	var reposResource []*models.Resource
+	for _, repo := range repos {
+		resource := MakeRepoResource(repo)
+		reposResource = append(reposResource, resource)
+	}
+	return reposResource
 }
 
 // MakeChartResources accepts a slice of repo+chart data, converts each to a Resource type

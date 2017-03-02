@@ -51,6 +51,10 @@ func configureAPI(api *operations.MonocularAPI) http.Handler {
 	api.JSONConsumer = runtime.JSONConsumer()
 	api.JSONProducer = runtime.JSONProducer()
 
+	api.GetAllReposHandler = operations.GetAllReposHandlerFunc(func(params operations.GetAllReposParams) middleware.Responder {
+		return handlers.GetRepos(params)
+	})
+
 	api.GetChartHandler = operations.GetChartHandlerFunc(func(params operations.GetChartParams) middleware.Responder {
 		return handlers.GetChart(params, chartsImplementation)
 	})
