@@ -69,7 +69,7 @@ func MakeChartResource(chart *models.ChartPackage) *models.Resource {
 // MakeRepoResource composes a Resource type that represents a repository
 func MakeRepoResource(repo repos.Repo) *models.Resource {
 	var ret models.Resource
-	ret.Type = StrToPtr("repo")
+	ret.Type = StrToPtr("repository")
 	ret.ID = StrToPtr(repo.Name)
 	ret.Attributes = &models.Repo{
 		Name:   &repo.Name,

@@ -84,11 +84,23 @@ func TestMakeRepoResource(t *testing.T) {
 	assert.NoErr(t, err)
 	repo := config.Repos[0]
 	repoResource := MakeRepoResource(repo)
-	assert.Equal(t, *repoResource.Type, "repo", "repo resource type field value")
+	assert.Equal(t, *repoResource.Type, "repository", "repo resource type field value")
 	assert.Equal(t, *repoResource.ID, repo.Name, "repo resource ID field value")
 	assert.Equal(t, *repoResource.Attributes.(*models.Repo).Name, repo.Name, "repo name")
 	assert.Equal(t, *repoResource.Attributes.(*models.Repo).URL, repo.URL, "repo URL")
 	assert.Equal(t, repoResource.Attributes.(*models.Repo).Source, repo.Source, "chart resource Attributes.URL field value")
+}
+
+func TestMakeRepoResources(t *testing.T) {
+	config, err := config.GetConfig()
+	assert.NoErr(t, err)
+	repos := config.Repos
+	repoResource := MakeRepoResources(repos)[0]
+	assert.Equal(t, *repoResource.Type, "repository", "repo resource type field value")
+	assert.Equal(t, *repoResource.ID, repos[0].Name, "repo resource ID field value")
+	assert.Equal(t, *repoResource.Attributes.(*models.Repo).Name, repos[0].Name, "repo name")
+	assert.Equal(t, *repoResource.Attributes.(*models.Repo).URL, repos[0].URL, "repo URL")
+	assert.Equal(t, repoResource.Attributes.(*models.Repo).Source, repos[0].Source, "chart resource Attributes.URL field value")
 }
 
 func TestMakeChartVersionResource(t *testing.T) {
