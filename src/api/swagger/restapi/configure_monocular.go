@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/NYTimes/gziphandler"
 	errors "github.com/go-openapi/errors"
 	runtime "github.com/go-openapi/runtime"
 	middleware "github.com/go-openapi/runtime/middleware"
@@ -102,7 +103,10 @@ func setupStaticFilesMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Returns static files under /static
 		if strings.Index(r.URL.Path, "/assets/") == 0 {
-			fs := http.StripPrefix("/assets/", http.FileServer(http.Dir(charthelper.DataDirBase())))
+			// 7 days cache
+			w.Header().Set("Cache-Control", "public, max-age=604800")
+			fs := http.FileServer(http.Dir(charthelper.DataDirBase()))
+			fs = http.StripPrefix("/assets/", gziphandler.GzipHandler(fs))
 			fs.ServeHTTP(w, r)
 		} else {
 			// Fallbacks to chained hander
