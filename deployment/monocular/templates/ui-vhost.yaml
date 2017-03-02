@@ -15,12 +15,9 @@ data:
 
     server {
       listen 80;
-      ##
-      # `gzip` Settings
-      ##
-
+      
       gzip on;
-      # Angular CLI already has gzipped the assets (ng build --prod --aot) 
+      # Angular CLI already has gzipped the assets (ng build --prod --aot)
       gzip_static  on;
 
       location / {
