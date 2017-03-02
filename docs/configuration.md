@@ -8,4 +8,4 @@ You can find an example file [here](config.example.yaml).
 
 Monocular, by default, uses the Stable and Incubator official chart repositories as Charts sources. This behavior can be changed by providing a repositories list as shown in [this example](config.example.yaml).
 
-> **NOTE:** If you are deploying Monocular using the [provided Helm chart](deployment.yaml), refer to the `values.yaml` file to make any configuration modifications.
+> **NOTE:** If you are deploying Monocular using the [provided Helm chart](deployment.md), refer to the `values.yaml` file to make any configuration modifications.
