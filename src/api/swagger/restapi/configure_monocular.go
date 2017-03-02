@@ -95,6 +95,7 @@ func setupMiddlewares(handler http.Handler) http.Handler {
 func setupGlobalMiddleware(handler http.Handler) http.Handler {
 	handler = setupStaticFilesMiddleware(handler)
 	handler = setupCorsMiddleware(handler)
+	handler = gziphandler.GzipHandler(handler)
 	return handler
 }
 
@@ -103,10 +104,9 @@ func setupStaticFilesMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Returns static files under /static
 		if strings.Index(r.URL.Path, "/assets/") == 0 {
-			// 7 days cache
-			w.Header().Set("Cache-Control", "public, max-age=604800")
+			w.Header().Set("Cache-Control", "public, max-age=7776000")
 			fs := http.FileServer(http.Dir(charthelper.DataDirBase()))
-			fs = http.StripPrefix("/assets/", gziphandler.GzipHandler(fs))
+			fs = http.StripPrefix("/assets/", fs)
 			fs.ServeHTTP(w, r)
 		} else {
 			// Fallbacks to chained hander
