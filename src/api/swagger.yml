@@ -137,6 +137,19 @@ paths:
           description: unexpected error
           schema:
             $ref: "#/definitions/error"
+  /v1/repos:
+    get:
+      operationId: getAllRepos
+      summary: "get all repositories enabled in the backend"
+      responses:
+        200:
+          description: repositories response
+          schema:
+            $ref: "#/definitions/resourceArrayData"
+        default:
+          description: unexpected error
+          schema:
+            $ref: "#/definitions/error"
 parameters:
   chartNameParam:
     name: name

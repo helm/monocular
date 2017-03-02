@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/arschles/assert"
+	"github.com/helm/monocular/src/api/config"
 	"github.com/helm/monocular/src/api/data/cache/charthelper"
 	"github.com/helm/monocular/src/api/swagger/models"
 )
@@ -76,6 +77,30 @@ func TestMakeChartResources(t *testing.T) {
 	assert.Equal(t, *chartsResource[0].Attributes.(*models.Chart).Name, chartName, "chart resource Attributes.Name field value")
 	assert.Equal(t, *chartsResource[0].Attributes.(*models.Chart).Description, chartDescription, "chart resource Attributes.Description field value")
 	assert.Equal(t, *chartsResource[0].Attributes.(*models.Chart).Home, chartHome, "chart resource Attributes.Home field value")
+}
+
+func TestMakeRepoResource(t *testing.T) {
+	config, err := config.GetConfig()
+	assert.NoErr(t, err)
+	repo := config.Repos[0]
+	repoResource := MakeRepoResource(repo)
+	assert.Equal(t, *repoResource.Type, "repository", "repo resource type field value")
+	assert.Equal(t, *repoResource.ID, repo.Name, "repo resource ID field value")
+	assert.Equal(t, *repoResource.Attributes.(*models.Repo).Name, repo.Name, "repo name")
+	assert.Equal(t, *repoResource.Attributes.(*models.Repo).URL, repo.URL, "repo URL")
+	assert.Equal(t, repoResource.Attributes.(*models.Repo).Source, repo.Source, "chart resource Attributes.URL field value")
+}
+
+func TestMakeRepoResources(t *testing.T) {
+	config, err := config.GetConfig()
+	assert.NoErr(t, err)
+	repos := config.Repos
+	repoResource := MakeRepoResources(repos)[0]
+	assert.Equal(t, *repoResource.Type, "repository", "repo resource type field value")
+	assert.Equal(t, *repoResource.ID, repos[0].Name, "repo resource ID field value")
+	assert.Equal(t, *repoResource.Attributes.(*models.Repo).Name, repos[0].Name, "repo name")
+	assert.Equal(t, *repoResource.Attributes.(*models.Repo).URL, repos[0].URL, "repo URL")
+	assert.Equal(t, repoResource.Attributes.(*models.Repo).Source, repos[0].Source, "chart resource Attributes.URL field value")
 }
 
 func TestMakeChartVersionResource(t *testing.T) {
