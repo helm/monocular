@@ -8,5 +8,5 @@ metadata:
     release: "{{ .Release.Name }}"
     heritage: "{{ .Release.Service }}"
 data:
-  config.yaml: |-
+  monocular.yaml: |-
 {{ toYaml .Values.api.config | indent 4 }}

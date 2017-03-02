@@ -31,7 +31,7 @@ spec:
           timeoutSeconds: 5
         volumeMounts:
           - name: config
-            mountPath: /root/monocular
+            mountPath: /root/monocular/config
         resources:
 {{ toYaml .Values.api.resources | indent 12 }}
       volumes:

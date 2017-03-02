@@ -1,5 +1,5 @@
 # This is an example of config file.
-# Copy it to `$HOME/monocular/config.yaml` in order to make the backend pick up the overrides.
+# Copy it to `$HOME/monocular/config/monocular.yaml` in order to make the backend pick up the overrides.
 repos:
   # Official repositories
   - name: stable
