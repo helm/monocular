@@ -38,7 +38,7 @@ export class ChartDetailsInfoComponent implements OnInit {
   get sourceName(): string {
     var parser = document.createElement('a');
     parser.href = this.chart.attributes.repo.sourceURL;
-    return parser.protocol + "//" + parser.hostname;
+    return parser.hostname;
   }
 
   loadVersions(chart: Chart): void {
