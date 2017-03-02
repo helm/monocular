@@ -1,0 +1,6 @@
+repos:
+  - name: repoName
+    registry: http://myrepobucket
+    source: http://github.com/my-repo
+  - name: repoName2
+    registry: http://myrepobucket2

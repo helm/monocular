@@ -94,8 +94,8 @@ func TestCachedChartsRefreshErrorPropagation(t *testing.T) {
 	// Invalid repo URL
 	rep := repos.Repos{
 		repos.Repo{
-			Name:        "stable",
-			RegistryURL: "./localhost",
+			Name: "stable",
+			URL:  "./localhost",
 		},
 	}
 	chImplementation := NewCachedCharts(rep)
@@ -104,8 +104,8 @@ func TestCachedChartsRefreshErrorPropagation(t *testing.T) {
 	// Repo does not exist
 	rep = repos.Repos{
 		repos.Repo{
-			Name:        "stable",
-			RegistryURL: "http://localhost",
+			Name: "stable",
+			URL:  "http://localhost",
 		},
 	}
 	chImplementation = NewCachedCharts(rep)
@@ -127,8 +127,8 @@ func TestCachedChartsRefreshErrorDownloadingPackage(t *testing.T) {
 
 	repos := repos.Repos{
 		repos.Repo{
-			Name:        "stable",
-			RegistryURL: "http://storage.googleapis.com/kubernetes-charts",
+			Name: "stable",
+			URL:  "http://storage.googleapis.com/kubernetes-charts",
 		},
 	}
 	chImplementation := NewCachedCharts(repos)
@@ -146,12 +146,12 @@ func getChartsImplementation() data.Charts {
 	}
 	repos := repos.Repos{
 		repos.Repo{
-			Name:        "stable",
-			RegistryURL: "http://storage.googleapis.com/kubernetes-charts",
+			Name: "stable",
+			URL:  "http://storage.googleapis.com/kubernetes-charts",
 		},
 		repos.Repo{
-			Name:        "incubator",
-			RegistryURL: "http://storage.googleapis.com/kubernetes-charts-incubator",
+			Name: "incubator",
+			URL:  "http://storage.googleapis.com/kubernetes-charts-incubator",
 		},
 	}
 	chImplementation := NewCachedCharts(repos)

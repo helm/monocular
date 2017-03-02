@@ -278,9 +278,9 @@ func getRepoObject(chart *models.ChartPackage) *models.Repo {
 	for _, repo := range config.Repos {
 		if repo.Name == chart.Repo {
 			repoPayload = models.Repo{
-				Name:        &repo.Name,
-				RegistryURL: &repo.RegistryURL,
-				SourceURL:   repo.SourceURL,
+				Name:   &repo.Name,
+				URL:    &repo.URL,
+				Source: repo.Source,
 			}
 			return &repoPayload
 		}

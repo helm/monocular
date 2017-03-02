@@ -13,14 +13,15 @@ var currentEnv = func() string {
 }
 
 // Config returns the CORS configuration for the environment
-func Config() (Cors, error) {
+// TODO, read the configuration from the overrides config file argument
+func Config(configFile string) (Cors, error) {
 	env := currentEnv()
 	if env == "development" {
 		return Cors{
 			AllowedOrigins: []string{"*"},
 		}, nil
 	}
-	// Defaults. TODO load from file
+	// Defaults
 	return Cors{
 		AllowedOrigins: []string{"my-api-server"},
 		AllowedHeaders: []string{"access-control-allow-headers", "x-xsrf-token"},

@@ -22,8 +22,15 @@ type Configuration struct {
 // GetConfig returns the environment specific configuration
 func GetConfig() (Configuration, error) {
 	res := Configuration{}
-	res.Cors, _ = cors.Config()
-	res.Repos, _ = repos.Enabled()
+	var err error
+	res.Cors, err = cors.Config(configFile())
+	if err != nil {
+		return res, err
+	}
+	res.Repos, err = repos.Enabled(configFile())
+	if err != nil {
+		return res, err
+	}
 
 	return res, nil
 }

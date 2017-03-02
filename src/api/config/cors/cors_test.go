@@ -9,7 +9,7 @@ import (
 func TestConfig(t *testing.T) {
 	var headers = []string{"access-control-allow-headers", "x-xsrf-token"}
 	var origin = []string{"my-api-server"}
-	config, err := Config()
+	config, err := Config("no-file")
 	assert.NoErr(t, err)
 	assert.Equal(t, config.AllowedHeaders, headers, "Allowed headers")
 	assert.Equal(t, config.AllowedOrigins, origin, "Default origin")
@@ -23,7 +23,7 @@ func TestConfigDevelopment(t *testing.T) {
 	}
 	defer func() { currentEnv = origCurrentEnv }()
 	var origin = []string{"*"}
-	config, err := Config()
+	config, err := Config("no-file")
 	assert.NoErr(t, err)
 	assert.Equal(t, len(config.AllowedHeaders), 0, "Allowed headers")
 	assert.Equal(t, config.AllowedOrigins, origin, "Default origin")
