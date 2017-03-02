@@ -2,9 +2,11 @@ package config
 
 import (
 	"os"
+	"path/filepath"
 
-	"github.com/helm/monocular/src/api/data/repos"
-	"github.com/imdario/mergo"
+	log "github.com/Sirupsen/logrus"
+	"github.com/helm/monocular/src/api/config/cors"
+	"github.com/helm/monocular/src/api/config/repos"
 )
 
 // ConfigurationWithOverrides includes default Configuration values
@@ -14,58 +16,56 @@ type configurationWithOverrides map[string]Configuration
 // Configuration is the the resulting environment based Configuration
 // For now it only includes Cors info
 type Configuration struct {
-	Cors  Cors
-	Repos repos.Repos
+	Cors        cors.Cors
+	Repos       repos.Repos
+	Initialized bool
 }
 
-// Cors configuration used during middleware setup
-type Cors struct {
-	AllowedOrigins []string
-	AllowedHeaders []string
-}
-
-func currentEnvironment() string {
-	env := os.Getenv("ENVIRONMENT")
-	if env == "" {
-		env = "production"
-	}
-	return env
-}
-
-// The default configuration gets overridden by the `currentEnvironment` settings (if any)
-func readConfigWithOverrides() configurationWithOverrides {
-	var config = configurationWithOverrides{
-		"default": Configuration{
-			Cors: Cors{
-				AllowedOrigins: []string{"my-api-server"},
-				AllowedHeaders: []string{"access-control-allow-headers", "x-xsrf-token"},
-			},
-		},
-		"development": Configuration{
-			Cors: Cors{
-				AllowedOrigins: []string{"*"},
-			},
-		},
-	}
-
-	return config
-}
+// Cached version of the config
+var currentConfig Configuration
 
 // GetConfig returns the environment specific configuration
 func GetConfig() (Configuration, error) {
-	res := Configuration{}
-	config := readConfigWithOverrides()
+	// Cached config
+	if currentConfig.Initialized {
+		return currentConfig, nil
+	}
 
-	res = mergeConfig(config, currentEnvironment())
-	res.Repos, _ = repos.Enabled()
+	configFilePath := configFile()
 
-	return res, nil
+	log.WithFields(log.Fields{
+		"configFile": configFilePath,
+	}).Info("Configuration bootstrap init")
+
+	_, err := os.Stat(configFilePath)
+	if err == nil {
+		log.Info("Configuration file found!")
+	} else {
+		log.Info("Configuration file not found, using defaults")
+	}
+
+	currentConfig.Cors, err = cors.Config(configFilePath)
+	if err != nil {
+		return currentConfig, err
+	}
+
+	currentConfig.Repos, err = repos.Enabled(configFilePath)
+	if err != nil {
+		return currentConfig, err
+	}
+
+	currentConfig.Initialized = true
+
+	log.Info("Configuration bootstrap finished")
+	return currentConfig, nil
 }
 
-func mergeConfig(conf configurationWithOverrides, env string) Configuration {
-	defaults := conf["default"]
-	custom := conf[env]
+// BaseDir returns the location of the directory
+// where the configuration files are stored
+func BaseDir() string {
+	return filepath.Join(os.Getenv("HOME"), "monocular")
+}
 
-	mergo.Merge(&custom, defaults)
-	return custom
+func configFile() string {
+	return filepath.Join(BaseDir(), "config.yaml")
 }

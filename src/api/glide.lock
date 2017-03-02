@@ -1,5 +1,5 @@
-hash: ba8fb689cb8579d9dea38d978ed578210cefe7687954cd1f417694cf98c61b53
-updated: 2017-02-15T02:11:09.469627804Z
+hash: 033e69b36b9b4dcbb9d5e796f15d7e4e931ad72736f78ed911eacfc3cf4b30ed
+updated: 2017-03-01T19:50:01.574394115Z
 imports:
 - name: github.com/arschles/assert
   version: bb58b908265b5931732079df03f2818bf2167ba0
@@ -65,6 +65,8 @@ imports:
   version: a62a804a8a009876ca59105f7899938a1349f4b3
 - name: github.com/rs/xhandler
   version: d9d9599b6aaf6a058cb7b1f48291ded2cbd13390
+- name: github.com/Sirupsen/logrus
+  version: 0208149b40d863d2c1a2f8fe5753096a9cf2cc8b
 - name: github.com/tylerb/graceful
   version: 4654dfbb6ad53cb5e27f37d99b02e16c1872fbbb
 - name: golang.org/x/image

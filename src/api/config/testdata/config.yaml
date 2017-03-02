@@ -1,0 +1,6 @@
+repos:
+  - name: repoName
+    url: http://myrepobucket
+    source: http://github.com/my-repo
+  - name: repoName2
+    url: http://myrepobucket2

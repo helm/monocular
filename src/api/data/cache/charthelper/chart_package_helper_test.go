@@ -10,6 +10,7 @@ import (
 	httpmock "gopkg.in/jarcoal/httpmock.v1"
 
 	"github.com/arschles/assert"
+	"github.com/helm/monocular/src/api/config"
 	"github.com/helm/monocular/src/api/swagger/models"
 )
 
@@ -196,6 +197,14 @@ func TestEnsureChartDataDir(t *testing.T) {
 	ensureChartDataDir(chart)
 	_, err = os.Stat(chartPath)
 	assert.NoErr(t, err)
+}
+
+// Required because DataDirBase has been overriden
+var origDataDirBase = DataDirBase()
+
+func TestDataDirBase(t *testing.T) {
+	path := filepath.Join(config.BaseDir(), "repo-data")
+	assert.Equal(t, origDataDirBase, path, "dataDirbase uses BaseDir")
 }
 
 func TestChartDataExist(t *testing.T) {

@@ -12,6 +12,9 @@ import (
 	"strings"
 	"time"
 
+	log "github.com/Sirupsen/logrus"
+
+	"github.com/helm/monocular/src/api/config"
 	"github.com/helm/monocular/src/api/swagger/models"
 )
 
@@ -55,7 +58,10 @@ var downloadTarball = func(chart *models.ChartPackage) error {
 	}
 	defer out.Close()
 
-	fmt.Printf("Downloading metadata from %s\n", source)
+	log.WithFields(log.Fields{
+		"source": source,
+		"dest":   destination,
+	}).Info("Downloading metadata")
 	// Download tarball
 	c := &http.Client{
 		Timeout: defaultTimeout,
@@ -66,6 +72,10 @@ var downloadTarball = func(chart *models.ChartPackage) error {
 	}
 
 	if resp.StatusCode != 200 {
+		log.WithFields(log.Fields{
+			"source":     source,
+			"statusCode": resp.StatusCode,
+		}).Error("Error downloading tarball")
 		return fmt.Errorf("Error downloading %s, %d", source, resp.StatusCode)
 	}
 
@@ -102,7 +112,11 @@ var extractFilesFromTarball = func(chart *models.ChartPackage) error {
 	for _, fileName := range filesToKeep {
 		src := filepath.Join(chartPath, fileName)
 		dest := filepath.Join(chartDataDir(chart), fileName)
-		fmt.Printf("Storing %s\n", dest)
+
+		log.WithFields(log.Fields{
+			"path": dest,
+		}).Info("Storing in cache")
+
 		if err := copyFile(dest, src); err != nil {
 			return err
 		}
@@ -123,13 +137,13 @@ var ensureChartDataDir = func(chart *models.ChartPackage) error {
 // Temporary path used for downloaded tarball
 var tarballTmpPath = func(chart *models.ChartPackage) string {
 	splitTarURL := strings.Split(chart.Urls[0], "/")
-	return filepath.Join("/tmp", splitTarURL[len(splitTarURL)-1])
+	return filepath.Join("/tmp", fmt.Sprintf("%s-%s", chart.Repo, splitTarURL[len(splitTarURL)-1]))
 }
 
 // DataDirBase is the directory used to store cached data like readme files
 // Variable so it can be mocked
 var DataDirBase = func() string {
-	return filepath.Join(os.Getenv("HOME"), "repo-data")
+	return filepath.Join(config.BaseDir(), "repo-data")
 }
 
 // Data directory with cached content for the current ChartPackage

@@ -27,7 +27,7 @@ export class ChartDetailsInfoComponent implements OnInit {
   }
 
   get sourceUrl(): string {
-    var chartSource = this.chart.attributes.repo.sourceURL;
+    var chartSource = this.chart.attributes.repo.source;
     if (!chartSource) return
 
     // Used to handle possible trailing URLs
@@ -37,7 +37,7 @@ export class ChartDetailsInfoComponent implements OnInit {
 
   get sourceName(): string {
     var parser = document.createElement('a');
-    parser.href = this.chart.attributes.repo.sourceURL;
+    parser.href = this.chart.attributes.repo.source;
     return parser.hostname;
   }
 

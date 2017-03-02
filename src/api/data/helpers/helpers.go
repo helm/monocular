@@ -4,11 +4,11 @@ import (
 	"fmt"
 
 	"github.com/Masterminds/semver"
+	"github.com/helm/monocular/src/api/config"
 	"github.com/helm/monocular/src/api/swagger/models"
 	"gopkg.in/yaml.v2"
 
 	"github.com/helm/monocular/src/api/data/cache/charthelper"
-	"github.com/helm/monocular/src/api/data/repos"
 )
 
 // APIVer1String is the API version 1 string we include in route URLs
@@ -274,13 +274,13 @@ func makeReadmeURL(chart *models.ChartPackage) *string {
 func getRepoObject(chart *models.ChartPackage) *models.Repo {
 	var repoPayload models.Repo
 
-	repos, _ := repos.Enabled()
-	for _, repo := range repos {
+	config, _ := config.GetConfig()
+	for _, repo := range config.Repos {
 		if repo.Name == chart.Repo {
 			repoPayload = models.Repo{
-				Name:        &repo.Name,
-				RegistryURL: &repo.RegistryURL,
-				SourceURL:   repo.SourceURL,
+				Name:   &repo.Name,
+				URL:    &repo.URL,
+				Source: repo.Source,
 			}
 			return &repoPayload
 		}

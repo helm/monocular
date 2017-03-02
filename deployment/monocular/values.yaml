@@ -19,6 +19,20 @@ api:
     requests:
       cpu: 100m
       memory: 128Mi
+  config:
+    repos:
+      # Official repositories
+      - name: stable
+        url: http://storage.googleapis.com/kubernetes-charts
+        source: https://github.com/kubernetes/charts/tree/master/stable
+      - name: incubator
+        url: http://storage.googleapis.com/kubernetes-charts-incubator
+        source: https://github.com/kubernetes/charts/tree/master/incubator
+      # Add your own repository
+      #- name: my-repo-name
+      #  url: my-repository-url
+      #  source: my-repository-source
+
 ui:
   replicaCount: 2
   image:

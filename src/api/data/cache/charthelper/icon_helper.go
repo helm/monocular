@@ -7,6 +7,8 @@ import (
 	"os"
 	"path/filepath"
 
+	log "github.com/Sirupsen/logrus"
+
 	"github.com/disintegration/imaging"
 	"github.com/helm/monocular/src/api/swagger/models"
 )
@@ -73,7 +75,11 @@ func downloadIcon(chart *models.ChartPackage) error {
 
 	// Use the same extension
 	dest, _ := iconPath(chart, originalFormat)
-	fmt.Printf("Downloading icon %s into %s\n", chart.Icon, dest)
+
+	log.WithFields(log.Fields{
+		"source": chart.Icon,
+		"dest":   dest,
+	}).Info("Downloading icon")
 
 	// Download
 	c := &http.Client{
@@ -112,7 +118,10 @@ func processIcon(chart *models.ChartPackage) error {
 	origPath, _ := iconPath(chart, originalFormat)
 	for _, format := range availableFormats {
 		destPath, _ := iconPath(chart, format.Name)
-		fmt.Printf("Processing %s into %s\n", origPath, destPath)
+		log.WithFields(log.Fields{
+			"source": origPath,
+			"dest":   destPath,
+		}).Info("Processing icon")
 		orig, err := imaging.Open(origPath)
 		if err != nil {
 			return err

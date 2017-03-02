@@ -16,6 +16,13 @@ swagger:model repo
 */
 type Repo struct {
 
+	/* URL
+
+	Required: true
+	Min Length: 1
+	*/
+	URL *string `json:"URL"`
+
 	/* name
 
 	Required: true
@@ -23,28 +30,21 @@ type Repo struct {
 	*/
 	Name *string `json:"name"`
 
-	/* registry URL
-
-	Required: true
-	Min Length: 1
-	*/
-	RegistryURL *string `json:"registryURL"`
-
-	/* source URL
+	/* source
 	 */
-	SourceURL string `json:"sourceURL,omitempty"`
+	Source string `json:"source,omitempty"`
 }
 
 // Validate validates this repo
 func (m *Repo) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateName(formats); err != nil {
+	if err := m.validateURL(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
 
-	if err := m.validateRegistryURL(formats); err != nil {
+	if err := m.validateName(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
@@ -55,6 +55,19 @@ func (m *Repo) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *Repo) validateURL(formats strfmt.Registry) error {
+
+	if err := validate.Required("URL", "body", m.URL); err != nil {
+		return err
+	}
+
+	if err := validate.MinLength("URL", "body", string(*m.URL), 1); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (m *Repo) validateName(formats strfmt.Registry) error {
 
 	if err := validate.Required("name", "body", m.Name); err != nil {
@@ -62,19 +75,6 @@ func (m *Repo) validateName(formats strfmt.Registry) error {
 	}
 
 	if err := validate.MinLength("name", "body", string(*m.Name), 1); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *Repo) validateRegistryURL(formats strfmt.Registry) error {
-
-	if err := validate.Required("registryURL", "body", m.RegistryURL); err != nil {
-		return err
-	}
-
-	if err := validate.MinLength("registryURL", "body", string(*m.RegistryURL), 1); err != nil {
 		return err
 	}
 

@@ -9,10 +9,10 @@ import (
 
 	"github.com/arschles/assert"
 	"github.com/go-openapi/loads"
+	"github.com/helm/monocular/src/api/config/repos"
 	"github.com/helm/monocular/src/api/data"
 	"github.com/helm/monocular/src/api/data/cache"
 	"github.com/helm/monocular/src/api/data/helpers"
-	"github.com/helm/monocular/src/api/data/repos"
 	"github.com/helm/monocular/src/api/handlers"
 	"github.com/helm/monocular/src/api/swagger/models"
 	"github.com/helm/monocular/src/api/swagger/restapi/operations"
@@ -193,12 +193,12 @@ func httpGet(s *httptest.Server, route string) (*http.Response, error) {
 func getChartsImplementation() data.Charts {
 	repos := repos.Repos{
 		repos.Repo{
-			Name:        "stable",
-			RegistryURL: "http://storage.googleapis.com/kubernetes-charts",
+			Name: "stable",
+			URL:  "http://storage.googleapis.com/kubernetes-charts",
 		},
 		repos.Repo{
-			Name:        "incubator",
-			RegistryURL: "http://storage.googleapis.com/kubernetes-charts-incubator",
+			Name: "incubator",
+			URL:  "http://storage.googleapis.com/kubernetes-charts-incubator",
 		},
 	}
 	chartsImplementation := cache.NewCachedCharts(repos)

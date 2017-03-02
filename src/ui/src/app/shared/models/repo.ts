@@ -1,5 +1,5 @@
 export class Repo {
   name: string;
-  registryURL: string;
-  sourceURL: string;
+  URL: string;
+  source: string;
 }
