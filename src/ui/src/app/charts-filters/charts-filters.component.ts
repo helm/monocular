@@ -1,4 +1,5 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import { Repo } from '../shared/models/repo';
 
 @Component({
   selector: 'app-charts-filters',
@@ -6,8 +7,8 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
   styleUrls: ['./charts-filters.component.scss']
 })
 export class ChartsFiltersComponent implements OnInit {
-  @Input() currentRepo: string
-  @Input() repositories: string[]
+  @Input() currentRepo: Repo;
+  @Input() repositories: Repo[];
   @Output() onChange = new EventEmitter();
 
   // Order elements
@@ -20,18 +21,20 @@ export class ChartsFiltersComponent implements OnInit {
       value: 'name'
     },
     {
-      name: 'Creation date',
+      name: 'Created at',
       value: 'created'
     }
   ];
+
+  allRepo: Repo
   // Order of the elements
   orderBy: string = this.orderElements[0].value;
-  repositoryType: string
 
   constructor() {}
 
   ngOnInit() {
-    this.repositoryType = this.currentRepo || this.repositoryElements[0];
+    this.allRepo = new Repo(); this.allRepo.id = "all";
+    this.currentRepo  = this.allRepo;
   }
 
   // Emit the changes of the filters
@@ -39,7 +42,7 @@ export class ChartsFiltersComponent implements OnInit {
     this.onChange.emit({ type, value });
   }
 
-  get repositoryElements(): string[] {
-    return ["all"].concat(this.repositories);
+  firstUpper(str: string): string {
+    return str.substring(0,1).toUpperCase() + str.substring(1).toLowerCase();
   }
 }
