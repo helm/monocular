@@ -26,6 +26,21 @@ export class ChartDetailsInfoComponent implements OnInit {
     return this.chart.attributes.sources || [];
   }
 
+  get sourceUrl(): string {
+    var chartSource = this.chart.attributes.repo.sourceURL;
+    if (!chartSource) return
+
+    // Used to handle possible trailing URLs
+    var urljoin = require('url-join');
+    return urljoin(chartSource, this.chart.attributes.name);
+  }
+
+  get sourceName(): string {
+    var parser = document.createElement('a');
+    parser.href = this.chart.attributes.repo.sourceURL;
+    return parser.hostname;
+  }
+
   loadVersions(chart: Chart): void {
     this.chartsService.getVersions(chart.attributes.repo.name, chart.attributes.name)
       .subscribe(versions => { this.versions = versions })
