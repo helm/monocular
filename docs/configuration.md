@@ -1,6 +1,6 @@
 # Instance configuration
 
-Monocular's backend can be configured by providing a config file in the following location `home/monocular/config.yaml`.
+Monocular's backend can be configured by providing a config file in the following location `$HOME/monocular/config/monocular.yaml`.
 
 You can find an example file [here](config.example.yaml).
 

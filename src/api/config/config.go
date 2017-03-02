@@ -67,5 +67,5 @@ func BaseDir() string {
 }
 
 func configFile() string {
-	return filepath.Join(BaseDir(), "config.yaml")
+	return filepath.Join(BaseDir(), "config", "monocular.yaml")
 }

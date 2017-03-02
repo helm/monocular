@@ -28,6 +28,6 @@ func TestBaseDir(t *testing.T) {
 }
 
 func TestConfigFile(t *testing.T) {
-	path := filepath.Join(BaseDir(), "config.yaml")
-	assert.Equal(t, configFile(), path, "Config file = BaseDir + config.yaml")
+	path := filepath.Join(BaseDir(), "config", "monocular.yaml")
+	assert.Equal(t, configFile(), path, "Config file = BaseDir + config + monocular.yaml")
 }
