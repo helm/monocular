@@ -16,6 +16,8 @@ import (
 	"github.com/helm/monocular/src/api/data/cache"
 	"github.com/helm/monocular/src/api/data/cache/charthelper"
 	"github.com/helm/monocular/src/api/handlers"
+	handlerscharts "github.com/helm/monocular/src/api/handlers/charts"
+	handlersrepos "github.com/helm/monocular/src/api/handlers/repos"
 	"github.com/helm/monocular/src/api/jobs"
 	"github.com/helm/monocular/src/api/swagger/restapi/operations"
 	"github.com/helm/monocular/src/api/swagger/restapi/operations/charts"
@@ -66,32 +68,32 @@ func configureAPI(api *operations.MonocularAPI) http.Handler {
 
 	// Repos
 	api.RepositoriesGetAllReposHandler = repositories.GetAllReposHandlerFunc(func(params repositories.GetAllReposParams) middleware.Responder {
-		return handlers.GetRepos(params)
+		return handlersrepos.GetRepos(params)
 	})
 
 	// Charts
 	api.ChartsSearchChartsHandler = charts.SearchChartsHandlerFunc(func(params charts.SearchChartsParams) middleware.Responder {
-		return handlers.SearchCharts(params, chartsImplementation)
+		return handlerscharts.SearchCharts(params, chartsImplementation)
 	})
 
 	api.ChartsGetChartHandler = charts.GetChartHandlerFunc(func(params charts.GetChartParams) middleware.Responder {
-		return handlers.GetChart(params, chartsImplementation)
+		return handlerscharts.GetChart(params, chartsImplementation)
 	})
 
 	api.ChartsGetChartVersionHandler = charts.GetChartVersionHandlerFunc(func(params charts.GetChartVersionParams) middleware.Responder {
-		return handlers.GetChartVersion(params, chartsImplementation)
+		return handlerscharts.GetChartVersion(params, chartsImplementation)
 	})
 
 	api.ChartsGetChartVersionsHandler = charts.GetChartVersionsHandlerFunc(func(params charts.GetChartVersionsParams) middleware.Responder {
-		return handlers.GetChartVersions(params, chartsImplementation)
+		return handlerscharts.GetChartVersions(params, chartsImplementation)
 	})
 
 	api.ChartsGetAllChartsHandler = charts.GetAllChartsHandlerFunc(func(params charts.GetAllChartsParams) middleware.Responder {
-		return handlers.GetAllCharts(params, chartsImplementation)
+		return handlerscharts.GetAllCharts(params, chartsImplementation)
 	})
 
 	api.ChartsGetChartsInRepoHandler = charts.GetChartsInRepoHandlerFunc(func(params charts.GetChartsInRepoParams) middleware.Responder {
-		return handlers.GetChartsInRepo(params, chartsImplementation)
+		return handlerscharts.GetChartsInRepo(params, chartsImplementation)
 	})
 
 	api.HealthzHandler = operations.HealthzHandlerFunc(func(params operations.HealthzParams) middleware.Responder {

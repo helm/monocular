@@ -1,10 +1,10 @@
-package handlers
+package repos
 
 import (
 	middleware "github.com/go-openapi/runtime/middleware"
 	"github.com/helm/monocular/src/api/config"
 	"github.com/helm/monocular/src/api/data/helpers"
-	"github.com/helm/monocular/src/api/swagger/models"
+	"github.com/helm/monocular/src/api/handlers"
 	reposapi "github.com/helm/monocular/src/api/swagger/restapi/operations/repositories"
 )
 
@@ -12,12 +12,7 @@ import (
 func GetRepos(params reposapi.GetAllReposParams) middleware.Responder {
 	config, _ := config.GetConfig()
 	resources := helpers.MakeRepoResources(config.Repos)
-	return reposHTTPBody(resources)
-}
 
-func reposHTTPBody(repos []*models.Resource) middleware.Responder {
-	resourceArrayData := models.ResourceArrayData{
-		Data: repos,
-	}
-	return reposapi.NewGetAllReposOK().WithPayload(&resourceArrayData)
+	payload := handlers.DataResourcesBody(resources)
+	return reposapi.NewGetAllReposOK().WithPayload(payload)
 }

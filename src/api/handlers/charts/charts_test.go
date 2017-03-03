@@ -1,4 +1,4 @@
-package handlers
+package charts
 
 import (
 	"net/http"
@@ -8,6 +8,7 @@ import (
 	"github.com/arschles/assert"
 	"github.com/go-openapi/runtime"
 	"github.com/helm/monocular/src/api/data/helpers"
+	"github.com/helm/monocular/src/api/handlers"
 	"github.com/helm/monocular/src/api/mocks"
 	"github.com/helm/monocular/src/api/swagger/models"
 	chartsapi "github.com/helm/monocular/src/api/swagger/restapi/operations/charts"
@@ -180,7 +181,9 @@ func TestChartHTTPBody(t *testing.T) {
 	chart, err := chartsImplementation.ChartFromRepo(testutil.RepoName, testutil.ChartName)
 	assert.NoErr(t, err)
 	chartResource := helpers.MakeChartResource(chart)
-	resp := chartHTTPBody(chartResource)
+
+	payload := handlers.DataResourceBody(chartResource)
+	resp := chartsapi.NewGetChartOK().WithPayload(payload)
 	assert.NotNil(t, resp, "chartHTTPBody response")
 	resp.WriteResponse(w, runtime.JSONProducer())
 	assert.Equal(t, w.Code, http.StatusOK, "expect a 200 response code")
@@ -194,7 +197,8 @@ func TestChartsHTTPBody(t *testing.T) {
 	charts, err := chartsImplementation.All()
 	assert.NoErr(t, err)
 	resources := helpers.MakeChartResources(charts)
-	resp := chartsHTTPBody(resources)
+	payload := handlers.DataResourcesBody(resources)
+	resp := chartsapi.NewGetAllChartsOK().WithPayload(payload)
 	assert.NotNil(t, resp, "chartHTTPBody response")
 	resp.WriteResponse(w, runtime.JSONProducer())
 	assert.Equal(t, w.Code, http.StatusOK, "expect a 200 response code")
