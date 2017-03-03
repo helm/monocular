@@ -35,7 +35,7 @@ export class ChartsComponent implements OnInit {
 
   ngOnInit() {
     this.loadRepos();
-		this.loadCharts();
+    this.loadCharts();
     this.updateMetaTags();
   }
 
