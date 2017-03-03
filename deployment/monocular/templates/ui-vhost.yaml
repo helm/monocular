@@ -15,6 +15,10 @@ data:
 
     server {
       listen 80;
+      
+      gzip on;
+      # Angular CLI already has gzipped the assets (ng build --prod --aot)
+      gzip_static  on;
 
       location / {
         try_files $uri @prerender;
