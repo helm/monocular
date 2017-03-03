@@ -15,6 +15,7 @@ import { TruncatePipe } from './shared/pipes/truncate.pipe';
 
 /* Services */
 import { ChartsService } from './shared/services/charts.service';
+import { ReposService } from './shared/services/repos.service';
 import { ConfigService } from './shared/services/config.service';
 import { MenuService } from './shared/services/menu.service';
 
@@ -85,6 +86,7 @@ const metaConfig: MetaConfig = {
   providers: [
     appRoutingProviders,
     ChartsService,
+    ReposService,
     ConfigService,
     MenuService
   ],

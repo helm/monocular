@@ -3,10 +3,11 @@
     <div class="charts-filter">
       <label class="charts-filter__title">Repository</label>
       <span class="charts-filter__select">
-        <md-select placeholder="" [(ngModel)]="repositoryType"
-          (onClose)="onChangeFilter('repositoryType', repositoryType)">
-          <md-option *ngFor="let repo of repositoryElements" [value]="repo.value">
-            {{ repo.name }}
+        <md-select placeholder="" [(ngModel)]="currentRepo"
+          (onClose)="onChangeFilter('repositoryType', currentRepo)">
+          <md-option [value]="allRepo">Any</md-option>
+          <md-option *ngFor="let repo of repositories" [value]="repo">
+            {{ this.firstUpper(repo.attributes.name) }}
           </md-option>
         </md-select>
       </span>
