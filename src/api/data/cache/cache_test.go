@@ -10,7 +10,7 @@ import (
 	"github.com/helm/monocular/src/api/data/cache/charthelper"
 	"github.com/helm/monocular/src/api/data/helpers"
 	"github.com/helm/monocular/src/api/swagger/models"
-	"github.com/helm/monocular/src/api/swagger/restapi/operations"
+	"github.com/helm/monocular/src/api/swagger/restapi/operations/charts"
 	"github.com/helm/monocular/src/api/testutil"
 )
 
@@ -54,7 +54,7 @@ func TestCachedChartsAll(t *testing.T) {
 }
 
 func TestCachedChartsSearch(t *testing.T) {
-	params := operations.SearchChartsParams{
+	params := charts.SearchChartsParams{
 		Name: "drupal",
 	}
 	charts, err := chartsImplementation.Search(params)

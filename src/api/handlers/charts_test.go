@@ -10,7 +10,7 @@ import (
 	"github.com/helm/monocular/src/api/data/helpers"
 	"github.com/helm/monocular/src/api/mocks"
 	"github.com/helm/monocular/src/api/swagger/models"
-	"github.com/helm/monocular/src/api/swagger/restapi/operations"
+	chartsapi "github.com/helm/monocular/src/api/swagger/restapi/operations/charts"
 	"github.com/helm/monocular/src/api/testutil"
 )
 
@@ -20,7 +20,7 @@ func TestGetChart200(t *testing.T) {
 	chart, err := chartsImplementation.ChartFromRepo(testutil.RepoName, testutil.ChartName)
 	assert.NoErr(t, err)
 	w := httptest.NewRecorder()
-	params := operations.GetChartParams{
+	params := chartsapi.GetChartParams{
 		Repo:      testutil.RepoName,
 		ChartName: testutil.ChartName,
 	}
@@ -36,7 +36,7 @@ func TestGetChart200(t *testing.T) {
 
 func TestGetChart404(t *testing.T) {
 	w := httptest.NewRecorder()
-	bogonParams := operations.GetChartParams{
+	bogonParams := chartsapi.GetChartParams{
 		Repo:      testutil.BogusRepo,
 		ChartName: testutil.ChartName,
 	}
@@ -52,7 +52,7 @@ func TestGetChartVersion200(t *testing.T) {
 	chart, err := chartsImplementation.ChartVersionFromRepo(testutil.RepoName, testutil.ChartName, testutil.ChartVersionString)
 	assert.NoErr(t, err)
 	w := httptest.NewRecorder()
-	params := operations.GetChartVersionParams{
+	params := chartsapi.GetChartVersionParams{
 		Repo:      testutil.RepoName,
 		ChartName: testutil.ChartName,
 		Version:   testutil.ChartVersionString,
@@ -69,7 +69,7 @@ func TestGetChartVersion200(t *testing.T) {
 
 func TestGetChartVersion404(t *testing.T) {
 	w := httptest.NewRecorder()
-	bogonParams := operations.GetChartVersionParams{
+	bogonParams := chartsapi.GetChartVersionParams{
 		Repo:      testutil.RepoName,
 		ChartName: testutil.ChartName,
 		Version:   "99.99.99",
@@ -86,7 +86,7 @@ func TestGetChartVersions200(t *testing.T) {
 	charts, err := chartsImplementation.ChartVersionsFromRepo(testutil.RepoName, testutil.ChartName)
 	assert.NoErr(t, err)
 	w := httptest.NewRecorder()
-	params := operations.GetChartVersionsParams{
+	params := chartsapi.GetChartVersionsParams{
 		Repo:      testutil.RepoName,
 		ChartName: testutil.ChartName,
 	}
@@ -101,7 +101,7 @@ func TestGetChartVersions200(t *testing.T) {
 
 func TestGetChartVersions404(t *testing.T) {
 	w := httptest.NewRecorder()
-	params := operations.GetChartVersionsParams{
+	params := chartsapi.GetChartVersionsParams{
 		Repo:      testutil.BogusRepo,
 		ChartName: testutil.ChartName,
 	}
@@ -116,7 +116,7 @@ func TestGetChartVersions404(t *testing.T) {
 
 func TestGetAllCharts200(t *testing.T) {
 	w := httptest.NewRecorder()
-	params := operations.GetAllChartsParams{}
+	params := chartsapi.GetAllChartsParams{}
 	resp := GetAllCharts(params, chartsImplementation)
 	assert.NotNil(t, resp, "GetAllCharts response")
 	resp.WriteResponse(w, runtime.JSONProducer())
@@ -130,7 +130,7 @@ func TestGetAllCharts200(t *testing.T) {
 
 func TestSearchCharts200(t *testing.T) {
 	w := httptest.NewRecorder()
-	params := operations.SearchChartsParams{
+	params := chartsapi.SearchChartsParams{
 		Name: "drupal",
 	}
 	resp := SearchCharts(params, chartsImplementation)
@@ -149,7 +149,7 @@ func TestGetChartsInRepo200(t *testing.T) {
 	numCharts := len(helpers.MakeChartResources(charts))
 	assert.NoErr(t, err)
 	w := httptest.NewRecorder()
-	params := operations.GetChartsInRepoParams{
+	params := chartsapi.GetChartsInRepoParams{
 		Repo: testutil.RepoName,
 	}
 	resp := GetChartsInRepo(params, chartsImplementation)
@@ -163,7 +163,7 @@ func TestGetChartsInRepo200(t *testing.T) {
 
 func TestGetChartsInRepo404(t *testing.T) {
 	w := httptest.NewRecorder()
-	params := operations.GetChartsInRepoParams{
+	params := chartsapi.GetChartsInRepoParams{
 		Repo: testutil.BogusRepo,
 	}
 	resp := GetChartsInRepo(params, chartsImplementation)

@@ -11,7 +11,7 @@ import (
 	"github.com/helm/monocular/src/api/data"
 	"github.com/helm/monocular/src/api/data/helpers"
 	"github.com/helm/monocular/src/api/swagger/models"
-	"github.com/helm/monocular/src/api/swagger/restapi/operations"
+	chartsapi "github.com/helm/monocular/src/api/swagger/restapi/operations/charts"
 )
 
 const (
@@ -22,10 +22,10 @@ const (
 )
 
 // GetChart is the handler for the /charts/{repo}/{name} endpoint
-func GetChart(params operations.GetChartParams, c data.Charts) middleware.Responder {
+func GetChart(params chartsapi.GetChartParams, c data.Charts) middleware.Responder {
 	chartPackage, err := c.ChartFromRepo(params.Repo, params.ChartName)
 	if err != nil {
-		log.Printf("data.Charts.ChartFromRepo(%s, %s) error (%s)", params.Repo, params.ChartName, err)
+		log.Printf("data.chartsapi.ChartFromRepo(%s, %s) error (%s)", params.Repo, params.ChartName, err)
 		return notFound(ChartResourceName)
 	}
 	chartResource := helpers.MakeChartResource(chartPackage)
@@ -33,10 +33,10 @@ func GetChart(params operations.GetChartParams, c data.Charts) middleware.Respon
 }
 
 // GetChartVersion is the handler for the /charts/{repo}/{name}/versions/{version} endpoint
-func GetChartVersion(params operations.GetChartVersionParams, c data.Charts) middleware.Responder {
+func GetChartVersion(params chartsapi.GetChartVersionParams, c data.Charts) middleware.Responder {
 	chartPackage, err := c.ChartVersionFromRepo(params.Repo, params.ChartName, params.Version)
 	if err != nil {
-		log.Printf("data.Charts.ChartVersionFromRepo(%s, %s, %s) error (%s)", params.Repo, params.ChartName, params.Version, err)
+		log.Printf("data.chartsapi.ChartVersionFromRepo(%s, %s, %s) error (%s)", params.Repo, params.ChartName, params.Version, err)
 		return notFound(ChartVersionResourceName)
 	}
 	chartVersionResource := helpers.MakeChartVersionResource(chartPackage)
@@ -44,10 +44,10 @@ func GetChartVersion(params operations.GetChartVersionParams, c data.Charts) mid
 }
 
 // GetChartVersions is the handler for the /charts/{repo}/{name}/versions endpoint
-func GetChartVersions(params operations.GetChartVersionsParams, c data.Charts) middleware.Responder {
+func GetChartVersions(params chartsapi.GetChartVersionsParams, c data.Charts) middleware.Responder {
 	chartPackages, err := c.ChartVersionsFromRepo(params.Repo, params.ChartName)
 	if err != nil {
-		log.Printf("data.Charts.ChartVersionsFromRepo(%s, %s) error (%s)", params.Repo, params.ChartName, err)
+		log.Printf("data.chartsapi.ChartVersionsFromRepo(%s, %s) error (%s)", params.Repo, params.ChartName, err)
 		return notFound(ChartVersionResourceName)
 	}
 
@@ -59,7 +59,7 @@ func GetChartVersions(params operations.GetChartVersionsParams, c data.Charts) m
 }
 
 // GetAllCharts is the handler for the /charts endpoint
-func GetAllCharts(params operations.GetAllChartsParams, c data.Charts) middleware.Responder {
+func GetAllCharts(params chartsapi.GetAllChartsParams, c data.Charts) middleware.Responder {
 	charts, err := c.All()
 	if err != nil {
 		log.Printf("data.Charts All() error (%s)", err)
@@ -73,7 +73,7 @@ func GetAllCharts(params operations.GetAllChartsParams, c data.Charts) middlewar
 }
 
 // GetChartsInRepo is the handler for the /charts/{repo} endpoint
-func GetChartsInRepo(params operations.GetChartsInRepoParams, c data.Charts) middleware.Responder {
+func GetChartsInRepo(params chartsapi.GetChartsInRepoParams, c data.Charts) middleware.Responder {
 	charts, err := c.AllFromRepo(params.Repo)
 	if err != nil {
 		log.Printf("data.Charts AllFromRepo(%s) error (%s)", params.Repo, err)
@@ -86,12 +86,12 @@ func GetChartsInRepo(params operations.GetChartsInRepoParams, c data.Charts) mid
 }
 
 // SearchCharts is the handler for the /charts/search endpoint
-func SearchCharts(params operations.SearchChartsParams, c data.Charts) middleware.Responder {
+func SearchCharts(params chartsapi.SearchChartsParams, c data.Charts) middleware.Responder {
 	charts, err := c.Search(params)
 	if err != nil {
 		message := fmt.Sprintf("data.Charts Search() error (%s)", err)
 		log.Printf(message)
-		return operations.NewSearchChartsDefault(http.StatusBadRequest).WithPayload(
+		return chartsapi.NewSearchChartsDefault(http.StatusBadRequest).WithPayload(
 			&models.Error{Code: helpers.Int64ToPtr(http.StatusNotFound), Message: &message},
 		)
 	}
@@ -104,7 +104,7 @@ func chartHTTPBody(chart *models.Resource) middleware.Responder {
 	resourceData := models.ResourceData{
 		Data: chart,
 	}
-	return operations.NewGetChartOK().WithPayload(&resourceData)
+	return chartsapi.NewGetChartOK().WithPayload(&resourceData)
 }
 
 // chartsHTTPBody is a convenience that returns a swagger-friendly HTTP 200 response with charts body data
@@ -112,5 +112,5 @@ func chartsHTTPBody(charts []*models.Resource) middleware.Responder {
 	resourceArrayData := models.ResourceArrayData{
 		Data: charts,
 	}
-	return operations.NewGetAllChartsOK().WithPayload(&resourceArrayData)
+	return chartsapi.NewGetAllChartsOK().WithPayload(&resourceArrayData)
 }

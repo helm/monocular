@@ -9,13 +9,13 @@ import (
 	"github.com/go-openapi/runtime"
 	"github.com/helm/monocular/src/api/config"
 	"github.com/helm/monocular/src/api/swagger/models"
-	"github.com/helm/monocular/src/api/swagger/restapi/operations"
+	reposapi "github.com/helm/monocular/src/api/swagger/restapi/operations/repositories"
 	"github.com/helm/monocular/src/api/testutil"
 )
 
 func TestGetAllRepos200(t *testing.T) {
 	w := httptest.NewRecorder()
-	params := operations.GetAllReposParams{}
+	params := reposapi.GetAllReposParams{}
 	resp := GetRepos(params)
 	assert.NotNil(t, resp, "GetRepos response")
 	resp.WriteResponse(w, runtime.JSONProducer())

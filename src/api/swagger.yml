@@ -22,6 +22,8 @@ paths:
     get:
       operationId: getChart
       summary: "get chart by repo/name"
+      tags:
+        - charts
       parameters:
         - name: repo
           in: path
@@ -44,6 +46,8 @@ paths:
     get:
       operationId: getChartVersions
       summary: "get all chart versions by repo/name"
+      tags:
+        - charts
       parameters:
         - name: repo
           in: path
@@ -66,6 +70,8 @@ paths:
     get:
       operationId: getChartVersion
       summary: "get specific chart version by repo/name"
+      tags:
+        - charts
       parameters:
         - name: repo
           in: path
@@ -92,6 +98,8 @@ paths:
     get:
       operationId: getAllCharts
       summary: "get all charts from all repos"
+      tags:
+        - charts
       responses:
         200:
           description: charts response
@@ -101,10 +109,32 @@ paths:
           description: unexpected error
           schema:
             $ref: "#/definitions/error"
+
+  /v1/charts/search:
+    get:
+      operationId: searchCharts
+      summary: "search charts"
+      tags:
+        - charts
+      parameters:
+       - $ref: "#/parameters/chartNameParam"
+      responses:
+        200:
+          description: repositories response
+          schema:
+            $ref: "#/definitions/resourceArrayData"
+        default:
+          description: unexpected error
+          schema:
+            $ref: "#/definitions/error"
+
+
   /v1/charts/{repo}:
     get:
       operationId: getChartsInRepo
       summary: "get all charts by repo"
+      tags:
+        - charts
       parameters:
         - name: repo
           in: path
@@ -122,30 +152,48 @@ paths:
           description: unexpected error
           schema:
             $ref: "#/definitions/error"
-  /v1/charts/search:
-    parameters:
-      - $ref: "#/parameters/chartNameParam"
+  /v1/repos:
     get:
-      operationId: searchCharts
-      summary: "search charts"
+      operationId: getAllRepos
+      summary: "get all repositories enabled in the backend"
+      tags:
+        - repositories
       responses:
         200:
-          description: charts response
+          description: repositories response
           schema:
             $ref: "#/definitions/resourceArrayData"
         default:
           description: unexpected error
           schema:
             $ref: "#/definitions/error"
-  /v1/repos:
+  /v1/releases:
     get:
-      operationId: getAllRepos
-      summary: "get all repositories enabled in the backend"
+      operationId: getAllReleases
+      summary: "get all Helm releases"
+      tags:
+        - releases
       responses:
         200:
-          description: repositories response
+          description: Get a list of releases
           schema:
             $ref: "#/definitions/resourceArrayData"
+        default:
+          description: unexpected error
+          schema:
+            $ref: "#/definitions/error"
+    post:
+      operationId: createRelease
+      summary: "Install a Helm chart version creating a release"
+      tags:
+        - releases
+      parameters:
+        - $ref: '#/parameters/createReleaseParams'
+      responses:
+        201:
+          description: Release created
+          schema:
+            $ref: "#/definitions/resourceData"
         default:
           description: unexpected error
           schema:
@@ -157,6 +205,29 @@ parameters:
     type: string
     description: chart name substring pattern match
     required: true
+  createReleaseParams:
+    name: data
+    description: Information related with the new Helm release.
+    in: body
+    type: object
+    required: true
+    schema:
+      properties:
+        releaseName:
+          type: string
+          description: Name of the new release
+        chartName:
+          type: string
+          description: Chart name
+        chartVersion:
+          type: string
+          description: Chart Version
+        namespace:
+          type: string
+          description: Namespace to deploy the chart into
+      required:
+        - chartName
+        - chartVersion
 definitions:
   resource: # a data type that describes a json-api-like resource
     type: object
@@ -399,4 +470,23 @@ definitions:
       name:
         type: string
       path:
+        type: string
+  release:
+    type: object
+    required:
+      - name
+      - status
+      - updated
+      - chart
+      - namespace
+    properties:
+      name:
+        type: string
+      status:
+        type: string
+      updated:
+        type: string
+      chart:
+        type: string
+      namespace:
         type: string
