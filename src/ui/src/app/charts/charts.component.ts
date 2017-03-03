@@ -34,14 +34,14 @@ export class ChartsComponent implements OnInit {
   }
 
   ngOnInit() {
-		this.loadRepos();
+    this.loadRepos();
 		this.loadCharts();
     this.updateMetaTags();
   }
 
   loadCharts(): void {
     this.route.params.forEach((params: Params) => {
-  		this.chartsService.getCharts(params["repo"]).subscribe(charts => {
+      this.chartsService.getCharts(params["repo"]).subscribe(charts => {
         this.loading = false;
         this.charts = charts;
         this.orderedCharts = this.orderCharts(this.charts);
@@ -51,7 +51,7 @@ export class ChartsComponent implements OnInit {
 
   loadRepos(): void {
     this.route.params.forEach((params: Params) => {
-  		this.reposService.getRepos().subscribe(repos => {
+      this.reposService.getRepos().subscribe(repos => {
         this.repositories = repos;
         if(params["repo"]) {
           this.currentRepo = repos.filter(r => r.id == params["repo"])[0];
