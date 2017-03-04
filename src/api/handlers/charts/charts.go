@@ -27,7 +27,7 @@ func GetChart(params chartsapi.GetChartParams, c data.Charts) middleware.Respond
 	chartPackage, err := c.ChartFromRepo(params.Repo, params.ChartName)
 	if err != nil {
 		log.Printf("data.chartsapi.ChartFromRepo(%s, %s) error (%s)", params.Repo, params.ChartName, err)
-		return handlers.NotFound(ChartResourceName)
+		return notFound(ChartResourceName)
 	}
 	chartResource := helpers.MakeChartResource(chartPackage)
 
@@ -40,7 +40,7 @@ func GetChartVersion(params chartsapi.GetChartVersionParams, c data.Charts) midd
 	chartPackage, err := c.ChartVersionFromRepo(params.Repo, params.ChartName, params.Version)
 	if err != nil {
 		log.Printf("data.chartsapi.ChartVersionFromRepo(%s, %s, %s) error (%s)", params.Repo, params.ChartName, params.Version, err)
-		return handlers.NotFound(ChartVersionResourceName)
+		return notFound(ChartVersionResourceName)
 	}
 	chartVersionResource := helpers.MakeChartVersionResource(chartPackage)
 	payload := handlers.DataResourceBody(chartVersionResource)
@@ -52,7 +52,7 @@ func GetChartVersions(params chartsapi.GetChartVersionsParams, c data.Charts) mi
 	chartPackages, err := c.ChartVersionsFromRepo(params.Repo, params.ChartName)
 	if err != nil {
 		log.Printf("data.chartsapi.ChartVersionsFromRepo(%s, %s) error (%s)", params.Repo, params.ChartName, err)
-		return handlers.NotFound(ChartVersionResourceName)
+		return notFound(ChartVersionResourceName)
 	}
 
 	// Sort by semver reverse order
@@ -68,7 +68,7 @@ func GetAllCharts(params chartsapi.GetAllChartsParams, c data.Charts) middleware
 	charts, err := c.All()
 	if err != nil {
 		log.Printf("data.Charts All() error (%s)", err)
-		return handlers.NotFound(ChartResourceName + "s")
+		return notFound(ChartResourceName + "s")
 	}
 
 	// For now we only sort by name
@@ -83,7 +83,7 @@ func GetChartsInRepo(params chartsapi.GetChartsInRepoParams, c data.Charts) midd
 	charts, err := c.AllFromRepo(params.Repo)
 	if err != nil {
 		log.Printf("data.Charts AllFromRepo(%s) error (%s)", params.Repo, err)
-		return handlers.NotFound(ChartResourceName + "s")
+		return notFound(ChartResourceName + "s")
 	}
 	// For now we only sort by name
 	sort.Sort(chartpackagesort.ByName(charts))
@@ -105,4 +105,12 @@ func SearchCharts(params chartsapi.SearchChartsParams, c data.Charts) middleware
 	resources := helpers.MakeChartResources(charts)
 	payload := handlers.DataResourcesBody(resources)
 	return chartsapi.NewGetAllChartsOK().WithPayload(payload)
+}
+
+// notFound is a convenience that contains a swagger-friendly 404 given a resource string
+func notFound(resource string) middleware.Responder {
+	message := fmt.Sprintf("404 %s not found", resource)
+	return chartsapi.NewGetChartDefault(http.StatusNotFound).WithPayload(
+		&models.Error{Code: helpers.Int64ToPtr(http.StatusNotFound), Message: &message},
+	)
 }
