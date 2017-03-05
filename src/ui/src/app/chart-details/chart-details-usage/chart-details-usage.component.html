@@ -3,7 +3,7 @@
     <h2 class="chart-details-usage__label">Add {{ chart.attributes.repo.name }} repository</h2>
     <md-input floatingPlaceholder=false [value]=repoAddInstructions></md-input>
     <button md-button ngxClipboard [cbContent]="repoAddInstructions" (cbOnSuccess)="showSnackBar()"
-      angulartics2On="click" angularticsEvent="RepositoryCopy" angularticsCategory="{{ cmdChartId }}"
+      angulartics2On="click" angularticsEvent="RepositoryCopy" angularticsCategory="{{ chart.id }}"
       [angularticsProperties]="{ label: currentVersion }">
       <md-icon svgIcon="content-copy"></md-icon>
     </button>
@@ -13,7 +13,7 @@
     <md-input readonly=true floatingPlaceholder=false [value]=installInstructions></md-input>
     <button md-button ngxClipboard [cbContent]="installInstructions" (cbOnSuccess)="showSnackBar()"
       angulartics2On="click" angularticsEvent="ChartInstallationCopy"
-      angularticsCategory="{{ cmdChartId }}" [angularticsProperties]="{ label: currentVersion }">
+      angularticsCategory="{{ chart.id }}" [angularticsProperties]="{ label: currentVersion }">
       <md-icon svgIcon="content-copy"></md-icon>
     </button>
   </div>

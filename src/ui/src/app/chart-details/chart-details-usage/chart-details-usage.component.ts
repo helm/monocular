@@ -34,11 +34,6 @@ export class ChartDetailsUsageComponent implements OnInit {
     });
   }
 
-  // Deletes /stable prefix not needed for stable repos
-  get cmdChartId(): string {
-    return this.chart.id.replace("stable/", "")
-  }
-
   get showRepoInstructions(): boolean {
     return this.chart.attributes.repo.name != 'stable'
   }
@@ -48,6 +43,6 @@ export class ChartDetailsUsageComponent implements OnInit {
   }
 
   get installInstructions(): string {
-    return `helm install ${this.cmdChartId} --version ${this.currentVersion}`;
+    return `helm install ${this.chart.id} --version ${this.currentVersion}`;
   }
 }
