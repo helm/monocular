@@ -1,6 +1,7 @@
 package releases
 
 import (
+	"fmt"
 	"net/http"
 
 	middleware "github.com/go-openapi/runtime/middleware"
@@ -12,6 +13,7 @@ import (
 	releasesapi "github.com/helm/monocular/src/api/swagger/restapi/operations/releases"
 	hapi_release5 "k8s.io/helm/pkg/proto/hapi/release"
 	rls "k8s.io/helm/pkg/proto/hapi/services"
+	"k8s.io/helm/pkg/timeconv"
 )
 
 // GetReleases returns all the existing releases in your cluster
@@ -52,11 +54,13 @@ func makeReleaseResources(releases *rls.ListReleasesResponse) []*models.Resource
 }
 
 func makeReleaseResource(release *hapi_release5.Release) *models.Resource {
+	nameAndVersion := fmt.Sprintf("%s-%s", release.Chart.Metadata.Name, release.Chart.Metadata.Version)
 	var ret models.Resource
 	ret.Type = helpers.StrToPtr("release")
 	ret.ID = helpers.StrToPtr(release.Name)
 	ret.Attributes = &models.Release{
-		Chart:     &release.Chart.Metadata.Name,
+		Chart:     &nameAndVersion,
+		Updated:   helpers.StrToPtr(timeconv.String(release.Info.LastDeployed)),
 		Name:      &release.Name,
 		Namespace: &release.Namespace,
 		Status:    helpers.StrToPtr(release.Info.Status.Code.String()),
