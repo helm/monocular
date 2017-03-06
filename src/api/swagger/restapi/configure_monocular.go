@@ -11,6 +11,7 @@ import (
 	errors "github.com/go-openapi/errors"
 	runtime "github.com/go-openapi/runtime"
 	middleware "github.com/go-openapi/runtime/middleware"
+	helmclient "github.com/helm/monocular/src/api/data/helm/client"
 
 	"github.com/helm/monocular/src/api/config"
 	"github.com/helm/monocular/src/api/data/cache"
@@ -48,6 +49,7 @@ func configureAPI(api *operations.MonocularAPI) http.Handler {
 	toDo := []jobs.Periodic{periodicRefresh}
 	jobs.DoPeriodic(toDo)
 	api.ServeError = errors.ServeError
+	helmClient := helmclient.NewHelmClient()
 
 	// Set your custom logger if needed. Default one is log.Printf
 	// Expected interface func(string, ...interface{})
@@ -60,11 +62,11 @@ func configureAPI(api *operations.MonocularAPI) http.Handler {
 
 	// Releases
 	api.ReleasesCreateReleaseHandler = releases.CreateReleaseHandlerFunc(func(params releases.CreateReleaseParams) middleware.Responder {
-		return hreleases.CreateRelease(params, chartsImplementation)
+		return hreleases.CreateRelease(helmClient, params, chartsImplementation)
 	})
 
 	api.ReleasesGetAllReleasesHandler = releases.GetAllReleasesHandlerFunc(func(params releases.GetAllReleasesParams) middleware.Responder {
-		return hreleases.GetReleases(params)
+		return hreleases.GetReleases(helmClient, params)
 	})
 
 	// Repos

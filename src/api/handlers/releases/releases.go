@@ -9,8 +9,6 @@ import (
 	"github.com/go-openapi/strfmt"
 	"github.com/helm/monocular/src/api/data"
 	"github.com/helm/monocular/src/api/data/cache/charthelper"
-	helmclient "github.com/helm/monocular/src/api/data/helm/client"
-	helmreleases "github.com/helm/monocular/src/api/data/helm/releases"
 	"github.com/helm/monocular/src/api/data/helpers"
 	"github.com/helm/monocular/src/api/handlers"
 	"github.com/helm/monocular/src/api/swagger/models"
@@ -21,15 +19,10 @@ import (
 )
 
 // GetReleases returns all the existing releases in your cluster
-func GetReleases(params releasesapi.GetAllReleasesParams) middleware.Responder {
-	client, err := helmclient.CreateTillerClient()
+func GetReleases(helmclient data.Client, params releasesapi.GetAllReleasesParams) middleware.Responder {
+	releases, err := helmclient.ListReleases(params)
 	if err != nil {
-		return error("Error creating the Helm client")
-	}
-	rel := helmreleases.NewHelmReleases(client)
-	releases, err := rel.ListReleases()
-	if err != nil {
-		return error("Error retrieving the list of releases")
+		return error(err.Error())
 	}
 
 	resources := makeReleaseResources(releases)
@@ -38,7 +31,7 @@ func GetReleases(params releasesapi.GetAllReleasesParams) middleware.Responder {
 }
 
 // CreateRelease installs a chart version
-func CreateRelease(params releasesapi.CreateReleaseParams, c data.Charts) middleware.Responder {
+func CreateRelease(helmclient data.Client, params releasesapi.CreateReleaseParams, c data.Charts) middleware.Responder {
 	// Params validation
 	format := strfmt.NewFormats()
 	err := params.Data.Validate(format)
@@ -59,14 +52,7 @@ func CreateRelease(params releasesapi.CreateReleaseParams, c data.Charts) middle
 	}
 	chartPath := charthelper.TarballPath(chartPackage)
 
-	// Install Release
-	client, err := helmclient.CreateTillerClient()
-	if err != nil {
-		return error("Error creating the Helm client")
-	}
-
-	rel := helmreleases.NewHelmReleases(client)
-	release, err := rel.InstallRelease(chartPath, params)
+	release, err := helmclient.InstallRelease(chartPath, params)
 	if err != nil {
 		return error(fmt.Sprintf("Can't create the release: %s", err))
 	}

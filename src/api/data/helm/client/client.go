@@ -4,17 +4,29 @@ import (
 	"fmt"
 
 	log "github.com/Sirupsen/logrus"
+	"github.com/helm/monocular/src/api/data"
+	releasesapi "github.com/helm/monocular/src/api/swagger/restapi/operations/releases"
 	"k8s.io/helm/pkg/helm"
 	"k8s.io/helm/pkg/helm/portforwarder"
 	"k8s.io/helm/pkg/kube"
+	rls "k8s.io/helm/pkg/proto/hapi/services"
 	"k8s.io/kubernetes/pkg/client/clientset_generated/internalclientset"
+
+	helmreleases "github.com/helm/monocular/src/api/data/helm/releases"
 	"k8s.io/kubernetes/pkg/client/restclient"
 )
 
 const tillerNamespace = "kube-system"
 
-// CreateTillerClient returns a helm.client
-func CreateTillerClient() (*helm.Client, error) {
+type helmClient struct{}
+
+// NewHelmClient returns the Helm implementation of data.Client
+func NewHelmClient() data.Client {
+	return &helmClient{}
+}
+
+// InitializeClient returns a helm.client
+func (c *helmClient) initialize() (*helm.Client, error) {
 	// From helm.setupConnection
 	config, client, err := getKubeClient("")
 	if err != nil {
@@ -34,6 +46,22 @@ func CreateTillerClient() (*helm.Client, error) {
 	}).Info("Helm Client created")
 
 	return helm.NewClient(helm.Host(tillerHost)), nil
+}
+
+func (c *helmClient) ListReleases(params releasesapi.GetAllReleasesParams) (*rls.ListReleasesResponse, error) {
+	client, err := c.initialize()
+	if err != nil {
+		return nil, err
+	}
+	return helmreleases.ListReleases(client, params)
+}
+
+func (c *helmClient) InstallRelease(chartPath string, params releasesapi.CreateReleaseParams) (*rls.InstallReleaseResponse, error) {
+	client, err := c.initialize()
+	if err != nil {
+		return nil, err
+	}
+	return helmreleases.InstallRelease(client, chartPath, params)
 }
 
 // getKubeClient is a convenience method for creating kubernetes config and client
