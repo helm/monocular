@@ -8,6 +8,7 @@ import (
 	middleware "github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/strfmt"
 	"github.com/helm/monocular/src/api/data"
+	"github.com/helm/monocular/src/api/data/cache/charthelper"
 	helmclient "github.com/helm/monocular/src/api/data/helm/client"
 	helmreleases "github.com/helm/monocular/src/api/data/helm/releases"
 	"github.com/helm/monocular/src/api/data/helpers"
@@ -37,7 +38,7 @@ func GetReleases(params releasesapi.GetAllReleasesParams) middleware.Responder {
 
 // CreateRelease installs a chart version
 func CreateRelease(params releasesapi.CreateReleaseParams, c data.Charts) middleware.Responder {
-	// Validation
+	// Params validation
 	format := strfmt.NewFormats()
 	err := params.Data.Validate(format)
 	if err != nil {
@@ -48,21 +49,21 @@ func CreateRelease(params releasesapi.CreateReleaseParams, c data.Charts) middle
 	if len(idSplit) != 2 || idSplit[0] == "" || idSplit[1] == "" {
 		return badRequestError("chartId must include the repository name. i.e: stable/wordpress")
 	}
-	// EO Validation
 
-	// Search chart package
+	// Search chart package and get local path
 	repo, chartName := idSplit[0], idSplit[1]
 	chartPackage, err := c.ChartVersionFromRepo(repo, chartName, *params.Data.ChartVersion)
 	if err != nil {
 		return badRequestError("chart not found")
 	}
+	chartPath := charthelper.TarballPath(chartPackage)
 
+	// Install Release
 	client, err := helmclient.CreateTillerClient()
 	if err != nil {
 		return error("Error creating the Helm client")
 	}
 
-	chartPath := charthelper.TarballPath(&chartPackage)
 	_, err = helmreleases.InstallRelease(client, chartPath, params)
 	if err != nil {
 		return error(fmt.Sprintf("Can't create the release: %s", err))
@@ -94,16 +95,16 @@ func makeReleaseResources(releases *rls.ListReleasesResponse) []*models.Resource
 }
 
 func makeReleaseResource(release *hapi_release5.Release) *models.Resource {
-	nameAndVersion := fmt.Sprintf("%s-%s", release.Chart.Metadata.Name, release.Chart.Metadata.Version)
 	var ret models.Resource
 	ret.Type = helpers.StrToPtr("release")
 	ret.ID = helpers.StrToPtr(release.Name)
 	ret.Attributes = &models.Release{
-		Chart:     &nameAndVersion,
-		Updated:   helpers.StrToPtr(timeconv.String(release.Info.LastDeployed)),
-		Name:      &release.Name,
-		Namespace: &release.Namespace,
-		Status:    helpers.StrToPtr(release.Info.Status.Code.String()),
+		ChartName:    &release.Chart.Metadata.Name,
+		ChartVersion: &release.Chart.Metadata.Version,
+		Updated:      helpers.StrToPtr(timeconv.String(release.Info.LastDeployed)),
+		Name:         &release.Name,
+		Namespace:    &release.Namespace,
+		Status:       helpers.StrToPtr(release.Info.Status.Code.String()),
 	}
 	return &ret
 }

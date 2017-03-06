@@ -15,11 +15,9 @@ func ListReleases(client *helm.Client) (*rls.ListReleasesResponse, error) {
 		release.Status_DEPLOYED,
 	}
 	resp, err := client.ListReleases(
-		helm.ReleaseListLimit(5),
-		helm.ReleaseListOffset(""),
 		helm.ReleaseListFilter(""),
-		helm.ReleaseListSort(int32(services.ListSort_NAME)),
-		helm.ReleaseListOrder(int32(services.ListSort_ASC)),
+		helm.ReleaseListSort(int32(services.ListSort_LAST_RELEASED)),
+		helm.ReleaseListOrder(int32(services.ListSort_DESC)),
 		helm.ReleaseListStatuses(stats),
 	)
 
@@ -43,5 +41,5 @@ func InstallRelease(client *helm.Client, chartPath string, params releasesapi.Cr
 		ns,
 		helm.ValueOverrides([]byte{}),
 		helm.ReleaseName(params.Data.ReleaseName),
-		helm.InstallDryRun(true))
+		helm.InstallDryRun(params.Data.DryRun))
 }

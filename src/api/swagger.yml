@@ -221,6 +221,9 @@ parameters:
         chartVersion:
           type: string
           description: Chart Version
+        dryRun:
+          type: boolean
+          description: Simulate an install
         namespace:
           type: string
           description: Namespace to deploy the chart into
@@ -476,7 +479,8 @@ definitions:
       - name
       - status
       - updated
-      - chart
+      - chartName
+      - chartVersion
       - namespace
     properties:
       name:
@@ -485,7 +489,9 @@ definitions:
         type: string
       updated:
         type: string
-      chart:
+      chartName:
+        type: string
+      chartVersion:
         type: string
       namespace:
         type: string

@@ -16,11 +16,17 @@ swagger:model release
 */
 type Release struct {
 
-	/* chart
+	/* chart name
 
 	Required: true
 	*/
-	Chart *string `json:"chart"`
+	ChartName *string `json:"chartName"`
+
+	/* chart version
+
+	Required: true
+	*/
+	ChartVersion *string `json:"chartVersion"`
 
 	/* name
 
@@ -51,7 +57,12 @@ type Release struct {
 func (m *Release) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateChart(formats); err != nil {
+	if err := m.validateChartName(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
+	if err := m.validateChartVersion(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
@@ -82,9 +93,18 @@ func (m *Release) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Release) validateChart(formats strfmt.Registry) error {
+func (m *Release) validateChartName(formats strfmt.Registry) error {
 
-	if err := validate.Required("chart", "body", m.Chart); err != nil {
+	if err := validate.Required("chartName", "body", m.ChartName); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *Release) validateChartVersion(formats strfmt.Registry) error {
+
+	if err := validate.Required("chartVersion", "body", m.ChartVersion); err != nil {
 		return err
 	}
 

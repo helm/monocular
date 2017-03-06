@@ -41,7 +41,7 @@ var DownloadAndExtractChartTarball = func(chart *models.ChartPackage) error {
 }
 
 var tarballExists = func(chart *models.ChartPackage) bool {
-	_, err := os.Stat(tarballPath(chart))
+	_, err := os.Stat(TarballPath(chart))
 	return err == nil
 }
 
@@ -49,7 +49,7 @@ var tarballExists = func(chart *models.ChartPackage) bool {
 // in order to extract specific files for caching
 var downloadTarball = func(chart *models.ChartPackage) error {
 	source := chart.Urls[0]
-	destination := tarballPath(chart)
+	destination := TarballPath(chart)
 
 	// Create output
 	out, err := os.Create(destination)
@@ -91,18 +91,18 @@ var downloadTarball = func(chart *models.ChartPackage) error {
 var filesToKeep = []string{"README.md"}
 
 var extractFilesFromTarball = func(chart *models.ChartPackage) error {
-	tarballPath := tarballPath(chart)
+	TarballPath := TarballPath(chart)
 	tarballExpandedPath, err := ioutil.TempDir(os.TempDir(), "chart")
 	if err != nil {
 		return err
 	}
 
 	// Extract
-	if _, err := os.Stat(tarballPath); err != nil {
-		return fmt.Errorf("Can not find file to extract %s", tarballPath)
+	if _, err := os.Stat(TarballPath); err != nil {
+		return fmt.Errorf("Can not find file to extract %s", TarballPath)
 	}
 
-	if err := untar(tarballPath, tarballExpandedPath); err != nil {
+	if err := untar(TarballPath, tarballExpandedPath); err != nil {
 		return err
 	}
 

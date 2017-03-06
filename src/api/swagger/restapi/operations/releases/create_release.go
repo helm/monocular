@@ -73,6 +73,10 @@ type CreateReleaseBody struct {
 	*/
 	ChartVersion *string `json:"chartVersion"`
 
+	/* Simulate an install
+	 */
+	DryRun bool `json:"dryRun,omitempty"`
+
 	/* Namespace to deploy the chart into
 	 */
 	Namespace string `json:"namespace,omitempty"`
