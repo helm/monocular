@@ -26,7 +26,8 @@ func GetReleases(params releasesapi.GetAllReleasesParams) middleware.Responder {
 	if err != nil {
 		return error("Error creating the Helm client")
 	}
-	releases, err := helmreleases.ListReleases(client)
+	rel := helmreleases.NewHelmReleases(client)
+	releases, err := rel.ListReleases()
 	if err != nil {
 		return error("Error retrieving the list of releases")
 	}
@@ -64,7 +65,8 @@ func CreateRelease(params releasesapi.CreateReleaseParams, c data.Charts) middle
 		return error("Error creating the Helm client")
 	}
 
-	release, err := helmreleases.InstallRelease(client, chartPath, params)
+	rel := helmreleases.NewHelmReleases(client)
+	release, err := rel.InstallRelease(chartPath, params)
 	if err != nil {
 		return error(fmt.Sprintf("Can't create the release: %s", err))
 	}
