@@ -257,7 +257,14 @@ func TestUntar(t *testing.T) {
 	notValidFile, _ := ioutil.TempFile(os.TempDir(), "")
 	err = untar(notValidFile.Name(), dest)
 	assert.ExistsErr(t, err, "SRC does not exist")
+}
 
+func TestReadmeStaticURL(t *testing.T) {
+	chart, err := getTestChart()
+	assert.NoErr(t, err)
+	res := ReadmeStaticUrl(chart, "prefix")
+	readmePath := filepath.Join(chartDataDir(chart), "README.md")
+	assert.Equal(t, res, staticUrl(readmePath, "prefix"), "Readme file ")
 }
 
 // Auxiliar
