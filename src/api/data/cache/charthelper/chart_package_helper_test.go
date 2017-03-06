@@ -68,15 +68,16 @@ func TestDownloadTarballCreatesFileInDestination(t *testing.T) {
 		httpmock.NewStringResponder(200, "Mocked Response"))
 
 	// Mock download path
-	randomPath, _ := ioutil.TempDir(os.TempDir(), "test")
-	tarballPathOrig := tarballPath
-	defer func() { tarballPath = tarballPathOrig }()
-	tarballPath = func(chart *models.ChartPackage) string {
-		return filepath.Join(randomPath, "myFile.tar.gz")
+	chartDataDirOrig := chartDataDir
+	defer func() { chartDataDir = chartDataDirOrig }()
+	pathExists, _ := ioutil.TempDir(os.TempDir(), "chart")
+	chartDataDir = func(c *models.ChartPackage) string {
+		return pathExists
 	}
+
 	err = downloadTarball(chart)
 	assert.NoErr(t, err)
-	_, err = os.Stat(tarballPath(chart))
+	_, err = os.Stat(filepath.Join(chartDataDir(chart), "chart.tgz"))
 	assert.NoErr(t, err)
 }
 
