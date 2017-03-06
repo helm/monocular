@@ -16,6 +16,5 @@ services:
       - 8080:8080
     volumes:
       - ./src/api:/go/src/github.com/helm/monocular/src/api
-      - /home/migmartri/.kube:/root/.kube
     environment:
       - ENVIRONMENT=development
