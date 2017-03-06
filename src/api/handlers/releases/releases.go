@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	middleware "github.com/go-openapi/runtime/middleware"
+	"github.com/go-openapi/strfmt"
 	helmclient "github.com/helm/monocular/src/api/data/helm/client"
 	helmreleases "github.com/helm/monocular/src/api/data/helm/releases"
 	"github.com/helm/monocular/src/api/data/helpers"
@@ -34,6 +35,19 @@ func GetReleases(params releasesapi.GetAllReleasesParams) middleware.Responder {
 
 // CreateRelease installs a chart version
 func CreateRelease(params releasesapi.CreateReleaseParams) middleware.Responder {
+	format := strfmt.NewFormats()
+	err := params.Data.Validate(format)
+	if err != nil {
+		return badRequestError(err.Error())
+	}
+	client, err := helmclient.CreateTillerClient()
+	if err != nil {
+		return error("Error creating the Helm client")
+	}
+	_, err = helmreleases.InstallRelease(client, params)
+	if err != nil {
+		return error(fmt.Sprintf("Can't create the release: %s", err))
+	}
 	return releasesapi.NewCreateReleaseCreated()
 }
 
@@ -41,6 +55,13 @@ func CreateRelease(params releasesapi.CreateReleaseParams) middleware.Responder 
 func error(message string) middleware.Responder {
 	return releasesapi.NewGetAllReleasesDefault(http.StatusInternalServerError).WithPayload(
 		&models.Error{Code: helpers.Int64ToPtr(http.StatusInternalServerError), Message: &message},
+	)
+}
+
+// error is a convenience that contains a swagger-friendly 500 given a string
+func badRequestError(message string) middleware.Responder {
+	return releasesapi.NewGetAllReleasesDefault(http.StatusBadRequest).WithPayload(
+		&models.Error{Code: helpers.Int64ToPtr(http.StatusBadRequest), Message: &message},
 	)
 }
 

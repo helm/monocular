@@ -2,6 +2,7 @@ package releases
 
 import (
 	log "github.com/Sirupsen/logrus"
+	releasesapi "github.com/helm/monocular/src/api/swagger/restapi/operations/releases"
 	"k8s.io/helm/pkg/helm"
 	"k8s.io/helm/pkg/proto/hapi/release"
 	"k8s.io/helm/pkg/proto/hapi/services"
@@ -28,4 +29,19 @@ func ListReleases(client *helm.Client) (*rls.ListReleasesResponse, error) {
 	}
 
 	return resp, err
+}
+
+// InstallRelease wraps helms client installReleae method
+func InstallRelease(client *helm.Client, params releasesapi.CreateReleaseParams) (*rls.InstallReleaseResponse, error) {
+	ns := *params.Data.Namespace
+	if ns == "" {
+		ns = "default"
+	}
+
+	return client.InstallRelease(
+		"todo",
+		ns,
+		helm.ValueOverrides([]byte{}),
+		helm.ReleaseName(*params.Data.ReleaseName),
+		helm.InstallDryRun(true))
 }

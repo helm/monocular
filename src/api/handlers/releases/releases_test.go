@@ -20,12 +20,12 @@ func TestGetReleases200(t *testing.T) {
 	// TODO, test body
 }
 
-func TestCreateRelease201(t *testing.T) {
-	w := httptest.NewRecorder()
-	params := releasesapi.CreateReleaseParams{}
-	resp := CreateRelease(params)
-	assert.NotNil(t, resp, "Create response")
-	resp.WriteResponse(w, runtime.JSONProducer())
-	assert.Equal(t, w.Code, http.StatusCreated, "expect a 201 response code")
-	// TODO, test body
-}
+//func TestCreateRelease201(t *testing.T) {
+//	w := httptest.NewRecorder()
+//	params := releasesapi.CreateReleaseParams{}
+//	resp := CreateRelease(params)
+//	assert.NotNil(t, resp, "Create response")
+//	resp.WriteResponse(w, runtime.JSONProducer())
+//	assert.Equal(t, w.Code, http.StatusCreated, "expect a 201 response code")
+//	// TODO, test body
+//}
