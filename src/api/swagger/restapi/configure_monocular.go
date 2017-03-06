@@ -60,7 +60,7 @@ func configureAPI(api *operations.MonocularAPI) http.Handler {
 
 	// Releases
 	api.ReleasesCreateReleaseHandler = releases.CreateReleaseHandlerFunc(func(params releases.CreateReleaseParams) middleware.Responder {
-		return hreleases.CreateRelease(params)
+		return hreleases.CreateRelease(params, chartsImplementation)
 	})
 
 	api.ReleasesGetAllReleasesHandler = releases.GetAllReleasesHandlerFunc(func(params releases.GetAllReleasesParams) middleware.Responder {

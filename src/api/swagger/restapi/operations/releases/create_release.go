@@ -61,11 +61,11 @@ swagger:model CreateReleaseBody
 */
 type CreateReleaseBody struct {
 
-	/* Chart name
+	/* Chart identifier, i.e: stable/wordpress
 
 	Required: true
 	*/
-	ChartName *string `json:"chartName"`
+	ChartID *string `json:"chartId"`
 
 	/* Chart Version
 
@@ -86,7 +86,7 @@ type CreateReleaseBody struct {
 func (o *CreateReleaseBody) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := o.validateChartName(formats); err != nil {
+	if err := o.validateChartID(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
@@ -102,9 +102,9 @@ func (o *CreateReleaseBody) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (o *CreateReleaseBody) validateChartName(formats strfmt.Registry) error {
+func (o *CreateReleaseBody) validateChartID(formats strfmt.Registry) error {
 
-	if err := validate.Required("data"+"."+"chartName", "body", o.ChartName); err != nil {
+	if err := validate.Required("data"+"."+"chartId", "body", o.ChartID); err != nil {
 		return err
 	}
 

@@ -215,9 +215,9 @@ parameters:
         releaseName:
           type: string
           description: Name of the new release
-        chartName:
+        chartId:
           type: string
-          description: Chart name
+          description: "Chart identifier, i.e: stable/wordpress"
         chartVersion:
           type: string
           description: Chart Version
@@ -225,7 +225,7 @@ parameters:
           type: string
           description: Namespace to deploy the chart into
       required:
-        - chartName
+        - chartId
         - chartVersion
 definitions:
   resource: # a data type that describes a json-api-like resource

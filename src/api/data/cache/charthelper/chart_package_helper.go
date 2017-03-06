@@ -134,8 +134,8 @@ var ensureChartDataDir = func(chart *models.ChartPackage) error {
 	return nil
 }
 
-// Temporary path used for downloaded tarball
-var tarballPath = func(chart *models.ChartPackage) string {
+// TarballPath returns the location of the chart package in the local cache
+var TarballPath = func(chart *models.ChartPackage) string {
 	return filepath.Join(chartDataDir(chart), "chart.tgz")
 }
 

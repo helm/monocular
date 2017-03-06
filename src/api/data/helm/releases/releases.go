@@ -32,14 +32,14 @@ func ListReleases(client *helm.Client) (*rls.ListReleasesResponse, error) {
 }
 
 // InstallRelease wraps helms client installReleae method
-func InstallRelease(client *helm.Client, params releasesapi.CreateReleaseParams) (*rls.InstallReleaseResponse, error) {
+func InstallRelease(client *helm.Client, chartPath string, params releasesapi.CreateReleaseParams) (*rls.InstallReleaseResponse, error) {
 	ns := params.Data.Namespace
 	if ns == "" {
 		ns = "default"
 	}
 
 	return client.InstallRelease(
-		"todo",
+		chartPath,
 		ns,
 		helm.ValueOverrides([]byte{}),
 		helm.ReleaseName(params.Data.ReleaseName),

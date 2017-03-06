@@ -3,9 +3,11 @@ package releases
 import (
 	"fmt"
 	"net/http"
+	"strings"
 
 	middleware "github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/strfmt"
+	"github.com/helm/monocular/src/api/data"
 	helmclient "github.com/helm/monocular/src/api/data/helm/client"
 	helmreleases "github.com/helm/monocular/src/api/data/helm/releases"
 	"github.com/helm/monocular/src/api/data/helpers"
@@ -34,17 +36,34 @@ func GetReleases(params releasesapi.GetAllReleasesParams) middleware.Responder {
 }
 
 // CreateRelease installs a chart version
-func CreateRelease(params releasesapi.CreateReleaseParams) middleware.Responder {
+func CreateRelease(params releasesapi.CreateReleaseParams, c data.Charts) middleware.Responder {
+	// Validation
 	format := strfmt.NewFormats()
 	err := params.Data.Validate(format)
 	if err != nil {
 		return badRequestError(err.Error())
 	}
+
+	idSplit := strings.Split(*params.Data.ChartID, "/")
+	if len(idSplit) != 2 || idSplit[0] == "" || idSplit[1] == "" {
+		return badRequestError("chartId must include the repository name. i.e: stable/wordpress")
+	}
+	// EO Validation
+
+	// Search chart package
+	repo, chartName := idSplit[0], idSplit[1]
+	chartPackage, err := c.ChartVersionFromRepo(repo, chartName, *params.Data.ChartVersion)
+	if err != nil {
+		return badRequestError("chart not found")
+	}
+
 	client, err := helmclient.CreateTillerClient()
 	if err != nil {
 		return error("Error creating the Helm client")
 	}
-	_, err = helmreleases.InstallRelease(client, params)
+
+	chartPath := charthelper.TarballPath(&chartPackage)
+	_, err = helmreleases.InstallRelease(client, chartPath, params)
 	if err != nil {
 		return error(fmt.Sprintf("Can't create the release: %s", err))
 	}
