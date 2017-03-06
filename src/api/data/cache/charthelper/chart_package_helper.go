@@ -41,7 +41,7 @@ var DownloadAndExtractChartTarball = func(chart *models.ChartPackage) error {
 }
 
 var tarballExists = func(chart *models.ChartPackage) bool {
-	_, err := os.Stat(tarballTmpPath(chart))
+	_, err := os.Stat(tarballPath(chart))
 	return err == nil
 }
 
@@ -49,7 +49,7 @@ var tarballExists = func(chart *models.ChartPackage) bool {
 // in order to extract specific files for caching
 var downloadTarball = func(chart *models.ChartPackage) error {
 	source := chart.Urls[0]
-	destination := tarballTmpPath(chart)
+	destination := tarballPath(chart)
 
 	// Create output
 	out, err := os.Create(destination)
@@ -91,7 +91,7 @@ var downloadTarball = func(chart *models.ChartPackage) error {
 var filesToKeep = []string{"README.md"}
 
 var extractFilesFromTarball = func(chart *models.ChartPackage) error {
-	tarballPath := tarballTmpPath(chart)
+	tarballPath := tarballPath(chart)
 	tarballExpandedPath, err := ioutil.TempDir(os.TempDir(), "chart")
 	if err != nil {
 		return err
@@ -135,9 +135,8 @@ var ensureChartDataDir = func(chart *models.ChartPackage) error {
 }
 
 // Temporary path used for downloaded tarball
-var tarballTmpPath = func(chart *models.ChartPackage) string {
-	splitTarURL := strings.Split(chart.Urls[0], "/")
-	return filepath.Join("/tmp", fmt.Sprintf("%s-%s", chart.Repo, splitTarURL[len(splitTarURL)-1]))
+var tarballPath = func(chart *models.ChartPackage) string {
+	return filepath.Join(chartDataDir(chart), "chart.tgz")
 }
 
 // DataDirBase is the directory used to store cached data like readme files

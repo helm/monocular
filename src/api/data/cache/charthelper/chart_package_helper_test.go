@@ -68,15 +68,16 @@ func TestDownloadTarballCreatesFileInDestination(t *testing.T) {
 		httpmock.NewStringResponder(200, "Mocked Response"))
 
 	// Mock download path
-	randomPath, _ := ioutil.TempDir(os.TempDir(), "test")
-	tarballTmpPathOrig := tarballTmpPath
-	defer func() { tarballTmpPath = tarballTmpPathOrig }()
-	tarballTmpPath = func(chart *models.ChartPackage) string {
-		return filepath.Join(randomPath, "myFile.tar.gz")
+	chartDataDirOrig := chartDataDir
+	defer func() { chartDataDir = chartDataDirOrig }()
+	pathExists, _ := ioutil.TempDir(os.TempDir(), "chart")
+	chartDataDir = func(c *models.ChartPackage) string {
+		return pathExists
 	}
+
 	err = downloadTarball(chart)
 	assert.NoErr(t, err)
-	_, err = os.Stat(tarballTmpPath(chart))
+	_, err = os.Stat(filepath.Join(chartDataDir(chart), "chart.tgz"))
 	assert.NoErr(t, err)
 }
 
@@ -84,9 +85,9 @@ func TestDownloadTarballErrorDownloading(t *testing.T) {
 	chart, err := getTestChart()
 	assert.NoErr(t, err)
 	randomPath, _ := ioutil.TempDir(os.TempDir(), "test")
-	tarballTmpPathOrig := tarballTmpPath
-	defer func() { tarballTmpPath = tarballTmpPathOrig }()
-	tarballTmpPath = func(chart *models.ChartPackage) string {
+	tarballPathOrig := tarballPath
+	defer func() { tarballPath = tarballPathOrig }()
+	tarballPath = func(chart *models.ChartPackage) string {
 		return filepath.Join(randomPath, "myFile.tar.gz")
 	}
 	// Invald protocol
@@ -105,10 +106,10 @@ func TestExtractFilesFromTarballOk(t *testing.T) {
 	ensureChartDataDir(chart)
 	assert.NoErr(t, err)
 	// Stubs
-	tarballTmpPathOrig := tarballTmpPath
-	defer func() { tarballTmpPath = tarballTmpPathOrig }()
-	tarballTmpPath = func(chart *models.ChartPackage) string {
-		path := MockedtarballTmpPath()
+	tarballPathOrig := tarballPath
+	defer func() { tarballPath = tarballPathOrig }()
+	tarballPath = func(chart *models.ChartPackage) string {
+		path := MockedtarballPath()
 		return path
 	}
 	err = extractFilesFromTarball(chart)
@@ -127,9 +128,9 @@ func TestExtractFilesFromTarballNotFound(t *testing.T) {
 	chart, err := getTestChart()
 	assert.NoErr(t, err)
 	// Stubs
-	tarballTmpPathOrig := tarballTmpPath
-	defer func() { tarballTmpPath = tarballTmpPathOrig }()
-	tarballTmpPath = func(chart *models.ChartPackage) string {
+	tarballPathOrig := tarballPath
+	defer func() { tarballPath = tarballPathOrig }()
+	tarballPath = func(chart *models.ChartPackage) string {
 		return "/does-not-exist.tar.gz"
 	}
 	err = extractFilesFromTarball(chart)
@@ -140,11 +141,11 @@ func TestExtractFilesFromTarballCantCopy(t *testing.T) {
 	chart, err := getTestChart()
 	assert.NoErr(t, err)
 	// Stubs
-	tarballTmpPathOrig := tarballTmpPath
+	tarballPathOrig := tarballPath
 	copyFileOrig := copyFile
-	defer func() { tarballTmpPath = tarballTmpPathOrig; copyFile = copyFileOrig }()
-	tarballTmpPath = func(chart *models.ChartPackage) string {
-		path := MockedtarballTmpPath()
+	defer func() { tarballPath = tarballPathOrig; copyFile = copyFileOrig }()
+	tarballPath = func(chart *models.ChartPackage) string {
+		path := MockedtarballPath()
 		return path
 	}
 
@@ -158,10 +159,10 @@ func TestReadFromCacheOk(t *testing.T) {
 	chart, err := getTestChart()
 	assert.NoErr(t, err)
 	// Stubs
-	tarballTmpPathOrig := tarballTmpPath
-	defer func() { tarballTmpPath = tarballTmpPathOrig }()
-	tarballTmpPath = func(chart *models.ChartPackage) string {
-		path := MockedtarballTmpPath()
+	tarballPathOrig := tarballPath
+	defer func() { tarballPath = tarballPathOrig }()
+	tarballPath = func(chart *models.ChartPackage) string {
+		path := MockedtarballPath()
 		return path
 	}
 	ensureChartDataDir(chart)
@@ -241,7 +242,7 @@ func TestCopyFile(t *testing.T) {
 }
 
 func TestUntar(t *testing.T) {
-	src := MockedtarballTmpPath()
+	src := MockedtarballPath()
 	dest, _ := ioutil.TempDir(os.TempDir(), "")
 	err := untar(src, dest)
 	assert.NoErr(t, err)
@@ -277,6 +278,6 @@ func getTestChart() (*models.ChartPackage, error) {
 }
 
 // Returns the test tarball path
-func MockedtarballTmpPath() string {
+func MockedtarballPath() string {
 	return filepath.Join("testdata", "drupal-0.3.0.tgz")
 }
