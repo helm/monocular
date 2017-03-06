@@ -64,11 +64,14 @@ func CreateRelease(params releasesapi.CreateReleaseParams, c data.Charts) middle
 		return error("Error creating the Helm client")
 	}
 
-	_, err = helmreleases.InstallRelease(client, chartPath, params)
+	release, err := helmreleases.InstallRelease(client, chartPath, params)
 	if err != nil {
 		return error(fmt.Sprintf("Can't create the release: %s", err))
 	}
-	return releasesapi.NewCreateReleaseCreated()
+
+	resource := makeReleaseResource(release.Release)
+	payload := handlers.DataResourceBody(resource)
+	return releasesapi.NewCreateReleaseCreated().WithPayload(payload)
 }
 
 // error is a convenience that contains a swagger-friendly 500 given a string
