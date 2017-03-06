@@ -74,16 +74,12 @@ type CreateReleaseBody struct {
 	ChartVersion *string `json:"chartVersion"`
 
 	/* Namespace to deploy the chart into
-
-	Required: true
-	*/
-	Namespace *string `json:"namespace"`
+	 */
+	Namespace string `json:"namespace,omitempty"`
 
 	/* Name of the new release
-
-	Required: true
-	*/
-	ReleaseName *string `json:"releaseName"`
+	 */
+	ReleaseName string `json:"releaseName,omitempty"`
 }
 
 // Validate validates this create release body
@@ -96,16 +92,6 @@ func (o *CreateReleaseBody) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := o.validateChartVersion(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
-	if err := o.validateNamespace(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
-	if err := o.validateReleaseName(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
@@ -128,24 +114,6 @@ func (o *CreateReleaseBody) validateChartName(formats strfmt.Registry) error {
 func (o *CreateReleaseBody) validateChartVersion(formats strfmt.Registry) error {
 
 	if err := validate.Required("data"+"."+"chartVersion", "body", o.ChartVersion); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (o *CreateReleaseBody) validateNamespace(formats strfmt.Registry) error {
-
-	if err := validate.Required("data"+"."+"namespace", "body", o.Namespace); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (o *CreateReleaseBody) validateReleaseName(formats strfmt.Registry) error {
-
-	if err := validate.Required("data"+"."+"releaseName", "body", o.ReleaseName); err != nil {
 		return err
 	}
 

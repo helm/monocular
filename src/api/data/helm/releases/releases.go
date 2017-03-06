@@ -33,7 +33,7 @@ func ListReleases(client *helm.Client) (*rls.ListReleasesResponse, error) {
 
 // InstallRelease wraps helms client installReleae method
 func InstallRelease(client *helm.Client, params releasesapi.CreateReleaseParams) (*rls.InstallReleaseResponse, error) {
-	ns := *params.Data.Namespace
+	ns := params.Data.Namespace
 	if ns == "" {
 		ns = "default"
 	}
@@ -42,6 +42,6 @@ func InstallRelease(client *helm.Client, params releasesapi.CreateReleaseParams)
 		"todo",
 		ns,
 		helm.ValueOverrides([]byte{}),
-		helm.ReleaseName(*params.Data.ReleaseName),
+		helm.ReleaseName(params.Data.ReleaseName),
 		helm.InstallDryRun(true))
 }

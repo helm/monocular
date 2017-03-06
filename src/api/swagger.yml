@@ -210,7 +210,6 @@ parameters:
     description: Information related with the new Helm release.
     in: body
     type: object
-    required: true
     schema:
       properties:
         releaseName:
