@@ -62,15 +62,15 @@ func configureAPI(api *operations.MonocularAPI) http.Handler {
 
 	// Releases
 	api.ReleasesCreateReleaseHandler = releases.CreateReleaseHandlerFunc(func(params releases.CreateReleaseParams) middleware.Responder {
-		return hreleases.CreateRelease(helmClient, params, chartsImplementation)
+		return hreleases.CreateRelease(helmClient, params, chartsImplementation, config.ReleasesEnabled)
 	})
 
 	api.ReleasesGetAllReleasesHandler = releases.GetAllReleasesHandlerFunc(func(params releases.GetAllReleasesParams) middleware.Responder {
-		return hreleases.GetReleases(helmClient, params)
+		return hreleases.GetReleases(helmClient, params, config.ReleasesEnabled)
 	})
 
 	api.ReleasesDeleteReleaseHandler = releases.DeleteReleaseHandlerFunc(func(params releases.DeleteReleaseParams) middleware.Responder {
-		return hreleases.DeleteRelease(helmClient, params)
+		return hreleases.DeleteRelease(helmClient, params, config.ReleasesEnabled)
 	})
 
 	// Repos

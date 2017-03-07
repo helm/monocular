@@ -19,7 +19,11 @@ import (
 )
 
 // GetReleases returns all the existing releases in your cluster
-func GetReleases(helmclient data.Client, params releasesapi.GetAllReleasesParams) middleware.Responder {
+func GetReleases(helmclient data.Client, params releasesapi.GetAllReleasesParams, releasesEnabled bool) middleware.Responder {
+	if !releasesEnabled {
+		return errorResponse("Feature not enabled", http.StatusForbidden)
+	}
+
 	releases, err := helmclient.ListReleases(params)
 	if err != nil {
 		return errorResponse(err.Error(), http.StatusInternalServerError)
@@ -31,7 +35,11 @@ func GetReleases(helmclient data.Client, params releasesapi.GetAllReleasesParams
 }
 
 // CreateRelease installs a chart version
-func CreateRelease(helmclient data.Client, params releasesapi.CreateReleaseParams, c data.Charts) middleware.Responder {
+func CreateRelease(helmclient data.Client, params releasesapi.CreateReleaseParams, c data.Charts, releasesEnabled bool) middleware.Responder {
+	if !releasesEnabled {
+		return errorResponse("Feature not enabled", http.StatusForbidden)
+	}
+
 	// Params validation
 	format := strfmt.NewFormats()
 	err := params.Data.Validate(format)
@@ -63,7 +71,10 @@ func CreateRelease(helmclient data.Client, params releasesapi.CreateReleaseParam
 }
 
 // DeleteRelease deletes an existing release
-func DeleteRelease(helmclient data.Client, params releasesapi.DeleteReleaseParams) middleware.Responder {
+func DeleteRelease(helmclient data.Client, params releasesapi.DeleteReleaseParams, releasesEnabled bool) middleware.Responder {
+	if !releasesEnabled {
+		return errorResponse("Feature not enabled", http.StatusForbidden)
+	}
 	release, err := helmclient.DeleteRelease(params.ReleaseName)
 	if err != nil {
 		return errorResponse(fmt.Sprintf("Can't delete the release: %s", err), http.StatusBadRequest)
