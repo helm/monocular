@@ -12,6 +12,7 @@ data:
     window.monocular = {
       overrides: {
         googleAnalyticsId: '{{.Values.ui.googleAnalyticsId}}',
-        appName: '{{.Values.ui.appName}}'
+        appName: '{{.Values.ui.appName}}',
+        releasesEnabled: '{{.Values.api.config.releasesEnabled}}'
       }
     };

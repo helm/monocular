@@ -1,8 +1,11 @@
 package config
 
 import (
+	"io/ioutil"
 	"os"
 	"path/filepath"
+
+	yaml "gopkg.in/yaml.v2"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/helm/monocular/src/api/config/cors"
@@ -18,7 +21,7 @@ type configurationWithOverrides map[string]Configuration
 type Configuration struct {
 	Cors            cors.Cors
 	Repos           repos.Repos
-	ReleasesEnabled bool
+	ReleasesEnabled bool `yaml:"releasesEnabled"`
 	Initialized     bool
 }
 
@@ -41,6 +44,8 @@ func GetConfig() (Configuration, error) {
 	_, err := os.Stat(configFilePath)
 	if err == nil {
 		log.Info("Configuration file found!")
+		// Load custom configuration
+		loadConfigFromFile(configFilePath, &currentConfig)
 	} else {
 		log.Info("Configuration file not found, using defaults")
 	}
@@ -67,6 +72,17 @@ func BaseDir() string {
 	return filepath.Join(os.Getenv("HOME"), "monocular")
 }
 
-func configFile() string {
+var configFile = func() string {
 	return filepath.Join(BaseDir(), "config", "monocular.yaml")
+}
+
+func loadConfigFromFile(filePath string, configStruct *Configuration) error {
+	bytes, err := ioutil.ReadFile(filePath)
+	if err != nil {
+		return err
+	}
+	if err := yaml.Unmarshal(bytes, configStruct); err != nil {
+		return err
+	}
+	return nil
 }
