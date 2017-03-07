@@ -22,7 +22,7 @@ import (
 func GetReleases(helmclient data.Client, params releasesapi.GetAllReleasesParams) middleware.Responder {
 	releases, err := helmclient.ListReleases(params)
 	if err != nil {
-		return error(err.Error())
+		return errorResponse(err.Error(), http.StatusInternalServerError)
 	}
 
 	resources := makeReleaseResources(releases)
@@ -36,25 +36,25 @@ func CreateRelease(helmclient data.Client, params releasesapi.CreateReleaseParam
 	format := strfmt.NewFormats()
 	err := params.Data.Validate(format)
 	if err != nil {
-		return badRequestError(err.Error())
+		return errorResponse(err.Error(), http.StatusBadRequest)
 	}
 
 	idSplit := strings.Split(*params.Data.ChartID, "/")
 	if len(idSplit) != 2 || idSplit[0] == "" || idSplit[1] == "" {
-		return badRequestError("chartId must include the repository name. i.e: stable/wordpress")
+		return errorResponse("chartId must include the repository name. i.e: stable/wordpress", http.StatusBadRequest)
 	}
 
 	// Search chart package and get local path
 	repo, chartName := idSplit[0], idSplit[1]
 	chartPackage, err := c.ChartVersionFromRepo(repo, chartName, *params.Data.ChartVersion)
 	if err != nil {
-		return badRequestError("chart not found")
+		return errorResponse("chart not found", http.StatusBadRequest)
 	}
 	chartPath := charthelper.TarballPath(chartPackage)
 
 	release, err := helmclient.InstallRelease(chartPath, params)
 	if err != nil {
-		return error(fmt.Sprintf("Can't create the release: %s", err))
+		return errorResponse(fmt.Sprintf("Can't create the release: %s", err), http.StatusInternalServerError)
 	}
 
 	resource := makeReleaseResource(release.Release)
@@ -66,24 +66,16 @@ func CreateRelease(helmclient data.Client, params releasesapi.CreateReleaseParam
 func DeleteRelease(helmclient data.Client, params releasesapi.DeleteReleaseParams) middleware.Responder {
 	release, err := helmclient.DeleteRelease(params.ReleaseName)
 	if err != nil {
-		return badRequestError(fmt.Sprintf("Can't delete the release: %s", err))
+		return errorResponse(fmt.Sprintf("Can't delete the release: %s", err), http.StatusBadRequest)
 	}
 	resource := makeReleaseResource(release.Release)
 	payload := handlers.DataResourceBody(resource)
 	return releasesapi.NewDeleteReleaseOK().WithPayload(payload)
 }
 
-// error is a convenience that contains a swagger-friendly 500 given a string
-func error(message string) middleware.Responder {
-	return releasesapi.NewGetAllReleasesDefault(http.StatusInternalServerError).WithPayload(
-		&models.Error{Code: helpers.Int64ToPtr(http.StatusInternalServerError), Message: &message},
-	)
-}
-
-// error is a convenience that contains a swagger-friendly 500 given a string
-func badRequestError(message string) middleware.Responder {
-	return releasesapi.NewGetAllReleasesDefault(http.StatusBadRequest).WithPayload(
-		&models.Error{Code: helpers.Int64ToPtr(http.StatusBadRequest), Message: &message},
+func errorResponse(message string, errorCode int64) middleware.Responder {
+	return releasesapi.NewGetAllReleasesDefault(int(errorCode)).WithPayload(
+		&models.Error{Code: helpers.Int64ToPtr(errorCode), Message: &message},
 	)
 }
 

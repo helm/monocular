@@ -16,9 +16,10 @@ type configurationWithOverrides map[string]Configuration
 // Configuration is the the resulting environment based Configuration
 // For now it only includes Cors info
 type Configuration struct {
-	Cors        cors.Cors
-	Repos       repos.Repos
-	Initialized bool
+	Cors            cors.Cors
+	Repos           repos.Repos
+	ReleasesEnabled bool
+	Initialized     bool
 }
 
 // Cached version of the config

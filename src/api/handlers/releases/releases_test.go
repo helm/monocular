@@ -149,22 +149,11 @@ func TestMakeReleaseResource(t *testing.T) {
 	assert.NotNil(t, res, "Has content")
 }
 
-func TestError(t *testing.T) {
+func TestErrorResponse(t *testing.T) {
 	const resource1 = "release"
 	w := httptest.NewRecorder()
-	resp := error(resource1)
+	resp := errorResponse(resource1, http.StatusBadRequest)
 	assert.NotNil(t, resp, "error response")
-	resp.WriteResponse(w, runtime.JSONProducer())
-	assert.Equal(t, w.Code, http.StatusInternalServerError, "expect a 500 response code")
-	var httpBody1 models.Error
-	assert.NoErr(t, testutil.ErrorModelFromJSON(w.Body, &httpBody1))
-}
-
-func TestBadRequest(t *testing.T) {
-	const resource1 = "release"
-	w := httptest.NewRecorder()
-	resp := badRequestError(resource1)
-	assert.NotNil(t, resp, "badRequest response")
 	resp.WriteResponse(w, runtime.JSONProducer())
 	assert.Equal(t, w.Code, http.StatusBadRequest, "expect a 400 response code")
 	var httpBody1 models.Error
