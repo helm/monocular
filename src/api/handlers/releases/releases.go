@@ -87,6 +87,9 @@ func makeReleaseResources(releases *rls.ListReleasesResponse) []*models.Resource
 
 func makeReleaseResource(release *hapi_release5.Release) *models.Resource {
 	var ret models.Resource
+	if release == nil {
+		return &ret
+	}
 	ret.Type = helpers.StrToPtr("release")
 	ret.ID = helpers.StrToPtr(release.Name)
 	ret.Attributes = &models.Release{
