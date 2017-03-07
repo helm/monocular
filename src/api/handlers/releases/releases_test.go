@@ -12,6 +12,7 @@ import (
 	"github.com/helm/monocular/src/api/mocks"
 	"github.com/helm/monocular/src/api/swagger/models"
 	releasesapi "github.com/helm/monocular/src/api/swagger/restapi/operations/releases"
+	"github.com/helm/monocular/src/api/testutil"
 )
 
 var helmClient = mocks.NewMockedClient()
@@ -126,4 +127,26 @@ func TestMakeReleaseResource(t *testing.T) {
 
 	res = makeReleaseResource(nil)
 	assert.NotNil(t, res, "Has content")
+}
+
+func TestError(t *testing.T) {
+	const resource1 = "release"
+	w := httptest.NewRecorder()
+	resp := error(resource1)
+	assert.NotNil(t, resp, "error response")
+	resp.WriteResponse(w, runtime.JSONProducer())
+	assert.Equal(t, w.Code, http.StatusInternalServerError, "expect a 500 response code")
+	var httpBody1 models.Error
+	assert.NoErr(t, testutil.ErrorModelFromJSON(w.Body, &httpBody1))
+}
+
+func TestBadRequest(t *testing.T) {
+	const resource1 = "release"
+	w := httptest.NewRecorder()
+	resp := badRequestError(resource1)
+	assert.NotNil(t, resp, "badRequest response")
+	resp.WriteResponse(w, runtime.JSONProducer())
+	assert.Equal(t, w.Code, http.StatusBadRequest, "expect a 400 response code")
+	var httpBody1 models.Error
+	assert.NoErr(t, testutil.ErrorModelFromJSON(w.Body, &httpBody1))
 }
