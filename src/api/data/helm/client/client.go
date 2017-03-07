@@ -35,7 +35,7 @@ func (c *helmClient) initialize() (*helm.Client, error) {
 
 	tunnel, err := portforwarder.New(tillerNamespace, client, config)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("Can't find a working Tiller pod: %s", err.Error())
 	}
 
 	tillerHost := fmt.Sprintf("localhost:%d", tunnel.Local)

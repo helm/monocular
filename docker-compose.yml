@@ -16,5 +16,7 @@ services:
       - 8080:8080
     volumes:
       - ./src/api:/go/src/github.com/helm/monocular/src/api
+      # Config example file
+      - ./docs/config.example.yaml:/root/monocular/config/monocular.yaml
     environment:
       - ENVIRONMENT=development
