@@ -198,6 +198,26 @@ paths:
           description: unexpected error
           schema:
             $ref: "#/definitions/error"
+  /v1/releases/{releaseName}:
+    delete:
+      operationId: deleteRelease
+      summary: delete a release from your cluster
+      tags:
+        - releases
+      parameters:
+        - name: releaseName
+          in: path
+          type: string
+          required: true
+      responses:
+        200:
+          description: release deleted
+          schema:
+            $ref: "#/definitions/resourceData"
+        default:
+          description: unexpected error
+          schema:
+            $ref: "#/definitions/error"
 parameters:
   chartNameParam:
     name: name

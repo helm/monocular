@@ -43,3 +43,13 @@ func InstallRelease(client *helm.Client, chartPath string, params releasesapi.Cr
 		helm.ReleaseName(params.Data.ReleaseName),
 		helm.InstallDryRun(params.Data.DryRun))
 }
+
+// DeleteRelease deletes an existing helm chart
+func DeleteRelease(client *helm.Client, releaseName string) (*rls.UninstallReleaseResponse, error) {
+	opts := []helm.DeleteOption{
+		helm.DeleteDryRun(false),
+		helm.DeletePurge(false),
+		helm.DeleteTimeout(300),
+	}
+	return client.DeleteRelease(releaseName, opts...)
+}

@@ -7,4 +7,5 @@ import rls "k8s.io/helm/pkg/proto/hapi/services"
 type Client interface {
 	ListReleases(params releasesapi.GetAllReleasesParams) (*rls.ListReleasesResponse, error)
 	InstallRelease(chartPath string, params releasesapi.CreateReleaseParams) (*rls.InstallReleaseResponse, error)
+	DeleteRelease(releaseName string) (*rls.UninstallReleaseResponse, error)
 }

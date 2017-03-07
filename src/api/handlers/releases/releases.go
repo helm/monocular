@@ -62,6 +62,17 @@ func CreateRelease(helmclient data.Client, params releasesapi.CreateReleaseParam
 	return releasesapi.NewCreateReleaseCreated().WithPayload(payload)
 }
 
+// DeleteRelease deletes an existing release
+func DeleteRelease(helmclient data.Client, params releasesapi.DeleteReleaseParams) middleware.Responder {
+	release, err := helmclient.DeleteRelease(params.ReleaseName)
+	if err != nil {
+		return badRequestError(fmt.Sprintf("Can't delete the release: %s", err))
+	}
+	resource := makeReleaseResource(release.Release)
+	payload := handlers.DataResourceBody(resource)
+	return releasesapi.NewDeleteReleaseOK().WithPayload(payload)
+}
+
 // error is a convenience that contains a swagger-friendly 500 given a string
 func error(message string) middleware.Responder {
 	return releasesapi.NewGetAllReleasesDefault(http.StatusInternalServerError).WithPayload(

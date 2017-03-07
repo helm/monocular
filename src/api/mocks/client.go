@@ -59,3 +59,11 @@ func (c *mockedBrokenClient) ListReleases(params releasesapi.GetAllReleasesParam
 func (c *mockedBrokenClient) InstallRelease(chartPath string, params releasesapi.CreateReleaseParams) (*rls.InstallReleaseResponse, error) {
 	return nil, errors.New("Can't initialize")
 }
+
+func (c *mockedClient) DeleteRelease(releaseName string) (*rls.UninstallReleaseResponse, error) {
+	return &rls.UninstallReleaseResponse{Release: &Resource}, nil
+}
+
+func (c *mockedBrokenClient) DeleteRelease(releaseName string) (*rls.UninstallReleaseResponse, error) {
+	return nil, errors.New("Can't initialize")
+}

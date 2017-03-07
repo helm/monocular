@@ -48,6 +48,8 @@ type MonocularAPI struct {
 
 	// ReleasesCreateReleaseHandler sets the operation handler for the create release operation
 	ReleasesCreateReleaseHandler releases.CreateReleaseHandler
+	// ReleasesDeleteReleaseHandler sets the operation handler for the delete release operation
+	ReleasesDeleteReleaseHandler releases.DeleteReleaseHandler
 	// ChartsGetAllChartsHandler sets the operation handler for the get all charts operation
 	ChartsGetAllChartsHandler charts.GetAllChartsHandler
 	// ReleasesGetAllReleasesHandler sets the operation handler for the get all releases operation
@@ -131,6 +133,10 @@ func (o *MonocularAPI) Validate() error {
 
 	if o.ReleasesCreateReleaseHandler == nil {
 		unregistered = append(unregistered, "releases.CreateReleaseHandler")
+	}
+
+	if o.ReleasesDeleteReleaseHandler == nil {
+		unregistered = append(unregistered, "releases.DeleteReleaseHandler")
 	}
 
 	if o.ChartsGetAllChartsHandler == nil {
@@ -246,6 +252,11 @@ func (o *MonocularAPI) initHandlerCache() {
 		o.handlers[strings.ToUpper("POST")] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/v1/releases"] = releases.NewCreateRelease(o.context, o.ReleasesCreateReleaseHandler)
+
+	if o.handlers["DELETE"] == nil {
+		o.handlers[strings.ToUpper("DELETE")] = make(map[string]http.Handler)
+	}
+	o.handlers["DELETE"]["/v1/releases/{releaseName}"] = releases.NewDeleteRelease(o.context, o.ReleasesDeleteReleaseHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)

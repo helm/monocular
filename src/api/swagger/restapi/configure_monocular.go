@@ -69,6 +69,10 @@ func configureAPI(api *operations.MonocularAPI) http.Handler {
 		return hreleases.GetReleases(helmClient, params)
 	})
 
+	api.ReleasesDeleteReleaseHandler = releases.DeleteReleaseHandlerFunc(func(params releases.DeleteReleaseParams) middleware.Responder {
+		return hreleases.DeleteRelease(helmClient, params)
+	})
+
 	// Repos
 	api.RepositoriesGetAllReposHandler = repositories.GetAllReposHandlerFunc(func(params repositories.GetAllReposParams) middleware.Responder {
 		return hrepos.GetRepos(params)
