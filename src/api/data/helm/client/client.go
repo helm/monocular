@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	log "github.com/Sirupsen/logrus"
+	"github.com/helm/monocular/src/api/config"
 	"github.com/helm/monocular/src/api/data"
 	releasesapi "github.com/helm/monocular/src/api/swagger/restapi/operations/releases"
 	"k8s.io/helm/cmd/helm/installer"
@@ -11,20 +12,47 @@ import (
 	"k8s.io/helm/pkg/helm/portforwarder"
 	"k8s.io/helm/pkg/kube"
 	rls "k8s.io/helm/pkg/proto/hapi/services"
+	"k8s.io/kubernetes/pkg/api"
 	"k8s.io/kubernetes/pkg/client/clientset_generated/internalclientset"
+	"k8s.io/kubernetes/pkg/client/clientset_generated/internalclientset/typed/core/internalversion"
+	"k8s.io/kubernetes/pkg/labels"
 
 	helmreleases "github.com/helm/monocular/src/api/data/helm/releases"
 	kerrors "k8s.io/kubernetes/pkg/api/errors"
 	"k8s.io/kubernetes/pkg/client/restclient"
 )
 
-const tillerNamespace = "kube-system"
+const (
+	tillerNamespace   = "kube-system"
+	tillerServiceName = "tiller-deploy"
+	tillerPort        = 44134
+)
 
-type helmClient struct{}
+type helmClient struct {
+	portForward bool
+}
 
 // NewHelmClient returns the Helm implementation of data.Client
 func NewHelmClient() data.Client {
-	return &helmClient{}
+	conf, _ := config.GetConfig()
+	return &helmClient{
+		portForward: conf.TillerPortForward,
+	}
+}
+
+func (c *helmClient) ensureTillerInstalled(namespace string, client *internalclientset.Clientset) error {
+	_, err := getFirstRunningPod(client, namespace, labels.Set{"app": "helm", "name": "tiller"}.AsSelector())
+	if err == nil {
+		return nil
+	}
+
+	log.WithFields(log.Fields{"error": err.Error()}).Info("Can't connect to Tiller. Installing")
+	if err = installer.Install(client, namespace, "", false, false); err != nil {
+		if !kerrors.IsAlreadyExists(err) {
+			return fmt.Errorf("error installing Tiller: %s", err)
+		}
+	}
+	return fmt.Errorf("Can't connect to Tiller. Installing, please wait")
 }
 
 // InitializeClient returns a helm.client
@@ -35,21 +63,23 @@ func (c *helmClient) initialize() (*helm.Client, error) {
 		return nil, err
 	}
 
-	tunnel, err := portforwarder.New(tillerNamespace, client, config)
+	err = c.ensureTillerInstalled(tillerNamespace, client)
 	if err != nil {
-		// Initialize tiller if it does not exist
-		if err = installer.Install(client, tillerNamespace, "", false, false); err != nil {
-			if !kerrors.IsAlreadyExists(err) {
-				return nil, fmt.Errorf("error installing Tiller: %s", err)
-			}
-		}
-		log.WithFields(log.Fields{"error": err.Error()}).Info("Can't connect to Tiller. Installing")
-		return nil, fmt.Errorf("Can't find a working Tiller pod. Installing, please try again later")
+		return nil, err
 	}
 
-	log.WithFields(log.Fields{"host": "localhost", "port": tunnel.Local}).Info("Helm Client created")
+	var tillerHost = fmt.Sprintf("%s.%s:%d", tillerServiceName, tillerNamespace, tillerPort)
 
-	tillerHost := fmt.Sprintf("localhost:%d", tunnel.Local)
+	if c.portForward {
+		tunnel, err := portforwarder.New(tillerNamespace, client, config)
+		if err != nil {
+			return nil, err
+		}
+
+		log.WithFields(log.Fields{"host": "localhost", "port": tunnel.Local}).Info("Helm Client created")
+		tillerHost = fmt.Sprintf("localhost:%d", tunnel.Local)
+	}
+
 	return helm.NewClient(helm.Host(tillerHost)), nil
 }
 
@@ -90,4 +120,21 @@ func getKubeClient(context string) (*restclient.Config, *internalclientset.Clien
 		return nil, nil, fmt.Errorf("could not get kubernetes client: %s", err)
 	}
 	return config, client, nil
+}
+
+func getFirstRunningPod(client internalversion.PodsGetter, namespace string, selector labels.Selector) (*api.Pod, error) {
+	options := api.ListOptions{LabelSelector: selector}
+	pods, err := client.Pods(namespace).List(options)
+	if err != nil {
+		return nil, err
+	}
+	if len(pods.Items) < 1 {
+		return nil, fmt.Errorf("could not find tiller")
+	}
+	for _, p := range pods.Items {
+		if api.IsPodReady(&p) {
+			return &p, nil
+		}
+	}
+	return nil, fmt.Errorf("could not find a ready tiller pod")
 }

@@ -23,5 +23,6 @@ Monocular adds support to interact with an existing Tiller server in order to:
 
 #### Requirements
 
-* Helm's server side component (Tiller) is installed in the same K8s cluster Monocular is deployed on. Learn how to initialize Helm and Tiller [here](https://github.com/kubernetes/helm/blob/master/docs/quickstart.md#initialize-helm-and-install-tiller).
-* Enable the `releasesEnabled` flag in the configuration file (or values.yaml if using the provided chart)
+* Enable the feature by setting the `releasesEnabled` flag in the configuration file (or values.yaml if using the provided chart)
+* If you are running Monocular outside of the k8s cluster, you will need to enable port forwarding
+by setting the following flag `tillerPortForward: true`.
