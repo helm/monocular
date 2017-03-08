@@ -177,7 +177,7 @@ func (c *cachedCharts) Refresh() error {
 	// 4 - Update the stored cache with the new elements if everything went well
 	c.rwm.Lock()
 	c.allCharts = updatedCharts
-	defer c.rwm.Unlock()
+	c.rwm.Unlock()
 	return nil
 }
 

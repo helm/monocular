@@ -42,7 +42,7 @@ func (r *refreshChartsData) Frequency() time.Duration {
 	return r.frequency
 }
 
-// Frequency implements the Periodic interface
+// FirstRun implements the Periodic interface
 func (r *refreshChartsData) FirstRun() bool {
 	return r.firstRun
 }
