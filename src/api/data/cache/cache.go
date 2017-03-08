@@ -190,7 +190,7 @@ type chanItem struct {
 // Counting semaphore, 25 downloads max in paralell
 var tokens = make(chan struct{}, 25)
 
-func processChartMetadata(chart *models.ChartPackage, out chan chanItem) {
+func processChartMetadata(chart *models.ChartPackage, out chan<- chanItem) {
 	tokens <- struct{}{}
 	// Semaphore control channel
 	defer func() {
