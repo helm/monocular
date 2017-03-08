@@ -6,6 +6,7 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/helm/monocular/src/api/data"
 	releasesapi "github.com/helm/monocular/src/api/swagger/restapi/operations/releases"
+	"k8s.io/helm/cmd/helm/installer"
 	"k8s.io/helm/pkg/helm"
 	"k8s.io/helm/pkg/helm/portforwarder"
 	"k8s.io/helm/pkg/kube"
@@ -13,6 +14,7 @@ import (
 	"k8s.io/kubernetes/pkg/client/clientset_generated/internalclientset"
 
 	helmreleases "github.com/helm/monocular/src/api/data/helm/releases"
+	kerrors "k8s.io/kubernetes/pkg/api/errors"
 	"k8s.io/kubernetes/pkg/client/restclient"
 )
 
@@ -35,16 +37,19 @@ func (c *helmClient) initialize() (*helm.Client, error) {
 
 	tunnel, err := portforwarder.New(tillerNamespace, client, config)
 	if err != nil {
-		return nil, fmt.Errorf("Can't find a working Tiller pod: %s", err.Error())
+		// Initialize tiller if it does not exist
+		if err = installer.Install(client, tillerNamespace, "", false, false); err != nil {
+			if !kerrors.IsAlreadyExists(err) {
+				return nil, fmt.Errorf("error installing Tiller: %s", err)
+			}
+		}
+		log.WithFields(log.Fields{"error": err.Error()}).Info("Can't connect to Tiller. Installing")
+		return nil, fmt.Errorf("Can't find a working Tiller pod. Installing, please try again later")
 	}
 
+	log.WithFields(log.Fields{"host": "localhost", "port": tunnel.Local}).Info("Helm Client created")
+
 	tillerHost := fmt.Sprintf("localhost:%d", tunnel.Local)
-
-	log.WithFields(log.Fields{
-		"host": "localhost",
-		"port": tunnel.Local,
-	}).Info("Helm Client created")
-
 	return helm.NewClient(helm.Host(tillerHost)), nil
 }
 
