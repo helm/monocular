@@ -15,6 +15,7 @@ import { TruncatePipe } from './shared/pipes/truncate.pipe';
 
 /* Services */
 import { ChartsService } from './shared/services/charts.service';
+import { ReleasesService } from './shared/services/releases.service';
 import { ReposService } from './shared/services/repos.service';
 import { ConfigService } from './shared/services/config.service';
 import { MenuService } from './shared/services/menu.service';
@@ -37,6 +38,7 @@ import { FooterListComponent } from './footer-list/footer-list.component';
 import { ChartDetailsInfoComponent } from './chart-details/chart-details-info/chart-details-info.component';
 import { ChartDetailsVersionsComponent } from './chart-details/chart-details-versions/chart-details-versions.component';
 import { ChartsComponent } from './charts/charts.component';
+import { ReleasesComponent } from './releases/releases.component';
 import { ChartsFiltersComponent } from './charts-filters/charts-filters.component';
 import { LoaderComponent } from './loader/loader.component';
 
@@ -71,7 +73,8 @@ const metaConfig: MetaConfig = {
     ChartDetailsInfoComponent,
     ChartsComponent,
     ChartsFiltersComponent,
-    LoaderComponent
+    LoaderComponent,
+    ReleasesComponent
   ],
   imports: [
     MaterialModule.forRoot(),
@@ -86,6 +89,7 @@ const metaConfig: MetaConfig = {
   providers: [
     appRoutingProviders,
     ChartsService,
+    ReleasesService,
     ReposService,
     ConfigService,
     MenuService

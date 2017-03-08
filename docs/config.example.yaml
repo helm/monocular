@@ -17,4 +17,4 @@ repos:
 releasesEnabled: true
 # Enables port forwarding for tiller Connections
 # Useful if you are running the app outside of the k8s cluster during development
-tillerPortForward: false
+tillerPortForward: true

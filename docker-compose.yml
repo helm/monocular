@@ -18,5 +18,6 @@ services:
       - ./src/api:/go/src/github.com/helm/monocular/src/api
       # Config example file
       - ./docs/config.example.yaml:/root/monocular/config/monocular.yaml
+      - /home/migmartri/.kube:/root/.kube
     environment:
       - ENVIRONMENT=development

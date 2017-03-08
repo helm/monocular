@@ -11,6 +11,11 @@
           Charts
         </a>
       </li>
+      <li *ngIf="config.releasesEnabled">
+        <a class="reverse" routerLink="/releases" routerLinkActive="active">
+          Releases
+        </a>
+      </li>
       <li><a class="reverse" href="https://github.com/helm/monocular/blob/master/docs/about.md" target="_blank">About</a></li>
     </ul>
   </nav>
