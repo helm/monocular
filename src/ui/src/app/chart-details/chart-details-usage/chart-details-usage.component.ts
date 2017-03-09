@@ -20,6 +20,7 @@ import { Router } from '@angular/router';
 export class ChartDetailsUsageComponent implements OnInit {
   @Input() chart: Chart
   @Input() currentVersion: string
+  installing: boolean
 
   constructor(
     mdIconRegistry: MdIconRegistry,
@@ -67,9 +68,12 @@ export class ChartDetailsUsageComponent implements OnInit {
   }
 
   performInstallation(chartID: string, version: string): void {
-    this.snackBar.open(`Installing ${chartID} please wait`, 'close', { duration: 5000 });
+    this.installing = true;
 
-    this.releasesService.installRelease(chartID, version).subscribe(
+    this.releasesService.installRelease(chartID, version)
+    .finally(() => {
+      this.installing = false
+    }).subscribe(
       release => {
         this.installOK(release)
       },
