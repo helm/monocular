@@ -28,8 +28,9 @@ export class ReleasesService {
    */
   getReleases(): Observable<Release[]> {
       return this.http.get(`${this.hostname}/v1/releases`)
-                    .map(this.extractData)
-                    .catch(this.handleError);
+                    .map((response) => {
+                      return this.extractData(response, [])
+                    }).catch(this.handleError);
   }
 
   installRelease(chartID: string, version: string): Observable<Release> {
@@ -45,9 +46,9 @@ export class ReleasesService {
                     .catch(this.handleError);
   }
 
-  private extractData(res: Response) {
+  private extractData(res: Response, fallback = {}) {
     let body = res.json();
-    return body.data || { };
+    return body.data || fallback;
   }
 
   private handleError (error: any) {

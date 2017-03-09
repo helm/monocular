@@ -2,7 +2,8 @@
 <section class="releases-index">
   <app-loader [loading]="loading">
     <app-panel title="Releases" class="app-panel--container">
-      <table>
+      <h1 *ngIf="!releases.length">There are no releases</h1>
+      <table *ngIf="releases.length">
         <thead>
           <tr>
             <th>Name</th>
