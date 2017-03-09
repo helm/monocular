@@ -1,0 +1,12 @@
+// Imports
+@import '~@angular/material/core/theming/theming';
+@import '../../theme.scss';
+table {
+  border: 2px solid $layout_light;
+  tr {
+    td {
+      padding: 10px;
+      border-bottom: 2px solid $layout_light;
+    }
+  }
+}
