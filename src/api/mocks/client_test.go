@@ -27,4 +27,9 @@ func TestMockedClient(t *testing.T) {
 	assert.NoErr(t, err)
 	_, err = clientBroken.DeleteRelease("foo")
 	assert.ExistsErr(t, err, "Cant list")
+
+	_, err = client.GetRelease("foo")
+	assert.NoErr(t, err)
+	_, err = clientBroken.GetRelease("foo")
+	assert.ExistsErr(t, err, "Cant list")
 }

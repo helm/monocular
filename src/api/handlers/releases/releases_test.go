@@ -157,6 +157,33 @@ func TestDeleteRelease400(t *testing.T) {
 	assert.Equal(t, w.Code, http.StatusBadRequest, "expect a 400 response code")
 }
 
+func TestGetRelease200(t *testing.T) {
+	w := httptest.NewRecorder()
+	params := releasesapi.GetReleaseParams{ReleaseName: "foo"}
+	resp := GetRelease(helmClient, params, true)
+	assert.NotNil(t, resp, "Get response")
+	resp.WriteResponse(w, runtime.JSONProducer())
+	assert.Equal(t, w.Code, http.StatusOK, "expect a 200 response code")
+}
+
+func TestGetRelease500(t *testing.T) {
+	w := httptest.NewRecorder()
+	params := releasesapi.GetReleaseParams{ReleaseName: "foo"}
+	resp := GetRelease(helmClientBroken, params, true)
+	assert.NotNil(t, resp, "Get response")
+	resp.WriteResponse(w, runtime.JSONProducer())
+	assert.Equal(t, w.Code, http.StatusInternalServerError, "expect a 500 response code")
+}
+
+func TestGetRelease403(t *testing.T) {
+	w := httptest.NewRecorder()
+	params := releasesapi.GetReleaseParams{ReleaseName: "foo"}
+	resp := GetRelease(helmClient, params, false)
+	assert.NotNil(t, resp, "Get response")
+	resp.WriteResponse(w, runtime.JSONProducer())
+	assert.Equal(t, w.Code, http.StatusForbidden, "expect a 403 response code")
+}
+
 func TestMakeReleaseResource(t *testing.T) {
 	res := makeReleaseResource(&mocks.Resource)
 	assert.NotNil(t, res, "Has content")
@@ -169,6 +196,23 @@ func TestMakeReleaseResource(t *testing.T) {
 	assert.NotNil(t, res.Attributes.(*models.Release).Updated, "Has updated at timestamp")
 
 	res = makeReleaseResource(nil)
+	assert.NotNil(t, res, "Has content")
+}
+
+func TestMakeReleaseExtendedResource(t *testing.T) {
+	res := makeReleaseExtendedResource(&mocks.Resource)
+	assert.NotNil(t, res, "Has content")
+	assert.Equal(t, *res.Type, "release", "type property")
+	assert.Equal(t, *res.ID, "my-release-name", "id property")
+	assert.Equal(t, *res.Attributes.(*models.ReleaseExtended).Namespace, "my-namespace", "namespace")
+	assert.Equal(t, *res.Attributes.(*models.ReleaseExtended).ChartVersion, "1.2.3", "version")
+	assert.Equal(t, *res.Attributes.(*models.ReleaseExtended).ChartName, "my-chart", "chart name")
+	assert.Equal(t, *res.Attributes.(*models.ReleaseExtended).Status, "200", "Status")
+	assert.NotNil(t, res.Attributes.(*models.ReleaseExtended).Updated, "Has updated at timestamp")
+	assert.Equal(t, *res.Attributes.(*models.ReleaseExtended).Notes, "my-notes", "Notes")
+	assert.Equal(t, *res.Attributes.(*models.ReleaseExtended).Resources, "my-resources", "Notes")
+
+	res = makeReleaseExtendedResource(nil)
 	assert.NotNil(t, res, "Has content")
 }
 

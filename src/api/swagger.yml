@@ -199,6 +199,25 @@ paths:
           schema:
             $ref: "#/definitions/error"
   /v1/releases/{releaseName}:
+    get:
+      operationId: getRelease
+      summary: get a release from your cluster
+      tags:
+        - releases
+      parameters:
+        - name: releaseName
+          in: path
+          type: string
+          required: true
+      responses:
+        200:
+          description: release information
+          schema:
+            $ref: "#/definitions/resourceData"
+        default:
+          description: unexpected error
+          schema:
+            $ref: "#/definitions/error"
     delete:
       operationId: deleteRelease
       summary: delete a release from your cluster
@@ -514,4 +533,34 @@ definitions:
       chartVersion:
         type: string
       namespace:
+        type: string
+  releaseExtended:
+    type: object
+    required:
+      - name
+      - status
+      - updated
+      - chartName
+      - chartVersion
+      - namespace
+      - resources
+      - notes
+    properties:
+      name:
+        type: string
+      status:
+        type: string
+      updated:
+        type: string
+      chartName:
+        type: string
+      chartVersion:
+        type: string
+      namespace:
+        type: string
+      name:
+        type: string
+      resources:
+        type: string
+      notes:
         type: string

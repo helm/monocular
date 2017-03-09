@@ -27,7 +27,9 @@ var Resource = helm_releases.Release{
 	Info: &helm_releases.Info{
 		LastDeployed: &timestamp.Timestamp{},
 		Status: &helm_releases.Status{
-			Code: 200,
+			Code:      200,
+			Resources: "my-resources",
+			Notes:     "my-notes",
 		},
 	},
 }
@@ -64,6 +66,14 @@ func (c *mockedClient) DeleteRelease(releaseName string) (*rls.UninstallReleaseR
 	return &rls.UninstallReleaseResponse{Release: &Resource}, nil
 }
 
+func (c *mockedClient) GetRelease(releaseName string) (*rls.GetReleaseContentResponse, error) {
+	return &rls.GetReleaseContentResponse{}, nil
+}
+
 func (c *mockedBrokenClient) DeleteRelease(releaseName string) (*rls.UninstallReleaseResponse, error) {
+	return nil, errors.New("Can't initialize")
+}
+
+func (c *mockedBrokenClient) GetRelease(releaseName string) (*rls.GetReleaseContentResponse, error) {
 	return nil, errors.New("Can't initialize")
 }

@@ -14,7 +14,8 @@ Monocular, by default, uses the Stable and Incubator official chart repositories
 
 Monocular adds support to interact with an existing Tiller server in order to:
 
-* List existing helm releases. GET `/v1/releases`
+* List existing Helm releases. GET `/v1/releases`
+* Get information about a Helm release. GET `/v1/releases/:releaseName`
 * Deploy a release. POST `/v1/releases`
 * Delete a release. DELETE `/v1/releases/:releaseName`
 

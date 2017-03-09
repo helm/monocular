@@ -64,6 +64,8 @@ type MonocularAPI struct {
 	ChartsGetChartVersionsHandler charts.GetChartVersionsHandler
 	// ChartsGetChartsInRepoHandler sets the operation handler for the get charts in repo operation
 	ChartsGetChartsInRepoHandler charts.GetChartsInRepoHandler
+	// ReleasesGetReleaseHandler sets the operation handler for the get release operation
+	ReleasesGetReleaseHandler releases.GetReleaseHandler
 	// HealthzHandler sets the operation handler for the healthz operation
 	HealthzHandler HealthzHandler
 	// ChartsSearchChartsHandler sets the operation handler for the search charts operation
@@ -165,6 +167,10 @@ func (o *MonocularAPI) Validate() error {
 
 	if o.ChartsGetChartsInRepoHandler == nil {
 		unregistered = append(unregistered, "charts.GetChartsInRepoHandler")
+	}
+
+	if o.ReleasesGetReleaseHandler == nil {
+		unregistered = append(unregistered, "releases.GetReleaseHandler")
 	}
 
 	if o.HealthzHandler == nil {
@@ -292,6 +298,11 @@ func (o *MonocularAPI) initHandlerCache() {
 		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/v1/charts/{repo}"] = charts.NewGetChartsInRepo(o.context, o.ChartsGetChartsInRepoHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v1/releases/{releaseName}"] = releases.NewGetRelease(o.context, o.ReleasesGetReleaseHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)

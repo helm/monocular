@@ -29,6 +29,24 @@ func ListReleases(client *helm.Client, params releasesapi.GetAllReleasesParams) 
 	return resp, err
 }
 
+// GetRelease gets the information of an existing release
+func GetRelease(client *helm.Client, releaseName string) (*rls.GetReleaseContentResponse, error) {
+	// TODO, find a way to retrieve all the information in a single call
+	// We get the information about the release
+	release, err := client.ReleaseContent(releaseName)
+	if err != nil {
+		return nil, err
+	}
+
+	// Now we populate the resources string
+	status, err := client.ReleaseStatus(releaseName)
+	if err != nil {
+		return nil, err
+	}
+	release.Release.Info = status.Info
+	return release, err
+}
+
 // InstallRelease wraps helms client installReleae method
 func InstallRelease(client *helm.Client, chartPath string, params releasesapi.CreateReleaseParams) (*rls.InstallReleaseResponse, error) {
 	ns := params.Data.Namespace

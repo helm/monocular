@@ -34,6 +34,22 @@ func GetReleases(helmclient data.Client, params releasesapi.GetAllReleasesParams
 	return releasesapi.NewGetAllReleasesOK().WithPayload(payload)
 }
 
+// GetRelease returns the extended version of a release
+func GetRelease(helmclient data.Client, params releasesapi.GetReleaseParams, releasesEnabled bool) middleware.Responder {
+	if !releasesEnabled {
+		return errorResponse("Feature not enabled", http.StatusForbidden)
+	}
+
+	release, err := helmclient.GetRelease(params.ReleaseName)
+	if err != nil {
+		return errorResponse(err.Error(), http.StatusInternalServerError)
+	}
+
+	resource := makeReleaseExtendedResource(release.Release)
+	payload := handlers.DataResourceBody(resource)
+	return releasesapi.NewGetReleaseOK().WithPayload(payload)
+}
+
 // CreateRelease installs a chart version
 func CreateRelease(helmclient data.Client, params releasesapi.CreateReleaseParams, c data.Charts, releasesEnabled bool) middleware.Responder {
 	if !releasesEnabled {
@@ -113,6 +129,26 @@ func makeReleaseResource(release *hapi_release5.Release) *models.Resource {
 		Name:         &release.Name,
 		Namespace:    &release.Namespace,
 		Status:       helpers.StrToPtr(release.Info.Status.Code.String()),
+	}
+	return &ret
+}
+
+func makeReleaseExtendedResource(release *hapi_release5.Release) *models.Resource {
+	var ret models.Resource
+	if release == nil {
+		return &ret
+	}
+	ret.Type = helpers.StrToPtr("release")
+	ret.ID = helpers.StrToPtr(release.Name)
+	ret.Attributes = &models.ReleaseExtended{
+		ChartName:    &release.Chart.Metadata.Name,
+		ChartVersion: &release.Chart.Metadata.Version,
+		Updated:      helpers.StrToPtr(timeconv.String(release.Info.LastDeployed)),
+		Name:         &release.Name,
+		Namespace:    &release.Namespace,
+		Status:       helpers.StrToPtr(release.Info.Status.Code.String()),
+		Resources:    helpers.StrToPtr(release.Info.Status.Resources),
+		Notes:        helpers.StrToPtr(release.Info.Status.Notes),
 	}
 	return &ret
 }

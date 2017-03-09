@@ -107,6 +107,14 @@ func (c *helmClient) DeleteRelease(releaseName string) (*rls.UninstallReleaseRes
 	return helmreleases.DeleteRelease(client, releaseName)
 }
 
+func (c *helmClient) GetRelease(releaseName string) (*rls.GetReleaseContentResponse, error) {
+	client, err := c.initialize()
+	if err != nil {
+		return nil, err
+	}
+	return helmreleases.GetRelease(client, releaseName)
+}
+
 // getKubeClient is a convenience method for creating kubernetes config and client
 // for a given kubeconfig context
 // TODO, this is not needed once we are in the same cluster.
