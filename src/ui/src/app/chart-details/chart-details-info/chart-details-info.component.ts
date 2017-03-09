@@ -2,7 +2,6 @@ import { Component, OnInit, Input } from '@angular/core';
 import { ChartsService } from '../../shared/services/charts.service';
 import { Chart } from '../../shared/models/chart';
 import { ChartVersion } from '../../shared/models/chart-version';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-chart-details-info',
@@ -15,7 +14,6 @@ export class ChartDetailsInfoComponent implements OnInit {
   versions: ChartVersion[]
   constructor(
     private chartsService: ChartsService,
-    private router: Router
   ) { }
 
   ngOnInit() {

@@ -165,6 +165,7 @@ func setupCorsMiddleware(handler http.Handler) http.Handler {
 		// on pre-flight requests
 		AllowedHeaders:   config.Cors.AllowedHeaders,
 		AllowCredentials: true,
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE"},
 	})
 
 	// Insert the middleware

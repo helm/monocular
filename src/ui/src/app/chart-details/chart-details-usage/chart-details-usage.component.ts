@@ -3,6 +3,9 @@ import { Chart } from '../../shared/models/chart';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MdIconRegistry } from '@angular/material';
 import { MdSnackBar } from '@angular/material';
+import { ConfigService } from '../../shared/services/config.service';
+import { ReleasesService } from '../../shared/services/releases.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-chart-details-usage',
@@ -18,6 +21,9 @@ export class ChartDetailsUsageComponent implements OnInit {
   constructor(
     mdIconRegistry: MdIconRegistry,
     sanitizer: DomSanitizer,
+    private config: ConfigService,
+    private releasesService: ReleasesService,
+    private router: Router,
     public snackBar: MdSnackBar
   ) {
     mdIconRegistry
@@ -44,5 +50,19 @@ export class ChartDetailsUsageComponent implements OnInit {
 
   get installInstructions(): string {
     return `helm install ${this.chart.id} --version ${this.currentVersion}`;
+  }
+
+  installRelease(chartID: string, version: string): void {
+    this.snackBar.open(`Installing ${chartID} please wait`, 'close', { duration: 5000 });
+
+    this.releasesService.installRelease(chartID, version).subscribe(release => {
+      let message = this.snackBar.open('Installation completed', 'view more', {
+      });
+
+      message.onAction().subscribe(() => {
+        this.router.navigate(['/releases']);
+      });
+    });
+
   }
 }

@@ -1,24 +1,33 @@
 <app-panel class="chart-details-usage" [border]=true>
-  <div *ngIf=showRepoInstructions class="chart-details-usage__repository">
-    <h2 class="chart-details-usage__label">Add {{ chart.attributes.repo.name }} repository</h2>
-    <md-input floatingPlaceholder=false [value]=repoAddInstructions></md-input>
-    <button md-button ngxClipboard [cbContent]="repoAddInstructions" (cbOnSuccess)="showSnackBar()"
-      angulartics2On="click" angularticsEvent="RepositoryCopy" angularticsCategory="{{ chart.id }}"
-      [angularticsProperties]="{ label: currentVersion }">
-      <md-icon svgIcon="content-copy"></md-icon>
-    </button>
-  </div>
-  <div>
-    <h2 class="chart-details-usage__label">Install chart</h2>
-    <md-input readonly=true floatingPlaceholder=false [value]=installInstructions></md-input>
-    <button md-button ngxClipboard [cbContent]="installInstructions" (cbOnSuccess)="showSnackBar()"
-      angulartics2On="click" angularticsEvent="ChartInstallationCopy"
-      angularticsCategory="{{ chart.id }}" [angularticsProperties]="{ label: currentVersion }">
-      <md-icon svgIcon="content-copy"></md-icon>
-    </button>
-  </div>
-  <p class="help-link">
-    <a href="https://github.com/kubernetes/helm/blob/master/docs/quickstart.md"
-     target="_blank" title="How to install Helm">Need Helm?</a>
-  </p>
+  <md-tab-group>
+      <md-tab *ngIf="config.releasesEnabled" label="One Click installation">
+        <button color="primary" md-raised-button (click)="installRelease(chart.id, currentVersion)">
+          Install {{ chart.attributes.name }} v{{ currentVersion }}
+        </button>
+      </md-tab>
+      <md-tab label="Helm CLI">
+        <div *ngIf=showRepoInstructions class="chart-details-usage__repository">
+          <h2 class="chart-details-usage__label">Add {{ chart.attributes.repo.name }} repository</h2>
+          <md-input floatingPlaceholder=false [value]=repoAddInstructions></md-input>
+          <button md-button ngxClipboard [cbContent]="repoAddInstructions" (cbOnSuccess)="showSnackBar()"
+            angulartics2On="click" angularticsEvent="RepositoryCopy" angularticsCategory="{{ chart.id }}"
+            [angularticsProperties]="{ label: currentVersion }">
+            <md-icon svgIcon="content-copy"></md-icon>
+          </button>
+        </div>
+        <div>
+          <h2 class="chart-details-usage__label">Install chart</h2>
+          <md-input readonly=true floatingPlaceholder=false [value]=installInstructions></md-input>
+          <button md-button ngxClipboard [cbContent]="installInstructions" (cbOnSuccess)="showSnackBar()"
+            angulartics2On="click" angularticsEvent="ChartInstallationCopy"
+            angularticsCategory="{{ chart.id }}" [angularticsProperties]="{ label: currentVersion }">
+            <md-icon svgIcon="content-copy"></md-icon>
+          </button>
+        </div>
+        <p class="help-link">
+          <a href="https://github.com/kubernetes/helm/blob/master/docs/quickstart.md"
+           target="_blank" title="How to install Helm">Need Helm?</a>
+        </p>
+      </md-tab>
+    </md-tab-group>
 </app-panel>
