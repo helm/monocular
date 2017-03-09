@@ -19,6 +19,7 @@ import { ReleasesService } from './shared/services/releases.service';
 import { ReposService } from './shared/services/repos.service';
 import { ConfigService } from './shared/services/config.service';
 import { MenuService } from './shared/services/menu.service';
+import { DialogsService } from './shared/services/dialogs.service';
 
 /* Components */
 import { AppComponent } from './app.component';
@@ -41,6 +42,8 @@ import { ChartsComponent } from './charts/charts.component';
 import { ReleasesComponent } from './releases/releases.component';
 import { ChartsFiltersComponent } from './charts-filters/charts-filters.component';
 import { LoaderComponent } from './loader/loader.component';
+import { ConfirmDialog }   from './confirm-dialog/confirm-dialog.component';
+
 
 require('hammerjs');
 
@@ -74,7 +77,8 @@ const metaConfig: MetaConfig = {
     ChartsComponent,
     ChartsFiltersComponent,
     LoaderComponent,
-    ReleasesComponent
+    ReleasesComponent,
+    ConfirmDialog
   ],
   imports: [
     MaterialModule.forRoot(),
@@ -92,7 +96,11 @@ const metaConfig: MetaConfig = {
     ReleasesService,
     ReposService,
     ConfigService,
-    MenuService
+    MenuService,
+    DialogsService
+  ],
+  entryComponents: [
+    ConfirmDialog,
   ],
   bootstrap: [AppComponent]
 })

@@ -1,9 +1,12 @@
 import { Component, OnInit, Input, ViewEncapsulation, ChangeDetectionStrategy } from '@angular/core';
 import { Chart } from '../../shared/models/chart';
+import { Release } from '../../shared/models/release';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MdIconRegistry } from '@angular/material';
 import { MdSnackBar } from '@angular/material';
 import { ConfigService } from '../../shared/services/config.service';
+import { DialogsService } from '../../shared/services/dialogs.service';
+
 import { ReleasesService } from '../../shared/services/releases.service';
 import { Router } from '@angular/router';
 
@@ -24,6 +27,7 @@ export class ChartDetailsUsageComponent implements OnInit {
     private config: ConfigService,
     private releasesService: ReleasesService,
     private router: Router,
+    private dialogsService: DialogsService,
     public snackBar: MdSnackBar
   ) {
     mdIconRegistry
@@ -53,16 +57,35 @@ export class ChartDetailsUsageComponent implements OnInit {
   }
 
   installRelease(chartID: string, version: string): void {
+    this.dialogsService
+      .confirm(`You will deploy ${chartID} v${version}`, '')
+      .subscribe(res => {
+        if (res)
+          this.performInstallation(chartID, version);
+      });
+
+  }
+
+  performInstallation(chartID: string, version: string): void {
     this.snackBar.open(`Installing ${chartID} please wait`, 'close', { duration: 5000 });
 
-    this.releasesService.installRelease(chartID, version).subscribe(release => {
+    this.releasesService.installRelease(chartID, version).subscribe(
+      release => {
+        this.installOK(release)
+      },
+      error => {
+        this.snackBar.open(`Error installing the application, please try later"`, 'close', { duration: 5000 });
+      }
+    );
+  }
+
+  installOK(release: Release) :void {
       let message = this.snackBar.open('Installation completed', 'view more', {
       });
 
       message.onAction().subscribe(() => {
         this.router.navigate(['/releases']);
       });
-    });
 
   }
 }
