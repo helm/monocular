@@ -5,6 +5,8 @@ import { MdIconRegistry } from '@angular/material';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MdSnackBar } from '@angular/material';
 import { DialogsService } from '../shared/services/dialogs.service';
+import { Router } from '@angular/router';
+import { ConfigService } from '../shared/services/config.service';
 
 @Component({
   selector: 'app-releases',
@@ -20,7 +22,9 @@ export class ReleasesComponent implements OnInit {
     private mdIconRegistry: MdIconRegistry,
     private sanitizer: DomSanitizer,
     private dialogsService: DialogsService,
-    public snackBar: MdSnackBar
+    public snackBar: MdSnackBar,
+    private router: Router,
+    private config: ConfigService
   ){
     mdIconRegistry
       .addSvgIcon('delete',
@@ -28,14 +32,20 @@ export class ReleasesComponent implements OnInit {
   }
 
   ngOnInit() {
+    // Do not show the page if the feature is not enabled
+    if(!this.config.releasesEnabled) {
+      return this.router.navigate(['/404']);
+    }
     this.loadReleases();
   }
 
   loadReleases(): void {
-    this.releasesService.getReleases().subscribe(releases => {
-      this.releases = releases;
+    this.releasesService.getReleases()
+    .finally(()=> {
       this.loading = false;
-    });
+    }).subscribe(releases => {
+      this.releases = releases;
+    })
   }
 
   deleteRelease(releaseName: string): void {
