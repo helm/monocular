@@ -1,33 +1,32 @@
 <app-header-bar></app-header-bar>
-<section class="releases-index">
-  <app-loader [loading]="loading">
-    <app-panel title="Releases" class="app-panel--container">
+<app-loader [loading]="loading">
+  <app-panel title="Releases" class="app-panel--container">
+    <section class="releases-list">
       <h1 *ngIf="!releases.length">There are no releases</h1>
-      <table *ngIf="releases.length">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Status</th>
-            <th>Chart name</th>
-            <th>Chart version</th>
-            <th>Namespace</th>
-            <th>Updated</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let release of releases">
-            <td>{{release.id}}</td>
-            <td>{{release.attributes.status}}</td>
-            <td>{{release.attributes.chartName}}</td>
-            <td>{{release.attributes.chartVersion}}</td>
-            <td>{{release.attributes.namespace}}</td>
-            <td>{{release.attributes.updated | date}}</td>
-            <td>{{release.attributes.updated | date}}</td>
-            <th><a><md-icon svgIcon="delete" (click)="deleteRelease(release.id)"></md-icon></a></th>
-          </tr>
-        </tbody>
-      </table>
-    </app-panel>
-  </app-loader>
-</section>
+          <md-card class="release" *ngFor="let release of releases">
+            <md-card-header>
+              <md-card-title>
+                {{ release.id }}
+                ({{ release.attributes.chartName }} v.{{ release.attributes.chartVersion }})
+              </md-card-title>
+              <md-card-subtitle>
+                  {{ release.attributes.status }} on namespace
+                  "{{ release.attributes.namespace }}"
+                  on {{ release.attributes.updated | date }}
+              </md-card-subtitle>
+            </md-card-header>
+            <md-card-content *ngIf="showornot">
+              <p>
+                TODO
+              </p>
+            </md-card-content>
+            <md-card-actions>
+              <button md-button (click)="deleteRelease(release.id)" color="primary">
+                <md-icon svgIcon="delete"></md-icon>
+                Delete release
+              </button>
+            </md-card-actions>
+        </md-card>
+    </section>
+  </app-panel>
+</app-loader>
