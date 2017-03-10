@@ -10,7 +10,7 @@ import { DialogsService } from '../shared/services/dialogs.service';
   selector: 'app-release-item',
   templateUrl: './release-item.component.html',
   styleUrls: ['./release-item.component.scss'],
-  inputs: ['release', 'extended']
+  inputs: ['release']
 })
 export class ReleaseItemComponent {
   @Output() onDelete = new EventEmitter();

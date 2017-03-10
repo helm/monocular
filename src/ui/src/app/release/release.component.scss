@@ -1,0 +1,38 @@
+// Import your custom theme
+@import '../../theme.scss';
+
+.release-details {
+  width: 100%;
+  margin: 3em 0;
+  padding: 0 2em;
+
+  @include mappy-bp(medium) {
+    display: flex;
+
+    &__info,
+    &__main {
+      padding: 0 1em;
+    }
+
+    &__info {
+      width: 35%;
+      dt {
+        margin: 10px 0;
+        font-weight: bold;
+      }
+    }
+
+    &__main {
+      min-width: 0;
+      flex: 3;
+      app-panel {
+        margin-bottom: 10px;
+        display: block;
+        pre {
+          white-space: pre-wrap;       /* css-3 */
+          white-space: -o-pre-wrap;    /* Opera 7 */
+        }
+      }
+    }
+  }
+}
