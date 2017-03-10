@@ -5,7 +5,7 @@ import (
 
 	"github.com/arschles/assert"
 	"github.com/helm/monocular/src/api/data/helpers"
-	"github.com/helm/monocular/src/api/swagger/restapi/operations"
+	"github.com/helm/monocular/src/api/swagger/restapi/operations/charts"
 	"github.com/helm/monocular/src/api/testutil"
 )
 
@@ -57,7 +57,7 @@ func TestMockChartsAll(t *testing.T) {
 }
 
 func TestMockChartsSearch(t *testing.T) {
-	params := operations.SearchChartsParams{
+	params := charts.SearchChartsParams{
 		Name: "drupal",
 	}
 	charts, err := chartsImplementation.Search(params)

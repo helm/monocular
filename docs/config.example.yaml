@@ -12,3 +12,9 @@ repos:
   #- name: my-repo-name
   #  url: my-repository-url
   #  source: my-repository-source
+
+# Enables Helm deployment integration
+releasesEnabled: true
+# Enables port forwarding for tiller Connections
+# Useful if you are running the app outside of the k8s cluster during development
+tillerPortForward: false

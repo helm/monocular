@@ -32,6 +32,8 @@ api:
       #- name: my-repo-name
       #  url: my-repository-url
       #  source: my-repository-source
+    # Enable Helm deployment integration
+    releasesEnabled: false
 
 ui:
   replicaCount: 2

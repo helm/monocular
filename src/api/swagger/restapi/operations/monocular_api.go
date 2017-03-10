@@ -14,6 +14,10 @@ import (
 	spec "github.com/go-openapi/spec"
 	strfmt "github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+
+	"github.com/helm/monocular/src/api/swagger/restapi/operations/charts"
+	"github.com/helm/monocular/src/api/swagger/restapi/operations/releases"
+	"github.com/helm/monocular/src/api/swagger/restapi/operations/repositories"
 )
 
 // NewMonocularAPI creates a new Monocular instance
@@ -42,22 +46,30 @@ type MonocularAPI struct {
 	// JSONProducer registers a producer for a "application/json" mime type
 	JSONProducer runtime.Producer
 
-	// GetAllChartsHandler sets the operation handler for the get all charts operation
-	GetAllChartsHandler GetAllChartsHandler
-	// GetAllReposHandler sets the operation handler for the get all repos operation
-	GetAllReposHandler GetAllReposHandler
-	// GetChartHandler sets the operation handler for the get chart operation
-	GetChartHandler GetChartHandler
-	// GetChartVersionHandler sets the operation handler for the get chart version operation
-	GetChartVersionHandler GetChartVersionHandler
-	// GetChartVersionsHandler sets the operation handler for the get chart versions operation
-	GetChartVersionsHandler GetChartVersionsHandler
-	// GetChartsInRepoHandler sets the operation handler for the get charts in repo operation
-	GetChartsInRepoHandler GetChartsInRepoHandler
+	// ReleasesCreateReleaseHandler sets the operation handler for the create release operation
+	ReleasesCreateReleaseHandler releases.CreateReleaseHandler
+	// ReleasesDeleteReleaseHandler sets the operation handler for the delete release operation
+	ReleasesDeleteReleaseHandler releases.DeleteReleaseHandler
+	// ChartsGetAllChartsHandler sets the operation handler for the get all charts operation
+	ChartsGetAllChartsHandler charts.GetAllChartsHandler
+	// ReleasesGetAllReleasesHandler sets the operation handler for the get all releases operation
+	ReleasesGetAllReleasesHandler releases.GetAllReleasesHandler
+	// RepositoriesGetAllReposHandler sets the operation handler for the get all repos operation
+	RepositoriesGetAllReposHandler repositories.GetAllReposHandler
+	// ChartsGetChartHandler sets the operation handler for the get chart operation
+	ChartsGetChartHandler charts.GetChartHandler
+	// ChartsGetChartVersionHandler sets the operation handler for the get chart version operation
+	ChartsGetChartVersionHandler charts.GetChartVersionHandler
+	// ChartsGetChartVersionsHandler sets the operation handler for the get chart versions operation
+	ChartsGetChartVersionsHandler charts.GetChartVersionsHandler
+	// ChartsGetChartsInRepoHandler sets the operation handler for the get charts in repo operation
+	ChartsGetChartsInRepoHandler charts.GetChartsInRepoHandler
+	// ReleasesGetReleaseHandler sets the operation handler for the get release operation
+	ReleasesGetReleaseHandler releases.GetReleaseHandler
 	// HealthzHandler sets the operation handler for the healthz operation
 	HealthzHandler HealthzHandler
-	// SearchChartsHandler sets the operation handler for the search charts operation
-	SearchChartsHandler SearchChartsHandler
+	// ChartsSearchChartsHandler sets the operation handler for the search charts operation
+	ChartsSearchChartsHandler charts.SearchChartsHandler
 
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
@@ -121,36 +133,52 @@ func (o *MonocularAPI) Validate() error {
 		unregistered = append(unregistered, "JSONProducer")
 	}
 
-	if o.GetAllChartsHandler == nil {
-		unregistered = append(unregistered, "GetAllChartsHandler")
+	if o.ReleasesCreateReleaseHandler == nil {
+		unregistered = append(unregistered, "releases.CreateReleaseHandler")
 	}
 
-	if o.GetAllReposHandler == nil {
-		unregistered = append(unregistered, "GetAllReposHandler")
+	if o.ReleasesDeleteReleaseHandler == nil {
+		unregistered = append(unregistered, "releases.DeleteReleaseHandler")
 	}
 
-	if o.GetChartHandler == nil {
-		unregistered = append(unregistered, "GetChartHandler")
+	if o.ChartsGetAllChartsHandler == nil {
+		unregistered = append(unregistered, "charts.GetAllChartsHandler")
 	}
 
-	if o.GetChartVersionHandler == nil {
-		unregistered = append(unregistered, "GetChartVersionHandler")
+	if o.ReleasesGetAllReleasesHandler == nil {
+		unregistered = append(unregistered, "releases.GetAllReleasesHandler")
 	}
 
-	if o.GetChartVersionsHandler == nil {
-		unregistered = append(unregistered, "GetChartVersionsHandler")
+	if o.RepositoriesGetAllReposHandler == nil {
+		unregistered = append(unregistered, "repositories.GetAllReposHandler")
 	}
 
-	if o.GetChartsInRepoHandler == nil {
-		unregistered = append(unregistered, "GetChartsInRepoHandler")
+	if o.ChartsGetChartHandler == nil {
+		unregistered = append(unregistered, "charts.GetChartHandler")
+	}
+
+	if o.ChartsGetChartVersionHandler == nil {
+		unregistered = append(unregistered, "charts.GetChartVersionHandler")
+	}
+
+	if o.ChartsGetChartVersionsHandler == nil {
+		unregistered = append(unregistered, "charts.GetChartVersionsHandler")
+	}
+
+	if o.ChartsGetChartsInRepoHandler == nil {
+		unregistered = append(unregistered, "charts.GetChartsInRepoHandler")
+	}
+
+	if o.ReleasesGetReleaseHandler == nil {
+		unregistered = append(unregistered, "releases.GetReleaseHandler")
 	}
 
 	if o.HealthzHandler == nil {
 		unregistered = append(unregistered, "HealthzHandler")
 	}
 
-	if o.SearchChartsHandler == nil {
-		unregistered = append(unregistered, "SearchChartsHandler")
+	if o.ChartsSearchChartsHandler == nil {
+		unregistered = append(unregistered, "charts.SearchChartsHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -226,35 +254,55 @@ func (o *MonocularAPI) initHandlerCache() {
 		o.handlers = make(map[string]map[string]http.Handler)
 	}
 
-	if o.handlers["GET"] == nil {
-		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)
+	if o.handlers["POST"] == nil {
+		o.handlers[strings.ToUpper("POST")] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/v1/charts"] = NewGetAllCharts(o.context, o.GetAllChartsHandler)
+	o.handlers["POST"]["/v1/releases"] = releases.NewCreateRelease(o.context, o.ReleasesCreateReleaseHandler)
+
+	if o.handlers["DELETE"] == nil {
+		o.handlers[strings.ToUpper("DELETE")] = make(map[string]http.Handler)
+	}
+	o.handlers["DELETE"]["/v1/releases/{releaseName}"] = releases.NewDeleteRelease(o.context, o.ReleasesDeleteReleaseHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/v1/repos"] = NewGetAllRepos(o.context, o.GetAllReposHandler)
+	o.handlers["GET"]["/v1/charts"] = charts.NewGetAllCharts(o.context, o.ChartsGetAllChartsHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/v1/charts/{repo}/{chartName}"] = NewGetChart(o.context, o.GetChartHandler)
+	o.handlers["GET"]["/v1/releases"] = releases.NewGetAllReleases(o.context, o.ReleasesGetAllReleasesHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/v1/charts/{repo}/{chartName}/versions/{version}"] = NewGetChartVersion(o.context, o.GetChartVersionHandler)
+	o.handlers["GET"]["/v1/repos"] = repositories.NewGetAllRepos(o.context, o.RepositoriesGetAllReposHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/v1/charts/{repo}/{chartName}/versions"] = NewGetChartVersions(o.context, o.GetChartVersionsHandler)
+	o.handlers["GET"]["/v1/charts/{repo}/{chartName}"] = charts.NewGetChart(o.context, o.ChartsGetChartHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/v1/charts/{repo}"] = NewGetChartsInRepo(o.context, o.GetChartsInRepoHandler)
+	o.handlers["GET"]["/v1/charts/{repo}/{chartName}/versions/{version}"] = charts.NewGetChartVersion(o.context, o.ChartsGetChartVersionHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v1/charts/{repo}/{chartName}/versions"] = charts.NewGetChartVersions(o.context, o.ChartsGetChartVersionsHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v1/charts/{repo}"] = charts.NewGetChartsInRepo(o.context, o.ChartsGetChartsInRepoHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v1/releases/{releaseName}"] = releases.NewGetRelease(o.context, o.ReleasesGetReleaseHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)
@@ -264,7 +312,7 @@ func (o *MonocularAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/v1/charts/search"] = NewSearchCharts(o.context, o.SearchChartsHandler)
+	o.handlers["GET"]["/v1/charts/search"] = charts.NewSearchCharts(o.context, o.ChartsSearchChartsHandler)
 
 }
 

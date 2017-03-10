@@ -85,9 +85,9 @@ func TestDownloadTarballErrorDownloading(t *testing.T) {
 	chart, err := getTestChart()
 	assert.NoErr(t, err)
 	randomPath, _ := ioutil.TempDir(os.TempDir(), "test")
-	tarballPathOrig := tarballPath
-	defer func() { tarballPath = tarballPathOrig }()
-	tarballPath = func(chart *models.ChartPackage) string {
+	TarballPathOrig := TarballPath
+	defer func() { TarballPath = TarballPathOrig }()
+	TarballPath = func(chart *models.ChartPackage) string {
 		return filepath.Join(randomPath, "myFile.tar.gz")
 	}
 	// Invald protocol
@@ -106,10 +106,10 @@ func TestExtractFilesFromTarballOk(t *testing.T) {
 	ensureChartDataDir(chart)
 	assert.NoErr(t, err)
 	// Stubs
-	tarballPathOrig := tarballPath
-	defer func() { tarballPath = tarballPathOrig }()
-	tarballPath = func(chart *models.ChartPackage) string {
-		path := MockedtarballPath()
+	TarballPathOrig := TarballPath
+	defer func() { TarballPath = TarballPathOrig }()
+	TarballPath = func(chart *models.ChartPackage) string {
+		path := MockedTarballPath()
 		return path
 	}
 	err = extractFilesFromTarball(chart)
@@ -128,9 +128,9 @@ func TestExtractFilesFromTarballNotFound(t *testing.T) {
 	chart, err := getTestChart()
 	assert.NoErr(t, err)
 	// Stubs
-	tarballPathOrig := tarballPath
-	defer func() { tarballPath = tarballPathOrig }()
-	tarballPath = func(chart *models.ChartPackage) string {
+	TarballPathOrig := TarballPath
+	defer func() { TarballPath = TarballPathOrig }()
+	TarballPath = func(chart *models.ChartPackage) string {
 		return "/does-not-exist.tar.gz"
 	}
 	err = extractFilesFromTarball(chart)
@@ -141,11 +141,11 @@ func TestExtractFilesFromTarballCantCopy(t *testing.T) {
 	chart, err := getTestChart()
 	assert.NoErr(t, err)
 	// Stubs
-	tarballPathOrig := tarballPath
+	TarballPathOrig := TarballPath
 	copyFileOrig := copyFile
-	defer func() { tarballPath = tarballPathOrig; copyFile = copyFileOrig }()
-	tarballPath = func(chart *models.ChartPackage) string {
-		path := MockedtarballPath()
+	defer func() { TarballPath = TarballPathOrig; copyFile = copyFileOrig }()
+	TarballPath = func(chart *models.ChartPackage) string {
+		path := MockedTarballPath()
 		return path
 	}
 
@@ -159,10 +159,10 @@ func TestReadFromCacheOk(t *testing.T) {
 	chart, err := getTestChart()
 	assert.NoErr(t, err)
 	// Stubs
-	tarballPathOrig := tarballPath
-	defer func() { tarballPath = tarballPathOrig }()
-	tarballPath = func(chart *models.ChartPackage) string {
-		path := MockedtarballPath()
+	TarballPathOrig := TarballPath
+	defer func() { TarballPath = TarballPathOrig }()
+	TarballPath = func(chart *models.ChartPackage) string {
+		path := MockedTarballPath()
 		return path
 	}
 	ensureChartDataDir(chart)
@@ -242,7 +242,7 @@ func TestCopyFile(t *testing.T) {
 }
 
 func TestUntar(t *testing.T) {
-	src := MockedtarballPath()
+	src := MockedTarballPath()
 	dest, _ := ioutil.TempDir(os.TempDir(), "")
 	err := untar(src, dest)
 	assert.NoErr(t, err)
@@ -278,6 +278,6 @@ func getTestChart() (*models.ChartPackage, error) {
 }
 
 // Returns the test tarball path
-func MockedtarballPath() string {
+func MockedTarballPath() string {
 	return filepath.Join("testdata", "drupal-0.3.0.tgz")
 }

@@ -8,7 +8,7 @@ import (
 	"github.com/helm/monocular/src/api/data"
 	"github.com/helm/monocular/src/api/data/helpers"
 	"github.com/helm/monocular/src/api/swagger/models"
-	"github.com/helm/monocular/src/api/swagger/restapi/operations"
+	chartsapi "github.com/helm/monocular/src/api/swagger/restapi/operations/charts"
 )
 
 // mockCharts fulfills the data.Charts interface
@@ -117,12 +117,9 @@ func (c *mockCharts) All() ([]*models.ChartPackage, error) {
 	return allCharts, nil
 }
 
-func (c *mockCharts) Search(params operations.SearchChartsParams) ([]*models.ChartPackage, error) {
+func (c *mockCharts) Search(params chartsapi.SearchChartsParams) ([]*models.ChartPackage, error) {
 	var ret []*models.ChartPackage
-	charts, err := c.All()
-	if err != nil {
-		return nil, err
-	}
+	charts, _ := c.All()
 	for _, chart := range charts {
 		if strings.Contains(*chart.Name, params.Name) {
 			ret = append(ret, chart)
@@ -137,10 +134,7 @@ func (c *mockCharts) Refresh() error {
 
 // getMockRepo is a convenience that loads a yaml repo from the filesystem
 func getMockRepo(repo string) ([]byte, error) {
-	path, err := getTestDataWd()
-	if err != nil {
-		return nil, err
-	}
+	path, _ := getTestDataWd()
 	path += fmt.Sprintf("repo-%s.yaml", repo)
 	y, err := getYAML(path)
 	if err != nil {

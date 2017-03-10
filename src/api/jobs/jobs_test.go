@@ -1,6 +1,7 @@
 package jobs
 
 import (
+	"errors"
 	"testing"
 	"time"
 
@@ -39,5 +40,16 @@ func TestDoPeriodic(t *testing.T) {
 	assert.True(t, p.i == 2, "the periodic wasn't called twice")
 	time.Sleep(interval)
 	assert.True(t, p.i == 3, "the periodic wasn't called thrice")
+	canceller()
+}
+
+func TestDoPeriodicWithError(t *testing.T) {
+	interval := time.Duration(3000) * time.Millisecond
+	p := &testPeriodic{t: t, err: errors.New("Do() crashes"), freq: interval, name: "test-periodic-job"}
+	canceller := DoPeriodic([]Periodic{p})
+	time.Sleep(interval / 2) // wait a little while for the goroutine to call the job once
+	assert.True(t, p.i == 1, "the periodic wasn't called once")
+	time.Sleep(interval)
+	assert.True(t, p.i == 2, "the periodic wasn't called twice")
 	canceller()
 }

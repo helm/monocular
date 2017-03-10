@@ -4,3 +4,4 @@ repos:
     source: http://github.com/my-repo
   - name: repoName2
     url: http://myrepobucket2
+releasesEnabled: true

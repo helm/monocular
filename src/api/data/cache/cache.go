@@ -16,7 +16,7 @@ import (
 	"github.com/helm/monocular/src/api/data/cache/charthelper"
 	"github.com/helm/monocular/src/api/data/helpers"
 	"github.com/helm/monocular/src/api/swagger/models"
-	"github.com/helm/monocular/src/api/swagger/restapi/operations"
+	"github.com/helm/monocular/src/api/swagger/restapi/operations/charts"
 )
 
 type cachedCharts struct {
@@ -108,7 +108,7 @@ func (c *cachedCharts) All() ([]*models.ChartPackage, error) {
 	return allCharts, nil
 }
 
-func (c *cachedCharts) Search(params operations.SearchChartsParams) ([]*models.ChartPackage, error) {
+func (c *cachedCharts) Search(params charts.SearchChartsParams) ([]*models.ChartPackage, error) {
 	c.rwm.RLock()
 	defer c.rwm.RUnlock()
 	var ret []*models.ChartPackage
