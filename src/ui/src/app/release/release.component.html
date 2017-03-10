@@ -1,0 +1,10 @@
+<app-header-bar></app-header-bar>
+<app-loader [loading]="loading">
+  <app-panel title="Release information" class="app-panel--container">
+    <section class="release-info">
+      <app-release-item [extended]="true" [release]=release
+        (onDelete)="releaseDeleted($event)">
+      </app-release-item>
+    </section>
+  </app-panel>
+</app-loader>

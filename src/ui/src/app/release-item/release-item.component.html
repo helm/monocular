@@ -1,0 +1,28 @@
+<md-card class="release" *ngIf="release" [ngClass]="{'extended': extended }">
+  <md-card-header>
+    <md-card-title>
+      <a routerLink="/releases/{{ release.id }}">
+        {{ release.id }}
+        ({{ release.attributes.chartName }} v.{{ release.attributes.chartVersion }})
+      </a>
+    </md-card-title>
+    <md-card-subtitle>
+        {{ release.attributes.status }} on namespace
+        "{{ release.attributes.namespace }}"
+        on {{ release.attributes.updated | date }}
+    </md-card-subtitle>
+  </md-card-header>
+  <md-card-content *ngIf="extended">
+    <h2>Resources</h2>
+    <pre>{{ release.attributes.resources }}</pre>
+    <h2>Notes</h2>
+    <pre>{{ release.attributes.notes }}</pre>
+  </md-card-content>
+  <md-card-actions>
+    <p *ngIf="deleting"><md-progress-bar mode="indeterminate"></md-progress-bar></p>
+    <button *ngIf="!deleting" md-button (click)="deleteRelease(release.id)" color="primary">
+      <md-icon svgIcon="delete"></md-icon>
+      Delete release
+    </button>
+  </md-card-actions>
+</md-card>
