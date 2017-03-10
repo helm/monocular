@@ -11,4 +11,6 @@ class ReleaseAttributes {
   namespace: string;
   status: string;
   updated: Date;
+  notes: string;
+  resources: string;
 }

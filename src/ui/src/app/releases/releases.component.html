@@ -3,30 +3,9 @@
   <app-panel title="Releases" class="app-panel--container">
     <section class="releases-list">
       <h1 *ngIf="!releases.length">There are no releases</h1>
-          <md-card class="release" *ngFor="let release of releases">
-            <md-card-header>
-              <md-card-title>
-                {{ release.id }}
-                ({{ release.attributes.chartName }} v.{{ release.attributes.chartVersion }})
-              </md-card-title>
-              <md-card-subtitle>
-                  {{ release.attributes.status }} on namespace
-                  "{{ release.attributes.namespace }}"
-                  on {{ release.attributes.updated | date }}
-              </md-card-subtitle>
-            </md-card-header>
-            <md-card-content *ngIf="showornot">
-              <p>
-                TODO
-              </p>
-            </md-card-content>
-            <md-card-actions>
-              <button md-button (click)="deleteRelease(release.id)" color="primary">
-                <md-icon svgIcon="delete"></md-icon>
-                Delete release
-              </button>
-            </md-card-actions>
-        </md-card>
+      <app-release-item *ngFor="let release of releases" [release]=release
+        (onDelete)="releaseDeleted($event)"
+      ></app-release-item>
     </section>
   </app-panel>
 </app-loader>

@@ -7,7 +7,6 @@
           Install {{ chart.attributes.name }} v{{ currentVersion }}
         </button>
         <p *ngIf="installing"><md-progress-bar mode="indeterminate"></md-progress-bar></p>
-
       </md-tab>
       <md-tab label="Helm CLI">
         <div *ngIf=showRepoInstructions class="chart-details-usage__repository">

@@ -21,13 +21,15 @@ export class ReleasesService {
     this.hostname = config.backendHostname;
   }
 
-  /**
-   * Get all charts from the API
-   *
-   * @return {Observable} An observable that will an array with all Charts
-   */
   getReleases(): Observable<Release[]> {
       return this.http.get(`${this.hostname}/v1/releases`)
+                    .map((response) => {
+                      return this.extractData(response, [])
+                    }).catch(this.handleError);
+  }
+
+  getRelease(releaseName: string): Observable<Release> {
+      return this.http.get(`${this.hostname}/v1/releases/${releaseName}`)
                     .map((response) => {
                       return this.extractData(response, [])
                     }).catch(this.handleError);

@@ -59,7 +59,7 @@ export class ChartDetailsUsageComponent implements OnInit {
 
   installRelease(chartID: string, version: string): void {
     this.dialogsService
-      .confirm(`You will deploy ${chartID} v${version}`, '')
+      .confirm(`You are going to deploy ${chartID} v${version}`, '')
       .subscribe(res => {
         if (res)
           this.performInstallation(chartID, version);
@@ -84,12 +84,6 @@ export class ChartDetailsUsageComponent implements OnInit {
   }
 
   installOK(release: Release) :void {
-      let message = this.snackBar.open('Installation completed', 'view more', {
-      });
-
-      message.onAction().subscribe(() => {
-        this.router.navigate(['/releases']);
-      });
-
+    this.router.navigate(['/releases', release.id]);
   }
 }
