@@ -18,6 +18,9 @@
               on {{ release.attributes.updated | date }}
           </md-card-subtitle>
         </md-card-header>
+        <md-card-actions>
+          <app-release-controls [release]=release (onDelete)="releaseDeleted($event)"></app-release-controls>
+        </md-card-actions>
       </md-card>
     </section>
   </app-panel>
