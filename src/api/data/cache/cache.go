@@ -159,6 +159,8 @@ func (c *cachedCharts) Refresh() error {
 		var chartsWithData []*models.ChartPackage
 		// Buffered channel
 		ch := make(chan chanItem, len(charts))
+		defer close(ch)
+
 		// 3.1 - parallellize processing
 		for _, chart := range charts {
 			go processChartMetadata(chart, ch)
