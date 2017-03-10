@@ -251,6 +251,7 @@ func ReadmeStaticUrl(chart *models.ChartPackage, prefix string) string {
 	path := filepath.Join(chartDataDir(chart), "README.md")
 	return staticUrl(path, prefix)
 }
+
 func staticUrl(path, prefix string) string {
 	return strings.Replace(path, DataDirBase(), prefix, 1)
 }
