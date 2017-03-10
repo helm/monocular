@@ -1,11 +1,11 @@
 /* tslint:disable:no-unused-variable */
 
 import { TestBed, async } from '@angular/core/testing';
-import { ReleaseItemComponent } from './release-item.component';
+import { ReleaseComponent } from './release.component';
 
 describe('Component: ReleaseItem', () => {
   it('should create an instance', () => {
-    let component = new ReleaseItemComponent();
+    let component = new ReleaseComponent();
     expect(component).toBeTruthy();
   });
 });

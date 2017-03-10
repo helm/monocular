@@ -27,6 +27,8 @@
             <dt>Last Updated:</dt>
             <dd>{{ release.attributes.updated | date }}</dd>
           </dl>
+          <hr/>
+          <app-release-controls [release]=release (onDelete)="releaseDeleted($event)"></app-release-controls>
         </app-panel>
       </aside>
     </section>

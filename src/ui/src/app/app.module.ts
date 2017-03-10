@@ -41,7 +41,7 @@ import { ChartDetailsVersionsComponent } from './chart-details/chart-details-ver
 import { ChartsComponent } from './charts/charts.component';
 import { ReleasesComponent } from './releases/releases.component';
 import { ReleaseComponent } from './release/release.component';
-import { ReleaseItemComponent } from './release-item/release-item.component';
+import { ReleaseControlsComponent } from './release-controls/release-controls.component';
 import { ChartsFiltersComponent } from './charts-filters/charts-filters.component';
 import { LoaderComponent } from './loader/loader.component';
 import { ConfirmDialog }   from './confirm-dialog/confirm-dialog.component';
@@ -80,7 +80,7 @@ const metaConfig: MetaConfig = {
     LoaderComponent,
     ReleasesComponent,
     ReleaseComponent,
-    ReleaseItemComponent,
+    ReleaseControlsComponent,
     ConfirmDialog
   ],
   imports: [

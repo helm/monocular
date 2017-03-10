@@ -1,5 +1,14 @@
+@import '../../theme.scss';
 .releases-list {
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: center;
+  .release {
+    margin: 10px;
+  }
+  @include mappy-bp(medium) {
+    display: flex;
+    flex-flow: row wrap;
+    .release {
+      flex: 1;
+      width: 700px;
+    }
+  }
 }
