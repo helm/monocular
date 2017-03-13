@@ -13,6 +13,6 @@ data:
       overrides: {
         googleAnalyticsId: '{{.Values.ui.googleAnalyticsId}}',
         appName: '{{.Values.ui.appName}}',
-        releasesEnabled: '{{.Values.api.config.releasesEnabled}}'
+        releasesEnabled: {{.Values.api.config.releasesEnabled}}
       }
     };
