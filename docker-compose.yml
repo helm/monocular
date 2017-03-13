@@ -18,5 +18,7 @@ services:
       - ./src/api:/go/src/github.com/helm/monocular/src/api
       # Config example file
       - ./docs/config.example.yaml:/root/monocular/config/monocular.yaml
+      # Used for loading kubernetes context used on Helm releases integration
+      - $HOME/.kube/:/root/.kube
     environment:
       - ENVIRONMENT=development
