@@ -13,6 +13,7 @@ type Periodic interface {
 	Do() error
 	Frequency() time.Duration
 	Name() string
+	FirstRun() bool
 }
 
 // PeriodicCanceller will cancel one or more Periodic jobs
@@ -26,11 +27,13 @@ func DoPeriodic(pSlice []Periodic) PeriodicCanceller {
 	for _, p := range pSlice {
 		go func(p Periodic) {
 			// execute once at the beginning
-			err := p.Do()
-			if err != nil {
-				log.Printf("periodic job ran and returned error (%s)", err)
+			if p.FirstRun() {
+				err := p.Do()
+				if err != nil {
+					log.Printf("periodic job ran and returned error (%s)", err)
+				}
+				log.Printf("periodic job %s ran", p.Name())
 			}
-			log.Printf("periodic job %s ran", p.Name())
 			ticker := time.NewTicker(p.Frequency())
 			for {
 				select {

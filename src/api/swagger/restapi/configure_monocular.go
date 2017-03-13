@@ -44,10 +44,14 @@ func configureAPI(api *operations.MonocularAPI) http.Handler {
 	}
 	// configure the api here
 	chartsImplementation := cache.NewCachedCharts(config.Repos)
+	// Run foreground repository refresh
+	chartsImplementation.Refresh()
+	// Setup background index refreshes
 	freshness := time.Duration(3600) * time.Second
-	periodicRefresh := cache.NewRefreshChartsData(chartsImplementation, freshness, "refresh-charts")
+	periodicRefresh := cache.NewRefreshChartsData(chartsImplementation, freshness, "refresh-charts", false)
 	toDo := []jobs.Periodic{periodicRefresh}
 	jobs.DoPeriodic(toDo)
+
 	api.ServeError = errors.ServeError
 	helmClient := helmclient.NewHelmClient()
 

@@ -11,6 +11,7 @@ type refreshChartsData struct {
 	chartsImplementation data.Charts
 	frequency            time.Duration
 	name                 string
+	firstRun             bool
 }
 
 // NewRefreshChartsData creates a new Periodic implementation that refreshes charts data.
@@ -18,11 +19,13 @@ func NewRefreshChartsData(
 	chartsImplementation data.Charts,
 	frequency time.Duration,
 	name string,
+	firstRun bool,
 ) jobs.Periodic {
 	return &refreshChartsData{
 		chartsImplementation: chartsImplementation,
 		frequency:            frequency,
 		name:                 name,
+		firstRun:             firstRun,
 	}
 }
 
@@ -37,6 +40,11 @@ func (r *refreshChartsData) Do() error {
 // Frequency implements the Periodic interface
 func (r *refreshChartsData) Frequency() time.Duration {
 	return r.frequency
+}
+
+// FirstRun implements the Periodic interface
+func (r *refreshChartsData) FirstRun() bool {
+	return r.firstRun
 }
 
 // Name implements the Periodic interface

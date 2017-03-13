@@ -127,18 +127,18 @@ func (c *cachedCharts) Search(params charts.SearchChartsParams) ([]*models.Chart
 // Refresh is the interface implementation for data.Charts
 // It refreshes cached data for all authoritative repository+chart data
 func (c *cachedCharts) Refresh() error {
-	c.rwm.Lock()
-	defer c.rwm.Unlock()
+	// New list of charts that will replace cached charts
+	var updatedCharts = make(map[string][]*models.ChartPackage)
 
 	log.WithFields(log.Fields{
 		"path": charthelper.DataDirBase(),
 	}).Info("Using cache directory")
 
 	for _, repo := range c.knownRepos {
-		// Append index.yaml
 		u, _ := url.Parse(repo.URL)
 		u.Path = path.Join(u.Path, "index.yaml")
 
+		// 1 - Download repo index
 		resp, err := http.Get(u.String())
 		if err != nil {
 			return err
@@ -148,37 +148,86 @@ func (c *cachedCharts) Refresh() error {
 		if err != nil {
 			return err
 		}
+
+		// 2 - Parse repo index
 		charts, err := helpers.ParseYAMLRepo(body, repo.Name)
 		if err != nil {
 			return err
 		}
-		var chartsWithData []*models.ChartPackage
-		for _, chart := range charts {
-			// Extra files. Skipped if the directory exists
-			dataExists, err := charthelper.ChartDataExists(chart)
-			if err != nil {
-				return err
-			}
-			if !dataExists {
-				log.WithFields(log.Fields{
-					"name":    *chart.Name,
-					"version": *chart.Version,
-				}).Info("Local cache missing")
 
-				err := charthelper.DownloadAndExtractChartTarball(chart)
-				if err != nil {
-					log.WithFields(log.Fields{
-						"error": err,
-					}).Error("Error on DownloadAndExtractChartTarball")
-					// Skip chart if error extracting the tarball
-					continue
-				}
-				// If we have a problem processing an image it will fallback to the default one
-				charthelper.DownloadAndProcessChartIcon(chart)
-			}
-			chartsWithData = append(chartsWithData, chart)
+		// 3 - Process elements in index
+		var chartsWithData []*models.ChartPackage
+		// Buffered channel
+		ch := make(chan chanItem, len(charts))
+		defer close(ch)
+
+		// 3.1 - parallellize processing
+		for _, chart := range charts {
+			go processChartMetadata(chart, ch)
 		}
-		c.allCharts[repo.Name] = chartsWithData
+		// 3.2 Channel drain
+		for range charts {
+			it := <-ch
+			// Only append the ones that have not failed
+			if it.err == nil {
+				chartsWithData = append(chartsWithData, it.chart)
+			}
+		}
+		updatedCharts[repo.Name] = chartsWithData
 	}
+
+	// 4 - Update the stored cache with the new elements if everything went well
+	c.rwm.Lock()
+	c.allCharts = updatedCharts
+	c.rwm.Unlock()
 	return nil
+}
+
+// Represents every element processed in paralell
+type chanItem struct {
+	chart *models.ChartPackage
+	err   error
+}
+
+// Counting semaphore, 25 downloads max in paralell
+var tokens = make(chan struct{}, 25)
+
+func processChartMetadata(chart *models.ChartPackage, out chan<- chanItem) {
+	tokens <- struct{}{}
+	// Semaphore control channel
+	defer func() {
+		<-tokens
+	}()
+
+	var it chanItem
+	it.chart = chart
+
+	// Extra files. Skipped if the directory exists
+	dataExists, err := charthelper.ChartDataExists(chart)
+	if err != nil {
+		it.err = err
+		out <- it
+		return
+	}
+
+	if !dataExists {
+		log.WithFields(log.Fields{
+			"name":    *chart.Name,
+			"version": *chart.Version,
+		}).Info("Local cache missing")
+
+		err := charthelper.DownloadAndExtractChartTarball(chart)
+		if err != nil {
+			log.WithFields(log.Fields{
+				"error": err,
+			}).Error("Error on DownloadAndExtractChartTarball")
+			// Skip chart if error extracting the tarball
+			it.err = err
+			out <- it
+			return
+		}
+		// If we have a problem processing an image it will fallback to the default one
+		charthelper.DownloadAndProcessChartIcon(chart)
+	}
+	out <- it
 }
