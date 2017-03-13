@@ -1,0 +1,27 @@
+<app-header-bar></app-header-bar>
+<app-loader [loading]="loading">
+  <app-panel title="Releases" class="app-panel--container">
+    <section class="releases-list">
+      <h1 *ngIf="!releases.length">There are no releases</h1>
+      <!--<app-release-item *ngFor="let release of releases" [release]=release (onDelete)="releaseDeleted($event)"></app-release-item>-->
+      <md-card class="release" *ngFor="let release of releases">
+        <md-card-header>
+          <md-card-title>
+            <a routerLink="/releases/{{ release.id }}">
+              {{ release.id }}
+              ({{ release.attributes.chartName }} v.{{ release.attributes.chartVersion }})
+            </a>
+          </md-card-title>
+          <md-card-subtitle>
+              {{ release.attributes.status }} on namespace
+              "{{ release.attributes.namespace }}"
+              on {{ release.attributes.updated | date }}
+          </md-card-subtitle>
+        </md-card-header>
+        <md-card-actions>
+          <app-release-controls [release]=release (onDelete)="releaseDeleted($event)"></app-release-controls>
+        </md-card-actions>
+      </md-card>
+    </section>
+  </app-panel>
+</app-loader>

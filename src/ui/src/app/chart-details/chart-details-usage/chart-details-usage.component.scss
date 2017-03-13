@@ -3,6 +3,9 @@
 // Import your custom theme
 @import '../../../theme.scss';
 
+md-tab-body {
+  margin-top: 1em;
+}
 .chart-details-usage {
   display: block;
   margin: 2em 0;

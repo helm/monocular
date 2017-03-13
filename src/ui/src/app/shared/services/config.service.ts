@@ -6,6 +6,7 @@ export class ConfigService {
   // They can be overriden using assets/js/overrides.js
   backendHostname: string
   appName: string
+  releasesEnabled: boolean
   // EO configurable options
 
   constructor() {
@@ -14,7 +15,8 @@ export class ConfigService {
       overrides = window["monocular"]["overrides"] || {}
     }
 
-    this.backendHostname = overrides.backendHostname || "http://localhost:8080"
-    this.appName = overrides.appName || "Monocular"
+    this.backendHostname = overrides.backendHostname || "http://localhost:8080";
+    this.appName = overrides.appName || "Monocular";
+    this.releasesEnabled = overrides.releasesEnabled;
   }
 }

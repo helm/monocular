@@ -6,11 +6,31 @@ import { ChartIndexComponent } from './chart-index/chart-index.component';
 import { ChartDetailsComponent } from './chart-details/chart-details.component';
 import { ChartSearchComponent } from './chart-search/chart-search.component';
 import { ChartsComponent } from './charts/charts.component';
+import { ReleasesComponent } from './releases/releases.component';
+import { ReleaseComponent } from './release/release.component';
 
 const appRoutes: Routes = [
   {
     path: '',
     component: ChartIndexComponent
+  },
+  {
+    path: 'releases',
+    component: ReleasesComponent,
+    data: {
+      meta: {
+        title: 'All Releases'
+      }
+    }
+  },
+  {
+    path: 'releases/:releaseName',
+    component: ReleaseComponent,
+    data: {
+      meta: {
+        title: 'Release information'
+      }
+    }
   },
   {
     path: 'charts',

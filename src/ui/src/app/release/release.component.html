@@ -1,0 +1,36 @@
+<app-header-bar></app-header-bar>
+<div>
+  <app-panel *ngIf="!release && !loading" class="app-panel--container">
+    <h2>Sorry, we couldn't find the release</h2>
+  </app-panel>
+  <app-loader [loading]="loading">
+    <section class="release-details" *ngIf="release">
+      <article class="release-details__main">
+        <app-panel title="Notes" [border]=true>
+          <pre>{{ release.attributes.notes }}</pre>
+        </app-panel>
+        <app-panel title="Resources" [border]=true>
+          <pre>{{ release.attributes.resources }}</pre>
+        </app-panel>
+      </article>
+      <aside class="release-details__info">
+        <app-panel title="Release information" [border]=true>
+          <dl>
+            <dt>Name:</dt>
+            <dd>{{ release.attributes.name }}</dd>
+            <dt>Chart:</dt>
+            <dd>{{ release.attributes.chartName }} v.{{ release.attributes.chartVersion }}</dd>
+            <dt>Namespace:</dt>
+            <dd>{{ release.attributes.namespace }}</dd>
+            <dt>Status:</dt>
+            <dd>{{ release.attributes.status }}</dd>
+            <dt>Last Updated:</dt>
+            <dd>{{ release.attributes.updated | date }}</dd>
+          </dl>
+          <hr/>
+          <app-release-controls [release]=release (onDelete)="releaseDeleted($event)"></app-release-controls>
+        </app-panel>
+      </aside>
+    </section>
+  </app-loader>
+</div>

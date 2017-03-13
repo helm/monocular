@@ -15,9 +15,11 @@ import { TruncatePipe } from './shared/pipes/truncate.pipe';
 
 /* Services */
 import { ChartsService } from './shared/services/charts.service';
+import { ReleasesService } from './shared/services/releases.service';
 import { ReposService } from './shared/services/repos.service';
 import { ConfigService } from './shared/services/config.service';
 import { MenuService } from './shared/services/menu.service';
+import { DialogsService } from './shared/services/dialogs.service';
 
 /* Components */
 import { AppComponent } from './app.component';
@@ -37,8 +39,12 @@ import { FooterListComponent } from './footer-list/footer-list.component';
 import { ChartDetailsInfoComponent } from './chart-details/chart-details-info/chart-details-info.component';
 import { ChartDetailsVersionsComponent } from './chart-details/chart-details-versions/chart-details-versions.component';
 import { ChartsComponent } from './charts/charts.component';
+import { ReleasesComponent } from './releases/releases.component';
+import { ReleaseComponent } from './release/release.component';
+import { ReleaseControlsComponent } from './release-controls/release-controls.component';
 import { ChartsFiltersComponent } from './charts-filters/charts-filters.component';
 import { LoaderComponent } from './loader/loader.component';
+import { ConfirmDialog }   from './confirm-dialog/confirm-dialog.component';
 
 require('hammerjs');
 
@@ -71,7 +77,11 @@ const metaConfig: MetaConfig = {
     ChartDetailsInfoComponent,
     ChartsComponent,
     ChartsFiltersComponent,
-    LoaderComponent
+    LoaderComponent,
+    ReleasesComponent,
+    ReleaseComponent,
+    ReleaseControlsComponent,
+    ConfirmDialog
   ],
   imports: [
     MaterialModule.forRoot(),
@@ -86,9 +96,14 @@ const metaConfig: MetaConfig = {
   providers: [
     appRoutingProviders,
     ChartsService,
+    ReleasesService,
     ReposService,
     ConfigService,
-    MenuService
+    MenuService,
+    DialogsService
+  ],
+  entryComponents: [
+    ConfirmDialog,
   ],
   bootstrap: [AppComponent]
 })
