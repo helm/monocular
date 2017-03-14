@@ -5,6 +5,9 @@
   width: 100%;
   margin: 3em 0;
   padding: 0 2em;
+  display: flex;
+  flex-direction: column-reverse;
+  flex-wrap: wrap;
 
   &__main {
     &__notes {
@@ -49,7 +52,8 @@
 
 
   @include mappy-bp(medium) {
-    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
 
     &__info,
     &__main {
