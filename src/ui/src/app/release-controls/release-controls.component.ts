@@ -1,8 +1,6 @@
 import { Component, Output, EventEmitter } from '@angular/core';
 import { ReleasesService } from '../shared/services/releases.service';
 import { Release } from '../shared/models/release';
-import { MdIconRegistry } from '@angular/material';
-import { DomSanitizer } from '@angular/platform-browser';
 import { MdSnackBar } from '@angular/material';
 import { DialogsService } from '../shared/services/dialogs.service';
 
@@ -18,15 +16,9 @@ export class ReleaseControlsComponent {
 
   constructor(
     private releasesService: ReleasesService,
-    private mdIconRegistry: MdIconRegistry,
-    private sanitizer: DomSanitizer,
     private dialogsService: DialogsService,
     public snackBar: MdSnackBar
-  ){
-    mdIconRegistry
-      .addSvgIcon('delete',
-        sanitizer.bypassSecurityTrustResourceUrl('/assets/icons/delete.svg'));
-   }
+  ){ }
 
   deleteRelease(releaseName: string): void {
     this.dialogsService

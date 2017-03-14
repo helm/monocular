@@ -5,12 +5,12 @@ import { Router } from '@angular/router';
 import { ConfigService } from '../shared/services/config.service';
 
 @Component({
-  selector: 'app-releases',
-  templateUrl: './releases.component.html',
-  styleUrls: ['./releases.component.scss']
+  selector: 'app-deployments',
+  templateUrl: './deployments.component.html',
+  styleUrls: ['./deployments.component.scss']
 })
-export class ReleasesComponent implements OnInit {
-  releases: Release[] = [];
+export class DeploymentsComponent implements OnInit {
+  deployments: Release[] = [];
   loading: boolean = true;
 
   constructor(
@@ -31,15 +31,15 @@ export class ReleasesComponent implements OnInit {
     this.releasesService.getReleases()
     .finally(()=> {
       this.loading = false;
-    }).subscribe(releases => {
-      this.releases = releases;
+    }).subscribe(deployments => {
+      this.deployments = deployments;
     })
   }
 
   releaseDeleted(event): void {
     // Optimist update
     if (event.state == "deleting") {
-      this.releases =  this.releases.filter(item => item.id !== event.name);
+      this.deployments =  this.deployments.filter(item => item.id !== event.name);
     }
   }
 }

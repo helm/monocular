@@ -1,0 +1,72 @@
+// Import your custom theme
+@import '../../theme.scss';
+
+.deployment-details {
+  width: 100%;
+  margin: 3em 0;
+  padding: 0 2em;
+
+  &__main {
+    &__notes {
+      margin: 2em 0;
+
+      pre {
+        padding: 1em;
+        margin-bottom: 0;
+        background-color: $layout_light;
+        white-space: pre-wrap;       /* css-3 */
+        white-space: -o-pre-wrap;    /* Opera 7 */
+        word-break: break-all;
+      }
+    }
+  }
+
+  &__title {
+    font-size: 2em;
+    padding-bottom: .3em;
+    margin: 0 0 .5em;
+    border-bottom: 1px solid $layout_light;
+  }
+
+  &__info {
+    &__title {
+      color: md-color($monocular-app-primary);
+      margin: 0 0 .5em;
+      font-weight: 300;
+    }
+
+    &__list {
+      md-icon {
+        color: darken($layout_light, 15%);
+      }
+    }
+
+    &__actions {
+      display: block;
+      margin: 2em 0;
+    }
+  }
+
+
+  @include mappy-bp(medium) {
+    display: flex;
+
+    &__info,
+    &__main {
+      padding: 0 1em;
+    }
+
+    &__info {
+      width: 35%;
+    }
+
+    &__main {
+      min-width: 0;
+      flex: 3;
+
+      &__notes {
+        margin-bottom: 0;
+      }
+    }
+  }
+}

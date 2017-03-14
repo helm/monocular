@@ -39,12 +39,13 @@ import { FooterListComponent } from './footer-list/footer-list.component';
 import { ChartDetailsInfoComponent } from './chart-details/chart-details-info/chart-details-info.component';
 import { ChartDetailsVersionsComponent } from './chart-details/chart-details-versions/chart-details-versions.component';
 import { ChartsComponent } from './charts/charts.component';
-import { ReleasesComponent } from './releases/releases.component';
-import { ReleaseComponent } from './release/release.component';
+import { DeploymentsComponent } from './deployments/deployments.component';
+import { DeploymentComponent } from './deployment/deployment.component';
 import { ReleaseControlsComponent } from './release-controls/release-controls.component';
 import { ChartsFiltersComponent } from './charts-filters/charts-filters.component';
 import { LoaderComponent } from './loader/loader.component';
 import { ConfirmDialog }   from './confirm-dialog/confirm-dialog.component';
+import { DeploymentResourceComponent } from './deployment/deployment-resource/deployment-resource.component';
 
 require('hammerjs');
 
@@ -78,10 +79,11 @@ const metaConfig: MetaConfig = {
     ChartsComponent,
     ChartsFiltersComponent,
     LoaderComponent,
-    ReleasesComponent,
-    ReleaseComponent,
+    DeploymentsComponent,
+    DeploymentComponent,
     ReleaseControlsComponent,
-    ConfirmDialog
+    ConfirmDialog,
+    DeploymentResourceComponent
   ],
   imports: [
     MaterialModule.forRoot(),

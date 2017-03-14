@@ -6,8 +6,8 @@ import { ChartIndexComponent } from './chart-index/chart-index.component';
 import { ChartDetailsComponent } from './chart-details/chart-details.component';
 import { ChartSearchComponent } from './chart-search/chart-search.component';
 import { ChartsComponent } from './charts/charts.component';
-import { ReleasesComponent } from './releases/releases.component';
-import { ReleaseComponent } from './release/release.component';
+import { DeploymentsComponent } from './deployments/deployments.component';
+import { DeploymentComponent } from './deployment/deployment.component';
 
 const appRoutes: Routes = [
   {
@@ -15,20 +15,20 @@ const appRoutes: Routes = [
     component: ChartIndexComponent
   },
   {
-    path: 'releases',
-    component: ReleasesComponent,
+    path: 'deployments',
+    component: DeploymentsComponent,
     data: {
       meta: {
-        title: 'All Releases'
+        title: 'Current deployments'
       }
     }
   },
   {
-    path: 'releases/:releaseName',
-    component: ReleaseComponent,
+    path: 'deployments/:deploymentName',
+    component: DeploymentComponent,
     data: {
       meta: {
-        title: 'Release information'
+        title: 'Deployment information'
       }
     }
   },

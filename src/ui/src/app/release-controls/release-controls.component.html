@@ -1,5 +1,5 @@
 <p *ngIf="deleting"><md-progress-bar mode="indeterminate"></md-progress-bar></p>
-<button *ngIf="!deleting" md-button (click)="deleteRelease(release.id)" md-raised-button>
-  <md-icon svgIcon="delete"></md-icon>
-  Delete release
+<button *ngIf="!deleting" md-button [color]="'warn'" (click)="deleteRelease(release.id)"
+  md-raised-button>
+    Delete deployment
 </button>
