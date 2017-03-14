@@ -12,7 +12,10 @@ askForConfirmation() {
 }
 
 releaseExists() {
-  RELEASES_NUMBER=`helm list -q $RELEASE_NAME | wc -l`
+  # Extract --kube-context from HELM_OPTS
+  LIST_OPTS=`echo $HELM_OPTS | sed -n "s/.*\(--kube-context [^ ]*\).*/\1/p"`
+
+  RELEASES_NUMBER=`helm list -q $RELEASE_NAME $LIST_OPTS | wc -l`
   [ $RELEASES_NUMBER -ne 0 ]
 }
 
