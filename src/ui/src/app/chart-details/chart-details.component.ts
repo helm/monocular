@@ -44,12 +44,25 @@ export class ChartDetailsComponent implements OnInit {
    *
    * @return {string} Title to display in the site
    */
-  contentTitleVersion(): string {
+  contentTitleVersion(capitalize = true): string {
     if (this.titleVersion.length > 0) {
-      return `${this.chart.attributes.name} ${this.titleVersion}`;
-    } else {
       return this.chart.attributes.name;
+    } else if (capitalize) {
+      return `Latest ${this.chart.attributes.name}`;
+    } else {
+      return `latest ${this.chart.attributes.name}`;
     }
+  }
+
+  /**
+   * Get the description content for the metatag
+   *
+   * @return {string} Description to add to the metatags
+   */
+  descriptionContent(): string {
+    let title: string = this.contentTitleVersion(false);
+    return `Deploy ${title} in Kubernetes. ${this.chart.attributes.name}
+      is a ${this.chart.attributes.description}`;
   }
 
   /**
@@ -58,8 +71,8 @@ export class ChartDetailsComponent implements OnInit {
   updateMetaTags(): void {
     let title: string = this.contentTitleVersion();
     this.metaService.setTitle(title, ` | ${this.config.appName}`);
-    this.metaService.setTag('description', this.chart.attributes.description);
+    this.metaService.setTag('description', this.descriptionContent());
     this.metaService.setTag('og:title', title);
-    this.metaService.setTag('og:description', this.chart.attributes.description);
+    this.metaService.setTag('og:description', this.descriptionContent());
   }
 }

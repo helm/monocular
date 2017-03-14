@@ -12,7 +12,7 @@ export class ConfigService {
   constructor() {
     var overrides: any = {}
     if (window["monocular"]) {
-      overrides = window["monocular"]["overrides"] || {}
+      overrides = window["monocular"]["overrides"] || {};
     }
 
     this.backendHostname = overrides.backendHostname || "http://localhost:8080";
