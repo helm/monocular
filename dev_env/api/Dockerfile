@@ -1,4 +1,4 @@
-FROM quay.io/deis/go-dev:0.17.0
+FROM quay.io/deis/go-dev:v0.22.0
 
 MAINTAINER Miguel Martinez <miguel@bitnami.com>
 
