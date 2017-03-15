@@ -1,11 +1,11 @@
 /* tslint:disable:no-unused-variable */
 
 import { TestBed, async } from '@angular/core/testing';
-import { ReleaseComponent } from './release.component';
+import { DeploymentComponent } from './deployment.component';
 
-describe('Component: ReleaseItem', () => {
+describe('Component: DeploymentItem', () => {
   it('should create an instance', () => {
-    let component = new ReleaseComponent();
+    let component = new DeploymentComponent();
     expect(component).toBeTruthy();
   });
 });

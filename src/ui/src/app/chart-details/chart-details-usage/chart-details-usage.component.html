@@ -2,7 +2,7 @@
   <md-tab-group>
       <md-tab *ngIf="config.releasesEnabled" label="One Click installation">
         <button color="primary" md-raised-button
-         (click)="installRelease(chart.id, currentVersion)"
+         (click)="installDeployment(chart.id, currentVersion)"
          *ngIf="!installing">
           Install {{ chart.attributes.name }} v{{ currentVersion }}
         </button>

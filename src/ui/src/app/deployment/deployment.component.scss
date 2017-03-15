@@ -9,6 +9,29 @@
   flex-direction: column-reverse;
   flex-wrap: wrap;
 
+  &__breadcrumb {
+    margin: 2em 2em 0;
+
+    ul {
+      padding: 0;
+      list-style: none;
+
+      li {
+        display: inline-block;
+
+        &:before {
+          content: '/';
+          color: darken($layout_light, 20%);
+          padding: 0 .5em 0 .4em;
+        }
+
+        &:first-child:before {
+          display: none;
+        }
+      }
+    }
+  }
+
   &__main {
     &__notes {
       margin: 2em 0;
@@ -40,7 +63,7 @@
 
     &__list {
       md-icon {
-        color: darken($layout_light, 15%);
+        color: darken($layout_light, 20%);
       }
     }
 
@@ -55,9 +78,12 @@
     flex-direction: row;
     flex-wrap: nowrap;
 
-    &__info,
+    &__info {
+      padding-left: 1em;
+    }
+
     &__main {
-      padding: 0 1em;
+      padding-right: 1em;
     }
 
     &__info {

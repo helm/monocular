@@ -1,13 +1,13 @@
 import { Component, OnInit, Input, ViewEncapsulation, ChangeDetectionStrategy } from '@angular/core';
 import { Chart } from '../../shared/models/chart';
-import { Release } from '../../shared/models/release';
+import { Deployment } from '../../shared/models/deployment';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MdIconRegistry } from '@angular/material';
 import { MdSnackBar } from '@angular/material';
 import { ConfigService } from '../../shared/services/config.service';
 import { DialogsService } from '../../shared/services/dialogs.service';
 
-import { ReleasesService } from '../../shared/services/releases.service';
+import { DeploymentsService } from '../../shared/services/deployments.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -26,7 +26,7 @@ export class ChartDetailsUsageComponent implements OnInit {
     mdIconRegistry: MdIconRegistry,
     sanitizer: DomSanitizer,
     private config: ConfigService,
-    private releasesService: ReleasesService,
+    private deploymentsService: DeploymentsService,
     private router: Router,
     private dialogsService: DialogsService,
     public snackBar: MdSnackBar
@@ -57,9 +57,14 @@ export class ChartDetailsUsageComponent implements OnInit {
     return `helm install ${this.chart.id} --version ${this.currentVersion}`;
   }
 
-  installRelease(chartID: string, version: string): void {
+  installDeployment(chartID: string, version: string): void {
     this.dialogsService
-      .confirm(`You are going to deploy ${chartID} v${version}`, '')
+      .confirm(
+        `Deploy ${chartID} v${version}`,
+        'You are going to deploy this chart in your cluster',
+        'Deploy it',
+        'Cancel'
+      )
       .subscribe(res => {
         if (res)
           this.performInstallation(chartID, version);
@@ -70,20 +75,20 @@ export class ChartDetailsUsageComponent implements OnInit {
   performInstallation(chartID: string, version: string): void {
     this.installing = true;
 
-    this.releasesService.installRelease(chartID, version)
+    this.deploymentsService.installDeployment(chartID, version)
     .finally(() => {
       this.installing = false
     }).subscribe(
-      release => {
-        this.installOK(release)
+      deployment => {
+        this.installOK(deployment)
       },
       error => {
-        this.snackBar.open(`Error installing the application, please try later"`, 'close', { duration: 5000 });
+        this.snackBar.open(`Error installing the application, please try later`, 'close', { duration: 5000 });
       }
     );
   }
 
-  installOK(release: Release) :void {
-    this.router.navigate(['/releases', release.id]);
+  installOK(deployment: Deployment) :void {
+    this.router.navigate(['/deployments', deployment.id]);
   }
 }

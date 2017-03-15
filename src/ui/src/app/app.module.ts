@@ -15,7 +15,7 @@ import { TruncatePipe } from './shared/pipes/truncate.pipe';
 
 /* Services */
 import { ChartsService } from './shared/services/charts.service';
-import { ReleasesService } from './shared/services/releases.service';
+import { DeploymentsService } from './shared/services/deployments.service';
 import { ReposService } from './shared/services/repos.service';
 import { ConfigService } from './shared/services/config.service';
 import { MenuService } from './shared/services/menu.service';
@@ -41,7 +41,7 @@ import { ChartDetailsVersionsComponent } from './chart-details/chart-details-ver
 import { ChartsComponent } from './charts/charts.component';
 import { DeploymentsComponent } from './deployments/deployments.component';
 import { DeploymentComponent } from './deployment/deployment.component';
-import { ReleaseControlsComponent } from './release-controls/release-controls.component';
+import { DeploymentControlsComponent } from './deployment-controls/deployment-controls.component';
 import { ChartsFiltersComponent } from './charts-filters/charts-filters.component';
 import { LoaderComponent } from './loader/loader.component';
 import { ConfirmDialog }   from './confirm-dialog/confirm-dialog.component';
@@ -81,7 +81,7 @@ const metaConfig: MetaConfig = {
     LoaderComponent,
     DeploymentsComponent,
     DeploymentComponent,
-    ReleaseControlsComponent,
+    DeploymentControlsComponent,
     ConfirmDialog,
     DeploymentResourceComponent
   ],
@@ -98,7 +98,7 @@ const metaConfig: MetaConfig = {
   providers: [
     appRoutingProviders,
     ChartsService,
-    ReleasesService,
+    DeploymentsService,
     ReposService,
     ConfigService,
     MenuService,

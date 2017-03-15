@@ -13,9 +13,12 @@
     flex-direction: row;
     flex-wrap: nowrap;
 
-    &__info,
+    &__info {
+      padding-left: 1em;
+    }
+
     &__docs {
-      padding: 0 1em;
+      padding-right: 1em;
     }
 
     &__info {

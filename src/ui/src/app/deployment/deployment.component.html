@@ -1,9 +1,13 @@
 <app-header-bar></app-header-bar>
 <div>
-  <app-panel *ngIf="!deployment && !loading" class="app-panel--container">
-    <h2>Sorry, we couldn't find the deployment</h2>
-  </app-panel>
+  <nav class="deployment-details__breadcrumb">
+    <ul>
+      <li><a routerLink="/deployments" href="/deployments">Deployments</a></li>
+      <li>{{ this.name }}</li>
+    </ul>
+  </nav>
   <app-loader [loading]="loading">
+    <h2 *ngIf="!deployment && !loading" >Sorry, we couldn't find the deployment</h2>
     <section class="deployment-details" *ngIf="deployment">
       <article class="deployment-details__main">
         <h1 class="deployment-details__title">Resources</h1>
@@ -43,7 +47,7 @@
           </md-list>
         </app-panel>
         <app-panel class="deployment-details__info__actions" title="Actions" [border]=true>
-          <app-release-controls [release]=deployment (onDelete)="releaseDeleted($event)"></app-release-controls>
+          <app-deployment-controls [deployment]=deployment (onDelete)="deploymentDeleted($event)"></app-deployment-controls>
         </app-panel>
       </aside>
     </section>

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Release } from '../models/release';
+import { Deployment } from '../models/deployment';
 import { ConfigService } from './config.service';
 
 import { Observable } from 'rxjs';
@@ -11,7 +11,7 @@ import { Http, Response } from '@angular/http';
 
 /* TODO, This is a mocked class. */
 @Injectable()
-export class ReleasesService {
+export class DeploymentsService {
   hostname: string;
 
   constructor(
@@ -21,29 +21,29 @@ export class ReleasesService {
     this.hostname = config.backendHostname;
   }
 
-  getReleases(): Observable<Release[]> {
+  getDeployments(): Observable<Deployment[]> {
       return this.http.get(`${this.hostname}/v1/releases`)
                     .map((response) => {
                       return this.extractData(response, [])
                     }).catch(this.handleError);
   }
 
-  getRelease(releaseName: string): Observable<Release> {
-      return this.http.get(`${this.hostname}/v1/releases/${releaseName}`)
+  getDeployment(deploymentName: string): Observable<Deployment> {
+      return this.http.get(`${this.hostname}/v1/releases/${deploymentName}`)
                     .map((response) => {
                       return this.extractData(response, [])
                     }).catch(this.handleError);
   }
 
-  installRelease(chartID: string, version: string): Observable<Release> {
+  installDeployment(chartID: string, version: string): Observable<Deployment> {
       var params = { "chartId": chartID, "chartVersion": version }
       return this.http.post(`${this.hostname}/v1/releases`, params)
                     .map(this.extractData)
                     .catch(this.handleError);
   }
 
-  deleteRelease(releaseName: string): Observable<Release> {
-    return this.http.delete(`${this.hostname}/v1/releases/${releaseName}`)
+  deleteDeployment(deploymentName: string): Observable<Deployment> {
+    return this.http.delete(`${this.hostname}/v1/releases/${deploymentName}`)
                     .map(this.extractData)
                     .catch(this.handleError);
   }

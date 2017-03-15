@@ -1,7 +1,7 @@
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
-import { ReleasesService } from '../shared/services/releases.service';
-import { Release } from '../shared/models/release';
+import { DeploymentsService } from '../shared/services/deployments.service';
+import { Deployment } from '../shared/models/deployment';
 import { Chart } from '../shared/models/chart';
 import { ConfigService } from '../shared/services/config.service';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -14,19 +14,20 @@ import { MdIconRegistry } from '@angular/material';
   viewProviders: [MdIconRegistry]
 })
 export class DeploymentComponent implements OnInit {
-  deployment: Release;
+  deployment: Deployment;
   resources = [];
   loading: boolean = true;
+  name: String = '';
 
   constructor(
-    private releasesService: ReleasesService,
+    private deploymentsService: DeploymentsService,
     private router: Router,
     private route: ActivatedRoute,
     private config: ConfigService,
     private mdIconRegistry: MdIconRegistry,
     private sanitizer: DomSanitizer
   ) {
-    const icons = ['layers', 'schedule', 'web-asset', 'info-outline'];
+    const icons = ['layers', 'schedule', 'web-asset', 'info-outline', 'arrow-back'];
 
     icons.forEach(icon => {
       mdIconRegistry
@@ -42,7 +43,8 @@ export class DeploymentComponent implements OnInit {
     }
 
     this.route.params.forEach((params: Params) => {
-      this.loadRelease(params['deploymentName']);
+      this.name = params['deploymentName'];
+      this.loadDeployment(params['deploymentName']);
     });
 
   }
@@ -52,7 +54,7 @@ export class DeploymentComponent implements OnInit {
    *
    * TODO: In the future, the backend will provide this information
    */
-  loadResources(deployment: Release): any {
+  loadResources(deployment: Deployment): any {
     let elements = deployment.attributes.resources.split('=='),
       resources = [];
 
@@ -92,8 +94,8 @@ export class DeploymentComponent implements OnInit {
     return resources;
   }
 
-  loadRelease(deploymentName: string): void {
-    this.releasesService.getRelease(deploymentName)
+  loadDeployment(deploymentName: string): void {
+    this.deploymentsService.getDeployment(deploymentName)
     .finally(()=> {
       this.loading = false;
     }).subscribe(deployment => {
@@ -102,7 +104,7 @@ export class DeploymentComponent implements OnInit {
     })
   }
 
-  releaseDeleted(event) {
+  deploymentDeleted(event) {
     if (event.state == "deleted") {
       return this.router.navigate(['/deployments']);
     }
