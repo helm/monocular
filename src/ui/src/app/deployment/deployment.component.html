@@ -1,0 +1,55 @@
+<app-header-bar></app-header-bar>
+<div>
+  <nav class="deployment-details__breadcrumb">
+    <ul>
+      <li><a routerLink="/deployments" href="/deployments">Deployments</a></li>
+      <li>{{ this.name }}</li>
+    </ul>
+  </nav>
+  <app-loader [loading]="loading">
+    <h2 *ngIf="!deployment && !loading" >Sorry, we couldn't find the deployment</h2>
+    <section class="deployment-details" *ngIf="deployment">
+      <article class="deployment-details__main">
+        <h1 class="deployment-details__title">Resources</h1>
+        <app-deployment-resource [resource]="resource" *ngFor="let resource of resources">
+        </app-deployment-resource>
+        <div class="deployment-details__main__notes">
+          <h1 class="deployment-details__title">Notes</h1>
+          <pre>{{ deployment.attributes.notes }}</pre>
+        </div>
+      </article>
+      <aside class="deployment-details__info">
+        <app-panel [border]=true>
+          <h2 class="deployment-details__info__title">
+            {{ deployment.attributes.name }}
+          </h2>
+          <md-list class="deployment-details__info__list">
+            <md-list-item>
+              <md-icon md-list-avatar svgIcon="layers"></md-icon>
+              <h4 md-line>Chart</h4>
+              <p md-line>{{ deployment.attributes.chartName }} v.{{ deployment.attributes.chartVersion }}</p>
+            </md-list-item>
+            <md-list-item>
+              <md-icon md-list-avatar svgIcon="web-asset"></md-icon>
+              <h4 md-line>Namespace</h4>
+              <p md-line>{{ deployment.attributes.namespace }}</p>
+            </md-list-item>
+            <md-list-item>
+              <md-icon md-list-avatar svgIcon="info-outline"></md-icon>
+              <h4 md-line>Status</h4>
+              <p md-line>{{ deployment.attributes.status }}</p>
+            </md-list-item>
+            <md-list-item>
+              <md-icon md-list-avatar svgIcon="schedule"></md-icon>
+              <h4 md-line>Last Updated</h4>
+              <p md-line>{{ deployment.attributes.updated | date }}</p>
+            </md-list-item>
+          </md-list>
+        </app-panel>
+        <app-panel class="deployment-details__info__actions" title="Actions" [border]=true>
+          <app-deployment-controls [deployment]=deployment (onDelete)="deploymentDeleted($event)"></app-deployment-controls>
+        </app-panel>
+      </aside>
+    </section>
+  </app-loader>
+</div>

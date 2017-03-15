@@ -5,13 +5,20 @@
   width: 100%;
   margin: 3em 0;
   padding: 0 2em;
+  display: flex;
+  flex-direction: column-reverse;
+  flex-wrap: wrap;
 
   @include mappy-bp(medium) {
-    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
 
-    &__info,
+    &__info {
+      padding-left: 1em;
+    }
+
     &__docs {
-      padding: 0 1em;
+      padding-right: 1em;
     }
 
     &__info {

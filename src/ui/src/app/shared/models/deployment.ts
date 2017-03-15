@@ -1,10 +1,10 @@
-export class Release {
+export class Deployment {
   id: string;
   type: string;
-  attributes: ReleaseAttributes
+  attributes: DeploymentAttributes
 }
 
-class ReleaseAttributes {
+class DeploymentAttributes {
   chartName: string;
   chartVersion: string;
   name: string;

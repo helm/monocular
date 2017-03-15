@@ -24,6 +24,11 @@ h1, h2, h3, h4, h5, h6 {
   color: lighten($layout_base, 10%);
 }
 
+// Set the h1 size
+h1 {
+  font-size: 2em;
+}
+
 // Anchors
 a {
   text-decoration: none;
