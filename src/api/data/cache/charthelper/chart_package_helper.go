@@ -18,7 +18,7 @@ import (
 	"github.com/helm/monocular/src/api/swagger/models"
 )
 
-const defaultTimeout time.Duration = 5 * time.Second
+const defaultTimeout time.Duration = 10 * time.Second
 
 // DownloadAndExtractChartTarball the chart tar file linked by metadata.Urls and store
 // the wanted files (i.e README.md) under chartDataDir
