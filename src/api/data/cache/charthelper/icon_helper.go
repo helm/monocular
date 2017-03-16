@@ -149,14 +149,18 @@ func iconPath(chart *models.ChartPackage, format string) (string, error) {
 var iconExist = func(chart *models.ChartPackage, format string) (bool, error) {
 	path, err := iconPath(chart, format)
 	if err != nil {
+		log.WithField("path", path).WithError(err).Error("IconExist error")
 		return false, err
 	}
 	_, err = os.Stat(path)
 	if err == nil {
+		log.WithField("path", path).Info("IconExist found")
 		return true, nil
 	} else if os.IsNotExist(err) {
+		log.WithField("path", path).Info("IconExist notFound")
 		return false, nil
 	}
+	log.WithField("path", path).WithError(err).Error("IconExist error")
 	return false, err
 }
 
@@ -168,7 +172,7 @@ var AvailableIcons = func(chart *models.ChartPackage, prefix string) []*IconOutp
 		if err != nil {
 			log.WithFields(log.Fields{
 				"error":  err,
-				"chart":  &chart.Name,
+				"chart":  *chart.Name,
 				"format": format.Name,
 			}).Error("Error on IconExists")
 			continue
