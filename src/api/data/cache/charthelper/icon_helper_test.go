@@ -119,6 +119,14 @@ func TestAvailableIcons(t *testing.T) {
 		path, _ := iconPath(chart, format.Name)
 		assert.Equal(t, icons[i].Path, staticUrl(path, "myPrefix"), "Same path")
 	}
+	// Error retrieving errors
+	iconExistOrig := iconExist
+	defer func() { iconExist = iconExistOrig }()
+	iconExist = func(chart *models.ChartPackage, format string) (bool, error) {
+		return false, errors.New("Error raised")
+	}
+	icons = AvailableIcons(chart, "myPrefix")
+	assert.Equal(t, len(icons), 0, "It skipped the ones that failed")
 }
 
 func getTestChartWithIcon() (*models.ChartPackage, error) {
