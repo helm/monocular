@@ -146,7 +146,7 @@ func iconPath(chart *models.ChartPackage, format string) (string, error) {
 }
 
 // Checks if the icon in specified format exist in chartDataDir
-func iconExist(chart *models.ChartPackage, format string) (bool, error) {
+var iconExist = func(chart *models.ChartPackage, format string) (bool, error) {
 	path, err := iconPath(chart, format)
 	if err != nil {
 		return false, err
@@ -164,7 +164,16 @@ func iconExist(chart *models.ChartPackage, format string) (bool, error) {
 var AvailableIcons = func(chart *models.ChartPackage, prefix string) []*IconOutput {
 	var res []*IconOutput
 	for _, format := range availableFormats {
-		if exist, _ := iconExist(chart, format.Name); !exist {
+		exist, err := iconExist(chart, format.Name)
+		if err != nil {
+			log.WithFields(log.Fields{
+				"error":  err,
+				"chart":  &chart.Name,
+				"format": format.Name,
+			}).Error("Error on IconExists")
+			continue
+		}
+		if !exist {
 			continue
 		}
 		path, _ := iconPath(chart, format.Name)
