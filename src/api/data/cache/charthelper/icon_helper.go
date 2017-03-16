@@ -154,7 +154,6 @@ var iconExist = func(chart *models.ChartPackage, format string) (bool, error) {
 	}
 	_, err = os.Stat(path)
 	if err == nil {
-		log.WithField("path", path).Info("IconExist found")
 		return true, nil
 	} else if os.IsNotExist(err) {
 		log.WithField("path", path).Info("IconExist notFound")
