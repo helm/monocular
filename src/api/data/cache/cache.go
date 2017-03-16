@@ -229,7 +229,10 @@ func processChartMetadata(chart *models.ChartPackage, out chan<- chanItem) {
 		// If we have a problem processing an image it will fallback to the default one
 		err = charthelper.DownloadAndProcessChartIcon(chart)
 		if err != nil {
-			log.WithError(err).Error("Error on DownloadAndProcessChartIcon")
+			log.WithFields(log.Fields{
+				"chart": *chart.Name,
+				"error": err,
+			}).Error("Error on DownloadAndProcessChartIcon")
 		}
 	}
 	out <- it
