@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { ChartsService } from '../shared/services/charts.service';
 import { Chart } from '../shared/models/chart';
-import { MetaService } from 'ng2-meta';
+import { SeoService } from '../shared/services/seo.service';
 import { ConfigService } from '../shared/services/config.service';
 
 @Component({
@@ -21,7 +21,7 @@ export class ChartDetailsComponent implements OnInit {
     private route: ActivatedRoute,
     private chartsService: ChartsService,
     private config: ConfigService,
-    private metaService: MetaService
+    private seo: SeoService
   ) { }
 
   ngOnInit() {
@@ -40,39 +40,20 @@ export class ChartDetailsComponent implements OnInit {
   }
 
   /**
-   * Content for the title version tag
-   *
-   * @return {string} Title to display in the site
-   */
-  contentTitleVersion(capitalize = true): string {
-    if (this.titleVersion.length > 0) {
-      return this.chart.attributes.name;
-    } else if (capitalize) {
-      return `Latest ${this.chart.attributes.name}`;
-    } else {
-      return `latest ${this.chart.attributes.name}`;
-    }
-  }
-
-  /**
-   * Get the description content for the metatag
-   *
-   * @return {string} Description to add to the metatags
-   */
-  descriptionContent(): string {
-    let title: string = this.contentTitleVersion(false);
-    return `Deploy ${title} in Kubernetes. ${this.chart.attributes.name}
-      is a ${this.chart.attributes.description}`;
-  }
-
-  /**
    * Update the metatags with the name and the description of the application.
    */
   updateMetaTags(): void {
-    let title: string = this.contentTitleVersion();
-    this.metaService.setTitle(title, ` | ${this.config.appName}`);
-    this.metaService.setTag('description', this.descriptionContent());
-    this.metaService.setTag('og:title', title);
-    this.metaService.setTag('og:description', this.descriptionContent());
+    if (this.titleVersion.length > 0) {
+      this.seo.setMetaTags('detailsWithVersion', {
+        name: this.chart.attributes.name,
+        description: this.chart.attributes.description,
+        version: this.titleVersion
+      });
+    } else {
+      this.seo.setMetaTags('details', {
+        name: this.chart.attributes.name,
+        description: this.chart.attributes.description
+      });
+    }
   }
 }

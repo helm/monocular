@@ -4,7 +4,7 @@ import { ReposService } from '../shared/services/repos.service';
 import { Chart } from '../shared/models/chart';
 import { Repo } from '../shared/models/repo';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { MetaService } from 'ng2-meta';
+import { SeoService } from '../shared/services/seo.service';
 import { ConfigService } from '../shared/services/config.service';
 
 @Component({
@@ -16,6 +16,8 @@ export class ChartsComponent implements OnInit {
   charts: Chart[] = [];
   orderedCharts: Chart[] = [];
   loading: boolean = true;
+  // Repos
+  repoName: string;
   currentRepo: Repo;
   repositories: Repo[];
 
@@ -25,7 +27,7 @@ export class ChartsComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private config: ConfigService,
-    private metaService: MetaService
+    private seo: SeoService
   ) { }
 
   // Default filters
@@ -34,29 +36,28 @@ export class ChartsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.loadRepos();
-    this.loadCharts();
-    this.updateMetaTags();
+    this.route.params.forEach((params: Params) => {
+      this.repoName = params['repo'];
+      this.updateMetaTags();
+      this.loadRepos();
+      this.loadCharts();
+    });
   }
 
   loadCharts(): void {
-    this.route.params.forEach((params: Params) => {
-      this.chartsService.getCharts(params["repo"]).subscribe(charts => {
-        this.loading = false;
-        this.charts = charts;
-        this.orderedCharts = this.orderCharts(this.charts);
-      });
-    })
+    this.chartsService.getCharts(this.repoName).subscribe(charts => {
+      this.loading = false;
+      this.charts = charts;
+      this.orderedCharts = this.orderCharts(this.charts);
+    });
   }
 
   loadRepos(): void {
-    this.route.params.forEach((params: Params) => {
-      this.reposService.getRepos().subscribe(repos => {
-        this.repositories = repos;
-        if(params["repo"]) {
-          this.currentRepo = repos.filter(r => r.id == params["repo"])[0];
-        }
-      });
+    this.reposService.getRepos().subscribe(repos => {
+      this.repositories = repos;
+      if(this.repoName) {
+        this.currentRepo = repos.filter(r => r.id == this.repoName)[0];
+      }
     });
   }
 
@@ -105,8 +106,14 @@ export class ChartsComponent implements OnInit {
   }
 
   updateMetaTags(): void {
-    let title: string = `${this.currentRepo ? this.currentRepo.attributes.name : "Any"} repository charts`;
-    this.metaService.setTitle(title, ` | ${this.config.appName}`);
-    this.metaService.setTag('og:title', title);
+    if (this.repoName) {
+      this.seo.setMetaTags('repoCharts', { repo: this.capitalize(this.repoName) });
+    } else {
+      this.seo.setMetaTags('charts');
+    }
+  }
+
+  capitalize(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
   }
 }

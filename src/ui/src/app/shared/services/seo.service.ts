@@ -52,7 +52,7 @@ export class SeoService {
     this.metaService.setTag('og:title', content.title);
     this.metaService.setTag('og:description', content.description);
 
-    // Check if we can add the image
+    // Check if we can set the image
     if (data['image'] !== undefined) {
       this.metaService.setTag('og:image', data['image']);
     }
