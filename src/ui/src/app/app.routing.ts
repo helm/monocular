@@ -12,13 +12,7 @@ import { DeploymentComponent } from './deployment/deployment.component';
 const appRoutes: Routes = [
   {
     path: '',
-    component: ChartIndexComponent,
-    data: {
-      meta: {
-        title: 'KubeApps: Discover & launch great Kubernetes-ready apps',
-        description: 'KubeApps is a platform for discovering & launching great Kubernetes-ready apps. Browse the catalog and deploy your applications in your Kubernetes cluster'
-      }
-    }
+    component: ChartIndexComponent
   },
   {
     path: 'deployments',
