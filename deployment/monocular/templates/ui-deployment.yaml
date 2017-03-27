@@ -10,6 +10,8 @@ spec:
     metadata:
       labels:
         app: {{ template "fullname" . }}-ui
+      annotations:
+        checksum/config: {{ print .Values.api.config | sha256sum }}
     spec:
       containers:
       - name: {{ .Chart.Name }}
