@@ -9,17 +9,17 @@ export default {
   },
   search: {
     title: 'Results for "{ search }" Kubernetes-ready applications',
-    description: 'Results for "{ search }" in the KubeApps catalog of Kubernetes-ready applications. ' +
+    description: 'Results for "{ search }" in the { appName } catalog of Kubernetes-ready applications. ' +
                  'Deploy all apps you need in your infrastructure or the cloud'
   },
   charts: {
     title: 'Kubernetes-ready applications catalog',
-    description: 'Browse the KubeApps catalog of Kubernetes-ready apps. Deploy all apps you need ' +
+    description: 'Browse the { appName } catalog of Kubernetes-ready apps. Deploy all apps you need ' +
                  'in your infrastructure or the cloud with a command using Helm Charts'
   },
   repoCharts: {
     title: '{ repo } repository of Kubernetes-ready applications',
-    description: 'Browse the KubeApps catalog of the { repo } repository of Kubernetes-ready apps. ' +
+    description: 'Browse the { appName } catalog of the { repo } repository of Kubernetes-ready apps. ' +
                  'Deploy all apps you need in your infrastructure or the cloud with a command using ' +
                  'Helm Charts'
   },
