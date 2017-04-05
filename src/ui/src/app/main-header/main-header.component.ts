@@ -1,10 +1,11 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
 import { Router, NavigationExtras } from '@angular/router';
 
 @Component({
   selector: 'app-main-header',
   templateUrl: './main-header.component.html',
-  styleUrls: ['./main-header.component.scss']
+  styleUrls: ['./main-header.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class MainHeaderComponent implements OnInit {
   @Input() totalChartsNumber: number

@@ -11,7 +11,7 @@ import { Component, OnInit, ViewEncapsulation, ChangeDetectionStrategy } from '@
 export class DeploymentResourceComponent implements OnInit {
   // Resource to represent
   public resource;
-  private serviceKeys: String[] = [];
+  public serviceKeys: String[] = [];
 
   ngOnInit() {
     for(let k in this.resource.services[0]){

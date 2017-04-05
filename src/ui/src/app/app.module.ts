@@ -79,9 +79,9 @@ const metaConfig: MetaConfig = {
     ChartsComponent,
     ChartsFiltersComponent,
     LoaderComponent,
+    DeploymentControlsComponent,
     DeploymentsComponent,
     DeploymentComponent,
-    DeploymentControlsComponent,
     ConfirmDialog,
     DeploymentResourceComponent
   ],

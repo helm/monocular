@@ -20,17 +20,20 @@ import { Router } from '@angular/router';
 export class ChartDetailsUsageComponent implements OnInit {
   @Input() chart: Chart
   @Input() currentVersion: string
-  installing: boolean
+  installing: boolean;
+  // Config
+  public config;
 
   constructor(
     mdIconRegistry: MdIconRegistry,
     sanitizer: DomSanitizer,
-    private config: ConfigService,
+    config: ConfigService,
     private deploymentsService: DeploymentsService,
     private router: Router,
     private dialogsService: DialogsService,
     public snackBar: MdSnackBar
   ) {
+    this.config = config;
     mdIconRegistry
       .addSvgIcon('content-copy',
         sanitizer.bypassSecurityTrustResourceUrl('/assets/icons/content-copy.svg'));
