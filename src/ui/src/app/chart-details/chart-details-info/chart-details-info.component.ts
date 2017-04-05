@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ChartsService } from '../../shared/services/charts.service';
 import { Chart } from '../../shared/models/chart';
-import { Maintainer } from "../../shared/models/maintainer"
+import { Maintainer } from '../../shared/models/maintainer';
 import { ChartVersion } from '../../shared/models/chart-version';
 
 @Component({
