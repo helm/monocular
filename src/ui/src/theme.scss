@@ -86,12 +86,12 @@ $mappy-queries: (
 @import '~mappy-breakpoints/mappy-breakpoints';
 
 // Add more classes to Material2 components
-.md-input {
-  &--full {
+md-input-container {
+  &.md-input--full {
     width: 100%;
   }
 
-  &--reverse {
+  &.md-input--reverse {
     .md-input-placeholder:not(.md-focused) {
       color: darken($layout_light, 25);
     }
@@ -103,7 +103,7 @@ $mappy-queries: (
     }
   }
 
-  &--big {
+  &.md-input--big {
     font-size: 1.5em;
   }
 }

@@ -27,9 +27,10 @@
   </nav>
   <div class="header-bar__search" *ngIf="showSearch">
     <form (ngSubmit)="searchCharts(searchBox)">
-      <md-input class="md-input--reverse md-input--full"
-        placeholder="Search..." #searchBox
-        floatingPlaceholder="false"></md-input>
+      <md-input-container class="md-input--reverse md-input--full">
+        <input md-input placeholder="Search..." #searchBox
+        floatingPlaceholder="false">
+      </md-input-container>
     </form>
   </div>
 </header>
