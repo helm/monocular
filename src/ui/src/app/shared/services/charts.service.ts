@@ -76,7 +76,7 @@ export class ChartsService {
          chart.attributes.description.match(re) ||
          chart.attributes.repo.name.match(re) ||
          this.arrayMatch(chart.attributes.keywords, re) ||
-         this.arrayMatch(chart.attributes.maintainers.map((m)=> { return m.name }), re) ||
+         this.arrayMatch((chart.attributes.maintainers || []).map((m)=> { return m.name }), re) ||
          this.arrayMatch(chart.attributes.sources, re)
       })
     })

@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ChartsService } from '../../shared/services/charts.service';
 import { Chart } from '../../shared/models/chart';
+import { Maintainer } from '../../shared/models/maintainer';
 import { ChartVersion } from '../../shared/models/chart-version';
 
 @Component({
@@ -31,6 +32,10 @@ export class ChartDetailsInfoComponent implements OnInit {
     // Used to handle possible trailing URLs
     var urljoin = require('url-join');
     return urljoin(chartSource, this.chart.attributes.name);
+  }
+
+  get maintainers(): Maintainer[] {
+    return this.chart.attributes.maintainers || [];
   }
 
   get sourceName(): string {
