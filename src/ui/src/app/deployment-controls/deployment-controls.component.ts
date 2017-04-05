@@ -2,6 +2,7 @@ import { Component, Output, EventEmitter } from '@angular/core';
 import { DeploymentsService } from '../shared/services/deployments.service';
 import { MdSnackBar } from '@angular/material';
 import { DialogsService } from '../shared/services/dialogs.service';
+import { Deployment } from '../shared/models/deployment';
 
 @Component({
   selector: 'app-deployment-controls',
@@ -10,6 +11,7 @@ import { DialogsService } from '../shared/services/dialogs.service';
   inputs: ['deployment']
 })
 export class DeploymentControlsComponent {
+  public deployment: Deployment;
   @Output() onDelete = new EventEmitter();
   deleting: boolean
 

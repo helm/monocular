@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { Chart } from '../../shared/models/chart';
 import { ChartsService } from '../../shared/services/charts.service';
 
@@ -20,7 +20,7 @@ export class ChartDetailsReadmeComponent implements OnChanges {
   ) { }
 
   // Detect if input changed
-  ngOnChanges() {
+  ngOnChanges(changes: SimpleChanges) {
     this.getReadme();
   }
 
@@ -31,7 +31,7 @@ export class ChartDetailsReadmeComponent implements OnChanges {
         this.chartsService.getChartReadme(chartVersion)
           .subscribe(resp => {
             this.loading = false;
-            this.readmeContent = this.markdown(resp.text())
+            this.readmeContent = this.markdown(resp.text());
           })
       })
   }

@@ -47,7 +47,7 @@
           </md-list>
         </app-panel>
         <app-panel class="deployment-details__info__actions" title="Actions" [border]=true>
-          <app-deployment-controls [deployment]=deployment (onDelete)="deploymentDeleted($event)"></app-deployment-controls>
+          <app-deployment-controls [deployment]="deployment" (onDelete)="deploymentDeleted($event)"></app-deployment-controls>
         </app-panel>
       </aside>
     </section>

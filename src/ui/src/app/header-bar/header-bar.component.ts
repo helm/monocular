@@ -21,16 +21,19 @@ export class HeaderBarComponent implements OnInit {
   public transparent: boolean = false;
   // Check if  the menu is opened
   public openedMenu: boolean = false;
+  // Config
+  public config;
 
   appName: string
   constructor(
     private router: Router,
-    private config: ConfigService,
+    config: ConfigService,
     private menuService: MenuService,
     private mdIconRegistry: MdIconRegistry,
     private sanitizer: DomSanitizer,
   ) {
     this.appName = config.appName;
+    this.config = config;
     // Set the icon
     mdIconRegistry
       .addSvgIcon('menu',
