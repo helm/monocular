@@ -20,6 +20,7 @@ import { ReposService } from './shared/services/repos.service';
 import { ConfigService } from './shared/services/config.service';
 import { MenuService } from './shared/services/menu.service';
 import { DialogsService } from './shared/services/dialogs.service';
+import { SeoService } from './shared/services/seo.service';
 
 /* Components */
 import { AppComponent } from './app.component';
@@ -102,10 +103,11 @@ const metaConfig: MetaConfig = {
     ReposService,
     ConfigService,
     MenuService,
+    SeoService,
     DialogsService
   ],
   entryComponents: [
-    ConfirmDialog,
+    ConfirmDialog
   ],
   bootstrap: [AppComponent]
 })

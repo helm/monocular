@@ -34,12 +34,7 @@ const appRoutes: Routes = [
   },
   {
     path: 'charts',
-    component: ChartsComponent,
-    data: {
-      meta: {
-        title: 'All charts'
-      }
-    }
+    component: ChartsComponent
   },
   {
     path: 'charts/search',
@@ -47,12 +42,7 @@ const appRoutes: Routes = [
   },
   {
     path: 'charts/:repo',
-    component: ChartsComponent,
-    data: {
-      meta: {
-        title: 'All charts by repository'
-      }
-    }
+    component: ChartsComponent
   },
   {
     path: 'charts/:repo/:chartName',
