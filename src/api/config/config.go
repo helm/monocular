@@ -23,7 +23,7 @@ type Configuration struct {
 	Repos                repos.Repos
 	ReleasesEnabled      bool  `yaml:"releasesEnabled"`
 	TillerPortForward    bool  `yaml:"tillerPortForward"`
-	CacheRefreshInterval int32 `yaml:"cacheRefreshInterval"`
+	CacheRefreshInterval int64 `yaml:"cacheRefreshInterval"`
 	Initialized          bool
 }
 
