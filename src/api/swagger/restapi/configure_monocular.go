@@ -47,7 +47,7 @@ func configureAPI(api *operations.MonocularAPI) http.Handler {
 	// Run foreground repository refresh
 	chartsImplementation.Refresh()
 	// Setup background index refreshes
-	freshness := time.Duration(3600) * time.Second
+	freshness := time.Duration(config.CacheRefreshInterval) * time.Second
 	periodicRefresh := cache.NewRefreshChartsData(chartsImplementation, freshness, "refresh-charts", false)
 	toDo := []jobs.Periodic{periodicRefresh}
 	jobs.DoPeriodic(toDo)
