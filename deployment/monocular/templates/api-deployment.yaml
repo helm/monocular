@@ -23,13 +23,13 @@ spec:
           httpGet:
             path: /healthz
             port: {{ .Values.api.service.internalPort }}
-          initialDelaySeconds: 60
+          initialDelaySeconds: 180
           timeoutSeconds: 10
         readinessProbe:
           httpGet:
             path: /healthz
             port: {{ .Values.api.service.internalPort }}
-          initialDelaySeconds: 30
+          initialDelaySeconds: 90
           timeoutSeconds: 5
         volumeMounts:
           - name: config
