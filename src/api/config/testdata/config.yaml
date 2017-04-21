@@ -5,3 +5,4 @@ repos:
   - name: repoName2
     url: http://myrepobucket2
 releasesEnabled: true
+cacheRefreshInterval: 3600
