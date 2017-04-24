@@ -29,7 +29,7 @@ spec:
           httpGet:
             path: /healthz
             port: {{ .Values.api.service.internalPort }}
-          initialDelaySeconds: 90
+          initialDelaySeconds: 30
           timeoutSeconds: 5
         volumeMounts:
           - name: config
