@@ -49,58 +49,13 @@ export class DeploymentComponent implements OnInit {
 
   }
 
-  /**
-   * Prepare the resources for displaying in the UI.
-   *
-   * TODO: In the future, the backend will provide this information
-   */
-  loadResources(deployment: Deployment): any {
-    let elements = deployment.attributes.resources.split('=='),
-      resources = [];
-
-    // Remove first element
-    elements.shift();
-
-    // Regex
-    let nameRegex = /^> [\w\d\s\/]+\/(\w+)+/;
-
-    elements.forEach(el => {
-      let lines = el.split("\n");
-
-      // Name
-      let name = nameRegex.exec(lines.shift())[1];
-      let headers = lines.shift().split(/\s+/);
-      let services = [];
-
-      // Remaining lines
-      lines.forEach(line => {
-        if (line !== ''){
-          let values = line.split(/\s+/);
-          let service = {};
-
-          values.forEach((value, i) => {
-            service[headers[i]] = value;
-          });
-
-          // Add to the array
-          services.push(service);
-        }
-      });
-
-      // Build the resource
-      resources.push({ name, services });
-    });
-
-    return resources;
-  }
-
   loadDeployment(deploymentName: string): void {
     this.deploymentsService.getDeployment(deploymentName)
     .finally(()=> {
       this.loading = false;
     }).subscribe(deployment => {
       this.deployment = deployment;
-      this.resources = this.loadResources(deployment);
+      this.resources = this.deploymentsService.loadResources(deployment);
     })
   }
 
