@@ -19,6 +19,8 @@ api:
     requests:
       cpu: 100m
       memory: 128Mi
+  livenessProbe:
+    initialDelaySeconds: 180
   config:
     repos:
       # Official repositories
