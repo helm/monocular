@@ -38,6 +38,12 @@
               <md-icon md-list-avatar svgIcon="info-outline"></md-icon>
               <h4 md-line>Status</h4>
               <p md-line>{{ deployment.attributes.status }}</p>
+            </md-list-item><md-list-item>
+              <md-icon md-list-avatar svgIcon="info-outline"></md-icon>
+              <h4 md-line>URL</h4>
+              <p md-line>
+                <a *ngFor="let url of deployment.attributes.urls" href="{{url}}" target="_blank"> {{url}}</a>
+              </p>
             </md-list-item>
             <md-list-item>
               <md-icon md-list-avatar svgIcon="schedule"></md-icon>

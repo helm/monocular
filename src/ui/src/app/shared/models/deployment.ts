@@ -13,4 +13,5 @@ class DeploymentAttributes {
   updated: Date;
   notes: string;
   resources: string;
+  urls: string[];
 }

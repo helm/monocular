@@ -50,7 +50,99 @@ export class DeploymentsService {
 
   private extractData(res: Response, fallback = {}) {
     let body = res.json();
-    return body.data || fallback;
+    var data = body.data;
+    if (!data) {
+        return fallback;
+    }
+    var attributes = data.attributes;
+    if (attributes) {
+      attributes.urls = [];
+      var resources = attributes.resources;
+      if (resources) {
+        var parsedResources = this.loadResources(data);
+        parsedResources.forEach(x => {
+          if (x.name == 'Service') {
+              x.services.forEach(svc => {
+                attributes.urls = attributes.urls.concat(this.svcToURLs(svc));
+              })
+          }
+        })
+      }
+    }
+    return data || fallback;
+  }
+
+  /**
+   * Take a service status and try to assemble urls out of it
+   * @param portSpec parsed SVC line
+   * @param ret out parameter to store urls in
+   */
+  private svcToURLs(portSpec) {
+    // pattern is INT_PORT:EXT_PORT/TCP
+    const portsRE = /^(\d+:)?(\d+)\/TCP$/;
+    // match ip4/6 ips, as opposed to <pending>
+    const ipRE = /^[\d\.:]+$/;
+    const EXT_IP = "EXTERNAL-IP";
+
+    var ret = [];
+    var ports = portSpec['PORT(S)'].split(",");
+    ports.forEach(port => {
+      var extIP = portSpec[EXT_IP];
+      // only look at services with valid external IP
+      if (!ipRE.exec(extIP))
+        return;
+      var portMatch = portsRE.exec(port);
+      if (portMatch) {
+        var protocol = portMatch[1] == '443:' ? 'https' : 'http';
+        ret.push(`${protocol}://${extIP}:${portMatch[2]}`);
+      }
+    })
+    return ret;
+  }
+
+  /**
+   * Prepare the resources for displaying in the UI.
+   *
+   * TODO: In the future, the backend will provide this information
+   */
+  loadResources(deployment: Deployment): any {
+    let elements = deployment.attributes.resources.split('=='),
+      resources = [];
+
+    // Remove first element
+    elements.shift();
+
+    // Regex
+    let nameRegex = /^> [\w\d\s\/]+\/(\w+)+/;
+
+    elements.forEach(el => {
+      let lines = el.split("\n");
+
+      // Name
+      let name = nameRegex.exec(lines.shift())[1];
+      let headers = lines.shift().split(/\s+/);
+      let services = [];
+
+      // Remaining lines
+      lines.forEach(line => {
+        if (line !== '') {
+          let values = line.split(/\s+/);
+          let service = {};
+
+          values.forEach((value, i) => {
+            service[headers[i]] = value;
+          });
+
+          // Add to the array
+          services.push(service);
+        }
+      });
+
+      // Build the resource
+      resources.push({ name, services });
+    });
+
+    return resources;
   }
 
   private handleError (error: any) {
