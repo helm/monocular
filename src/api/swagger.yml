@@ -558,8 +558,6 @@ definitions:
         type: string
       namespace:
         type: string
-      name:
-        type: string
       resources:
         type: string
       notes:
