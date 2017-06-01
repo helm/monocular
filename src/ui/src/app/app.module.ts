@@ -41,6 +41,7 @@ import { ChartDetailsInfoComponent } from './chart-details/chart-details-info/ch
 import { ChartDetailsVersionsComponent } from './chart-details/chart-details-versions/chart-details-versions.component';
 import { ChartsComponent } from './charts/charts.component';
 import { DeploymentsComponent } from './deployments/deployments.component';
+import { DeploymentItemComponent } from './deployment-item/deployment-item.component';
 import { DeploymentComponent } from './deployment/deployment.component';
 import { DeploymentControlsComponent } from './deployment-controls/deployment-controls.component';
 import { ChartsFiltersComponent } from './charts-filters/charts-filters.component';
@@ -82,6 +83,7 @@ const metaConfig: MetaConfig = {
     LoaderComponent,
     DeploymentControlsComponent,
     DeploymentsComponent,
+    DeploymentItemComponent,
     DeploymentComponent,
     ConfirmDialog,
     DeploymentResourceComponent

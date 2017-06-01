@@ -1,0 +1,20 @@
+<div class="deployment_item">
+  <!-- href="/deployments/{{ deployment.id }}" routerLink="/deployments/{{ deployment.id }}"> -->
+  <div class="deployment_item_icon">
+    <!-- <md-icon md-card-avatar svgIcon="layers"></md-icon> -->
+    <!-- <img alt="{{ chart.attributes.name }}'s logo" src="{{ getIconUrl() }}"/> -->
+  </div>
+  <div class="deployment_item_content">
+    <h2 class="deployment_item_content__title">
+      {{ deployment.id }}
+    </h2>
+    <div class="deployment_item_content__subtitle">
+        {{ deployment.attributes.chartName }} v.{{ deployment.attributes.chartVersion }} <br/>
+        Namespace: <b>{{ deployment.attributes.namespace }}</b><br/>
+        Status: <b>{{ deployment.attributes.status }}</b>
+    </div>
+    <div class="deployment_item_content__date">
+      {{ deployment.attributes.updated | date }}
+    </div>
+  </div>
+</div>

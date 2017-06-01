@@ -14,6 +14,10 @@ import { MdIconRegistry } from '@angular/material';
 })
 export class DeploymentsComponent implements OnInit {
   deployments: Deployment[] = [];
+  sidebarMenu: Object[] = [
+    { title: 'Namespace', subs: ['default', 'data', 'kubeless'] },
+    { title: 'Order By', subs: ['Name', 'Date', 'Status'] }
+  ];
   loading: boolean = true;
 
   constructor(
@@ -44,4 +48,5 @@ export class DeploymentsComponent implements OnInit {
       this.deployments = deployments;
     })
   }
+
 }

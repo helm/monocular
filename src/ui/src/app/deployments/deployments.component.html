@@ -12,24 +12,25 @@
           </a>
         </div>
       </header>
-      <h1 *ngIf="!deployments.length">There are no deployments</h1>
-      <a class="deployments__deployment" *ngFor="let deployment of deployments"
-        href="/deployments/{{ deployment.id }}" routerLink="/deployments/{{ deployment.id }}">
-        <md-card>
-          <md-card-header>
-            <md-icon md-card-avatar svgIcon="layers"></md-icon>
-            <md-card-title>
-              {{ deployment.id }}
-              ({{ deployment.attributes.chartName }} v.{{ deployment.attributes.chartVersion }})
-            </md-card-title>
-            <md-card-subtitle>
-                {{ deployment.attributes.status }} on namespace
-                "{{ deployment.attributes.namespace }}"
-                on {{ deployment.attributes.updated | date }}
-            </md-card-subtitle>
-          </md-card-header>
-        </md-card>
-      </a>
+      <div class="deployments__gallery">
+        <div class="deployments__gallery__sidebar">
+          <div class="sidebar_section" *ngFor="let menu of sidebarMenu">
+              <h3 class="sidebar_section_title">{{ menu.title }}</h3>
+              <div class="sidebar_section_link" *ngFor="let sub of menu.subs">
+                {{ sub }}
+              </div>
+          </div>
+        </div>
+        <div class="deployments__gallery__content">
+          <div class="deployments__gallery__content__topbar">
+            <input type="text" placeholder="Search deployment..." />
+          </div>
+          <div class="deployments__gallery__content__list">
+            <h3 *ngIf="!deployments.length">There are no deployments</h3>
+            <app-deployment-item *ngFor="let deployment of deployments" [deployment]=deployment></app-deployment-item>
+          </div>
+        </div>
+      </div>
     </section>
   </app-panel>
 </app-loader>

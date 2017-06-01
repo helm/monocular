@@ -1,44 +1,62 @@
 @import '../../theme.scss';
 
 .deployments {
+  max-width: 1000px;
+  margin: auto;
   &__header {
     width: 100%;
-
+    display: flex;
     &__title {
       margin-top: 0;
     }
 
     &__new {
-      margin-bottom: 2em;
+      margin-left: 1em;
+      margin-bottom: 1em;
       text-align: center;
     }
-
-    @include mappy-bp(small) {
-      display: flex;
-
-      &__block {
-        flex: 1;
-      }
-
-      &__new {
-        text-align: right;
-        margin-bottom: 0;
-      }
-    }
   }
+  &__gallery {
+    width: 100%;
 
-  &__deployment {
-    md-card-title {
-      color: md-color($monocular-app-primary);
+    display: flex;
+    &__sidebar {
+      width: 175px;
+      border-right: 1px solid #D7D9DD;
     }
+    &__content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      &__topbar {
+        height: 40px;
+        border-bottom: 1px solid #D7D9DD;
+        input {
+          width: 100%;
+          height: 100%;
+          border: 0;
+          font-size: 16px;
+          background: none;
+          outline: none;
+          padding: 0 10px;
+        }
+      }
+      &__list {
+        flex: 1;
+        display: flex;
+        flex-flow: row wrap;
+        justify-content: space-between;
 
-    md-icon {
-      color: darken($layout_light, 20%);
-    }
-
-    &:hover {
-      md-card {
-        background-color: $layout_light;
+        app-deployment-item {
+          height: 150px;
+          margin-bottom: 1em;
+          @include mappy-bp(small) {
+            width: 100%;
+          }
+          @include mappy-bp(medium) {
+            width: 45%;
+          }
+        }
       }
     }
   }
