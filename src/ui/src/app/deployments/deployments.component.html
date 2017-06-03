@@ -14,20 +14,26 @@
       </header>
       <div class="deployments__gallery">
         <div class="deployments__gallery__sidebar">
-          <div class="sidebar_section" *ngFor="let menu of sidebarMenu">
-              <h3 class="sidebar_section_title">{{ menu.title }}</h3>
-              <div class="sidebar_section_link" *ngFor="let sub of menu.subs">
-                {{ sub }}
+          <div class="sidebar_section">
+              <h3 class="sidebar_section_title">Namespace</h3>
+              <div class="sidebar_section_link" *ngFor="let ns of namespaces" [class.active]="ns == namespace" (click)='clickNamespace(namespace)'>
+                {{ ns }}
+              </div>
+          </div>
+          <div class="sidebar_section">
+              <h3 class="sidebar_section_title">Order By</h3>
+              <div class="sidebar_section_link" *ngFor="let order of orders" [class.active]="order == orderBy" (click)='clickOrderBy(order)'>
+                {{ order }}
               </div>
           </div>
         </div>
         <div class="deployments__gallery__content">
           <div class="deployments__gallery__content__topbar">
-            <input type="text" placeholder="Search deployment..." />
+            <input type="text" placeholder="Search deployment..." (keyup)="searchChange($event)" />
           </div>
           <div class="deployments__gallery__content__list">
             <h3 *ngIf="!deployments.length">There are no deployments</h3>
-            <app-deployment-item *ngFor="let deployment of deployments" [deployment]=deployment></app-deployment-item>
+            <app-deployment-item *ngFor="let deployment of visibleDeployments" [deployment]=deployment></app-deployment-item>
           </div>
         </div>
       </div>
