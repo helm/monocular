@@ -17,7 +17,6 @@ export class DeploymentItemComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    console.log(this.deployment)
   }
 
   /**
@@ -27,11 +26,6 @@ export class DeploymentItemComponent implements OnInit {
    * @return {string} The URL of the icon or a placeholder
    */
   getIconUrl(): string {
-    // let icons = this.deployment.chart.relationships.latestChartVersion.data.icons;
-    // if (icons !== undefined && icons.length > 0) {
-    //   return this.config.backendHostname + icons.find(icon => icon.name === '160x160-fit').path;
-    // } else {
-      return '/assets/images/placeholder.png';
-    // }
+    return this.deployment.attributes.chartIcon ? this.deployment.attributes.chartIcon : '/assets/images/placeholder.png';
   }
 }

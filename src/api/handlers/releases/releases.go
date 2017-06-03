@@ -117,14 +117,20 @@ func makeReleaseResources(releases *rls.ListReleasesResponse) []*models.Resource
 
 func makeReleaseResource(release *hapi_release5.Release) *models.Resource {
 	var ret models.Resource
+	fmt.Sprintf("AQUI %v", &release.Chart)
 	if release == nil {
 		return &ret
 	}
 	ret.Type = helpers.StrToPtr("release")
 	ret.ID = helpers.StrToPtr(release.Name)
+	// var icon string
+	// if (len(&release.Chart.relationships.latestChartVersion.data.icons) > 0) {
+	// 	icon = &release.Chart.relationships.latestChartVersion.data.icons[0]
+	// }
 	ret.Attributes = &models.Release{
 		ChartName:    &release.Chart.Metadata.Name,
 		ChartVersion: &release.Chart.Metadata.Version,
+		ChartIcon:    &release.Chart.Metadata.Icon,
 		Updated:      helpers.StrToPtr(timeconv.String(release.Info.LastDeployed)),
 		Name:         &release.Name,
 		Namespace:    &release.Namespace,

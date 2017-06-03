@@ -7,6 +7,7 @@ export class Deployment {
 class DeploymentAttributes {
   chartName: string;
   chartVersion: string;
+  chartIcon: string;
   name: string;
   namespace: string;
   status: string;

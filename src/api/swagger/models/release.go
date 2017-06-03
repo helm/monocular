@@ -28,6 +28,12 @@ type Release struct {
 	*/
 	ChartVersion *string `json:"chartVersion"`
 
+	/* chartIcon
+
+	Required: false
+	*/
+	ChartIcon *string `json:"chartIcon"`
+
 	/* name
 
 	Required: true
