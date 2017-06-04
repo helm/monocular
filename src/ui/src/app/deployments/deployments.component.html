@@ -16,7 +16,7 @@
         <div class="deployments__gallery__sidebar">
           <div class="sidebar_section">
               <h3 class="sidebar_section_title">Namespace</h3>
-              <div class="sidebar_section_link" *ngFor="let ns of namespaces" [class.active]="ns == namespace" (click)='clickNamespace(namespace)'>
+              <div class="sidebar_section_link" *ngFor="let ns of namespaces" [class.active]="ns == namespace" (click)='clickNamespace(ns)'>
                 {{ ns }}
               </div>
           </div>
@@ -32,7 +32,7 @@
             <input type="text" placeholder="Search deployment..." (keyup)="searchChange($event)" />
           </div>
           <div class="deployments__gallery__content__list">
-            <h3 *ngIf="!deployments.length">There are no deployments</h3>
+            <h3 *ngIf="!visibleDeployments.length" class="deployments__gallery__content__list__empty">There are no deployments</h3>
             <app-deployment-item *ngFor="let deployment of visibleDeployments" [deployment]=deployment></app-deployment-item>
           </div>
         </div>
