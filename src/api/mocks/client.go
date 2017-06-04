@@ -22,6 +22,7 @@ var Resource = helm_releases.Release{
 		Metadata: &chart.Metadata{
 			Name:    "my-chart",
 			Version: "1.2.3",
+			Icon: "chart-icon",
 		},
 	},
 	Info: &helm_releases.Info{
