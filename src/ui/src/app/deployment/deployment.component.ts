@@ -64,4 +64,8 @@ export class DeploymentComponent implements OnInit {
       return this.router.navigate(['/deployments']);
     }
   }
+
+  getIconUrl(): string {
+    return this.deployment.attributes.chartIcon ? this.deployment.attributes.chartIcon : '/assets/images/placeholder.png';
+  }
 }
