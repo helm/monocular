@@ -117,7 +117,6 @@ func makeReleaseResources(releases *rls.ListReleasesResponse) []*models.Resource
 
 func makeReleaseResource(release *hapi_release5.Release) *models.Resource {
 	var ret models.Resource
-	fmt.Sprintf("AQUI %v", &release.Chart)
 	if release == nil {
 		return &ret
 	}
