@@ -15,7 +15,7 @@ import { MdIconRegistry } from '@angular/material';
 export class DeploymentsComponent implements OnInit {
   deployments: Deployment[] = [];
   visibleDeployments: Deployment[] = [];
-  namespaces: string[] = ['All', 'default', 'data', 'kubeless'];
+  namespaces: string[] = ['All'];
   orders: string[] = ['Name', 'Date', 'Status'];
   orderBy: string = 'Date';
   namespace: string = 'All';
@@ -82,7 +82,6 @@ export class DeploymentsComponent implements OnInit {
   }
 
   searchChange(e) {
-    console.log('O', e.target.value);
     let newValue = e.target.value;
     if (!newValue) {
       return this.filterDeployments();

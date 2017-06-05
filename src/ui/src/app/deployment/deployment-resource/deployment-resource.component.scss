@@ -2,20 +2,21 @@
 
 .resource {
   margin-bottom: 1em;
-  overflow: scroll;
 
   &__title {
     margin-bottom: .5em;
+    margin-top: 1.5em;
+    color: md-color($monocular-app-primary);
   }
 
   &__table {
     width: 100%;
-
     th {
       text-align: left;
       font-size: .8em;
       font-weight: normal;
-      border-bottom: 1px solid $layout_base;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+      color: rgba(0, 0, 0, 0.4);
     }
 
     th,

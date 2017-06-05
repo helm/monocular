@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Deployment } from '../shared/models/deployment';
 import { ConfigService } from '../shared/services/config.service';
+import ColorThief from 'color-thief-browser'
 
 @Component({
   selector: 'app-deployment-item',
@@ -9,6 +10,9 @@ import { ConfigService } from '../shared/services/config.service';
   inputs: ['deployment']
 })
 export class DeploymentItemComponent implements OnInit {
+  @ViewChild('logo') logoRef: ElementRef;
+  backgroundColor: string;
+
   // Chart to represent
   public deployment: Deployment;
 
@@ -16,8 +20,7 @@ export class DeploymentItemComponent implements OnInit {
     private config: ConfigService
   ) {}
 
-  ngOnInit() {
-  }
+  ngOnInit() { }
 
   /**
    * Display the icon of the application if it's provided. In the other case,
@@ -26,6 +29,17 @@ export class DeploymentItemComponent implements OnInit {
    * @return {string} The URL of the icon or a placeholder
    */
   getIconUrl(): string {
+    if (this.deployment.attributes.chartIcon && !this.backgroundColor) {
+      let img = this.logoRef.nativeElement;
+      img.addEventListener('load', (e) => {
+        const ct = new ColorThief();
+        const palette = ct.getPalette(img, 2);
+        if (palette.length > 0) {
+          const rgb = palette[0];
+          this.backgroundColor = `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, 0.1)`
+        }
+      })
+    }
     return this.deployment.attributes.chartIcon ? this.deployment.attributes.chartIcon : '/assets/images/placeholder.png';
   }
 }

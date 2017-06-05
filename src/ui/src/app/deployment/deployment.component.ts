@@ -1,11 +1,12 @@
 import { Router, ActivatedRoute, Params } from '@angular/router';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { DeploymentsService } from '../shared/services/deployments.service';
 import { Deployment } from '../shared/models/deployment';
 import { Chart } from '../shared/models/chart';
 import { ConfigService } from '../shared/services/config.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MdIconRegistry } from '@angular/material';
+import ColorThief from 'color-thief-browser'
 
 @Component({
   selector: 'app-deployment',
@@ -14,6 +15,9 @@ import { MdIconRegistry } from '@angular/material';
   viewProviders: [MdIconRegistry]
 })
 export class DeploymentComponent implements OnInit {
+  @ViewChild('logo') logoRef: ElementRef;
+  backgroundColor: string;
+
   deployment: Deployment;
   resources = [];
   loading: boolean = true;
@@ -66,6 +70,17 @@ export class DeploymentComponent implements OnInit {
   }
 
   getIconUrl(): string {
+    if (this.deployment.attributes.chartIcon && this.logoRef && !this.backgroundColor) {
+      let img = this.logoRef.nativeElement;
+      img.addEventListener('load', (e) => {
+        const ct = new ColorThief();
+        const palette = ct.getPalette(img, 2);
+        if (palette.length > 0) {
+          const rgb = palette[0];
+          this.backgroundColor = `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, 0.1)`
+        }
+      })
+    }
     return this.deployment.attributes.chartIcon ? this.deployment.attributes.chartIcon : '/assets/images/placeholder.png';
   }
 }

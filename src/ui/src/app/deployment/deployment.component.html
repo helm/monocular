@@ -8,9 +8,9 @@
     <h2 *ngIf="!deployment && !loading" >Sorry, we couldn't find the deployment</h2>
     <section class="deployment-details" *ngIf="deployment">
       <aside class="deployment-details__info">
-        <div class="deployment-details__info__container">
+        <div class="deployment-details__info__container" [style.background-color]="backgroundColor">
           <div class="deployment-details__info__icon">
-            <img alt="{{ deployment.chartName }}'s logo" src="{{ getIconUrl() }}"/>
+            <img #logo crossOrigin="anonymous" alt="{{ deployment.chartName }}'s logo" src="{{ getIconUrl() }}"/>
           </div>
           <div class="deployment-details__info__list">
             <div class="deployment-details__info__list__item">
@@ -37,7 +37,8 @@
             </div>
           </div>
         </div>
-        <div class="deployment-details__info__container actions" title="Actions">
+        <div class="deployment-details__info__container actions" [style.background-color]="backgroundColor">
+          <h3 class="actions__title">Actions</h3>
           <app-deployment-controls [deployment]="deployment" (onDelete)="deploymentDeleted($event)"></app-deployment-controls>
         </div>
       </aside>

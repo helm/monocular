@@ -26,6 +26,7 @@
 
 
   &__main {
+    padding-bottom: 2em;
     &__notes {
       margin: 2em 0;
 
@@ -56,11 +57,17 @@
       overflow: hidden;
       &.actions {
         padding: 1em;
+        margin-top: 2em;
+        h3 {
+          margin-top: 0;
+          margin-bottom: .5em;
+        }
       }
     }
 
     &__icon {
       height: 100px;
+      max-width: 100%;
       background: white;
       display: flex;
       img {
