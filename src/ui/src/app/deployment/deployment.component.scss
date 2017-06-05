@@ -67,11 +67,13 @@
 
     &__icon {
       height: 100px;
-      max-width: 100%;
       background: white;
       display: flex;
       img {
-        height: 60%;
+        width: auto;
+        height: auto;
+        max-height: 60%;
+        max-width: 80%;
         margin: auto;
       }
     }

@@ -15,7 +15,6 @@ import ColorThief from 'color-thief-browser'
   viewProviders: [MdIconRegistry]
 })
 export class DeploymentComponent implements OnInit {
-  @ViewChild('logo') logoRef: ElementRef;
   backgroundColor: string;
 
   deployment: Deployment;
@@ -70,11 +69,13 @@ export class DeploymentComponent implements OnInit {
   }
 
   getIconUrl(): string {
-    if (this.deployment.attributes.chartIcon && this.logoRef && !this.backgroundColor) {
-      let img = this.logoRef.nativeElement;
-      img.addEventListener('load', (e) => {
+    if (this.deployment.attributes.chartIcon && !this.backgroundColor) {
+      var imgObj = new Image();
+      imgObj.crossOrigin = 'Anonymous';
+      imgObj.src = this.deployment.attributes.chartIcon;
+      imgObj.addEventListener('load', (e) => {
         const ct = new ColorThief();
-        const palette = ct.getPalette(img, 2);
+        const palette = ct.getPalette(imgObj, 2);
         if (palette.length > 0) {
           const rgb = palette[0];
           this.backgroundColor = `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, 0.1)`
