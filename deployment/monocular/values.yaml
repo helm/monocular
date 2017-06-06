@@ -44,7 +44,6 @@ api:
     releasesEnabled: false
     # Cache refresh interval in sec.
     cacheRefreshInterval: 3600
-
 ui:
   replicaCount: 2
   image:
@@ -66,6 +65,7 @@ ui:
   # ui-config populate
   googleAnalyticsId: UA-XXXXXX-X
   appName: Monocular
+  # backendHostname: http://monocular-api.local
 
 prerender:
   replicaCount: 1
