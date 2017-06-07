@@ -1,24 +1,20 @@
 package client
 
 import (
+	"errors"
 	"fmt"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/helm/monocular/src/api/config"
 	"github.com/helm/monocular/src/api/data"
 	releasesapi "github.com/helm/monocular/src/api/swagger/restapi/operations/releases"
-	"k8s.io/helm/cmd/helm/installer"
 	"k8s.io/helm/pkg/helm"
 	"k8s.io/helm/pkg/helm/portforwarder"
 	"k8s.io/helm/pkg/kube"
 	rls "k8s.io/helm/pkg/proto/hapi/services"
-	"k8s.io/kubernetes/pkg/api"
 	"k8s.io/kubernetes/pkg/client/clientset_generated/internalclientset"
-	"k8s.io/kubernetes/pkg/client/clientset_generated/internalclientset/typed/core/internalversion"
-	"k8s.io/kubernetes/pkg/labels"
 
 	helmreleases "github.com/helm/monocular/src/api/data/helm/releases"
-	kerrors "k8s.io/kubernetes/pkg/api/errors"
 	"k8s.io/kubernetes/pkg/client/restclient"
 )
 
@@ -40,38 +36,18 @@ func NewHelmClient() data.Client {
 	}
 }
 
-func (c *helmClient) ensureTillerInstalled(namespace string, client *internalclientset.Clientset) error {
-	_, err := getFirstRunningPod(client, namespace, labels.Set{"app": "helm", "name": "tiller"}.AsSelector())
-	if err == nil {
-		return nil
-	}
-
-	log.WithFields(log.Fields{"error": err.Error()}).Info("Can't connect to Tiller. Installing")
-	if err = installer.Install(client, namespace, "", false, false); err != nil {
-		if !kerrors.IsAlreadyExists(err) {
-			return fmt.Errorf("error installing Tiller: %s", err)
-		}
-	}
-	return fmt.Errorf("Can't connect to Tiller. Installing, please wait")
-}
-
 // InitializeClient returns a helm.client
 func (c *helmClient) initialize() (*helm.Client, error) {
 	// From helm.setupConnection
-	config, client, err := getKubeClient("")
-	if err != nil {
-		return nil, err
-	}
-
-	err = c.ensureTillerInstalled(tillerNamespace, client)
-	if err != nil {
-		return nil, err
-	}
-
 	var tillerHost = fmt.Sprintf("%s.%s:%d", tillerServiceName, tillerNamespace, tillerPort)
 
 	if c.portForward {
-		tunnel, err := portforwarder.New(tillerNamespace, client, config)
+		config, kubeClient, err := getKubeClient("")
+		if err != nil {
+			return nil, err
+		}
+
+		tunnel, err := portforwarder.New(tillerNamespace, kubeClient, config)
 		if err != nil {
 			return nil, err
 		}
@@ -80,7 +56,13 @@ func (c *helmClient) initialize() (*helm.Client, error) {
 		tillerHost = fmt.Sprintf("localhost:%d", tunnel.Local)
 	}
 
-	return helm.NewClient(helm.Host(tillerHost)), nil
+	client := helm.NewClient(helm.Host(tillerHost))
+	// test connection
+	if _, err := client.GetVersion(); err != nil {
+		return nil, errors.New("Failed to connect to Tiller, are you sure it is installed?")
+	}
+
+	return client, nil
 }
 
 func (c *helmClient) ListReleases(params releasesapi.GetAllReleasesParams) (*rls.ListReleasesResponse, error) {
@@ -128,21 +110,4 @@ func getKubeClient(context string) (*restclient.Config, *internalclientset.Clien
 		return nil, nil, fmt.Errorf("could not get kubernetes client: %s", err)
 	}
 	return config, client, nil
-}
-
-func getFirstRunningPod(client internalversion.PodsGetter, namespace string, selector labels.Selector) (*api.Pod, error) {
-	options := api.ListOptions{LabelSelector: selector}
-	pods, err := client.Pods(namespace).List(options)
-	if err != nil {
-		return nil, err
-	}
-	if len(pods.Items) < 1 {
-		return nil, fmt.Errorf("could not find tiller")
-	}
-	for _, p := range pods.Items {
-		if api.IsPodReady(&p) {
-			return &p, nil
-		}
-	}
-	return nil, fmt.Errorf("could not find a ready tiller pod")
 }
