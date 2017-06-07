@@ -71,6 +71,10 @@ func GetConfig() (Configuration, error) {
 // BaseDir returns the location of the directory
 // where the configuration files are stored
 func BaseDir() string {
+	if basedir, ok := os.LookupEnv("MONOCULAR_HOME"); ok {
+		return basedir
+	}
+
 	return filepath.Join(os.Getenv("HOME"), "monocular")
 }
 

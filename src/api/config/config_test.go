@@ -72,6 +72,20 @@ func TestBaseDir(t *testing.T) {
 	assert.Equal(t, BaseDir(), path, "BaseDir uses home + monocular")
 }
 
+func TestBaseDirWithEnvVar(t *testing.T) {
+	path := "/path/to/monocular/home"
+	os.Setenv("MONOCULAR_HOME", path)
+	defer func() { os.Unsetenv("MONOCULAR_HOME") }()
+	assert.Equal(t, BaseDir(), path, "BaseDir uses MONOCULAR_HOME value")
+}
+
+func TestBaseDirWithEmptyEnvVar(t *testing.T) {
+	path := ""
+	os.Setenv("MONOCULAR_HOME", path)
+	defer func() { os.Unsetenv("MONOCULAR_HOME") }()
+	assert.Equal(t, BaseDir(), path, "BaseDir uses MONOCULAR_HOME value")
+}
+
 func TestConfigFile(t *testing.T) {
 	path := filepath.Join(BaseDir(), "config", "monocular.yaml")
 	assert.Equal(t, configFile(), path, "Config file = BaseDir + config + monocular.yaml")
