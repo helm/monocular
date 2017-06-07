@@ -34,11 +34,16 @@ api:
       #- name: my-repo-name
       #  url: my-repository-url
       #  source: my-repository-source
+    cors:
+      allowed_origins:
+        - my-api-server
+      allowed_headers:
+        - "access-control-allow-headers"
+        - "x-xsrf-token"
     # Enable Helm deployment integration
     releasesEnabled: false
     # Cache refresh interval in sec.
     cacheRefreshInterval: 3600
-
 ui:
   replicaCount: 2
   image:
@@ -60,13 +65,14 @@ ui:
   # ui-config populate
   googleAnalyticsId: UA-XXXXXX-X
   appName: Monocular
+  # backendHostname: http://monocular-api.local
 
 prerender:
   replicaCount: 1
   image:
     repository: migmartri/prerender
-    tag: 0.1
-    pullPolicy: IfNotPresent
+    tag: latest
+    pullPolicy: Always
   cacheEnabled: true
   service:
     name: prerender

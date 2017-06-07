@@ -14,8 +14,8 @@ data:
     }
 
     server {
-      listen 80;
-      
+      listen {{ .Values.ui.service.internalPort }};
+
       gzip on;
       # Angular CLI already has gzipped the assets (ng build --prod --aot)
       gzip_static  on;

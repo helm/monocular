@@ -4,5 +4,11 @@ repos:
     source: http://github.com/my-repo
   - name: repoName2
     url: http://myrepobucket2
+cors:
+  allowed_origins:
+    - "http://mymonocular"
+  allowed_headers:
+    - "access-control-allow-headers"
+    - "x-xsrf-token"
 releasesEnabled: true
 cacheRefreshInterval: 3600

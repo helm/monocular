@@ -13,6 +13,9 @@ data:
       overrides: {
         googleAnalyticsId: '{{.Values.ui.googleAnalyticsId}}',
         appName: '{{.Values.ui.appName}}',
+        {{- if .Values.ui.backendHostname }}
+        backendHostname: '{{ .Values.ui.backendHostname }}',
+        {{- end }}
         releasesEnabled: {{.Values.api.config.releasesEnabled}}
       }
     };

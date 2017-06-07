@@ -13,6 +13,13 @@ repos:
   #  url: my-repository-url
   #  source: my-repository-source
 
+cors:
+  allowed_origins:
+    - my-api-server
+  allowed_headers:
+    - "access-control-allow-headers"
+    - "x-xsrf-token"
+
 # Enables Helm deployment integration
 # https://github.com/helm/monocular/blob/master/docs/configuration.md#enable-helm-releases-integration
 releasesEnabled: true
