@@ -48,7 +48,7 @@ $monocular-app-primary: md-palette($md-monocular);
 $monocular-app-accent:  md-palette($md-light-blue);
 
 // The warn palette is optional (defaults to red).
-$monocular-app-warn:    md-palette($md-deep-orange);
+$monocular-app-warn:    md-palette($md-red);
 
 // Create the theme object (a Sass map containing all of the palettes).
 $monocular-app-theme: md-light-theme($monocular-app-primary, $monocular-app-accent, $monocular-app-warn);

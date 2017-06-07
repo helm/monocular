@@ -3,9 +3,9 @@
   <nav class="deployment-details__header">
     <a routerLink="/deployments" href="/deployments"><md-icon md-list-avatar svgIcon="arrow-back"></md-icon>Deployments</a>
     <h1>{{ this.name }}</h1>
+    <h2 *ngIf="!deployment && !loading" >Sorry, we couldn't find the deployment</h2>
   </nav>
   <app-loader [loading]="loading">
-    <h2 *ngIf="!deployment && !loading" >Sorry, we couldn't find the deployment</h2>
     <section class="deployment-details" *ngIf="deployment">
       <aside class="deployment-details__info">
         <div class="deployment-details__info__container" [style.background-color]="backgroundColor">
@@ -14,25 +14,25 @@
           </div>
           <div class="deployment-details__info__list">
             <div class="deployment-details__info__list__item">
-              <h6>Chart</h6>
+              <p>Chart</p>
               <h4>{{ deployment.attributes.chartName }} v.{{ deployment.attributes.chartVersion }}</h4>
             </div>
             <div class="deployment-details__info__list__item">
-              <h6>Namespace</h6>
+              <p>Namespace</p>
               <h4>{{ deployment.attributes.namespace }}</h4>
             </div>
             <div class="deployment-details__info__list__item">
-              <h6>Status</h6>
+              <p>Status</p>
               <h4>{{ deployment.attributes.status }}</h4>
             </div>
             <div class="deployment-details__info__list__item" *ngIf="deployment.attributes.urls.length">
-              <h6>URL</h6>
+              <p>URL</p>
               <h4>
                 <a *ngFor="let url of deployment.attributes.urls" href="{{url}}" target="_blank"> {{url}}</a>
               </h4>
             </div>
             <div class="deployment-details__info__list__item">
-              <h6>Last Updated</h6>
+              <p>Last Updated</p>
               <h4>{{ deployment.attributes.updated | date }}</h4>
             </div>
           </div>

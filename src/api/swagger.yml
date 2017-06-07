@@ -528,6 +528,7 @@ definitions:
       - updated
       - chartName
       - chartVersion
+      - chartIcon
       - namespace
     properties:
       name:
@@ -552,6 +553,7 @@ definitions:
       - updated
       - chartName
       - chartVersion
+      - chartIcon
       - namespace
       - resources
       - notes

@@ -40,6 +40,14 @@
     }
     &__subtitle {
       font-size: 0.8em;
+      line-height: 1.5em;
+      b {
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 4px;
+        padding: 1px 4px;
+        font-size: 0.9em;
+        font-weight: 600;
+      }
     }
     &__date {
       position: absolute;
