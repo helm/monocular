@@ -17,6 +17,9 @@ spec:
       - name: {{ .Chart.Name }}
         image: "{{ .Values.api.image.repository }}:{{ .Values.api.image.tag }}"
         imagePullPolicy: {{ .Values.api.image.pullPolicy }}
+        env:
+        - name: MONOCULAR_HOME
+          value: /monocular
         ports:
         - containerPort: {{ .Values.api.service.internalPort }}
         livenessProbe:
@@ -32,11 +35,15 @@ spec:
           initialDelaySeconds: 30
           timeoutSeconds: 5
         volumeMounts:
+          - name: cache
+            mountPath: /monocular
           - name: config
-            mountPath: /root/monocular/config
+            mountPath: /monocular/config
         resources:
 {{ toYaml .Values.api.resources | indent 12 }}
       volumes:
       - name: config
         configMap:
           name: {{ template "fullname" . }}-api-config
+      - name: cache
+        emptyDir: {}
