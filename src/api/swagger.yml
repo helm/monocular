@@ -540,6 +540,8 @@ definitions:
         type: string
       chartVersion:
         type: string
+      chartIcon:
+        type: string
       namespace:
         type: string
   releaseExtended:
@@ -563,6 +565,8 @@ definitions:
       chartName:
         type: string
       chartVersion:
+        type: string
+      chartIcon:
         type: string
       namespace:
         type: string

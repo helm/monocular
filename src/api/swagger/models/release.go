@@ -16,6 +16,10 @@ swagger:model release
 */
 type Release struct {
 
+	/* chart icon
+	 */
+	ChartIcon string `json:"chartIcon,omitempty"`
+
 	/* chart name
 
 	Required: true
@@ -27,12 +31,6 @@ type Release struct {
 	Required: true
 	*/
 	ChartVersion *string `json:"chartVersion"`
-
-	/* chartIcon
-
-	Required: false
-	*/
-	ChartIcon *string `json:"chartIcon"`
 
 	/* name
 
