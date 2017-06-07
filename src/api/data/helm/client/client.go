@@ -59,7 +59,7 @@ func (c *helmClient) initialize() (*helm.Client, error) {
 	client := helm.NewClient(helm.Host(tillerHost))
 	// test connection
 	if _, err := client.GetVersion(); err != nil {
-		return nil, errors.New("Failed to connect to Tiller, are you sure it is installed?")
+		return nil, errors.New("failed to connect to Tiller, are you sure it is installed?")
 	}
 
 	return client, nil
