@@ -6,17 +6,29 @@
   </div>
   <nav class="header-bar__navigation">
     <ul>
-      <li>
-        <a class="reverse" routerLink="/charts" routerLinkActive="active">
+      <li class="header-bar__search" *ngIf="showSearch">
+        <form (ngSubmit)="searchCharts(searchBox)">
+          <input placeholder="Search charts..." #searchBox>
+        </form>
+      </li>
+      <li *ngIf="showSearch" class="separator"></li>
+      <li routerLink="/charts" routerLinkActive="active">
+        <a class="reverse" >
           Charts
         </a>
       </li>
-      <li *ngIf="config.releasesEnabled">
-        <a class="reverse" routerLink="/deployments" routerLinkActive="active">
+      <li class="separator"></li>
+      <li *ngIf="config.releasesEnabled" routerLink="/deployments" routerLinkActive="active">
+        <a class="reverse">
           Deployments
         </a>
       </li>
-      <li><a class="reverse" href="https://github.com/helm/monocular/blob/master/docs/about.md" target="_blank">About</a></li>
+      <li *ngIf="config.releasesEnabled" class="separator"></li>
+      <li>
+        <a class="reverse" href="https://github.com/helm/monocular/blob/master/docs/about.md" target="_blank">
+          About
+        </a>
+      </li>
     </ul>
   </nav>
   <nav class="header-bar__open">
@@ -25,12 +37,4 @@
       <md-icon *ngIf="openedMenu" svgIcon="close"></md-icon>
     </div>
   </nav>
-  <div class="header-bar__search" *ngIf="showSearch">
-    <form (ngSubmit)="searchCharts(searchBox)">
-      <md-input-container class="md-input--reverse md-input--full">
-        <input md-input placeholder="Search..." #searchBox
-        floatingPlaceholder="false">
-      </md-input-container>
-    </form>
-  </div>
 </header>

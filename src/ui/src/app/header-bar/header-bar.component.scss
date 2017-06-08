@@ -4,14 +4,22 @@
 @import '../../theme.scss';
 
 // Variables
-$header-bar-padding: 1.5em 2em;
-$header-bar-padding-small: 1.5em;
+$header-bar-padding: 0 2em;
+$header-bar-padding-small: 0 1em;
 
 .header-bar {
+  position: fixed;
+  top: 0px;
+  width: 100%;
+  height: 70px;
+  display: flex;
+  align-items: center;
   padding: $header-bar-padding;
   background-color: $layout_base;
-
+  z-index: 10;
   &--transparent {
+    position: relative;
+    margin-top: -70px;
     background-color: transparent;
   }
 
@@ -29,25 +37,71 @@ $header-bar-padding-small: 1.5em;
 
   &__search {
     margin-top: .5em;
-
-    .md-input-wrapper {
-      margin: .4em 0;
+    input {
+      border: 0;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 0.5em;
+      border-radius: 4px;
+      color: black;
+      font-size: 1em;
+      outline: none;
+      transition: background 0.2s ease;
+      &:focus {
+        background: rgba(255, 255, 255, 0.8);
+      }
     }
   }
 
   &__navigation {
-    float: right;
+
+    margin-left: auto;
     margin-right: 2em;
     display: none;
-
     ul {
       margin: .5em 0;
 
       li {
         display: inline-block;
-
+        position: relative;
+        margin: 0 1em;
+        &.separator {
+          width: 4px;
+          height: 4px;
+          background: white;
+          border-radius: 2px;
+          margin: 0;
+          margin-bottom: 2px;
+        }
         a {
-          padding: 1em;
+          transition: opacity 0.2s ease;
+          &:hover {
+            color: white;
+            opacity: 0.5;
+          }
+          &::after{
+            background: white none repeat scroll 0 0;
+            bottom: -10px;
+            content: "";
+            display: inline-block;
+            height: 2px;
+            left: 0;
+            position: absolute;
+            width: 0;
+            z-index: 1;
+            transition: width 0.3s ease;
+          }
+        }
+        &.active {
+          a {
+            color: white;
+            font-weight: 600;
+            &::after {
+              width: 100%;
+            }
+            &:hover {
+              opacity: 1;
+            }
+          }
         }
       }
     }
@@ -70,10 +124,6 @@ $header-bar-padding-small: 1.5em;
   }
 
   @include mappy-bp(small) {
-    &__search {
-      margin-top: 0;
-      float: right;
-    }
 
     &__open {
       display: none;
