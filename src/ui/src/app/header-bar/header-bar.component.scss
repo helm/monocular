@@ -122,11 +122,11 @@ $header-bar-padding-small: 0 1em;
     }
   }
 
-  @include mappy-bp(max-width small) {
+  @include mappy-bp(max-width medium) {
     padding: $header-bar-padding-small;
   }
 
-  @include mappy-bp(small) {
+  @include mappy-bp(medium) {
 
     &__open {
       display: none;
