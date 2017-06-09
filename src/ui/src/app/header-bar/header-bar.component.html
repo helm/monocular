@@ -31,7 +31,7 @@
       </li>
     </ul>
   </nav>
-  <nav class="header-bar__open">
+  <nav class="header-bar__open" [class.opened]="openedMenu">
     <div (click)="openMenu()">
       <md-icon *ngIf="!openedMenu" svgIcon="menu"></md-icon>
       <md-icon *ngIf="openedMenu" svgIcon="close"></md-icon>

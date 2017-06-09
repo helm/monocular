@@ -42,12 +42,12 @@ $header-bar-padding-small: 0 1em;
       background: rgba(255, 255, 255, 0.1);
       padding: 0.5em;
       border-radius: 4px;
-      color: black;
+      color: white;
       font-size: 1em;
       outline: none;
       transition: background 0.2s ease;
       &:focus {
-        background: rgba(255, 255, 255, 0.8);
+        background: rgba(255, 255, 255, 0.2);
       }
     }
   }
@@ -109,9 +109,12 @@ $header-bar-padding-small: 0 1em;
 
   &__open {
     color: white;
-    float: right;
     margin-right: 4em;
-
+    margin-left: auto;
+    transition: margin-right 0.3s ease;
+    &.opened {
+      margin-right: 1em;
+    }
     svg {
       cursor: pointer;
       width: 32px;

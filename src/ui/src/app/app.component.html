@@ -7,6 +7,11 @@
           Charts
         </a>
       </li>
+      <li *ngIf="config.releasesEnabled">
+        <a routerLink="/deployments" routerLinkActive="active">
+          Deployments
+        </a>
+      </li>
       <li>
         <a href="https://github.com/helm/monocular/blob/master/docs/about.md" target="_blank">
           About
