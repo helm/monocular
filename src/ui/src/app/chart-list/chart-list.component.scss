@@ -5,61 +5,24 @@
   display: flex;
   flex-flow: row wrap;
   justify-content: space-between;
-  margin-bottom: -2vw;
-
-  &:after {
-    content: "";
-    flex: auto;
-  }
+  margin-bottom: 1em;
 
   app-chart-item {
     display: block;
     width: 100%;
-    margin-bottom: 1em;
+    margin: 1em;
+    margin-right: 0;
 
-    // Responsive
     @include mappy-bp(small) {
-      margin: 0 0 2vw 2%;
+      width: 100%;
+    }
+    @include mappy-bp(medium) {
+      width: 46%;
+    }
+    @include mappy-bp(large) {
+      width: 31%;
     }
   }
 
-  @include mappy-bp(small medium) {
-    app-chart-item {
-      width: 49%;
 
-      &:nth-child(2n+1) {
-        margin-left: 0;
-      }
-    }
-  }
-
-  @include mappy-bp(medium large) {
-    app-chart-item {
-      width: 32%;
-
-      &:nth-child(3n+1) {
-        margin-left: 0;
-      }
-    }
-  }
-
-  @include mappy-bp(large xlarge) {
-    app-chart-item {
-      width: 23.5%;
-
-      &:nth-child(4n+1) {
-        margin-left: 0;
-      }
-    }
-  }
-
-  @include mappy-bp(xlarge) {
-    app-chart-item {
-      width: 18.4%;
-
-      &:nth-child(5n+1) {
-        margin-left: 0;
-      }
-    }
-  }
 }

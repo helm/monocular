@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ChartsService } from '../shared/services/charts.service';
 import { ReposService } from '../shared/services/repos.service';
 import { Chart } from '../shared/models/chart';
-import { Repo } from '../shared/models/repo';
+import { Repo, RepoAttributes } from '../shared/models/repo';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { SeoService } from '../shared/services/seo.service';
 import { ConfigService } from '../shared/services/config.service';
@@ -16,9 +16,21 @@ export class ChartsComponent implements OnInit {
   charts: Chart[] = [];
   orderedCharts: Chart[] = [];
   loading: boolean = true;
+
+  // Order elements
+  orders: {
+    name: string,
+    value: string
+  }[] = [
+    { name: 'Name', value: 'name' },
+    { name: 'Created at', value: 'created' }
+  ];
+  orderBy: string = this.orders[0].value;
+
   // Repos
   repoName: string;
-  currentRepo: Repo;
+  allRepo: Repo;
+  selectedRepository: Repo;
   repositories: Repo[];
 
   constructor(
@@ -36,6 +48,10 @@ export class ChartsComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.allRepo = new Repo();
+    this.allRepo.id = "";
+    this.allRepo.attributes = new RepoAttributes();
+    this.allRepo.attributes.name = 'All';
     this.route.params.forEach((params: Params) => {
       this.repoName = params['repo'];
       this.updateMetaTags();
@@ -54,35 +70,42 @@ export class ChartsComponent implements OnInit {
 
   loadRepos(): void {
     this.reposService.getRepos().subscribe(repos => {
-      this.repositories = repos;
       if(this.repoName) {
-        this.currentRepo = repos.filter(r => r.id == this.repoName)[0];
+        this.selectedRepository = repos.filter(r => r.id == this.repoName)[0];
+      } else {
+        this.selectedRepository = this.allRepo;
       }
+      this.repositories = repos;
+      this.repositories.splice(0, 0, this.allRepo)
     });
-  }
-
-  // Update a filter
-  onChangeFilter(filter): void {
-    if (this.filters[filter.type] !== filter.value) {
-      // Repository change
-      if (filter.type == "repositoryType") {
-        return this.goToRepo(filter.value.id)
-      }
-
-      // in place filtering
-      this.filters[filter.type] = filter.value;
-      this.orderedCharts = this.orderCharts(this.charts);
-    }
   }
 
   goToRepo(repo: string) {
     repo = repo === 'all' ? '' : repo;
-    this.router.navigate(['/charts', repo]);
+    this.repoName = repo;
+    this.router.navigate(['/charts', repo], {replaceUrl:true});
+  }
+
+  changeOrderBy(orderByValue: string) {
+    this.orderBy = orderByValue;
+    this.orderedCharts = this.orderCharts(this.charts);
+  }
+
+  searchChange(e) {
+    let searchValue = e.target.value;
+    if (!searchValue) {
+      return this.orderedCharts = this.orderCharts(this.charts);
+    }
+    this.loading = true;
+    this.chartsService.searchCharts(searchValue).subscribe(charts => {
+      this.loading = false;
+      this.orderedCharts = charts;
+    });
   }
 
   // Sort charts
   orderCharts(charts): Chart[] {
-    switch(this.filters.orderBy) {
+    switch(this.orderBy) {
       case 'created': {
         return charts.sort(this.sortByCreated).reverse()
       }
