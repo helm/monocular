@@ -1,8 +1,8 @@
 <div class="chart-item">
-  <div class="chart-item-content">
+  <div class="chart-item-content" [style.background-color]="backgroundColor">
     <div class="chart-item-logo">
       <a [href]="goToDetailUrl()" [routerLink]="goToDetailUrl()">
-        <img alt="{{ chart.attributes.name }}'s logo" src="{{ getIconUrl() }}"/>
+        <img alt="{{ chart.attributes.name }}'s logo" src="{{ iconUrl }}"/>
       </a>
     </div>
     <div class="chart-item-info">

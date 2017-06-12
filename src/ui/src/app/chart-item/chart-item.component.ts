@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Chart } from '../shared/models/chart';
 import { ConfigService } from '../shared/services/config.service';
+import ColorThief from 'color-thief-browser'
 
 @Component({
   selector: 'app-chart-item',
@@ -9,6 +10,8 @@ import { ConfigService } from '../shared/services/config.service';
   inputs: ['chart', 'showVersion', 'showDescription']
 })
 export class ChartItemComponent implements OnInit {
+  private backgroundColor: string
+  private iconUrl: string
   // Chart to represent
   public chart: Chart;
   // Show version form by default
@@ -21,6 +24,7 @@ export class ChartItemComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.iconUrl = this.getIconUrl();
   }
 
   goToDetailUrl(): string {
@@ -40,7 +44,22 @@ export class ChartItemComponent implements OnInit {
   getIconUrl(): string {
     let icons = this.chart.relationships.latestChartVersion.data.icons;
     if (icons !== undefined && icons.length > 0) {
-      return this.config.backendHostname + icons.find(icon => icon.name === '160x160-fit').path;
+      const icon = this.config.backendHostname + icons.find(icon => icon.name === '160x160-fit').path;
+      if (!this.backgroundColor) {
+        const imgObj = new Image();
+        imgObj.crossOrigin = 'Anonymous';
+        imgObj.src = icon;
+        imgObj.addEventListener('load', (e) => {
+          const ct = new ColorThief();
+          const palette = ct.getPalette(imgObj, 2);
+          if (palette.length > 0) {
+            const rgb = palette[0];
+            this.backgroundColor = `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, 1)`
+          }
+        })
+      }
+
+      return icon;
     } else {
       return '/assets/images/placeholder.png';
     }

@@ -4,41 +4,53 @@
 @import '../../theme.scss';
 
 // Vars
-$chart-item-content-height: 80px;
+$chart-item-content-height: 150px;
 
 .chart-item {
-  border: 1px solid #eaeaea;
-  border-radius: $border-radius;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
 
   &-content {
-    text-align: center;
+    height: $chart-item-content-height;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background: md-color($monocular-app-primary);
+    color: white;
   }
 
   &-logo {
-    height: $chart-item-content-height + (16 * 2);
-    // We use this 1.5 to center images correctly
-    line-height: $chart-item-content-height + (16 * 1.5);
-    text-align: center;
-    // If all the logos are transparent, we can enable this property
-    // background-color: $layout_light;
-    border-radius: $border-radius $border-radius 0 0;
-    box-shadow: inset 0 -2px 4px rgba(0, 0, 0, .04);
-    border-bottom: 1px solid darken($layout_light, 5);
-
+    height: 100%;
+    width: 100px;
+    background-color: white;
+    a {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
     img {
-      max-height: $chart-item-content-height;
-      vertical-align: middle;
+      width: 60%;
+      max-height: 100%;
     }
   }
 
   &-info {
-    margin: 1em 0;
+    flex: 1;
+    height: 100%;
+    padding: 1em;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
 
     &__title {
-      color: md-color($monocular-app-primary);
-      margin: 0 0 .5em;
-      font-weight: 300;
+      a { color: white; }
+      margin: 0;
+      font-weight: 500;
       cursor: pointer;
+      margin-bottom: 4px;
     }
 
     p {
@@ -50,8 +62,9 @@ $chart-item-content-height: 80px;
     &__repo {
       color: md-color($monocular-app-accent);
       font-size: .8em;
-      position: relative;
-      top: -1px;
+      background: white;
+      padding: 2px 4px;
+      border-radius: 4px;
 
       &.repo-incubator {
         color: md-color($monocular-app-warn, 600);
@@ -63,10 +76,6 @@ $chart-item-content-height: 80px;
     }
 
     &__version {
-      color: lighten($layout_text, 20%);
-      margin-right: 5px;
-      padding-right: 7px;
-      border-right: 1px solid darken($layout_light, 5);
     }
   }
 
