@@ -49,11 +49,11 @@ export class ChartsComponent implements OnInit {
 
   ngOnInit() {
     this.allRepo = new Repo();
-    this.allRepo.id = "";
+    this.allRepo.id = "all";
     this.allRepo.attributes = new RepoAttributes();
     this.allRepo.attributes.name = 'All';
     this.route.params.forEach((params: Params) => {
-      this.repoName = params['repo'];
+      this.repoName = params['repo'] ? params['repo'] : undefined;
       this.updateMetaTags();
       this.loadRepos();
       this.loadCharts();
@@ -81,9 +81,7 @@ export class ChartsComponent implements OnInit {
   }
 
   goToRepo(repo: string) {
-    repo = repo === 'all' ? '' : repo;
-    this.repoName = repo;
-    this.router.navigate(['/charts', repo], {replaceUrl:true});
+    this.router.navigate(['/charts', repo === 'all' ? '' : repo], {replaceUrl:true});
   }
 
   changeOrderBy(orderByValue: string) {

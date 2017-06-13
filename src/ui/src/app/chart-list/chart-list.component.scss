@@ -5,12 +5,12 @@
   display: flex;
   flex-flow: row wrap;
   justify-content: space-between;
-  margin-bottom: 1em;
+  margin-top: 1em;
 
   app-chart-item {
     display: block;
     width: 100%;
-    margin: 1em 0 0 1em;
+    margin-bottom: 1em;
 
     @include mappy-bp(small) {
       width: 100%;

@@ -6,7 +6,12 @@
 // Variables
 $header-bar-padding: 0 2em;
 $header-bar-padding-small: 0 1em;
-
+@mixin placeholder {
+  &::-webkit-input-placeholder {@content;}
+  &:-moz-placeholder           {@content;}
+  &::-moz-placeholder          {@content;}
+  &:-ms-input-placeholder      {@content;}
+}
 .header-bar {
   position: fixed;
   top: 0px;
@@ -46,6 +51,9 @@ $header-bar-padding-small: 0 1em;
       font-size: 1em;
       outline: none;
       transition: background 0.2s ease;
+      @include placeholder {
+        color: rgba(255, 255, 255, 0.6);
+      }
       &:focus {
         background: rgba(255, 255, 255, 0.2);
       }
