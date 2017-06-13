@@ -95,7 +95,7 @@ export class ChartsComponent implements OnInit {
       return this.orderedCharts = this.orderCharts(this.charts);
     }
     this.loading = true;
-    this.chartsService.searchCharts(searchValue).subscribe(charts => {
+    this.chartsService.searchCharts(searchValue, this.repoName).subscribe(charts => {
       this.loading = false;
       this.orderedCharts = this.orderCharts(charts);
     });
