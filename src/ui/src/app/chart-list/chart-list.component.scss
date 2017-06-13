@@ -10,8 +10,7 @@
   app-chart-item {
     display: block;
     width: 100%;
-    margin: 1em;
-    margin-right: 0;
+    margin: 1em 0 0 1em;
 
     @include mappy-bp(small) {
       width: 100%;

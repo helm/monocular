@@ -3,31 +3,80 @@
 
 .chart-details {
   width: 100%;
-  margin: 3em 0;
-  padding: 0 2em;
   display: flex;
-  flex-direction: column-reverse;
-  flex-wrap: wrap;
+  flex-direction: column;
 
+  &__header {
+    width: 100%;
+    margin-top: -80px;
+    margin-bottom: 40px;
+    &__background {
+      width: 100%;
+      height: 200px;
+      background: md-color($monocular-app-primary);
+    }
+    &__content {
+      max-width: 1000px;
+      margin: auto;
+      margin-top: -75px;
+      display: flex;
+    }
+    &__text {
+      h1 {
+        height: 70px;
+        color: white;
+        margin: 0;
+        display: flex;
+        align-items: flex-end;
+      }
+      p {
+        line-height: 1.6em;
+      }
+      &__repo {
+        color: md-color($monocular-app-accent);
+        &.repo-incubator {
+          color: md-color($monocular-app-warn, 600);
+        }
+        a {
+          color: inherit;
+        }
+      }
+    }
+    &__icon {
+      width: 150px;
+      height: 150px;
+      background: white;
+      border: 2px solid md-color($monocular-app-primary);
+      margin-right: 1em;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      img {
+        width: 70%;
+        max-height: 70%;
+      }
+    }
+  }
+  &__content {
+    max-width: 1000px;
+    margin: auto;
+    display: flex;
+    flex-direction: column-reverse;
+  }
   @include mappy-bp(medium) {
-    flex-direction: row;
-    flex-wrap: nowrap;
+    &__content {
+      flex-direction: row;
+      &__info {
+        width: 35%;
+        padding-left: 1em;
+      }
 
-    &__info {
-      padding-left: 1em;
-    }
-
-    &__docs {
-      padding-right: 1em;
-    }
-
-    &__info {
-      width: 35%;
-    }
-
-    &__docs {
-      min-width: 0;
-      flex: 3;
+      &__docs {
+        padding-right: 1em;
+        min-width: 0;
+        flex: 3;
+      }
     }
   }
 }

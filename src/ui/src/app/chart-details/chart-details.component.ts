@@ -5,6 +5,7 @@ import { Chart } from '../shared/models/chart';
 import { ChartVersion } from '../shared/models/chart-version';
 import { SeoService } from '../shared/services/seo.service';
 import { ConfigService } from '../shared/services/config.service';
+import ColorThief from 'color-thief-browser';
 
 @Component({
   selector: 'app-chart-details',
@@ -16,6 +17,8 @@ export class ChartDetailsComponent implements OnInit {
   chart: Chart;
   loading: boolean = true;
   currentVersion: ChartVersion;
+  iconUrl: string;
+  chartColor: string;
   titleVersion: string;
 
   constructor(
@@ -23,22 +26,27 @@ export class ChartDetailsComponent implements OnInit {
     private chartsService: ChartsService,
     private config: ConfigService,
     private seo: SeoService
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.route.params.forEach((params: Params) => {
       let repo = params['repo'];
-      let chartName = params['chartName']
-      this.chartsService.getChart(repo, chartName)
-        .subscribe(chart => {
-          this.loading = false;
-          this.chart = chart;
-          let version = params['version'] || this.chart.relationships.latestChartVersion.data.version;
-          this.chartsService.getVersion(repo, chartName, version)
-            .subscribe(chartVersion => { this.currentVersion = chartVersion });
-          this.titleVersion = params['version'] || '';
-          this.updateMetaTags();
-        });
+      let chartName = params['chartName'];
+      this.chartsService.getChart(repo, chartName).subscribe(chart => {
+        this.loading = false;
+        this.chart = chart;
+        let version =
+          params['version'] ||
+          this.chart.relationships.latestChartVersion.data.version;
+        this.chartsService
+          .getVersion(repo, chartName, version)
+          .subscribe(chartVersion => {
+            this.currentVersion = chartVersion;
+          });
+        this.titleVersion = params['version'] || '';
+        this.updateMetaTags();
+        this.iconUrl = this.getIconUrl();
+      });
     });
   }
 
@@ -57,6 +65,36 @@ export class ChartDetailsComponent implements OnInit {
         name: this.chart.attributes.name,
         description: this.chart.attributes.description
       });
+    }
+  }
+
+  goToRepoUrl(): string {
+    return `/charts/${this.chart.attributes.repo.name}`;
+  }
+
+  getIconUrl(): string {
+    let icons = this.chart.relationships.latestChartVersion.data.icons;
+    if (icons !== undefined && icons.length > 0) {
+      const icon =
+        this.config.backendHostname +
+        icons.find(icon => icon.name === '160x160-fit').path;
+      if (!this.chartColor) {
+        const imgObj = new Image();
+        imgObj.crossOrigin = 'Anonymous';
+        imgObj.src = icon;
+        imgObj.addEventListener('load', e => {
+          const ct = new ColorThief();
+          const palette = ct.getPalette(imgObj, 2);
+          if (palette.length > 0) {
+            const rgb = palette[0];
+            this.chartColor = `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, 1)`;
+          }
+        });
+      }
+
+      return icon;
+    } else {
+      return '/assets/images/placeholder.png';
     }
   }
 }

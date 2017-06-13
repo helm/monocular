@@ -88,7 +88,7 @@ export class ChartsComponent implements OnInit {
 
   changeOrderBy(orderByValue: string) {
     this.orderBy = orderByValue;
-    this.orderedCharts = this.orderCharts(this.charts);
+    this.orderedCharts = this.orderCharts(this.orderedCharts);
   }
 
   searchChange(e) {
@@ -99,7 +99,7 @@ export class ChartsComponent implements OnInit {
     this.loading = true;
     this.chartsService.searchCharts(searchValue).subscribe(charts => {
       this.loading = false;
-      this.orderedCharts = charts;
+      this.orderedCharts = this.orderCharts(charts);
     });
   }
 
