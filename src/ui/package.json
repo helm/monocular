@@ -10,8 +10,8 @@
     "test-ci": "ng test --single-run",
     "pree2e": "webdriver-manager update",
     "e2e": "protractor",
-    "compile": "ng build --prod --progress=false",
-    "compile-aot": "ng build --prod --aot --progress=false"
+    "compile": "ng build --prod --progress=false -o rootfs/dist",
+    "compile-aot": "ng build --prod --aot --progress=false -o rootfs/dist"
   },
   "private": true,
   "dependencies": {
