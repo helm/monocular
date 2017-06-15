@@ -51,4 +51,3 @@ test-native:
 
 docker-build: build
 	docker build --rm -t ${IMAGE} rootfs
-	docker tag ${IMAGE} ${MUTABLE_IMAGE}

@@ -4,7 +4,7 @@
 api:
   replicaCount: 2
   image:
-    repository: gcr.io/helm-ui/monocular-api
+    repository: bitnami/monocular-api
     tag: latest
     pullPolicy: Always
   service:
@@ -47,7 +47,7 @@ api:
 ui:
   replicaCount: 2
   image:
-    repository: gcr.io/helm-ui/monocular-ui
+    repository: bitnami/monocular-ui
     tag: latest
     pullPolicy: Always
   service:
@@ -85,6 +85,7 @@ prerender:
       memory: 128Mi
 
 ingress:
+  enabled: true
   hosts:
   # Wildcard
   -
