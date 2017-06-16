@@ -78,8 +78,8 @@ export class DeploymentsService {
    * @param ret out parameter to store urls in
    */
   private svcToURLs(portSpec) {
-    // pattern is INT_PORT:EXT_PORT/TCP
-    const portsRE = /^(\d+:)?(\d+)\/TCP$/;
+    // pattern is EXT_PORT:INT_PORT/TCP
+    const portsRE = /^(\d+):(\d+)\/TCP$/;
     // match ip4/6 ips, as opposed to <pending>
     const ipRE = /^[\d\.:]+$/;
     const EXT_IP = "EXTERNAL-IP";
@@ -93,8 +93,8 @@ export class DeploymentsService {
         return;
       var portMatch = portsRE.exec(port);
       if (portMatch) {
-        var protocol = portMatch[1] == '443:' ? 'https' : 'http';
-        ret.push(`${protocol}://${extIP}:${portMatch[2]}`);
+        var protocol = portMatch[1] == '443' ? 'https' : 'http';
+        ret.push(`${protocol}://${extIP}:${portMatch[1]}`);
       }
     })
     return ret;
