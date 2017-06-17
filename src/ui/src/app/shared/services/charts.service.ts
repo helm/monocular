@@ -68,7 +68,7 @@ export class ChartsService {
   }
 
   /* TODO, use backend search API endpoint */
-  searchCharts(query, repo: string): Observable<Chart[]> {
+  searchCharts(query, repo?: string): Observable<Chart[]> {
     let re = new RegExp(query, 'i');
     return this.getCharts(repo).map(charts => {
       return charts.filter(chart => {

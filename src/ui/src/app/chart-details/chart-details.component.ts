@@ -5,7 +5,7 @@ import { Chart } from '../shared/models/chart';
 import { ChartVersion } from '../shared/models/chart-version';
 import { SeoService } from '../shared/services/seo.service';
 import { ConfigService } from '../shared/services/config.service';
-import ColorThief from 'color-thief-browser';
+import RGBaster from '../../assets/js/RGBaster';
 
 @Component({
   selector: 'app-chart-details',
@@ -79,15 +79,9 @@ export class ChartDetailsComponent implements OnInit {
         this.config.backendHostname +
         icons.find(icon => icon.name === '160x160-fit').path;
       if (!this.chartColor) {
-        const imgObj = new Image();
-        imgObj.crossOrigin = 'Anonymous';
-        imgObj.src = icon;
-        imgObj.addEventListener('load', e => {
-          const ct = new ColorThief();
-          const palette = ct.getPalette(imgObj, 2);
-          if (palette.length > 0) {
-            const rgb = palette[0];
-            this.chartColor = `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, 1)`;
+        RGBaster.colors(icon, {
+          success: payload => {
+            this.chartColor = payload.best;
           }
         });
       }
