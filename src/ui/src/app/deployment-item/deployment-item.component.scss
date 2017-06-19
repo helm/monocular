@@ -15,24 +15,25 @@
   overflow: hidden;
   &_icon {
     height: 100%;
-    width: 100px;
+    width: 80px;
     background: white;
     display: flex;
     align-items: center;
     justify-content: center;
     img {
-      width: 60%;
+      width: 70%;
       max-height: 100%;
     }
   }
   &_content {
     height: 100%;
-    width: 100%;
     position: relative;
     padding: 10px;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    word-wrap: break-word;
+    overflow: hidden;
     &__title {
       margin: 0;
       margin-bottom: 5px;
