@@ -42,6 +42,10 @@ export class HeaderBarComponent implements OnInit {
       'close',
       this.sanitizer.bypassSecurityTrustResourceUrl('/assets/icons/close.svg')
     );
+    this.mdIconRegistry.addSvgIcon(
+      'search',
+      this.sanitizer.bypassSecurityTrustResourceUrl('/assets/icons/search.svg')
+    );
     this.appName = this.config.appName;
   }
 

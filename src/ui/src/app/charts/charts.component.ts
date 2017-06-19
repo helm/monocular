@@ -19,6 +19,8 @@ export class ChartsComponent implements OnInit {
   charts: Chart[] = [];
   orderedCharts: Chart[] = [];
   loading: boolean = true;
+  searchTerm: string;
+  searchTimeout: any;
 
   // Order elements
   orders: {
@@ -101,13 +103,21 @@ export class ChartsComponent implements OnInit {
   }
 
   searchChange(e) {
-    let searchValue = e.target.value;
-    if (!searchValue) {
+    this.searchTerm = e.target.value;
+    clearTimeout(this.searchTimeout);
+    if (!this.searchTerm) {
       return (this.orderedCharts = this.orderCharts(this.charts));
+    }
+    this.searchTimeout = setTimeout(() => this.searchCharts(), 1000);
+  }
+
+  searchCharts() {
+    if (!this.searchTerm) {
+      return false;
     }
     this.loading = true;
     this.chartsService
-      .searchCharts(searchValue, this.repoName)
+      .searchCharts(this.searchTerm, this.repoName)
       .subscribe(charts => {
         this.loading = false;
         this.orderedCharts = this.orderCharts(charts);

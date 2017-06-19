@@ -50,6 +50,7 @@
         border-bottom: 1px solid #D7D9DD;
         align-items: center;
         padding-left: 10px;
+        * { fill: rgba(0, 0, 0, 0.5); }
         input {
           width: 100%;
           height: 100%;
@@ -58,6 +59,9 @@
           background: none;
           outline: none;
           margin-left: 5px;
+          @include placeholder {
+            color: rgba(0, 0, 0, 0.5);
+          }
         }
       }
     }

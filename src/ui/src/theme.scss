@@ -107,3 +107,10 @@ md-input-container {
     font-size: 1.5em;
   }
 }
+
+@mixin placeholder {
+  &::-webkit-input-placeholder {@content;}
+  &:-moz-placeholder           {@content;}
+  &::-moz-placeholder          {@content;}
+  &:-ms-input-placeholder      {@content;}
+}

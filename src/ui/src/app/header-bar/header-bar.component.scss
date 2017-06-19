@@ -6,12 +6,7 @@
 // Variables
 $header-bar-padding: 0 2em;
 $header-bar-padding-small: 0 1em;
-@mixin placeholder {
-  &::-webkit-input-placeholder {@content;}
-  &:-moz-placeholder           {@content;}
-  &::-moz-placeholder          {@content;}
-  &:-ms-input-placeholder      {@content;}
-}
+
 .header-bar {
   position: fixed;
   top: 0px;
@@ -42,20 +37,32 @@ $header-bar-padding-small: 0 1em;
 
   &__search {
     margin-top: .5em;
+    background: rgba(255, 255, 255, 0.125);
+    border-radius: 4px;
+    transition: background 0.2s ease;
+    padding: 0.3em 0.5em;
+    svg {
+      fill: rgba(255, 255, 255, 0.6);
+    }
+    form {
+      display: flex;
+      align-items: center;
+      flex-direction: row;
+    }
+    &.focused {
+      background: rgba(255, 255, 255, 0.175);
+      svg {
+        fill: white;
+      }
+    }
     input {
+      background: none;
       border: 0;
-      background: rgba(255, 255, 255, 0.1);
-      padding: 0.5em;
-      border-radius: 4px;
       color: white;
       font-size: 1em;
       outline: none;
-      transition: background 0.2s ease;
       @include placeholder {
         color: rgba(255, 255, 255, 0.6);
-      }
-      &:focus {
-        background: rgba(255, 255, 255, 0.2);
       }
     }
   }
@@ -72,6 +79,7 @@ $header-bar-padding-small: 0 1em;
         display: inline-block;
         position: relative;
         margin: 0 1em;
+        vertical-align: middle;
         &.separator {
           width: 4px;
           height: 4px;

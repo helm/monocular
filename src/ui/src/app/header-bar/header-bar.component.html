@@ -6,9 +6,10 @@
   </div>
   <nav class="header-bar__navigation">
     <ul>
-      <li class="header-bar__search" *ngIf="showSearch">
+      <li class="header-bar__search" *ngIf="showSearch" [class.focused]="searchFocused">
         <form (ngSubmit)="searchCharts(searchBox)">
-          <input placeholder="Search charts..." #searchBox>
+          <md-icon svgIcon="search"></md-icon>
+          <input placeholder="Search charts..." #searchBox (focus)="searchFocused = true" (blur)="searchFocused = false">
         </form>
       </li>
       <li *ngIf="showSearch" class="separator"></li>
