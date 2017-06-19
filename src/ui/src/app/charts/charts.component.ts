@@ -6,11 +6,14 @@ import { Repo, RepoAttributes } from '../shared/models/repo';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { SeoService } from '../shared/services/seo.service';
 import { ConfigService } from '../shared/services/config.service';
+import { MdIconRegistry } from '@angular/material';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-charts',
   templateUrl: './charts.component.html',
-  styleUrls: ['./charts.component.scss']
+  styleUrls: ['./charts.component.scss'],
+  viewProviders: [MdIconRegistry]
 })
 export class ChartsComponent implements OnInit {
   charts: Chart[] = [];
@@ -39,8 +42,14 @@ export class ChartsComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private config: ConfigService,
-    private seo: SeoService
-  ) { }
+    private seo: SeoService,
+    private mdIconRegistry: MdIconRegistry,
+    private sanitizer: DomSanitizer
+  ) {
+    mdIconRegistry
+      .addSvgIcon('search',
+        sanitizer.bypassSecurityTrustResourceUrl(`/assets/icons/search.svg`));
+  }
 
   // Default filters
   filters = {

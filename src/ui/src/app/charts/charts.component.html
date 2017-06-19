@@ -24,6 +24,7 @@
         </div>
         <div class="charts__gallery__content">
           <div class="charts__gallery__content__topbar">
+            <md-icon svgIcon="search"></md-icon>
             <input type="text" placeholder="Search charts..." (keyup)="searchChange($event)" />
           </div>
           <app-chart-list [charts]="orderedCharts"></app-chart-list>

@@ -29,8 +29,8 @@ export class DeploymentsComponent implements OnInit {
     private sanitizer: DomSanitizer
   ){
     mdIconRegistry
-      .addSvgIcon('layers',
-        sanitizer.bypassSecurityTrustResourceUrl(`/assets/icons/layers.svg`));
+      .addSvgIcon('search',
+        sanitizer.bypassSecurityTrustResourceUrl(`/assets/icons/search.svg`));
   }
 
   ngOnInit() {
