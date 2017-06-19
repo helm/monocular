@@ -29,7 +29,6 @@ import { ChartListComponent } from './chart-list/chart-list.component';
 import { ChartItemComponent } from './chart-item/chart-item.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { ChartDetailsComponent } from './chart-details/chart-details.component';
-import { ChartSearchComponent } from './chart-search/chart-search.component';
 import { HeaderBarComponent } from './header-bar/header-bar.component';
 import { ChartDetailsUsageComponent } from './chart-details/chart-details-usage/chart-details-usage.component';
 import { ChartDetailsReadmeComponent } from './chart-details/chart-details-readme/chart-details-readme.component';
@@ -66,7 +65,6 @@ const metaConfig: MetaConfig = {
     ChartItemComponent,
     PageNotFoundComponent,
     ChartDetailsComponent,
-    ChartSearchComponent,
     HeaderBarComponent,
     ChartDetailsUsageComponent,
     ChartDetailsVersionsComponent,

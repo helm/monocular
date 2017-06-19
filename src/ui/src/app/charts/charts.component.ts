@@ -63,6 +63,12 @@ export class ChartsComponent implements OnInit {
     this.allRepo.id = 'all';
     this.allRepo.attributes = new RepoAttributes();
     this.allRepo.attributes.name = 'All';
+    this.route.queryParams.forEach((params: Params) => {
+      this.searchTerm = params['q'] ? params['q'] : undefined;
+      if (this.searchTerm) {
+        this.searchCharts();
+      }
+    });
     this.route.params.forEach((params: Params) => {
       this.repoName = params['repo'] ? params['repo'] : undefined;
       this.updateMetaTags();
@@ -75,7 +81,9 @@ export class ChartsComponent implements OnInit {
     this.chartsService.getCharts(this.repoName).subscribe(charts => {
       this.loading = false;
       this.charts = charts;
-      this.orderedCharts = this.orderCharts(this.charts);
+      if (!this.searchTerm) {
+        this.orderedCharts = this.orderCharts(this.charts);
+      }
     });
   }
 
