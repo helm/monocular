@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { Angulartics2Module, Angulartics2GoogleAnalytics } from 'angulartics2';
 import { ClipboardModule } from 'ngx-clipboard';
-import { MetaModule } from 'ng2-meta';
+import { MetaModule, MetaLoader, MetaStaticLoader, PageTitlePositioning } from '@ngx-meta/core';
 import { routing, appRoutingProviders } from './app.routing';
 
 /* Material library */
@@ -50,13 +50,17 @@ import { DeploymentResourceComponent } from './deployment/deployment-resource/de
 
 require('hammerjs');
 
-const metaConfig = {
-  //Append a title suffix such as a site name to all titles
-  useTitleSuffix: true,
-  defaults: {
-    description: 'Discover & launch great Kubernetes-ready apps'
-  }
-};
+
+const metaFactory = (): MetaLoader => {
+  return new MetaStaticLoader({
+    pageTitlePositioning: PageTitlePositioning.PrependPageTitle,
+    pageTitleSeparator: ' | ',
+    applicationName: 'Monocular',
+    defaults: {
+      description: 'Discover & launch great Kubernetes-ready apps'
+    }
+  });
+}
 
 @NgModule({
   declarations: [
@@ -94,7 +98,10 @@ const metaConfig = {
 		routing,
     Angulartics2Module.forRoot([Angulartics2GoogleAnalytics]),
     ClipboardModule,
-    MetaModule.forRoot(metaConfig)
+    MetaModule.forRoot({
+      provide: MetaLoader,
+      useFactory: (metaFactory)
+    })
   ],
   providers: [
     appRoutingProviders,
