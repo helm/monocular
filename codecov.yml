@@ -1,8 +1,0 @@
-codecov:
-  branch: master
-  status:
-    project:
-      default:
-        paths:
-          - src/api
-          - src/ui

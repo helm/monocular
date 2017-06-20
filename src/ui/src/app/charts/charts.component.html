@@ -1,7 +1,0 @@
-<app-header-bar></app-header-bar>
-<app-charts-filters (onChange)="onChangeFilter($event)" [currentRepo]="currentRepo" [repositories]="repositories"></app-charts-filters>
-<app-loader [loading]="loading">
-  <app-panel>
-    <app-chart-list [charts]="orderedCharts"></app-chart-list>
-  </app-panel>
-</app-loader>
