@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { Angulartics2Module, Angulartics2GoogleAnalytics } from 'angulartics2';
 import { ClipboardModule } from 'ngx-clipboard';
-import { MetaModule, MetaConfig } from 'ng2-meta';
+import { MetaModule } from 'ng2-meta';
 import { routing, appRoutingProviders } from './app.routing';
 
 /* Material library */
@@ -50,7 +50,7 @@ import { DeploymentResourceComponent } from './deployment/deployment-resource/de
 
 require('hammerjs');
 
-const metaConfig: MetaConfig = {
+const metaConfig = {
   //Append a title suffix such as a site name to all titles
   useTitleSuffix: true,
   defaults: {

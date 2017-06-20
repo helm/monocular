@@ -5,7 +5,7 @@ import { ChartDetailsReadmeComponent } from './chart-details-readme.component';
 
 describe('Component: ChartDetailsReadme', () => {
   it('should create an instance', () => {
-    let component = new ChartDetailsReadmeComponent();
+    let component = TestBed.createComponent(ChartDetailsReadmeComponent);
     expect(component).toBeTruthy();
   });
 });

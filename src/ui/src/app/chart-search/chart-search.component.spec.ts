@@ -5,7 +5,7 @@ import { ChartSearchComponent } from './chart-search.component';
 
 describe('Component: ChartSearch', () => {
   it('should create an instance', () => {
-    let component = new ChartSearchComponent();
+    let component = TestBed.createComponent(ChartSearchComponent);
     expect(component).toBeTruthy();
   });
 });

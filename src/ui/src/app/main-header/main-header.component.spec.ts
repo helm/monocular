@@ -5,7 +5,7 @@ import { MainHeaderComponent } from './main-header.component';
 
 describe('Component: MainHeader', () => {
   it('should create an instance', () => {
-    let component = new MainHeaderComponent();
+    let component = TestBed.createComponent(MainHeaderComponent);
     expect(component).toBeTruthy();
   });
 });

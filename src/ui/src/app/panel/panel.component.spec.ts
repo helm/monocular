@@ -5,7 +5,7 @@ import { PanelComponent } from './panel.component';
 
 describe('Component: Panel', () => {
   it('should create an instance', () => {
-    let component = new PanelComponent();
+    let component = TestBed.createComponent(PanelComponent);
     expect(component).toBeTruthy();
   });
 });

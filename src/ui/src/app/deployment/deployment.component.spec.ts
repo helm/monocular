@@ -5,7 +5,7 @@ import { DeploymentComponent } from './deployment.component';
 
 describe('Component: DeploymentItem', () => {
   it('should create an instance', () => {
-    let component = new DeploymentComponent();
+    let component = TestBed.createComponent(DeploymentComponent);
     expect(component).toBeTruthy();
   });
 });

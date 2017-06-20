@@ -5,7 +5,7 @@ import { FooterListComponent } from './footer-list.component';
 
 describe('Component: FooterList', () => {
   it('should create an instance', () => {
-    let component = new FooterListComponent();
+    let component = TestBed.createComponent(FooterListComponent);
     expect(component).toBeTruthy();
   });
 });

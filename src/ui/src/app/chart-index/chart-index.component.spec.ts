@@ -5,7 +5,7 @@ import { ChartIndexComponent } from './chart-index.component';
 
 describe('Component: ChartIndex', () => {
   it('should create an instance', () => {
-    let component = new ChartIndexComponent();
+    let component = TestBed.createComponent(ChartIndexComponent);
     expect(component).toBeTruthy();
   });
 });

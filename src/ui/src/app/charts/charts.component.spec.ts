@@ -5,7 +5,7 @@ import { ChartsComponent } from './charts.component';
 
 describe('Component: Charts', () => {
   it('should create an instance', () => {
-    let component = new ChartsComponent();
+    let component = TestBed.createComponent(ChartsComponent);
     expect(component).toBeTruthy();
   });
 });
