@@ -51,7 +51,7 @@ import { DeploymentResourceComponent } from './deployment/deployment-resource/de
 require('hammerjs');
 
 
-const metaFactory = (): MetaLoader => {
+export function metaFactory(): MetaLoader {
   return new MetaStaticLoader({
     pageTitlePositioning: PageTitlePositioning.PrependPageTitle,
     pageTitleSeparator: ' | ',
