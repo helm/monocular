@@ -13,7 +13,13 @@
 #
 
 # Based on https://github.com/migmartri/helm-hack-night-charts/blob/master/repo-sync.sh
-# USAGE: repo-sync.sh <commit-changes?>
+# USAGE: repo-sync.sh
+
+GIT_URL=github.com/helm/monocular.git
+REPO_URL=https://helm.github.io/monocular
+REPO_DIR=$TRAVIS_BUILD_DIR
+CHART_PATH="$REPO_DIR/deployment/monocular"
+COMMIT_CHANGES=true
 
 log () {
   echo -e "\033[0;33m$(date "+%H:%M:%S")\033[0;37m ==> $1."
@@ -22,16 +28,15 @@ log () {
 travis_setup_git() {
   git config user.email "travis@travis-ci.org"
   git config user.name "Travis CI"
-  COMMIT_MSG="Updating chart repository, travis build #$TRAVIS_BUILD_NUMBER"
-  git remote add upstream "https://$GH_TOKEN@github.com/helm/monocular.git"
+  git remote add upstream "https://$GH_TOKEN@$GIT_URL"
 }
 
 show_important_vars() {
-    echo "  REPO_URL: $REPO_URL"
-    echo "  BUILD_DIR: $BUILD_DIR"
-    echo "  REPO_DIR: $REPO_DIR"
-    echo "  TRAVIS: $TRAVIS"
-    echo "  COMMIT_CHANGES: $COMMIT_CHANGES"
+  echo "  REPO_URL: $REPO_URL"
+  echo "  BUILD_DIR: $BUILD_DIR"
+  echo "  REPO_DIR: $REPO_DIR"
+  echo "  TRAVIS: $TRAVIS"
+  echo "  COMMIT_CHANGES: $COMMIT_CHANGES"
 }
 
 # https://github.com/bitnami/test-infra/blob/master/circle/docker-release-image.sh#L234
@@ -62,52 +67,44 @@ install_helm() {
   fi
 }
 
-COMMIT_CHANGES="${1}"
-: ${COMMIT_CHANGES:=false}
-: ${TRAVIS:=false}
-REPO_URL=https://helm.github.io/monocular
-BUILD_DIR=$(mktemp -d)
-# Current directory
-REPO_DIR="$( cd "$(dirname $(dirname "${BASH_SOURCE[0]}"))" && pwd )"
-CHART_PATH="$REPO_DIR/deployment/monocular"
-COMMIT_MSG="Updating chart repository"
-
-show_important_vars
-
-if [ $TRAVIS != "false" ]; then
-  log "Configuring git for Travis-ci"
-  travis_setup_git
-else
-  git remote add upstream git@github.com:helm/monocular.git || true
-fi
-
-git fetch upstream
-git checkout gh-pages
-
-log "Initializing build directory with existing charts index"
-if [ -f index.yaml ]; then
-  cp index.yaml $BUILD_DIR
-fi
-
-git checkout master
-
 update_chart_version() {
-  CHART_VERSION=$(grep '^version:' $1/Chart.yaml | awk '{print $2}')
+  CHART_VERSION=$(grep '^version:' $CHART_PATH/Chart.yaml | awk '{print $2}')
   CHART_VERSION_NEXT="${CHART_VERSION%.*}.$((${CHART_VERSION##*.}+1))"
-  sed -i 's|^version:.*|version: '"$CHART_VERSION_NEXT"'|g' $1/Chart.yaml
-  sed -i 's|^appVersion:.*|appVersion: '"$2"'|g' $1/Chart.yaml
-  sed -i '/bitnami\/monocular/{n; s/tag:.*/tag: '"$2"'/}' $1/values.yaml
+  sed -i 's|^version:.*|version: '"$CHART_VERSION_NEXT"'|g' $CHART_PATH/Chart.yaml
+  sed -i 's|^appVersion:.*|appVersion: '"$TRAVIS_TAG"'|g' $CHART_PATH/Chart.yaml
+  sed -i '/bitnami\/monocular/{n; s/tag:.*/tag: '"$TRAVIS_TAG"'/}' $CHART_PATH/values.yaml
 
   if [ $COMMIT_CHANGES != "false" ]; then
     log "Commiting chart source changes to master branch"
     git add $1/Chart.yaml $1/values.yaml
-    git commit --message "chart: bump to $CHART_VERSION_NEXT"
+    git commit --message "chart: bump to $CHART_VERSION_NEXT [skip ci]" --message "travis build #$TRAVIS_BUILD_NUMBER"
     git push -q upstream HEAD:master
   fi
 }
 
-log "Updating chart version"
-update_chart_version $CHART_PATH $TRAVIS_TAG
+show_important_vars
+
+travis_setup_git
+git fetch upstream
+
+# Bump chart if this is a release
+if [[ -n "$TRAVIS_TAG" ]]; then
+  log "Updating chart version"
+  update_chart_version
+fi
+
+BUILD_DIR=$(mktemp -d)
+log "Initializing build directory with existing charts index"
+if git show upstream/gh-pages:index.yaml >/dev/null 2>&1; then
+  git show upstream/gh-pages:index.yaml > $BUILD_DIR/index.yaml
+fi
+
+# Skip repository sync if chart already exists in index
+CHART_VERSION=$(grep '^version:' $CHART_PATH/Chart.yaml | awk '{print $2}')
+if ! grep -q "version: $CHART_VERSION" $BUILD_DIR/index.yaml; then
+  log "Chart version $CHART_VERSION already exists... skipping"
+  exit 0
+fi
 
 install_helm
 
@@ -115,7 +112,7 @@ install_helm
 log "Packaging charts from source code"
 pushd $BUILD_DIR
   log "Packaging chart"
-  helm package $REPO_DIR/deployment/monocular
+  helm package $CHART_PATH
 
   log "Indexing repository"
   if [ -f index.yaml ]; then
@@ -132,7 +129,7 @@ cp $BUILD_DIR/* $REPO_DIR
 if [ $COMMIT_CHANGES != "false" ]; then
   log "Commiting changes to gh-pages branch"
   git add *.tgz index.yaml
-  git commit --message "$COMMIT_MSG"
+  git commit --message "release $CHART_VERSION [skip ci]" --message "travis build #$TRAVIS_BUILD_NUMBER"
   git push -q upstream HEAD:gh-pages
 fi
 
