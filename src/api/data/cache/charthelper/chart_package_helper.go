@@ -23,18 +23,27 @@ const defaultTimeout time.Duration = 10 * time.Second
 // DownloadAndExtractChartTarball the chart tar file linked by metadata.Urls and store
 // the wanted files (i.e README.md) under chartDataDir
 var DownloadAndExtractChartTarball = func(chart *models.ChartPackage) error {
-	if err := ensureChartDataDir(chart); err != nil {
+	err := ensureChartDataDir(chart)
+	if err != nil {
 		return err
 	}
 
+	defer func() {
+		if err != nil {
+			cleanChartDataDir(chart)
+		}
+	}()
+
 	if !tarballExists(chart) {
-		if err := downloadTarball(chart); err != nil {
+		err = downloadTarball(chart)
+		if err != nil {
 			cleanChartDataDir(chart)
 			return err
 		}
 	}
 
-	if err := extractFilesFromTarball(chart); err != nil {
+	err = extractFilesFromTarball(chart)
+	if err != nil {
 		cleanChartDataDir(chart)
 		return err
 	}
@@ -137,16 +146,7 @@ var ensureChartDataDir = func(chart *models.ChartPackage) error {
 }
 
 var cleanChartDataDir = func(chart *models.ChartPackage) error {
-	dir := chartDataDir(chart)
-	if _, err := os.Stat(dir); err != nil {
-		return err
-	}
-
-	if err := os.RemoveAll(dir); err != nil {
-		return err
-	}
-
-	return nil
+	return os.RemoveAll(chartDataDir(chart))
 }
 
 // TarballPath returns the location of the chart package in the local cache
