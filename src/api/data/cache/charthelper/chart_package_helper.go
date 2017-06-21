@@ -29,11 +29,13 @@ var DownloadAndExtractChartTarball = func(chart *models.ChartPackage) error {
 
 	if !tarballExists(chart) {
 		if err := downloadTarball(chart); err != nil {
+			cleanChartDataDir(chart)
 			return err
 		}
 	}
 
 	if err := extractFilesFromTarball(chart); err != nil {
+		cleanChartDataDir(chart)
 		return err
 	}
 
@@ -131,6 +133,19 @@ var ensureChartDataDir = func(chart *models.ChartPackage) error {
 			return fmt.Errorf("Could not create %s: %s", dir, err)
 		}
 	}
+	return nil
+}
+
+var cleanChartDataDir = func(chart *models.ChartPackage) error {
+	dir := chartDataDir(chart)
+	if _, err := os.Stat(dir); err != nil {
+		return err
+	}
+
+	if err := os.RemoveAll(dir); err != nil {
+		return err
+	}
+
 	return nil
 }
 

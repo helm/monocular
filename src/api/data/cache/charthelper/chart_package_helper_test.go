@@ -44,6 +44,8 @@ func TestDownloadAndExtractChartTarballErrorDownload(t *testing.T) {
 	assert.NoErr(t, err)
 	err = DownloadAndExtractChartTarball(chart)
 	assert.ExistsErr(t, err, "Error downloading the tar file")
+	_, err = os.Stat(chartDataDir(chart))
+	assert.ExistsErr(t, err, "chart data dir has been removed")
 }
 
 func TestDownloadAndExtractChartTarballErrorExtract(t *testing.T) {
@@ -54,6 +56,8 @@ func TestDownloadAndExtractChartTarballErrorExtract(t *testing.T) {
 	assert.NoErr(t, err)
 	err = DownloadAndExtractChartTarball(chart)
 	assert.ExistsErr(t, err, "Error extracting tar file content")
+	_, err = os.Stat(chartDataDir(chart))
+	assert.ExistsErr(t, err, "chart data dir has been removed")
 }
 
 // It creates the tar file in local filesystem
@@ -198,6 +202,27 @@ func TestEnsureChartDataDir(t *testing.T) {
 	ensureChartDataDir(chart)
 	_, err = os.Stat(chartPath)
 	assert.NoErr(t, err)
+}
+
+func TestCleanChartDataDir(t *testing.T) {
+	chart, err := getTestChart()
+	assert.NoErr(t, err)
+	randomPath, _ := ioutil.TempDir(os.TempDir(), "chart")
+	DataDirBaseOrig := DataDirBase
+	defer func() { DataDirBase = DataDirBaseOrig }()
+	DataDirBase = func() string {
+		return randomPath
+	}
+	chartPath := chartDataDir(chart)
+	ensureChartDataDir(chart)
+	_, err = os.Stat(chartPath)
+	assert.NoErr(t, err)
+
+	err = cleanChartDataDir(chart)
+	assert.NoErr(t, err)
+
+	_, err = os.Stat(chartPath)
+	assert.ExistsErr(t, err, "chart dir removed")
 }
 
 // Required because DataDirBase has been overriden
