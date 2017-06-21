@@ -145,7 +145,7 @@ var ensureChartDataDir = func(chart *models.ChartPackage) error {
 	return nil
 }
 
-var cleanChartDataDir = func(chart *models.ChartPackage) error {
+func cleanChartDataDir(chart *models.ChartPackage) error {
 	return os.RemoveAll(chartDataDir(chart))
 }
 
