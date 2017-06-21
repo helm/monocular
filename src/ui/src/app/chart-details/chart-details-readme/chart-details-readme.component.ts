@@ -1,4 +1,5 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import markdown from 'marked';
 import { Chart } from '../../shared/models/chart';
 import { ChartsService } from '../../shared/services/charts.service';
 import { ChartVersion } from '../../shared/models/chart-version';
@@ -14,11 +15,8 @@ export class ChartDetailsReadmeComponent implements OnChanges {
 
   loading: boolean = true;
   readmeContent: string;
-  markdown = require('marked');
 
-  constructor(
-    private chartsService: ChartsService,
-  ) { }
+  constructor(private chartsService: ChartsService) {}
 
   // Detect if input changed
   ngOnChanges(changes: SimpleChanges) {
@@ -28,10 +26,9 @@ export class ChartDetailsReadmeComponent implements OnChanges {
   // TODO. This should not require loading the specific version and then the readme
   getReadme(): void {
     if (!this.currentVersion) return;
-    this.chartsService.getChartReadme(this.currentVersion)
-      .subscribe(resp => {
-        this.loading = false;
-        this.readmeContent = this.markdown(resp.text());
-      });
+    this.chartsService.getChartReadme(this.currentVersion).subscribe(resp => {
+      this.loading = false;
+      this.readmeContent = markdown(resp.text());
+    });
   }
 }

@@ -3,6 +3,7 @@ import { ChartsService } from '../../shared/services/charts.service';
 import { Chart } from '../../shared/models/chart';
 import { Maintainer } from '../../shared/models/maintainer';
 import { ChartVersion } from '../../shared/models/chart-version';
+import urljoin from 'url-join';
 
 @Component({
   selector: 'app-chart-details-info',
@@ -29,8 +30,6 @@ export class ChartDetailsInfoComponent implements OnInit {
     var chartSource = this.chart.attributes.repo.source;
     if (!chartSource) return
 
-    // Used to handle possible trailing URLs
-    var urljoin = require('url-join');
     return urljoin(chartSource, this.chart.attributes.name);
   }
 

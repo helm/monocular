@@ -29,7 +29,9 @@ export class DeploymentComponent implements OnInit {
     private config: ConfigService,
     private mdIconRegistry: MdIconRegistry,
     private sanitizer: DomSanitizer
-  ) {
+  ) {}
+
+  ngOnInit() {
     const icons = [
       'layers',
       'schedule',
@@ -39,14 +41,11 @@ export class DeploymentComponent implements OnInit {
     ];
 
     icons.forEach(icon => {
-      mdIconRegistry.addSvgIcon(
+      this.mdIconRegistry.addSvgIcon(
         icon,
-        sanitizer.bypassSecurityTrustResourceUrl(`/assets/icons/${icon}.svg`)
+        this.sanitizer.bypassSecurityTrustResourceUrl(`/assets/icons/${icon}.svg`)
       );
     });
-  }
-
-  ngOnInit() {
     // Do not show the page if the feature is not enabled
     if (!this.config.releasesEnabled) {
       return this.router.navigate(['/404']);

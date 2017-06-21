@@ -48,7 +48,7 @@ import { LoaderComponent } from './loader/loader.component';
 import { ConfirmDialog }   from './confirm-dialog/confirm-dialog.component';
 import { DeploymentResourceComponent } from './deployment/deployment-resource/deployment-resource.component';
 
-require('hammerjs');
+import 'hammerjs';
 
 const metaConfig: MetaConfig = {
   //Append a title suffix such as a site name to all titles

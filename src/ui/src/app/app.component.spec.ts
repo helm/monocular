@@ -9,6 +9,7 @@ import { FooterComponent } from './footer/footer.component';
 import { FooterListComponent } from './footer-list/footer-list.component';
 
 import { Angulartics2GoogleAnalytics } from 'angulartics2';
+import { ConfigService } from './shared/services/config.service';
 
 describe('AppComponent', () => {
   let component: AppComponent;
@@ -21,7 +22,8 @@ describe('AppComponent', () => {
         RouterTestingModule
       ],
       providers: [
-        { provide: Angulartics2GoogleAnalytics }
+        { provide: Angulartics2GoogleAnalytics },
+        { provide: ConfigService, useValue: { appName: 'appName' } }
       ]
     })
     .compileComponents();

@@ -27,29 +27,31 @@ export class DeploymentsComponent implements OnInit {
     private config: ConfigService,
     private mdIconRegistry: MdIconRegistry,
     private sanitizer: DomSanitizer
-  ){
-    mdIconRegistry
-      .addSvgIcon('search',
-        sanitizer.bypassSecurityTrustResourceUrl(`/assets/icons/search.svg`));
-  }
+  ) {}
 
   ngOnInit() {
+    this.mdIconRegistry.addSvgIcon(
+      'search',
+      this.sanitizer.bypassSecurityTrustResourceUrl(`/assets/icons/search.svg`)
+    );
     // Do not show the page if the feature is not enabled
-    if(!this.config.releasesEnabled) {
+    if (!this.config.releasesEnabled) {
       return this.router.navigate(['/404']);
     }
     this.loadDeployments();
   }
 
   loadDeployments(): void {
-    this.deploymentsService.getDeployments()
-    .finally(()=> {
-      this.loading = false;
-    }).subscribe(deployments => {
-      this.deployments = deployments;
-      this.filterDeployments();
-      this.namespaces = this.exportNamespaces();
-    })
+    this.deploymentsService
+      .getDeployments()
+      .finally(() => {
+        this.loading = false;
+      })
+      .subscribe(deployments => {
+        this.deployments = deployments;
+        this.filterDeployments();
+        this.namespaces = this.exportNamespaces();
+      });
   }
 
   exportNamespaces(): string[] {
@@ -58,16 +60,16 @@ export class DeploymentsComponent implements OnInit {
       if (list.indexOf(dp.attributes.namespace) == -1) {
         list.push(dp.attributes.namespace);
       }
-    })
+    });
     return list;
   }
 
   filterDeployments() {
-    let filtered = this.deployments
+    let filtered = this.deployments;
     if (this.namespace !== 'All') {
       filtered = filtered.filter(deployment => {
         return deployment.attributes.namespace === this.namespace;
-      })
+      });
     }
     filtered = filtered.sort((a, b) => {
       if (this.orderBy === 'Name') {
@@ -77,7 +79,7 @@ export class DeploymentsComponent implements OnInit {
       } else {
         return a.attributes.updated <= b.attributes.updated ? -1 : 1;
       }
-    })
+    });
     this.visibleDeployments = filtered;
   }
 
@@ -89,7 +91,7 @@ export class DeploymentsComponent implements OnInit {
     let searchTerm = newValue.toLowerCase();
     this.visibleDeployments = this.deployments.filter(deployment => {
       return deployment.id.indexOf(searchTerm) != -1;
-    })
+    });
   }
 
   clickNamespace(ns) {
@@ -101,5 +103,4 @@ export class DeploymentsComponent implements OnInit {
     this.orderBy = order;
     this.filterDeployments();
   }
-
 }

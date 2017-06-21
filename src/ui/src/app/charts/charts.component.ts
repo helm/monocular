@@ -22,8 +22,8 @@ export class ChartsComponent implements OnInit {
 
   // Order elements
   orders: {
-    name: string,
-    value: string
+    name: string;
+    value: string;
   }[] = [
     { name: 'Name', value: 'name' },
     { name: 'Created at', value: 'created' }
@@ -45,20 +45,20 @@ export class ChartsComponent implements OnInit {
     private seo: SeoService,
     private mdIconRegistry: MdIconRegistry,
     private sanitizer: DomSanitizer
-  ) {
-    mdIconRegistry
-      .addSvgIcon('search',
-        sanitizer.bypassSecurityTrustResourceUrl(`/assets/icons/search.svg`));
-  }
+  ) {}
 
   // Default filters
   filters = {
     orderBy: 'name'
-  }
+  };
 
   ngOnInit() {
+    this.mdIconRegistry.addSvgIcon(
+      'search',
+      this.sanitizer.bypassSecurityTrustResourceUrl(`/assets/icons/search.svg`)
+    );
     this.allRepo = new Repo();
-    this.allRepo.id = "all";
+    this.allRepo.id = 'all';
     this.allRepo.attributes = new RepoAttributes();
     this.allRepo.attributes.name = 'All';
     this.route.params.forEach((params: Params) => {
@@ -79,18 +79,20 @@ export class ChartsComponent implements OnInit {
 
   loadRepos(): void {
     this.reposService.getRepos().subscribe(repos => {
-      if(this.repoName) {
+      if (this.repoName) {
         this.selectedRepository = repos.filter(r => r.id == this.repoName)[0];
       } else {
         this.selectedRepository = this.allRepo;
       }
       this.repositories = repos;
-      this.repositories.splice(0, 0, this.allRepo)
+      this.repositories.splice(0, 0, this.allRepo);
     });
   }
 
   goToRepo(repo: string) {
-    this.router.navigate(['/charts', repo === 'all' ? '' : repo], {replaceUrl:true});
+    this.router.navigate(['/charts', repo === 'all' ? '' : repo], {
+      replaceUrl: true
+    });
   }
 
   changeOrderBy(orderByValue: string) {
@@ -101,43 +103,48 @@ export class ChartsComponent implements OnInit {
   searchChange(e) {
     let searchValue = e.target.value;
     if (!searchValue) {
-      return this.orderedCharts = this.orderCharts(this.charts);
+      return (this.orderedCharts = this.orderCharts(this.charts));
     }
     this.loading = true;
-    this.chartsService.searchCharts(searchValue, this.repoName).subscribe(charts => {
-      this.loading = false;
-      this.orderedCharts = this.orderCharts(charts);
-    });
+    this.chartsService
+      .searchCharts(searchValue, this.repoName)
+      .subscribe(charts => {
+        this.loading = false;
+        this.orderedCharts = this.orderCharts(charts);
+      });
   }
 
   // Sort charts
   orderCharts(charts): Chart[] {
-    switch(this.orderBy) {
+    switch (this.orderBy) {
       case 'created': {
-        return charts.sort(this.sortByCreated).reverse()
+        return charts.sort(this.sortByCreated).reverse();
       }
       default: {
         return charts.sort((a, b) =>
-          a.attributes.name.localeCompare(b.attributes.name));
+          a.attributes.name.localeCompare(b.attributes.name)
+        );
       }
     }
   }
 
-  private
+  private;
   sortByCreated(a: Chart, b: Chart) {
-      let aVersion = a.relationships.latestChartVersion.data
-      let bVersion = b.relationships.latestChartVersion.data
-      if(aVersion.created < bVersion.created){
-          return -1
-      } else if (aVersion.created > bVersion.created){
-        return 1
-      }
-      return 0
+    let aVersion = a.relationships.latestChartVersion.data;
+    let bVersion = b.relationships.latestChartVersion.data;
+    if (aVersion.created < bVersion.created) {
+      return -1;
+    } else if (aVersion.created > bVersion.created) {
+      return 1;
+    }
+    return 0;
   }
 
   updateMetaTags(): void {
     if (this.repoName) {
-      this.seo.setMetaTags('repoCharts', { repo: this.capitalize(this.repoName) });
+      this.seo.setMetaTags('repoCharts', {
+        repo: this.capitalize(this.repoName)
+      });
     } else {
       this.seo.setMetaTags('charts');
     }
