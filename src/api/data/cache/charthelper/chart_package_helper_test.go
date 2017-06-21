@@ -225,6 +225,20 @@ func TestCleanChartDataDir(t *testing.T) {
 	assert.ExistsErr(t, err, "chart dir removed")
 }
 
+func TestCleanChartDataDirNotFound(t *testing.T) {
+	chart, err := getTestChart()
+	assert.NoErr(t, err)
+	randomPath, _ := ioutil.TempDir(os.TempDir(), "chart")
+	DataDirBaseOrig := DataDirBase
+	defer func() { DataDirBase = DataDirBaseOrig }()
+	DataDirBase = func() string {
+		return randomPath
+	}
+
+	err = cleanChartDataDir(chart)
+	assert.ExistsErr(t, err, "chart dir not found")
+}
+
 // Required because DataDirBase has been overriden
 var origDataDirBase = DataDirBase()
 
