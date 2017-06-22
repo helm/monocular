@@ -2,3 +2,8 @@ The Monocular chart sets up an Ingress to serve the API and UI on the same
 domain. You can get the address to access Monocular from this Ingress endpoint.
 
 Visit https://github.com/helm/monocular for more information.
+
+{{ if .Values.api.config.releasesEnabled -}}
+**IMPORTANT**: Releases are enabled, which will allow anybody with access to the running instance to create, list and delete any Helm release existing in your cluster.
+This feature is aimed for internal, behind the firewall deployments of Monocular, please plan accordingly. To disable this, re-install Monocular setting api.config.releasesEnabled=false.
+{{ end }}

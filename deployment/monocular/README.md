@@ -113,6 +113,7 @@ Ensure that you replace `$FRONTEND_HOSTNAME` and `$API_HOSTNAME` with the hostna
 | Value                                   | Description                                                                                 | Default               |
 |-----------------------------------------|---------------------------------------------------------------------------------------------|-----------------------|
 | `api.livenessProbe.initialDelaySeconds` | Increase this if the API pods are crashing due to the chart repository sync taking too long | `180`                 |
+| `api.config.releasesEnabled`            | Enable installing and managing charts in the cluster                                        | `3600`                |
 | `api.config.cacheRefreshInterval`       | How often to sync with chart repositories                                                   | `3600`                |
 | `ui.googleAnalyticsId`                  | Google Analytics ID                                                                         | `UA-XXXXXX-X` (unset) |
 | `ui.appName`                            | Name to use in title bar and header                                                         | `Monocular`           |
