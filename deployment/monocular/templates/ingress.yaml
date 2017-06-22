@@ -1,3 +1,4 @@
+{{- if .Values.ingress.enabled -}}
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
@@ -7,6 +8,7 @@ metadata:
     {{ $key }}: {{ $value | quote }}
   {{- end }}
     ingress.kubernetes.io/rewrite-target: /
+    kubernetes.io/ingress.class: nginx
   labels:
     app: {{ template "fullname" . }}
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
@@ -32,4 +34,5 @@ spec:
   - secretName: {{ .Values.ingress.tls.secretName }}
     hosts:
 {{ toYaml .Values.ingress.hosts | indent 4 }}
+{{- end -}}
 {{- end -}}

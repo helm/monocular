@@ -25,10 +25,10 @@ api:
     repos:
       # Official repositories
       - name: stable
-        url: http://storage.googleapis.com/kubernetes-charts
+        url: https://kubernetes-charts.storage.googleapis.com
         source: https://github.com/kubernetes/charts/tree/master/stable
       - name: incubator
-        url: http://storage.googleapis.com/kubernetes-charts-incubator
+        url: https://kubernetes-charts-incubator.storage.googleapis.com
         source: https://github.com/kubernetes/charts/tree/master/incubator
       # Add your own repository
       #- name: my-repo-name
@@ -41,7 +41,7 @@ api:
         - "access-control-allow-headers"
         - "x-xsrf-token"
     # Enable Helm deployment integration
-    releasesEnabled: false
+    releasesEnabled: true
     # Cache refresh interval in sec.
     cacheRefreshInterval: 3600
 ui:
@@ -97,7 +97,6 @@ ingress:
   ## Ingress annotations
   ##
   annotations:
-  #   kubernetes.io/ingress.class: nginx
   #   kubernetes.io/tls-acme: 'true'
 
   ## Ingress TLS configuration

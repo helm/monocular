@@ -23,17 +23,16 @@ You can use the chart in this repository to install Monocular in your cluster.
 - [Nginx Ingress controller](https://github.com/kubernetes/ingress)
 
 ```console
-$ git clone https://github.com/helm/monocular.git
-$ cd ./monocular
-$ helm install ./deployment/monocular
+$ helm repo add monocular https://helm.github.io/monocular
+$ helm install monocular/monocular
 ```
 
 Read more on how to deploy Monocular [here](docs/deployment.md).
 
 ## Documentation
 
-- [Configuration](docs/configuration.md)
-- [Deployment](docs/deployment.md)
+- [Configuration](deployment/monocular/README.md#configuration)
+- [Deployment](deployment/monocular/README.md)
 - [Development](docs/development.md)
 
 ## Contribute
