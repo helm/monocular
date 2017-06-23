@@ -101,7 +101,7 @@ fi
 
 # Skip repository sync if chart already exists in index
 CHART_VERSION=$(grep '^version:' $CHART_PATH/Chart.yaml | awk '{print $2}')
-if ! grep -q "version: $CHART_VERSION" $BUILD_DIR/index.yaml; then
+if grep -q "version: $CHART_VERSION" $BUILD_DIR/index.yaml; then
   log "Chart version $CHART_VERSION already exists... skipping"
   exit 0
 fi
