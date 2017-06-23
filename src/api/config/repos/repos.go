@@ -26,13 +26,13 @@ type Repo struct {
 var official = Repos{
 	Repo{
 		Name:   "stable",
-		URL:    "http://storage.googleapis.com/kubernetes-charts",
+		URL:    "https://kubernetes-charts.storage.googleapis.com",
 		Source: "https://github.com/kubernetes/charts/tree/master/stable",
 	},
 	Repo{
 		Name:   "incubator",
 		URL:    "http://storage.googleapis.com/kubernetes-charts-incubator",
-		Source: "https://github.com/kubernetes/charts/tree/master/incubator",
+		Source: "https://kubernetes-charts-incubator.storage.googleapis.com",
 	},
 }
 
