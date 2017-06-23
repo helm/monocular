@@ -29,9 +29,7 @@ after_success:
       docker push bitnami/monocular-api
       docker push bitnami/monocular-ui
 
-      if [[ -n "$TRAVIS_TAG" ]]; then
-        bash ./scripts/repo-sync.sh true
-      fi
+      ./scripts/repo-sync.sh
     fi
   - bash <(curl -s https://codecov.io/bash)
 
