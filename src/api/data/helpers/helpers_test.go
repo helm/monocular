@@ -19,6 +19,7 @@ const (
 	chartDigest      = "99c76e403d752c84ead610644d4b1c2f2b453a74b921f422b9dcb8a7c8b559cd"
 	chartDescription = "Chart for Apache HTTP Server"
 	chartVersion     = "0.0.1"
+	chartAppVersion  = "1.0.0"
 	chartHome        = "https://k8s.io/helm"
 )
 
@@ -40,6 +41,7 @@ func TestParseYAMLRepo(t *testing.T) {
 	assert.Equal(t, *charts[0].Digest, chartDigest, "chart checksum field value")
 	assert.Equal(t, *charts[0].Description, chartDescription, "chart description field value")
 	assert.Equal(t, *charts[0].Version, chartVersion, "chart version field value")
+	assert.Equal(t, *charts[0].AppVersion, chartAppVersion, "chart app version field value")
 	assert.Equal(t, *charts[0].Home, chartHome, "chart home field value")
 	//assert.Equal(t, *charts[0].Urls[0], chartURL, "chart URL field value")
 	//assert.Equal(t, *charts[0].Sources[0], chartSource, "chart URL field value")
@@ -272,7 +274,8 @@ entries:
       urls:
         - %s
       version: %s
-generated: 2016-10-06T16:23:20.499029981-06:00`, APIVer1String, chartCreated, chartDescription, chartDigest, chartHome, chartName, chartSource, chartURL, chartVersion))
+      appVersion: %s
+generated: 2016-10-06T16:23:20.499029981-06:00`, APIVer1String, chartCreated, chartDescription, chartDigest, chartHome, chartName, chartSource, chartURL, chartVersion, chartAppVersion))
 }
 
 func TestMakeAvailableIcons(t *testing.T) {

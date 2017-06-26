@@ -1,5 +1,5 @@
-hash: f4eb22294333c0bbcb3540dd0e20c245ea8034301270431b34325c515cefcfc8
-updated: 2017-03-04T02:17:35.771976193Z
+hash: fe15a69f8f76feec7f59f73452c161cfd7f47585f5691550117153b782a59c19
+updated: 2017-06-26T15:34:35.87063994Z
 imports:
 - name: cloud.google.com/go
   version: 3b1ae45394a234c385be014e9a488f2bb6eef821
@@ -205,7 +205,7 @@ imports:
   - jlexer
   - jwriter
 - name: github.com/Masterminds/semver
-  version: 59c29afe1a994eacb71c833025ca7acf874bb1da
+  version: 3f0ab6d4ab4bed1c61caf056b63a6e62190c7801
 - name: github.com/mitchellh/go-wordwrap
   version: ad45545899c7b13c020ea92b2072220eefad42b8
 - name: github.com/NYTimes/gziphandler
@@ -221,7 +221,7 @@ imports:
 - name: github.com/rs/xhandler
   version: d9d9599b6aaf6a058cb7b1f48291ded2cbd13390
 - name: github.com/Sirupsen/logrus
-  version: 0208149b40d863d2c1a2f8fe5753096a9cf2cc8b
+  version: ba1b36c82c5e05c4f912a88eab0dcd91a171688f
 - name: github.com/spf13/cobra
   version: f62e98d28ab7ad31d707ba837a966378465c7b57
 - name: github.com/spf13/pflag
@@ -326,9 +326,10 @@ imports:
   - pkg/proto/hapi/release
   - pkg/proto/hapi/services
   - pkg/proto/hapi/version
+  - pkg/timeconv
   - pkg/version
 - name: k8s.io/kubernetes
-  version: e9eeec655e7fdee50d4e19200f9707d1cd4a3371
+  version: f07eea23494be1e7c11a8e2cf51bd96d1ec9fdf1
   subpackages:
   - federation/apis/federation
   - federation/apis/federation/install
