@@ -35,6 +35,10 @@ Read more on how to deploy Monocular [here](docs/deployment.md).
 - [Deployment](deployment/monocular/README.md)
 - [Development](docs/development.md)
 
+## Roadmap
+
+The [Monocular roadmap is currently located in the wiki](https://github.com/helm/monocular/wiki/Roadmap).
+
 ## Contribute
 
 This project is still under active development, so you'll likely encounter
