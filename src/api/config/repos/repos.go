@@ -31,8 +31,8 @@ var official = Repos{
 	},
 	Repo{
 		Name:   "incubator",
-		URL:    "http://storage.googleapis.com/kubernetes-charts-incubator",
-		Source: "https://kubernetes-charts-incubator.storage.googleapis.com",
+		URL:    "https://kubernetes-charts-incubator.storage.googleapis.com",
+		Source: "https://github.com/kubernetes/charts/tree/master/incubator",
 	},
 }
 
