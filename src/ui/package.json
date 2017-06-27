@@ -39,7 +39,7 @@
   },
   "devDependencies": {
     "@types/jasmine": "^2.2.30",
-    "@angular/cli": "1.1.2",
+    "@angular/cli": "1.1.3",
     "@angular/compiler-cli": "^4.0.0",
     "@angular/language-service": "^4.0.0",
     "bootstrap-sass": "^3.3.7",
