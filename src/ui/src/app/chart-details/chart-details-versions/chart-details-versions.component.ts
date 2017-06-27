@@ -9,7 +9,7 @@ import { ChartAttributes } from '../../shared/models/chart';
 })
 export class ChartDetailsVersionsComponent implements OnInit {
   @Input() versions: ChartVersion[]
-  @Input() currentVersion: string
+  @Input() currentVersion: ChartVersion
   constructor() { }
 
   ngOnInit() { }
@@ -20,6 +20,6 @@ export class ChartDetailsVersionsComponent implements OnInit {
   }
 
   isSelected(version: ChartVersion): boolean {
-    return version.attributes.version == this.currentVersion
+    return version.attributes.version == this.currentVersion.attributes.version;
   }
 }

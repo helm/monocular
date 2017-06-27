@@ -11,7 +11,7 @@ import { ChartVersion } from '../../shared/models/chart-version';
 })
 export class ChartDetailsInfoComponent implements OnInit {
   @Input() chart: Chart
-  @Input() currentVersion: string
+  @Input() currentVersion: ChartVersion
   versions: ChartVersion[]
   constructor(
     private chartsService: ChartsService,
@@ -43,7 +43,7 @@ export class ChartDetailsInfoComponent implements OnInit {
     parser.href = this.chart.attributes.repo.source;
     return parser.hostname;
   }
-
+  
   loadVersions(chart: Chart): void {
     this.chartsService.getVersions(chart.attributes.repo.name, chart.attributes.name)
       .subscribe(versions => { this.versions = versions })

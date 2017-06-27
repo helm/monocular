@@ -1,6 +1,7 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { Chart } from '../../shared/models/chart';
 import { ChartsService } from '../../shared/services/charts.service';
+import { ChartVersion } from '../../shared/models/chart-version';
 
 @Component({
   selector: 'app-chart-details-readme',
@@ -9,7 +10,7 @@ import { ChartsService } from '../../shared/services/charts.service';
 })
 export class ChartDetailsReadmeComponent implements OnChanges {
   @Input() chart: Chart;
-  @Input() currentVersion: string;
+  @Input() currentVersion: ChartVersion;
 
   loading: boolean = true;
   readmeContent: string;
@@ -26,13 +27,11 @@ export class ChartDetailsReadmeComponent implements OnChanges {
 
   // TODO. This should not require loading the specific version and then the readme
   getReadme(): void {
-    this.chartsService.getVersion(this.chart.attributes.repo.name, this.chart.attributes.name, this.currentVersion)
-      .subscribe(chartVersion => {
-        this.chartsService.getChartReadme(chartVersion)
-          .subscribe(resp => {
-            this.loading = false;
-            this.readmeContent = this.markdown(resp.text());
-          })
-      })
+    if (!this.currentVersion) return;
+    this.chartsService.getChartReadme(this.currentVersion)
+      .subscribe(resp => {
+        this.loading = false;
+        this.readmeContent = this.markdown(resp.text());
+      });
   }
 }

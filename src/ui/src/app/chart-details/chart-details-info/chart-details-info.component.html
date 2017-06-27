@@ -4,7 +4,7 @@
     </app-chart-item>
   </div>
 
-  <app-chart-details-usage [chart]=chart [currentVersion]=currentVersion></app-chart-details-usage>
+  <app-chart-details-usage [chart]=chart *ngIf="currentVersion" [currentVersion]=currentVersion.attributes.version></app-chart-details-usage>
 
   <app-panel class="chartInfo__properties" [border]=true>
     <div class="chartInfo__versions">
