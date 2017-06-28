@@ -25,7 +25,7 @@
     <div class="chartInfo__maintainers">
       <h1>Maintainers</h1>
       <div *ngFor="let maintainer of maintainers">
-        <a href="mailto:{{ maintainer.email }}">{{ maintainer.name }}</a>
+        <a href="{{ maintainerUrl(maintainer) }}">{{ maintainer.name }}</a>
       </div>
     </div>
     <div class="chartInfo__related" *ngIf="sources.length">

@@ -48,4 +48,12 @@ export class ChartDetailsInfoComponent implements OnInit {
     this.chartsService.getVersions(chart.attributes.repo.name, chart.attributes.name)
       .subscribe(versions => { this.versions = versions })
   }
+
+  maintainerUrl(maintainer: Maintainer): string {
+    if (this.chart.attributes.repo.source.match(/github.com/)) {
+      return `https://github.com/${maintainer.name}`;
+    } else {
+      return `mailto:${maintainer.email}`;
+    }
+  }
 }
