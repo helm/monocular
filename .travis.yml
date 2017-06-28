@@ -13,11 +13,11 @@ before_install:
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
 install:
-  - make -C src/api bootstrap
-  - make -C src/ui install
+  - make -j1 -C src/api bootstrap
+  - make -j1 -C src/ui install
 script:
-  - make -C src/api test test-cover docker-build
-  - make -C src/ui docker-build # Tests disabled for now
+  - make -j1 -C src/api test test-cover docker-build
+  - make -j1 -C src/ui docker-build # Tests disabled for now
 after_success:
   - |
     if [[ "$TRAVIS_PULL_REQUEST" == false ]]; then
