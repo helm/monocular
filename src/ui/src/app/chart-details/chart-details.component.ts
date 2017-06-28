@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { ChartsService } from '../shared/services/charts.service';
 import { Chart } from '../shared/models/chart';
+import { ChartVersion } from '../shared/models/chart-version';
 import { SeoService } from '../shared/services/seo.service';
 import { ConfigService } from '../shared/services/config.service';
 
@@ -14,7 +15,7 @@ export class ChartDetailsComponent implements OnInit {
   /* This resource will be different, probably ChartVersion */
   chart: Chart;
   loading: boolean = true;
-  currentVersion: string;
+  currentVersion: ChartVersion;
   titleVersion: string;
 
   constructor(
@@ -32,7 +33,9 @@ export class ChartDetailsComponent implements OnInit {
         .subscribe(chart => {
           this.loading = false;
           this.chart = chart;
-          this.currentVersion = params['version'] || this.chart.relationships.latestChartVersion.data.version;
+          let version = params['version'] || this.chart.relationships.latestChartVersion.data.version;
+          this.chartsService.getVersion(repo, chartName, version)
+            .subscribe(chartVersion => { this.currentVersion = chartVersion });
           this.titleVersion = params['version'] || '';
           this.updateMetaTags();
         });

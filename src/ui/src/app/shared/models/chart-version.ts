@@ -12,6 +12,7 @@ export class ChartVersionAttributes {
   icons: ChartVersionIcon[];
   readme: string;
   version: string;
+  app_version: string;
   urls: string[];
 }
 

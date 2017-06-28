@@ -17,6 +17,13 @@ swagger:model chartPackage
 */
 type ChartPackage struct {
 
+	/* app version
+
+	Required: true
+	Min Length: 1
+	*/
+	AppVersion *string `json:"appVersion"`
+
 	/* created
 
 	Required: true
@@ -96,6 +103,11 @@ type ChartPackage struct {
 func (m *ChartPackage) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateAppVersion(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
 	if err := m.validateCreated(formats); err != nil {
 		// prop
 		res = append(res, err)
@@ -154,6 +166,19 @@ func (m *ChartPackage) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *ChartPackage) validateAppVersion(formats strfmt.Registry) error {
+
+	if err := validate.Required("appVersion", "body", m.AppVersion); err != nil {
+		return err
+	}
+
+	if err := validate.MinLength("appVersion", "body", string(*m.AppVersion), 1); err != nil {
+		return err
+	}
+
 	return nil
 }
 

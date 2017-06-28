@@ -329,6 +329,7 @@ definitions:
       - sources
       - urls
       - version
+      - appVersion
     properties:
       repo:
         type: string
@@ -356,6 +357,9 @@ definitions:
         items:
           $ref: "#/definitions/maintainer"
       version:
+        type: string
+        minLength: 1
+      appVersion:
         type: string
         minLength: 1
       home:
@@ -413,6 +417,7 @@ definitions:
       - digest
       - urls
       - version
+      - app_version
       - readme
     properties:
       created:
@@ -433,6 +438,9 @@ definitions:
         items:
           $ref: "#/definitions/icon"
       version:
+        type: string
+        minLength: 1
+      app_version:
         type: string
         minLength: 1
   resourceLink: # a data type that describes the "canonical" API endpoint to a resource

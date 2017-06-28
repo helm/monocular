@@ -4,10 +4,10 @@ import (
 	"fmt"
 
 	"github.com/Masterminds/semver"
+	"github.com/ghodss/yaml"
 	"github.com/helm/monocular/src/api/config"
 	"github.com/helm/monocular/src/api/config/repos"
 	"github.com/helm/monocular/src/api/swagger/models"
-	"gopkg.in/yaml.v2"
 
 	"github.com/helm/monocular/src/api/data/cache/charthelper"
 )
@@ -26,7 +26,7 @@ func IsYAML(b []byte) bool {
 // to a slice of charts
 func ParseYAMLRepo(rawYAML []byte, repoName string) ([]*models.ChartPackage, error) {
 	var ret []*models.ChartPackage
-	repoIndex := make(map[interface{}]interface{})
+	repoIndex := make(map[string]interface{})
 	if err := yaml.Unmarshal(rawYAML, &repoIndex); err != nil {
 		return nil, err
 	}
@@ -114,12 +114,13 @@ func MakeChartVersionResource(chart *models.ChartPackage) *models.Resource {
 	ret.Type = StrToPtr("chartVersion")
 	ret.ID = StrToPtr(MakeChartVersionID(chart.Repo, *chart.Name, *chart.Version))
 	ret.Attributes = &models.ChartVersion{
-		Created: chart.Created,
-		Digest:  chart.Digest,
-		Urls:    chart.Urls,
-		Version: chart.Version,
-		Icons:   makeAvailableIcons(chart),
-		Readme:  makeReadmeURL(chart),
+		Created:    chart.Created,
+		Digest:     chart.Digest,
+		Urls:       chart.Urls,
+		Version:    chart.Version,
+		AppVersion: chart.AppVersion,
+		Icons:      makeAvailableIcons(chart),
+		Readme:     makeReadmeURL(chart),
 	}
 	AddChartRelationship(&ret, chart)
 	return &ret
@@ -163,12 +164,13 @@ func AddLatestChartVersionRelationship(resource *models.Resource, chartPackage *
 				Self: StrToPtr(MakeRepoChartVersionRouteURL(APIVer1String, chartPackage.Repo, *chartPackage.Name, *chartPackage.Version)),
 			},
 			Data: &models.ChartVersion{
-				Created: chartPackage.Created,
-				Digest:  chartPackage.Digest,
-				Urls:    chartPackage.Urls,
-				Version: chartPackage.Version,
-				Icons:   makeAvailableIcons(chartPackage),
-				Readme:  makeReadmeURL(chartPackage),
+				Created:    chartPackage.Created,
+				Digest:     chartPackage.Digest,
+				Urls:       chartPackage.Urls,
+				Version:    chartPackage.Version,
+				AppVersion: chartPackage.AppVersion,
+				Icons:      makeAvailableIcons(chartPackage),
+				Readme:     makeReadmeURL(chartPackage),
 			},
 		},
 	}
