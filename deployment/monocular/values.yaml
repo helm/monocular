@@ -36,9 +36,11 @@ api:
       #  source: my-repository-source
     cors:
       allowed_origins:
-        - my-api-server
+        - ""
+        # e.g. UI served on a different domain
+        # - http://monocular.local
       allowed_headers:
-        - "access-control-allow-headers"
+        - "content-type"
         - "x-xsrf-token"
     # Enable Helm deployment integration
     releasesEnabled: true

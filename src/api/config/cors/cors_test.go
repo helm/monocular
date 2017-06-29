@@ -12,8 +12,8 @@ var configFileOk = filepath.Join("..", "testdata", "config.yaml")
 var configFileNotOk = filepath.Join("..", "testdata", "bogus_config.yaml")
 var configFileNoCors = filepath.Join("..", "testdata", "nocors_config.yaml")
 var defaultExpectedCors = Cors{
-	AllowedOrigins: []string{"my-api-server"},
-	AllowedHeaders: []string{"access-control-allow-headers", "x-xsrf-token"},
+	AllowedOrigins: []string{""},
+	AllowedHeaders: []string{"content-type", "x-xsrf-token"},
 }
 
 func TestConfigFileDoesNotExist(t *testing.T) {
