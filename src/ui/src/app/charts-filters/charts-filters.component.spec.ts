@@ -5,7 +5,7 @@ import { ChartsFiltersComponent } from './charts-filters.component';
 
 describe('Component: ChartsFilters', () => {
   it('should create an instance', () => {
-    let component = TestBed.createComponent(DeploymentItemComponent);
+    let component = TestBed.createComponent(ChartsFiltersComponent);
     expect(component).toBeTruthy();
   });
 });

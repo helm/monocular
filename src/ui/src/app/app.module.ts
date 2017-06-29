@@ -4,7 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { Angulartics2Module, Angulartics2GoogleAnalytics } from 'angulartics2';
 import { ClipboardModule } from 'ngx-clipboard';
-import { MetaModule, MetaLoader, MetaStaticLoader, PageTitlePositioning } from '@ngx-meta/core';
+import {
+  MetaModule,
+  MetaLoader,
+  MetaStaticLoader,
+  PageTitlePositioning
+} from '@ngx-meta/core';
 import { routing, appRoutingProviders } from './app.routing';
 
 /* Material library */
@@ -45,11 +50,9 @@ import { DeploymentComponent } from './deployment/deployment.component';
 import { DeploymentControlsComponent } from './deployment-controls/deployment-controls.component';
 import { ChartsFiltersComponent } from './charts-filters/charts-filters.component';
 import { LoaderComponent } from './loader/loader.component';
-import { ConfirmDialog }   from './confirm-dialog/confirm-dialog.component';
+import { ConfirmDialog } from './confirm-dialog/confirm-dialog.component';
 import { DeploymentResourceComponent } from './deployment/deployment-resource/deployment-resource.component';
-
-require('hammerjs');
-
+import 'hammerjs';
 
 export function metaFactory(): MetaLoader {
   return new MetaStaticLoader({
@@ -95,12 +98,12 @@ export function metaFactory(): MetaLoader {
     BrowserModule,
     FormsModule,
     HttpModule,
-		routing,
+    routing,
     Angulartics2Module.forRoot([Angulartics2GoogleAnalytics]),
     ClipboardModule,
     MetaModule.forRoot({
       provide: MetaLoader,
-      useFactory: (metaFactory)
+      useFactory: metaFactory
     })
   ],
   providers: [
@@ -113,9 +116,7 @@ export function metaFactory(): MetaLoader {
     SeoService,
     DialogsService
   ],
-  entryComponents: [
-    ConfirmDialog
-  ],
+  entryComponents: [ConfirmDialog],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}
