@@ -7,8 +7,6 @@ metadata:
   {{- range $key, $value := .Values.ingress.annotations }}
     {{ $key }}: {{ $value | quote }}
   {{- end }}
-    ingress.kubernetes.io/rewrite-target: /
-    kubernetes.io/ingress.class: nginx
   labels:
     app: {{ template "fullname" . }}
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
