@@ -1,5 +1,6 @@
 # Use older version of Trusty VM due to issues in the updated one
 group: deprecated-2017Q2
+filter_secrets: false
 language: node_js
 node_js:
   - '6.9.5'
