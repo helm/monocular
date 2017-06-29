@@ -27,8 +27,8 @@ func defaultCors() (Cors, error) {
 	}
 	// Defaults
 	return Cors{
-		AllowedOrigins: []string{"my-api-server"},
-		AllowedHeaders: []string{"access-control-allow-headers", "x-xsrf-token"},
+		AllowedOrigins: []string{""},
+		AllowedHeaders: []string{"content-type", "x-xsrf-token"},
 	}, nil
 }
 
