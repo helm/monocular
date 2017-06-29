@@ -84,6 +84,20 @@ EOF
 $ helm install monocular/monocular -f custom-repos.yaml
 ```
 
+### Serve Monocular on a single domain
+
+You can configure the Ingress object with the hostnames you wish to serve Monocular on:
+
+```console
+$ cat > custom-domains.yaml <<<EOF
+ingress:
+  hosts:
+  - monocular.local
+EOF
+
+$ helm install monocular/monocular -f custom-domains.yaml
+```
+
 ### Serve Monocular frontend and API on different domains
 
 In order to serve the frontend and the API on different domains, you need to configure the frontend with the API location and configure CORS correctly for the API to accept requests from the frontend.
@@ -110,10 +124,13 @@ Ensure that you replace `$FRONTEND_HOSTNAME` and `$API_HOSTNAME` with the hostna
 
 ### Other configuration options
 
-| Value                                   | Description                                                                                 | Default               |
-|-----------------------------------------|---------------------------------------------------------------------------------------------|-----------------------|
-| `api.livenessProbe.initialDelaySeconds` | Increase this if the API pods are crashing due to the chart repository sync taking too long | `180`                 |
-| `api.config.releasesEnabled`            | Enable installing and managing charts in the cluster                                        | `3600`                |
-| `api.config.cacheRefreshInterval`       | How often to sync with chart repositories                                                   | `3600`                |
-| `ui.googleAnalyticsId`                  | Google Analytics ID                                                                         | `UA-XXXXXX-X` (unset) |
-| `ui.appName`                            | Name to use in title bar and header                                                         | `Monocular`           |
+| Value                                   | Description                                                                                 | Default                                                                         |
+|-----------------------------------------|---------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------|
+| `api.livenessProbe.initialDelaySeconds` | Increase this if the API pods are crashing due to the chart repository sync taking too long | `180`                                                                           |
+| `api.config.releasesEnabled`            | Enable installing and managing charts in the cluster                                        | `3600`                                                                          |
+| `api.config.cacheRefreshInterval`       | How often to sync with chart repositories                                                   | `3600`                                                                          |
+| `ui.googleAnalyticsId`                  | Google Analytics ID                                                                         | `UA-XXXXXX-X` (unset)                                                           |
+| `ui.appName`                            | Name to use in title bar and header                                                         | `Monocular`                                                                     |
+| `ingress.enabled`                       | If enabled, create an Ingress object                                                        | `true`                                                                          |
+| `ingress.annotations`                   | Ingress annotations                                                                         | `{ingress.kubernetes.io/rewrite-target: /, kubernetes.io/ingress.class: nginx}` |
+| `ingress.tls`                           | TLS configuration for the Ingress object                                                    | `nil`                                                                           |

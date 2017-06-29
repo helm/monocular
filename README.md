@@ -18,16 +18,34 @@ See Monocular in action at [KubeApps.com](https://kubeapps.com) or click [here](
 
 You can use the chart in this repository to install Monocular in your cluster.
 
-##### Prerequisites
+### Prerequisites
 - [Helm and Tiller installed](https://github.com/kubernetes/helm/blob/master/docs/quickstart.md)
-- [Nginx Ingress controller](https://github.com/kubernetes/ingress)
+- [Nginx Ingress controller](https://kubeapps.com/charts/stable/nginx-ingress)
+  - Install with Helm: `helm install stable/nginx-ingress`
+  - **Minikube/Kubeadm**: `helm install stable/nginx-ingress --set controller.hostNetwork=true`
+
 
 ```console
 $ helm repo add monocular https://helm.github.io/monocular
 $ helm install monocular/monocular
 ```
 
-Read more on how to deploy Monocular [here](docs/deployment.md).
+### Access Monocular
+
+Use the Ingress endpoint to access your Monocular instance:
+
+```console
+# Wait for all pods to be running (this can take a few minutes)
+$ kubectl get pods --watch
+
+$ kubectl get ingress
+NAME                        HOSTS     ADDRESS         PORTS     AGE
+tailored-alpaca-monocular   *         192.168.64.30   80        11h
+```
+
+Visit the address specified in the Ingress object in your browser, e.g. http://192.168.64.30.
+
+Read more on how to deploy Monocular [here](deployment/monocular/README.md).
 
 ## Documentation
 
