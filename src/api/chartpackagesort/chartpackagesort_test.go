@@ -7,7 +7,7 @@ import (
 
 	"github.com/Masterminds/semver"
 	"github.com/arschles/assert"
-	"github.com/helm/monocular/src/api/mocks"
+	"github.com/kubernetes-helm/monocular/src/api/mocks"
 )
 
 func TestSortedByName(t *testing.T) {

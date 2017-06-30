@@ -14,7 +14,7 @@ import (
 	flags "github.com/jessevdk/go-flags"
 	graceful "github.com/tylerb/graceful"
 
-	"github.com/helm/monocular/src/api/swagger/restapi/operations"
+	"github.com/kubernetes-helm/monocular/src/api/swagger/restapi/operations"
 )
 
 const (

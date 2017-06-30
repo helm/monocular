@@ -1,6 +1,6 @@
 # Monocular
 
-[Monocular](https://github.com/helm/monocular) is web-based UI for managing Kubernetes applications packaged as Helm Charts. It allows you to search and discover available charts from multiple repositories, and install them in your cluster with one click.
+[Monocular](https://github.com/kubernetes-helm/monocular) is web-based UI for managing Kubernetes applications packaged as Helm Charts. It allows you to search and discover available charts from multiple repositories, and install them in your cluster with one click.
 
 ## TL;DR;
 
@@ -11,7 +11,7 @@ $ helm install monocular/monocular
 
 ## Introduction
 
-This chart bootstraps a [Monocular](https://github.com/helm/monocular) deployment on a [Kubernetes](http://kubernetes.io) cluster using the [Helm](https://helm.sh) package manager.
+This chart bootstraps a [Monocular](https://github.com/kubernetes-helm/monocular) deployment on a [Kubernetes](http://kubernetes.io) cluster using the [Helm](https://helm.sh) package manager.
 
 ## Prerequisites
 
@@ -26,7 +26,7 @@ It is possible to run Monocular on separate domains and without the Nginx Ingres
 First, ensure you have added the Monocular chart repository:
 
 ```console
-$ helm repo add monocular https://helm.github.io/monocular
+$ helm repo add monocular https://kubernetes-helm.github.io/monocular
 ```
 
 To install the chart with the release name `my-release`:
@@ -77,8 +77,8 @@ api
         url: http://storage.googleapis.com/kubernetes-charts-incubator
         source: https://github.com/kubernetes/charts/tree/master/incubator
       - name: monocular
-        url: https://helm.github.io/monocular
-        source: https://github.com/helm/monocular/tree/master/charts
+        url: https://kubernetes-helm.github.io/monocular
+        source: https://github.com/kubernetes-helm/monocular/tree/master/charts
 EOF
 
 $ helm install monocular/monocular -f custom-repos.yaml

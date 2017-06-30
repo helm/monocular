@@ -9,14 +9,14 @@ import (
 
 	"github.com/arschles/assert"
 	"github.com/go-openapi/loads"
-	"github.com/helm/monocular/src/api/config/repos"
-	"github.com/helm/monocular/src/api/data"
-	"github.com/helm/monocular/src/api/data/cache"
-	"github.com/helm/monocular/src/api/data/helpers"
-	handlerscharts "github.com/helm/monocular/src/api/handlers/charts"
-	"github.com/helm/monocular/src/api/swagger/models"
-	"github.com/helm/monocular/src/api/swagger/restapi/operations"
-	"github.com/helm/monocular/src/api/testutil"
+	"github.com/kubernetes-helm/monocular/src/api/config/repos"
+	"github.com/kubernetes-helm/monocular/src/api/data"
+	"github.com/kubernetes-helm/monocular/src/api/data/cache"
+	"github.com/kubernetes-helm/monocular/src/api/data/helpers"
+	handlerscharts "github.com/kubernetes-helm/monocular/src/api/handlers/charts"
+	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
+	"github.com/kubernetes-helm/monocular/src/api/swagger/restapi/operations"
+	"github.com/kubernetes-helm/monocular/src/api/testutil"
 )
 
 const versionsRouteString = "versions"

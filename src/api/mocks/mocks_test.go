@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/arschles/assert"
-	"github.com/helm/monocular/src/api/testutil"
+	"github.com/kubernetes-helm/monocular/src/api/testutil"
 )
 
 func TestGetYAML(t *testing.T) {

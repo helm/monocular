@@ -7,10 +7,10 @@ import (
 
 	"github.com/arschles/assert"
 	"github.com/go-openapi/runtime"
-	"github.com/helm/monocular/src/api/config"
-	"github.com/helm/monocular/src/api/swagger/models"
-	reposapi "github.com/helm/monocular/src/api/swagger/restapi/operations/repositories"
-	"github.com/helm/monocular/src/api/testutil"
+	"github.com/kubernetes-helm/monocular/src/api/config"
+	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
+	reposapi "github.com/kubernetes-helm/monocular/src/api/swagger/restapi/operations/repositories"
+	"github.com/kubernetes-helm/monocular/src/api/testutil"
 )
 
 func TestGetAllRepos200(t *testing.T) {

@@ -1,4 +1,4 @@
-package: github.com/helm/monocular
+package: github.com/kubernetes-helm/monocular
 import:
 - package: github.com/gorilla/mux
 - package: github.com/kelseyhightower/envconfig

@@ -1,8 +1,8 @@
 package data
 
 import (
-	"github.com/helm/monocular/src/api/swagger/models"
-	"github.com/helm/monocular/src/api/swagger/restapi/operations/charts"
+	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
+	"github.com/kubernetes-helm/monocular/src/api/swagger/restapi/operations/charts"
 )
 
 // Charts is an interface for managing chart data sourced from a repository index

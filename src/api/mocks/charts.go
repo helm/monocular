@@ -5,10 +5,10 @@ import (
 	"log"
 	"strings"
 
-	"github.com/helm/monocular/src/api/data"
-	"github.com/helm/monocular/src/api/data/helpers"
-	"github.com/helm/monocular/src/api/swagger/models"
-	chartsapi "github.com/helm/monocular/src/api/swagger/restapi/operations/charts"
+	"github.com/kubernetes-helm/monocular/src/api/data"
+	"github.com/kubernetes-helm/monocular/src/api/data/helpers"
+	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
+	chartsapi "github.com/kubernetes-helm/monocular/src/api/swagger/restapi/operations/charts"
 )
 
 // mockCharts fulfills the data.Charts interface
