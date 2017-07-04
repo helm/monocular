@@ -17,6 +17,7 @@ $header-bar-padding-small: 0 1em;
   padding: $header-bar-padding;
   background-color: $layout_base;
   z-index: 10;
+
   &--transparent {
     position: relative;
     margin-top: -70px;
@@ -41,26 +42,32 @@ $header-bar-padding-small: 0 1em;
     border-radius: 4px;
     transition: background 0.2s ease;
     padding: 0.3em 0.5em;
+
     svg {
       fill: rgba(255, 255, 255, 0.6);
     }
+
     form {
       display: flex;
       align-items: center;
       flex-direction: row;
     }
+
     &.focused {
       background: rgba(255, 255, 255, 0.175);
+
       svg {
         fill: white;
       }
     }
+
     input {
       background: none;
       border: 0;
       color: white;
       font-size: 1em;
       outline: none;
+
       @include placeholder {
         color: rgba(255, 255, 255, 0.6);
       }
@@ -68,10 +75,10 @@ $header-bar-padding-small: 0 1em;
   }
 
   &__navigation {
-
     margin-left: auto;
     margin-right: 2em;
     display: none;
+
     ul {
       margin: .5em 0;
 
@@ -80,6 +87,7 @@ $header-bar-padding-small: 0 1em;
         position: relative;
         margin: 0 1em;
         vertical-align: middle;
+
         &.separator {
           width: 4px;
           height: 4px;
@@ -88,12 +96,15 @@ $header-bar-padding-small: 0 1em;
           margin: 0;
           margin-bottom: 2px;
         }
+
         a {
           transition: opacity 0.2s ease;
+
           &:hover {
             color: white;
             opacity: 0.5;
           }
+
           &::after{
             background: white none repeat scroll 0 0;
             bottom: -10px;
@@ -107,13 +118,17 @@ $header-bar-padding-small: 0 1em;
             transition: width 0.3s ease;
           }
         }
+
         &.active {
+
           a {
             color: white;
             font-weight: 600;
+
             &::after {
               width: 100%;
             }
+
             &:hover {
               opacity: 1;
             }
@@ -128,9 +143,11 @@ $header-bar-padding-small: 0 1em;
     margin-right: 4em;
     margin-left: auto;
     transition: margin-right 0.3s ease;
+
     &.opened {
       margin-right: 1em;
     }
+
     svg {
       cursor: pointer;
       width: 32px;

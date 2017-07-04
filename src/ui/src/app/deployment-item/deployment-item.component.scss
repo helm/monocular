@@ -13,6 +13,7 @@
   color: inherit;
   box-sizing: border-box;
   overflow: hidden;
+
   &_icon {
     height: 100%;
     width: 80px;
@@ -20,11 +21,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
+
     img {
       width: 70%;
       max-height: 100%;
     }
   }
+
   &_content {
     height: 100%;
     position: relative;
@@ -34,14 +37,17 @@
     justify-content: center;
     word-wrap: break-word;
     overflow: hidden;
+
     &__title {
       margin: 0;
       margin-bottom: 5px;
       font-size: 1.2em;
     }
+
     &__subtitle {
       font-size: 0.8em;
       line-height: 1.5em;
+
       b {
         background: rgba(0, 0, 0, 0.1);
         border-radius: 4px;
@@ -50,6 +56,7 @@
         font-weight: 600;
       }
     }
+    
     &__date {
       position: absolute;
       top: 10px;

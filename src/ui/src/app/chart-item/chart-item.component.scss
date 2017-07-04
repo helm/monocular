@@ -17,6 +17,7 @@ $chart-item-content-height: 150px;
   &:active {
     transform: scale(0.98);
   }
+
   &-content {
     height: $chart-item-content-height;
     display: flex;
@@ -33,6 +34,7 @@ $chart-item-content-height: 150px;
     display: flex;
     align-items: center;
     justify-content: center;
+
     a {
       width: 100%;
       height: 100%;
@@ -40,6 +42,7 @@ $chart-item-content-height: 150px;
       align-items: center;
       justify-content: center;
     }
+
     img {
       width: 70%;
       max-height: 100%;
@@ -55,12 +58,16 @@ $chart-item-content-height: 150px;
     justify-content: flex-end;
     word-wrap: break-word;
     overflow: hidden;
+
     &__title {
-      a { color: white; }
       margin: 0;
       font-weight: 500;
       cursor: pointer;
       margin-bottom: 4px;
+
+      a {
+        color: white;
+      }
     }
 
     p {
@@ -83,9 +90,6 @@ $chart-item-content-height: 150px;
       a {
         color: inherit;
       }
-    }
-
-    &__version {
     }
   }
 

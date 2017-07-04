@@ -5,6 +5,7 @@
   margin: auto;
 
   &__header {
+
     &__title {
       margin-top: 0;
     }
@@ -18,11 +19,14 @@
     &__sidebar {
       width: 175px;
       border-right: 1px solid #D7D9DD;
+
       .sidebar_section {
         margin-bottom: 40px;
+
         &_title {
           margin-bottom: 10px;
         }
+
         &_link {
           cursor: pointer;
           font-size: 1.1em;
@@ -35,22 +39,29 @@
         }
       }
     }
+
     &__content {
       flex: 1;
       display: flex;
       flex-direction: column;
+
       app-chart-list {
         flex: 1;
         display: flex;
         padding-left: 1em;
       }
+
       &__topbar {
         display: flex;
         height: 40px;
         border-bottom: 1px solid #D7D9DD;
         align-items: center;
         padding-left: 10px;
-        * { fill: rgba(0, 0, 0, 0.5); }
+
+        * {
+          fill: rgba(0, 0, 0, 0.5);
+        }
+
         input {
           width: 100%;
           height: 100%;
@@ -59,6 +70,7 @@
           background: none;
           outline: none;
           margin-left: 5px;
+
           @include placeholder {
             color: rgba(0, 0, 0, 0.5);
           }
