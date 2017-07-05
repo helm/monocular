@@ -48,9 +48,7 @@ export class ChartItemComponent implements OnInit {
         icons.find(icon => icon.name === '160x160-fit').path;
       if (!this.backgroundColor) {
         RGBaster.colors(icon, {
-          success: payload => {
-            this.backgroundColor = payload.best;
-          }
+          success: payload => (this.backgroundColor = payload.best)
         });
       }
 

@@ -3,7 +3,7 @@
 
 .deployment-details__header {
   width: 100%;
-  max-width: 1000px;
+  max-width: $layout-max-width;
   margin: auto;
   padding: 2em;
   h1 {
@@ -17,7 +17,7 @@
 
 .deployment-details {
   width: 100%;
-  max-width: 1000px;
+  max-width: $layout-max-width;
   margin: auto;
   padding: 0 2em;
   display: flex;
@@ -50,8 +50,8 @@
   &__info {
 
     &__container {
-      background: #EAEDEF;
-      box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+      background: $light-background;
+      box-shadow: 2px 2px 10px rgba(black, 0.2);
       border-radius: $border-radius;
       margin-bottom: 1em;
       overflow: hidden;

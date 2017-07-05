@@ -1,7 +1,7 @@
 @import '../../theme.scss';
 
 .charts {
-  max-width: 1000px;
+  max-width: $layout-max-width;
   margin: auto;
 
   &__header {
@@ -18,7 +18,7 @@
 
     &__sidebar {
       width: 175px;
-      border-right: 1px solid #D7D9DD;
+      border-right: 1px solid $border-color;
 
       .sidebar_section {
         margin-bottom: 40px;
@@ -54,25 +54,25 @@
       &__topbar {
         display: flex;
         height: 40px;
-        border-bottom: 1px solid #D7D9DD;
+        border-bottom: 1px solid $border-color;
         align-items: center;
         padding-left: 10px;
 
         * {
-          fill: rgba(0, 0, 0, 0.5);
+          fill: rgba(black, 0.5);
         }
 
         input {
           width: 100%;
           height: 100%;
           border: 0;
-          font-size: 18px;
+          font-size: 1.1em;
           background: none;
           outline: none;
           margin-left: 5px;
 
           @include placeholder {
-            color: rgba(0, 0, 0, 0.5);
+            color: rgba(black, 0.5);
           }
         }
       }

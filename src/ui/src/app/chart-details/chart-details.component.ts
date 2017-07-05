@@ -80,9 +80,7 @@ export class ChartDetailsComponent implements OnInit {
         icons.find(icon => icon.name === '160x160-fit').path;
       if (!this.chartColor) {
         RGBaster.colors(icon, {
-          success: payload => {
-            this.chartColor = payload.best;
-          }
+          success: payload => (this.chartColor = payload.best)
         });
       }
 

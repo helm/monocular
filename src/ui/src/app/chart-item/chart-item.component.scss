@@ -9,11 +9,13 @@ $chart-item-content-height: 150px;
 .chart-item {
   border-radius: $border-radius;
   overflow: hidden;
-  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 2px 2px 10px rgba(black, 0.2);
   transition: transform 0.2s ease;
+
   &:hover {
     transform: scale(1.02);
   }
+
   &:active {
     transform: scale(0.98);
   }

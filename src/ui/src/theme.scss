@@ -48,7 +48,7 @@ $monocular-app-primary: md-palette($md-monocular);
 $monocular-app-accent:  md-palette($md-light-blue);
 
 // The warn palette is optional (defaults to red).
-$monocular-app-warn:    md-palette($md-red);
+$monocular-app-warn: md-palette($md-red);
 
 // Create the theme object (a Sass map containing all of the palettes).
 $monocular-app-theme: md-light-theme($monocular-app-primary, $monocular-app-accent, $monocular-app-warn);
@@ -63,6 +63,8 @@ $layout_dark: #333239;
 $layout_base: #303030;
 $layout_light: #f8f8f8;
 $layout_text: #38383F;
+$light-background: #EAEDEF;
+$border-color: #D7D9DD;
 
 // Other common sizes
 $border-radius: 8px;
@@ -74,6 +76,8 @@ $breakpoints: (
   large: 1100px,
   xlarge: 1366px
 );
+
+$layout-max-width: 1000px;
 
 $mappy-queries: (
   phone: mappy-bp(max-width small),

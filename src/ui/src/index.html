@@ -46,39 +46,24 @@
     </app-root>
   </div>
   <script>
-  (function(i, s, o, g, r, a, m) {
-  i['GoogleAnalyticsObject'] = r;
-  (i[r] =
-    i[r] ||
-    function() {
-      (i[r].q = i[r].q || []).push(arguments);
-    }), (i[r].l = 1 * new Date());
-  (a = s.createElement(o)), (m = s.getElementsByTagName(o)[0]);
-  a.async = 1;
-  a.src = g;
-  m.parentNode.insertBefore(a, m);
-})(
-  window,
-  document,
-  'script',
-  'https://www.google-analytics.com/analytics.js',
-  'ga'
-);
-
-// Set the last param to 'none' for development!
-// Remember to replace the correct identifier for your project
-ga('create', window.monocular.overrides.googleAnalyticsId, 'auto');
-</script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+    // Set the last param to 'none' for development!
+    // Remember to replace the correct identifier for your project
+    ga('create', window.monocular.overrides.googleAnalyticsId, 'auto');
+  </script>
   <script type="text/javascript">
-  /**
+    /**
      * TODO: We must use a template system to include custom variables to the project
      * I'm not happy defining this code.
      */
-var title = document.getElementById('app-name');
-if (title) {
-  var appName = window.monocular.overrides.appName;
-  title.innerHTML = appName;
-}
-</script>
+    var title = document.getElementById('app-name');
+    if (title) {
+      var appName = window.monocular.overrides.appName;
+      title.innerHTML = appName;
+    }
+  </script>
 </body>
 </html>

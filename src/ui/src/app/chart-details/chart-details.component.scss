@@ -1,27 +1,27 @@
 // Import your custom theme
 @import '../../theme.scss';
 
+$header-height: 200px;
+$icon-height: 150px;
+
 .chart-details {
-  width: 100%;
   display: flex;
   flex-direction: column;
 
   &__header {
-    width: 100%;
     margin-top: -80px;
     margin-bottom: 40px;
 
     &__background {
-      width: 100%;
-      height: 200px;
+      height: $header-height;
       background: md-color($monocular-app-primary);
     }
 
     &__content {
       padding: 0 1em;
-      max-width: 1000px;
+      max-width: $layout-max-width;
       margin: auto;
-      margin-top: -75px;
+      margin-top: -$icon-height / 2;
       display: flex;
     }
 
@@ -29,9 +29,10 @@
       flex: 1;
 
       h1 {
-        height: 70px;
+        min-height: $icon-height / 2;
         color: white;
         margin: 0;
+        margin-top: -5px;
         display: flex;
         align-items: flex-end;
       }
@@ -54,8 +55,8 @@
     }
 
     &__icon {
-      width: 150px;
-      height: 150px;
+      width: $icon-height;
+      height: $icon-height;
       background: white;
       border: 2px solid md-color($monocular-app-primary);
       margin-right: 1em;
@@ -72,12 +73,11 @@
   }
 
   &__content {
-    max-width: 1000px;
+    max-width: $layout-max-width;
     margin: auto;
     display: flex;
     flex-direction: column-reverse;
-    padding: 0 1em;
-    padding-bottom: 1em;
+    padding: 0 1em 1em 1em;
   }
 
   @include mappy-bp(medium) {
@@ -104,7 +104,7 @@
 
       &__content {
         flex-direction: column;
-        
+
         h1 {
           color: inherit;
         }
