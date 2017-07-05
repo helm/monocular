@@ -12,8 +12,8 @@ body {
   // reset
   margin: 0;
   padding: 0;
-  color: $layout_text;
-  background: $layout_base;
+  color: $layout-text;
+  background: $layout-base;
 }
 
 * {
@@ -22,7 +22,7 @@ body {
 
 // Text
 h1, h2, h3, h4, h5, h6 {
-  color: lighten($layout_base, 10%);
+  color: lighten($layout-base, 10%);
 }
 
 // Set the h1 size
@@ -42,7 +42,7 @@ a {
   }
 
   &.reverse {
-    color: $layout_light;
+    color: $layout-light;
 
     &:hover {
       color: lighten(md-color($monocular-app-primary), 10%);

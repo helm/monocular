@@ -6,7 +6,8 @@
   display: flex;
   flex-flow: row wrap;
   margin-top: 1em;
-
+  justify-content: center;
+  
   &__empty {
     align-self: center;
     margin: auto;

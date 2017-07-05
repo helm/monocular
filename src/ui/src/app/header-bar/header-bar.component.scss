@@ -15,7 +15,7 @@ $header-bar-padding-small: 0 1em;
   display: flex;
   align-items: center;
   padding: $header-bar-padding;
-  background-color: $layout_base;
+  background-color: $layout-base;
   z-index: 10;
 
   &--transparent {
@@ -38,13 +38,13 @@ $header-bar-padding-small: 0 1em;
 
   &__search {
     margin-top: .5em;
-    background: rgba(white, 0.125);
+    background: rgba($background-white, 0.125);
     border-radius: 4px;
     transition: background 0.2s ease;
     padding: 0.3em 0.5em;
 
     svg {
-      fill: rgba(white, 0.6);
+      fill: rgba($text-white, 0.6);
     }
 
     form {
@@ -54,22 +54,22 @@ $header-bar-padding-small: 0 1em;
     }
 
     &.focused {
-      background: rgba(white, 0.175);
+      background: rgba($background-white, 0.175);
 
       svg {
-        fill: white;
+        fill: $text-white;
       }
     }
 
     input {
       background: none;
       border: 0;
-      color: white;
+      color: $text-white;
       font-size: 1em;
       outline: none;
 
       @include placeholder {
-        color: rgba(white, 0.6);
+        color: rgba($text-white, 0.6);
       }
     }
   }
@@ -91,7 +91,7 @@ $header-bar-padding-small: 0 1em;
         &.separator {
           width: 4px;
           height: 4px;
-          background: white;
+          background: $background-white;
           border-radius: 2px;
           margin: 0;
           margin-bottom: 2px;
@@ -101,12 +101,12 @@ $header-bar-padding-small: 0 1em;
           transition: opacity 0.2s ease;
 
           &:hover {
-            color: white;
+            color: $text-white;
             opacity: 0.5;
           }
 
           &::after{
-            background: white none repeat scroll 0 0;
+            background: $background-white none repeat scroll 0 0;
             bottom: -10px;
             content: "";
             display: inline-block;
@@ -122,7 +122,7 @@ $header-bar-padding-small: 0 1em;
         &.active {
 
           a {
-            color: white;
+            color: $text-white;
             font-weight: 600;
 
             &::after {
@@ -139,7 +139,7 @@ $header-bar-padding-small: 0 1em;
   }
 
   &__open {
-    color: white;
+    color: $text-white;
     margin-right: 4em;
     margin-left: auto;
     transition: margin-right 0.3s ease;

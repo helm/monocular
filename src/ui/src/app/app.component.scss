@@ -8,7 +8,7 @@ $menu-height: 120px;
 .App {
 
   &__Wrap {
-    background: white;
+    background: $background-white;
     display: flex;
     min-height: 100vh;
     flex-direction: column;
@@ -23,7 +23,7 @@ $menu-height: 120px;
 
   &__Menu {
     position: absolute;
-    background-color: $layout_base;
+    background-color: $layout-base;
     top: 0;
     height: 0;
     width: 100%;
@@ -41,7 +41,7 @@ $menu-height: 120px;
       color: md-color($monocular-app-primary);
       a.active {
         font-weight: bold;
-        color: white;
+        color: $text-white;
       }
     }
   }

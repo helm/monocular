@@ -30,7 +30,7 @@ $icon-height: 150px;
 
       h1 {
         min-height: $icon-height / 2;
-        color: white;
+        color: $text-white;
         margin: 0;
         margin-top: -5px;
         display: flex;
@@ -57,7 +57,7 @@ $icon-height: 150px;
     &__icon {
       width: $icon-height;
       height: $icon-height;
-      background: white;
+      background: $background-white;
       border: 2px solid md-color($monocular-app-primary);
       margin-right: 1em;
       border-radius: $border-radius;

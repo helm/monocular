@@ -59,7 +59,7 @@
         padding-left: 10px;
 
         * {
-          fill: rgba(black, 0.5);
+          fill: lighten($layout-base, 50%);
         }
 
         input {
@@ -70,9 +70,9 @@
           background: none;
           outline: none;
           margin-left: 5px;
-
+          color: $layout-base;
           @include placeholder {
-            color: rgba(black, 0.5);
+            color: lighten($layout-base, 50%);
           }
         }
       }

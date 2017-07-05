@@ -8,8 +8,8 @@ $main-header-height: 400px;
 
 .main-header {
   height: $main-header-height;
-  //background-color: $layout_base;
-  background: linear-gradient(to left, $layout_base, md-color($monocular-app-primary, 900));
+  //background-color: $layout-base;
+  background: linear-gradient(to left, $layout-base, md-color($monocular-app-primary, 900));
   border-bottom: 3px solid black;
 
   &-content {
@@ -31,7 +31,7 @@ $main-header-height: 400px;
     }
 
     &__slogan {
-      color: $layout_light;
+      color: $layout-light;
       padding: 3em 0 1em;
       font-weight: 100;
 
