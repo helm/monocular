@@ -22,21 +22,29 @@ export class ChartsComponent implements OnInit {
   searchTerm: string;
   searchTimeout: any;
 
-  // Order elements
-  orders: {
-    name: string;
-    value: string;
-  }[] = [
-    { name: 'Name', value: 'name' },
-    { name: 'Created at', value: 'created' }
+  // Default filters
+  filters = [
+    { title: 'Repository',
+      onSelect: i => this.onSelectRepo(i),
+      items: [
+        { title: 'All', value: 'all', selected: true }
+      ]
+    },
+    { title: 'Order By',
+      onSelect: i => this.onSelectOrderBy(i),
+      items: [
+        { title: 'Name', value: 'name', selected: true },
+        { title: 'Created at', value: 'created', selected: false }
+      ]
+    }
   ];
-  orderBy: string = this.orders[0].value;
+
+  // Order elements
+  orderBy: string = 'name';
 
   // Repos
   repoName: string;
   allRepo: Repo;
-  selectedRepository: Repo;
-  repositories: Repo[];
 
   constructor(
     private chartsService: ChartsService,
@@ -48,11 +56,6 @@ export class ChartsComponent implements OnInit {
     private mdIconRegistry: MdIconRegistry,
     private sanitizer: DomSanitizer
   ) {}
-
-  // Default filters
-  filters = {
-    orderBy: 'name'
-  };
 
   ngOnInit() {
     this.mdIconRegistry.addSvgIcon(
@@ -89,24 +92,32 @@ export class ChartsComponent implements OnInit {
 
   loadRepos(): void {
     this.reposService.getRepos().subscribe(repos => {
-      if (this.repoName) {
-        this.selectedRepository = repos.filter(r => r.id == this.repoName)[0];
-      } else {
-        this.selectedRepository = this.allRepo;
-      }
-      this.repositories = repos;
-      this.repositories.splice(0, 0, this.allRepo);
+      repos.splice(0, 0, this.allRepo);
+      this.filters[0].items = repos.map(r => ({
+        title: r.attributes.name,
+        value: r.id,
+        selected: this.repoName ? r.id == this.repoName : r.id == 'all'
+      }));
     });
   }
 
-  goToRepo(repo: string) {
-    this.router.navigate(['/charts', repo === 'all' ? '' : repo], {
+  onSelectRepo(index) {
+    this.repoName = this.filters[0].items[index].value;
+    this.filters[0].items = this.filters[0].items.map(r => {
+      r.selected = r.value == this.repoName;
+      return r;
+    });
+    this.router.navigate(['/charts', this.repoName === 'all' ? '' : this.repoName], {
       replaceUrl: true
     });
   }
 
-  changeOrderBy(orderByValue: string) {
-    this.orderBy = orderByValue;
+  onSelectOrderBy(index) {
+    this.orderBy = this.filters[1].items[index].value;
+    this.filters[1].items = this.filters[1].items.map(o => {
+      o.selected = o.value == this.orderBy;
+      return o;
+    });
     this.orderedCharts = this.orderCharts(this.orderedCharts);
   }
 
@@ -146,7 +157,6 @@ export class ChartsComponent implements OnInit {
     }
   }
 
-  private;
   sortByCreated(a: Chart, b: Chart) {
     let aVersion = a.relationships.latestChartVersion.data;
     let bVersion = b.relationships.latestChartVersion.data;
