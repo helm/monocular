@@ -1,20 +1,16 @@
-<a class="deployment_item" href="/deployments/{{ deployment.id }}" routerLink="/deployments/{{ deployment.id }}"
-  [style.background-color]="backgroundColor"
->
-  <div class="deployment_item_icon">
-    <img alt="{{ deployment.chartName }}'s logo" src="{{ getIconUrl() }}"/>
-  </div>
-  <div class="deployment_item_content">
-    <h2 class="deployment_item_content__title">
+<app-list-item class="deployment-item" [detailUrl]="'/deployments/' + deployment.id" [themeColor]="themeColor">
+  <img class="list-item-logo deployment-item-logo" alt="{{ deployment.chartName }}'s logo" src="{{ iconUrl }}"/>
+  <div class="list-item-info deployment-item-info">
+    <h2 class="deployment-item-info__title">
       {{ deployment.id }}
     </h2>
-    <div class="deployment_item_content__subtitle">
+    <div class="deployment-item-info__subtitle">
         {{ deployment.attributes.chartName }} v.{{ deployment.attributes.chartVersion }} <br/>
         Namespace: <b>{{ deployment.attributes.namespace }}</b><br/>
         Status: <b>{{ deployment.attributes.status }}</b>
     </div>
-    <div class="deployment_item_content__date">
+    <div class="deployment-item-info__date">
       {{ deployment.attributes.updated | date }}
     </div>
   </div>
-</a>
+</app-list-item>

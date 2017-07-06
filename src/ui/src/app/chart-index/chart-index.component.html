@@ -2,7 +2,9 @@
 <section class="chart-index__list">
   <app-panel>
     <app-loader [loading]="loading">
-      <app-chart-list [charts]="charts"></app-chart-list>
+      <div class="chart-list">
+        <app-chart-list [charts]="charts"></app-chart-list>
+      </div>
     </app-loader>
   </app-panel>
 </section>

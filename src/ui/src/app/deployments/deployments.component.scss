@@ -84,7 +84,8 @@
         flex: 1;
         display: flex;
         flex-flow: row wrap;
-        padding-right: 10px;
+        margin-top: 1em;
+        padding-left: 1em;
 
         &__empty {
           align-self: center;
@@ -93,20 +94,27 @@
         }
 
         app-deployment-item {
-          height: 150px;
-          margin-bottom: 1em;
-          margin-right: 1em;
+          padding-bottom: 1em;
 
           @include mappy-bp(small) {
             width: 100%;
+            padding-right: 0;
           }
 
-          @include mappy-bp(medium) {
-            width: 46%;
+          @include mappy-bp(medium large) {
+            width: 50%;
+            padding-right: 1em;
+            &:nth-child(2n) {
+              padding-right: 0;
+            }
           }
 
           @include mappy-bp(large) {
-            width: 31%;
+            width: 33.3%;
+            padding-right: 1em;
+            &:nth-child(3n) {
+              padding-right: 0;
+            }
           }
         }
       }

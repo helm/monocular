@@ -10,7 +10,7 @@ import RGBaster from '../../assets/js/RGBaster';
   inputs: ['chart', 'showVersion', 'showDescription']
 })
 export class ChartItemComponent implements OnInit {
-  private backgroundColor: string;
+  private themeColor: string;
   private iconUrl: string;
   // Chart to represent
   public chart: Chart;
@@ -34,23 +34,15 @@ export class ChartItemComponent implements OnInit {
     return `/charts/${this.chart.attributes.repo.name}`;
   }
 
-  /**
-   * Display the icon of the application if it's provided. In the other case,
-   * It will return an string for a placeholder.
-   *
-   * @return {string} The URL of the icon or a placeholder
-   */
   getIconUrl(): string {
     let icons = this.chart.relationships.latestChartVersion.data.icons;
     if (icons !== undefined && icons.length > 0) {
       const icon =
         this.config.backendHostname +
         icons.find(icon => icon.name === '160x160-fit').path;
-      if (!this.backgroundColor) {
-        RGBaster.colors(icon, {
-          success: payload => (this.backgroundColor = payload.best)
-        });
-      }
+      RGBaster.colors(icon, {
+        success: payload => (this.themeColor = payload.best)
+      });
 
       return icon;
     } else {

@@ -46,6 +46,7 @@ import { DeploymentControlsComponent } from './deployment-controls/deployment-co
 import { LoaderComponent } from './loader/loader.component';
 import { ConfirmDialog }   from './confirm-dialog/confirm-dialog.component';
 import { DeploymentResourceComponent } from './deployment/deployment-resource/deployment-resource.component';
+import { ListItemComponent } from './list-item/list-item.component';
 
 import 'hammerjs';
 
@@ -82,7 +83,8 @@ const metaConfig: MetaConfig = {
     DeploymentItemComponent,
     DeploymentComponent,
     ConfirmDialog,
-    DeploymentResourceComponent
+    DeploymentResourceComponent,
+    ListItemComponent
   ],
   imports: [
     MaterialModule.forRoot(),
