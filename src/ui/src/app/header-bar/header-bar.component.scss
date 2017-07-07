@@ -4,24 +4,27 @@
 @import '../../theme.scss';
 
 // Variables
-$header-bar-padding: 0 2em;
-$header-bar-padding-small: 0 1em;
+$header-bar-padding: 0 4em;
+$header-bar-padding-small: 0 2em;
 
 .header-bar {
   position: fixed;
   top: 0px;
+  left: 0px;
   width: 100%;
-  height: 70px;
-  display: flex;
-  align-items: center;
-  padding: $header-bar-padding;
+  height: $header-bar-height;
   background-color: $layout-base;
+  background: linear-gradient(to left, $layout-base, md-color($monocular-app-primary, 900));
   z-index: 10;
+  padding: $header-bar-padding;
+  display: flex;
+  justify-content: center;
 
-  &--transparent {
-    position: relative;
-    margin-top: -70px;
-    background-color: transparent;
+  &__content {
+    flex: 1;
+    max-width: $layout-max-width;
+    display: flex;
+    align-items: center;
   }
 
   &__logo {
@@ -33,6 +36,9 @@ $header-bar-padding-small: 0 1em;
       font-size: 1.5em;
       margin: 0;
       font-family: 'Ubuntu', sans-serif;
+    }
+    a:hover {
+      color: $text-white;
     }
   }
 
@@ -76,7 +82,6 @@ $header-bar-padding-small: 0 1em;
 
   &__navigation {
     margin-left: auto;
-    margin-right: 2em;
     display: none;
 
     ul {
@@ -85,7 +90,7 @@ $header-bar-padding-small: 0 1em;
       li {
         display: inline-block;
         position: relative;
-        margin: 0 1em;
+        margin: 0;
         vertical-align: middle;
 
         &.separator {
@@ -93,7 +98,7 @@ $header-bar-padding-small: 0 1em;
           height: 4px;
           background: $background-white;
           border-radius: 2px;
-          margin: 0;
+          margin: 0 1em;
           margin-bottom: 2px;
         }
 
@@ -140,14 +145,8 @@ $header-bar-padding-small: 0 1em;
 
   &__open {
     color: $text-white;
-    margin-right: 4em;
     margin-left: auto;
-    transition: margin-right 0.3s ease;
-
-    &.opened {
-      margin-right: 1em;
-    }
-
+    margin-right: 4em;
     svg {
       cursor: pointer;
       width: 32px;

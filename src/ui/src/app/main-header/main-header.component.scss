@@ -4,22 +4,18 @@
 @import '../../theme.scss';
 
 // Variables
-$main-header-height: 400px;
+$main-header-height: 400px - $header-bar-height;
 
 .main-header {
   height: $main-header-height;
-  //background-color: $layout-base;
   background: linear-gradient(to left, $layout-base, md-color($monocular-app-primary, 900));
   border-bottom: 3px solid black;
+  padding: $header-bar-height 2em 0;
 
   &-content {
     width: 100%;
-    padding: 1.5em;
-
-    @include mappy-bp(small) {
-      width: 85%;
-      margin: 1.2em auto 0;
-    }
+    max-width: $layout-max-width;
+    margin: auto;
 
     @include mappy-bp(medium) {
       display: flex;

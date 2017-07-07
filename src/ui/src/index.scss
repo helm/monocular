@@ -16,6 +16,11 @@
   top: 0;
   right: 0;
   z-index: 99;
+
+  svg {
+    width: $header-bar-height;
+    height: $header-bar-height;
+  }
 }
 
 // Main loader
