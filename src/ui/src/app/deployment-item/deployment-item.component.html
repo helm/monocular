@@ -1,5 +1,5 @@
 <app-list-item class="deployment-item" [detailUrl]="'/deployments/' + deployment.id" [themeColor]="themeColor">
-  <img class="list-item-logo deployment-item-logo" alt="{{ deployment.chartName }}'s logo" src="{{ iconUrl }}"/>
+  <img class="list-item-logo deployment-item-logo" alt="{{ deployment.attributes.chartName }}'s logo" src="{{ iconUrl }}"/>
   <div class="list-item-info deployment-item-info">
     <h2 class="deployment-item-info__title">
       {{ deployment.id }}

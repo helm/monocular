@@ -10,10 +10,10 @@ import RGBaster from '../../assets/js/RGBaster';
   inputs: ['deployment']
 })
 export class DeploymentItemComponent implements OnInit {
-  private themeColor: string;
-  private iconUrl: string;
+  public themeColor: string;
+  public iconUrl: string;
 
-  // Chart to represent
+  // Deployment to represent
   public deployment: Deployment;
 
 

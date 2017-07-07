@@ -21,6 +21,7 @@ import { ChartItemComponent } from '../chart-item/chart-item.component';
 import { PanelComponent } from '../panel/panel.component';
 import { HeaderBarComponent } from '../header-bar/header-bar.component';
 import { LoaderComponent } from '../loader/loader.component';
+import { ListItemComponent } from '../list-item/list-item.component';
 import { ChartDetailsVersionsComponent } from './chart-details-versions/chart-details-versions.component';
 import { ChartDetailsInfoComponent } from './chart-details-info/chart-details-info.component';
 import { ChartDetailsReadmeComponent } from './chart-details-readme/chart-details-readme.component';
@@ -99,7 +100,8 @@ describe('ChartDetailsComponent', () => {
           PanelComponent,
           HeaderBarComponent,
           ChartItemComponent,
-          TruncatePipe
+          TruncatePipe,
+          ListItemComponent
         ],
         providers: [
           { provide: ChartsService, useValue: chartsServiceStub },

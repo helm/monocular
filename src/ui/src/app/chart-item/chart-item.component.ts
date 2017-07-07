@@ -10,8 +10,8 @@ import RGBaster from '../../assets/js/RGBaster';
   inputs: ['chart', 'showVersion', 'showDescription']
 })
 export class ChartItemComponent implements OnInit {
-  private themeColor: string;
-  private iconUrl: string;
+  public themeColor: string;
+  public iconUrl: string;
   // Chart to represent
   public chart: Chart;
   // Show version form by default

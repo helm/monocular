@@ -31,7 +31,7 @@ export class ChartDetailsUsageComponent implements OnInit {
   constructor(
     private mdIconRegistry: MdIconRegistry,
     private sanitizer: DomSanitizer,
-    private config: ConfigService,
+    public config: ConfigService,
     private deploymentsService: DeploymentsService,
     private router: Router,
     private dialogsService: DialogsService,

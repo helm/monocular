@@ -26,7 +26,7 @@ export class HeaderBarComponent implements OnInit {
   appName: string;
   constructor(
     private router: Router,
-    private config: ConfigService,
+    public config: ConfigService,
     private menuService: MenuService,
     private mdIconRegistry: MdIconRegistry,
     private sanitizer: DomSanitizer
