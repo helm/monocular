@@ -90,10 +90,18 @@ $filters-width: 175px;
             }
           }
 
-          @include mappy-bp(large) {
+          @include mappy-bp(large xlarge) {
             width: 33.3%;
             padding-right: 1.5em;
             &:nth-child(3n) {
+              padding-right: 0;
+            }
+          }
+
+          @include mappy-bp(xlarge) {
+            width: 25%;
+            padding-right: 1.5em;
+            &:nth-child(4n) {
               padding-right: 0;
             }
           }

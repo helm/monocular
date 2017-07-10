@@ -71,15 +71,15 @@ $border-color: #D7D9DD;
 
 // Other common sizes
 $border-radius: 8px;
-$layout-max-width: 1150px;
+$layout-max-width: 1280px;
 $header-bar-height: 70px;
 
 // Responsive. They represents the min width of every display.
 $breakpoints: (
   small: 480px,
-  medium: 860px,
-  large: 1100px,
-  xlarge: 1366px
+  medium: 840px,
+  large: 1024px,
+  xlarge: 1280px
 );
 
 $mappy-queries: (
