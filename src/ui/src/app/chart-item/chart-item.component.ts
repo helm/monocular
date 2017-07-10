@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Chart } from '../shared/models/chart';
 import { ConfigService } from '../shared/services/config.service';
-import RGBaster from '../../assets/js/RGBaster';
 
 @Component({
   selector: 'app-chart-item',
@@ -10,7 +9,6 @@ import RGBaster from '../../assets/js/RGBaster';
   inputs: ['chart', 'showVersion', 'showDescription']
 })
 export class ChartItemComponent implements OnInit {
-  public themeColor: string;
   public iconUrl: string;
   // Chart to represent
   public chart: Chart;
@@ -40,10 +38,6 @@ export class ChartItemComponent implements OnInit {
       const icon =
         this.config.backendHostname +
         icons.find(icon => icon.name === '160x160-fit').path;
-      RGBaster.colors(icon, {
-        success: payload => (this.themeColor = payload.best)
-      });
-
       return icon;
     } else {
       return '/assets/images/placeholder.png';

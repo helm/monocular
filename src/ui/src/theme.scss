@@ -66,11 +66,12 @@ $layout-text: #38383F;
 $text-white: white;
 $background-light: #EAEDEF;
 $background-white: white;
+$header-backgound-gradient: linear-gradient(to left, $layout-base, md-color($monocular-app-primary, 900));
 $border-color: #D7D9DD;
 
 // Other common sizes
 $border-radius: 8px;
-$layout-max-width: 1000px;
+$layout-max-width: 1150px;
 $header-bar-height: 70px;
 
 // Responsive. They represents the min width of every display.

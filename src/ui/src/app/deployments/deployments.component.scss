@@ -33,6 +33,7 @@ $filters-width: 175px;
       flex: 1;
       display: flex;
       flex-direction: column;
+      border-left: 1px solid $border-color;
 
       &__topbar {
         display: flex;
@@ -65,8 +66,7 @@ $filters-width: 175px;
         flex: 1;
         display: flex;
         flex-flow: row wrap;
-        margin-top: 1em;
-        padding-left: 1em;
+        padding: 1.5em 0 0 1.5em;
 
         &__empty {
           align-self: center;
@@ -75,7 +75,7 @@ $filters-width: 175px;
         }
 
         app-deployment-item {
-          padding-bottom: 1em;
+          padding-bottom: 1.5em;
 
           @include mappy-bp(small) {
             width: 100%;
@@ -84,7 +84,7 @@ $filters-width: 175px;
 
           @include mappy-bp(medium large) {
             width: 50%;
-            padding-right: 1em;
+            padding-right: 1.5em;
             &:nth-child(2n) {
               padding-right: 0;
             }
@@ -92,7 +92,7 @@ $filters-width: 175px;
 
           @include mappy-bp(large) {
             width: 33.3%;
-            padding-right: 1em;
+            padding-right: 1.5em;
             &:nth-child(3n) {
               padding-right: 0;
             }

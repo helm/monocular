@@ -8,7 +8,7 @@ $main-header-height: 400px - $header-bar-height;
 
 .main-header {
   height: $main-header-height;
-  background: linear-gradient(to left, $layout-base, md-color($monocular-app-primary, 900));
+  background: $header-backgound-gradient;
   border-bottom: 3px solid black;
   padding: $header-bar-height 2em 0;
 

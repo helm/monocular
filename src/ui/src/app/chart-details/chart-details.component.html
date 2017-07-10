@@ -6,15 +6,15 @@
   <app-loader [loading]="loading">
     <section class="chart-details" *ngIf="chart">
       <div class="chart-details__header">
-        <div class="chart-details__header__background" [style.background-color]="chartColor"></div>
+        <div class="chart-details__header__background"></div>
         <div class="chart-details__header__content">
-          <div class="chart-details__header__icon" [style.border-color]="chartColor">
+          <div class="chart-details__header__icon">
             <img alt="{{ chart.attributes.name }}'s logo" src="{{ iconUrl }}"/>
           </div>
           <div class="chart-details__header__text">
             <h1>{{ chart.attributes.name }}</h1>
             <p>
-              <span>v{{ chart.relationships.latestChartVersion.data.version }}</span> - 
+              <span>v{{ chart.relationships.latestChartVersion.data.version }}</span> -
               <span class="chart-details__header__text__repo">
                 <a [href]="goToRepoUrl()" [routerLink]="goToRepoUrl()">{{ chart.attributes.repo.name }}</a>
               </span><br/>

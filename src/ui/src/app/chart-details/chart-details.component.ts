@@ -5,7 +5,6 @@ import { Chart } from '../shared/models/chart';
 import { ChartVersion } from '../shared/models/chart-version';
 import { SeoService } from '../shared/services/seo.service';
 import { ConfigService } from '../shared/services/config.service';
-import RGBaster from '../../assets/js/RGBaster';
 
 @Component({
   selector: 'app-chart-details',
@@ -18,7 +17,6 @@ export class ChartDetailsComponent implements OnInit {
   loading: boolean = true;
   currentVersion: ChartVersion;
   iconUrl: string;
-  chartColor: string;
   titleVersion: string;
 
   constructor(
@@ -78,12 +76,6 @@ export class ChartDetailsComponent implements OnInit {
       const icon =
         this.config.backendHostname +
         icons.find(icon => icon.name === '160x160-fit').path;
-      if (!this.chartColor) {
-        RGBaster.colors(icon, {
-          success: payload => (this.chartColor = payload.best)
-        });
-      }
-
       return icon;
     } else {
       return '/assets/images/placeholder.png';

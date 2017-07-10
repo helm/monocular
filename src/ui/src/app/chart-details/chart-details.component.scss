@@ -14,7 +14,7 @@ $icon-height: 150px;
 
     &__background {
       height: $header-height;
-      background: md-color($monocular-app-primary);
+      background: $header-backgound-gradient;
     }
 
     &__content {
@@ -58,7 +58,7 @@ $icon-height: 150px;
       width: $icon-height;
       height: $icon-height;
       background: $background-white;
-      border: 2px solid md-color($monocular-app-primary);
+      border: 2px solid $layout-base;
       margin-right: 1em;
       border-radius: $border-radius;
       display: flex;

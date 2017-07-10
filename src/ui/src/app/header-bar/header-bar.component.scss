@@ -4,7 +4,7 @@
 @import '../../theme.scss';
 
 // Variables
-$header-bar-padding: 0 4em;
+$header-bar-padding: 0 2em;
 $header-bar-padding-small: 0 2em;
 
 .header-bar {
@@ -14,7 +14,7 @@ $header-bar-padding-small: 0 2em;
   width: 100%;
   height: $header-bar-height;
   background-color: $layout-base;
-  background: linear-gradient(to left, $layout-base, md-color($monocular-app-primary, 900));
+  background: $header-backgound-gradient;
   z-index: 10;
   padding: $header-bar-padding;
   display: flex;
@@ -166,6 +166,12 @@ $header-bar-padding-small: 0 2em;
 
     &__navigation {
       display: block;
+    }
+  }
+
+  @include mappy-bp(max-width $layout-max-width + 80px) {
+    &__navigation {
+      margin-right: 2em;
     }
   }
 }

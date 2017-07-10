@@ -6,7 +6,6 @@ import { Chart } from '../shared/models/chart';
 import { ConfigService } from '../shared/services/config.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MdIconRegistry } from '@angular/material';
-import RGBaster from '../../assets/js/RGBaster';
 
 @Component({
   selector: 'app-deployment',
@@ -15,8 +14,6 @@ import RGBaster from '../../assets/js/RGBaster';
   viewProviders: [MdIconRegistry]
 })
 export class DeploymentComponent implements OnInit {
-  backgroundColor: string;
-
   deployment: Deployment;
   resources = [];
   loading: boolean = true;
@@ -43,7 +40,9 @@ export class DeploymentComponent implements OnInit {
     icons.forEach(icon => {
       this.mdIconRegistry.addSvgIcon(
         icon,
-        this.sanitizer.bypassSecurityTrustResourceUrl(`/assets/icons/${icon}.svg`)
+        this.sanitizer.bypassSecurityTrustResourceUrl(
+          `/assets/icons/${icon}.svg`
+        )
       );
     });
     // Do not show the page if the feature is not enabled
@@ -76,15 +75,6 @@ export class DeploymentComponent implements OnInit {
   }
 
   getIconUrl(): string {
-    if (this.deployment.attributes.chartIcon && !this.backgroundColor) {
-      RGBaster.colors(this.deployment.attributes.chartIcon, {
-        success: payload => {
-          this.backgroundColor = payload.best
-            .replace('rgb', 'rgba')
-            .replace(')', ', 0.1)');
-        }
-      });
-    }
     return this.deployment.attributes.chartIcon
       ? this.deployment.attributes.chartIcon
       : '/assets/images/placeholder.png';

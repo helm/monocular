@@ -8,15 +8,13 @@ $chart-item-content-height: 150px;
 $chart-item-logo-width: 80px;
 
 .chart-item {
-  background-color: md-color($monocular-app-primary);
 
   &-logo {
-    width: 70%;
-    max-height: 100%;
+    max-height: 80%;
   }
 
   &-info {
-    
+
     &__title {
       margin: 0;
       font-weight: 500;
@@ -24,7 +22,7 @@ $chart-item-logo-width: 80px;
       margin-bottom: 4px;
 
       a {
-        color: $text-white;
+        color: inherit;
       }
     }
 
@@ -37,9 +35,12 @@ $chart-item-logo-width: 80px;
     &__repo {
       color: md-color($monocular-app-accent);
       font-size: .8em;
-      background: $background-white;
       padding: 2px 4px;
       border-radius: 4px;
+
+      &:hover {
+        background: $background-white;
+      }
 
       &.repo-incubator {
         color: md-color($monocular-app-warn, 600);

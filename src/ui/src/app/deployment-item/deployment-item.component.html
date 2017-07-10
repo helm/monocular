@@ -1,13 +1,12 @@
-<app-list-item class="deployment-item" [detailUrl]="'/deployments/' + deployment.id" [themeColor]="themeColor">
+<app-list-item class="deployment-item" [detailUrl]="'/deployments/' + deployment.id">
   <img class="list-item-logo deployment-item-logo" alt="{{ deployment.attributes.chartName }}'s logo" src="{{ iconUrl }}"/>
   <div class="list-item-info deployment-item-info">
     <h2 class="deployment-item-info__title">
       {{ deployment.id }}
     </h2>
     <div class="deployment-item-info__subtitle">
-        {{ deployment.attributes.chartName }} v.{{ deployment.attributes.chartVersion }} <br/>
-        Namespace: <b>{{ deployment.attributes.namespace }}</b><br/>
-        Status: <b>{{ deployment.attributes.status }}</b>
+        {{ deployment.attributes.chartName }} v.{{ deployment.attributes.chartVersion }} <b>{{ deployment.attributes.status }}</b> <br/>
+        Namespace: <b>{{ deployment.attributes.namespace }}</b>
     </div>
     <div class="deployment-item-info__date">
       {{ deployment.attributes.updated | date }}

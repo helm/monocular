@@ -51,7 +51,7 @@
 
     &__container {
       background: $background-light;
-      box-shadow: 2px 2px 10px rgba(black, 0.2);
+      border: 1px solid $border-color;
       border-radius: $border-radius;
       margin-bottom: 1em;
       overflow: hidden;
@@ -68,6 +68,7 @@
     &__icon {
       height: 100px;
       background: $background-white;
+      border-bottom: 1px solid $border-color;
       display: flex;
       img {
         width: auto;

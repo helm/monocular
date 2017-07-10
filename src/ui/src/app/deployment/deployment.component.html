@@ -8,7 +8,7 @@
   <app-loader [loading]="loading">
     <section class="deployment-details" *ngIf="deployment">
       <aside class="deployment-details__info">
-        <div class="deployment-details__info__container" [style.background-color]="backgroundColor">
+        <div class="deployment-details__info__container">
           <div class="deployment-details__info__icon">
             <img alt="{{ deployment.chartName }}'s logo" src="{{ getIconUrl() }}"/>
           </div>

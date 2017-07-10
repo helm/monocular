@@ -4,9 +4,8 @@ import { Component, OnInit } from '@angular/core';
   selector: 'app-list-item',
   templateUrl: './list-item.component.html',
   styleUrls: ['./list-item.component.scss'],
-  inputs: ['detailUrl', 'themeColor']
+  inputs: ['detailUrl']
 })
 export class ListItemComponent {
-  public themeColor: string;
   public detailUrl: string;
 }

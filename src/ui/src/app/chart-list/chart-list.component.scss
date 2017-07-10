@@ -5,7 +5,6 @@
   flex: 1;
   display: flex;
   flex-flow: row wrap;
-  margin-top: 1em;
 
   &__empty {
     align-self: center;
@@ -14,7 +13,7 @@
   }
 
   app-chart-item {
-    padding-bottom: 1em;
+    padding-bottom: 1.5em;
 
     @include mappy-bp(small) {
       width: 100%;
@@ -23,7 +22,7 @@
 
     @include mappy-bp(medium large) {
       width: 50%;
-      padding-right: 1em;
+      padding-right: 1.5em;
       &:nth-child(2n) {
         padding-right: 0;
       }
@@ -31,7 +30,7 @@
 
     @include mappy-bp(large) {
       width: 33.3%;
-      padding-right: 1em;
+      padding-right: 1.5em;
       &:nth-child(3n) {
         padding-right: 0;
       }

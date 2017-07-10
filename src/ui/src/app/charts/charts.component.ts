@@ -24,17 +24,17 @@ export class ChartsComponent implements OnInit {
 
   // Default filters
   filters = [
-    { title: 'Repository',
+    {
+      title: 'Repository',
       onSelect: i => this.onSelectRepo(i),
-      items: [
-        { title: 'All', value: 'all', selected: true }
-      ]
+      items: [{ title: 'All', value: 'all', selected: true }]
     },
-    { title: 'Order By',
+    {
+      title: 'Order By',
       onSelect: i => this.onSelectOrderBy(i),
       items: [
         { title: 'Name', value: 'name', selected: true },
-        { title: 'Created at', value: 'created', selected: false }
+        { title: 'Created At', value: 'created', selected: false }
       ]
     }
   ];
@@ -107,9 +107,10 @@ export class ChartsComponent implements OnInit {
       r.selected = r.value == this.repoName;
       return r;
     });
-    this.router.navigate(['/charts', this.repoName === 'all' ? '' : this.repoName], {
-      replaceUrl: true
-    });
+    this.router.navigate(
+      ['/charts', this.repoName === 'all' ? '' : this.repoName],
+      { replaceUrl: true }
+    );
   }
 
   onSelectOrderBy(index) {

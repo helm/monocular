@@ -4,15 +4,15 @@
 @import '../../theme.scss';
 
 // Vars
-$list-item-content-height: 150px;
-$list-item-logo-width: 80px;
+$list-item-content-height: 200px;
 
 .list-item {
   border-radius: $border-radius;
   overflow: hidden;
-  box-shadow: 2px 2px 10px lighten($layout-base, 60%);
+  // box-shadow: 2px 2px 10px lighten($layout-base, 60%);
+  border: 1px solid $border-color;
   transition: transform 0.2s ease;
-  background-color: inherit;
+  background-color: $background-light;
 
   &:hover {
     transform: scale(1.02);
@@ -23,36 +23,31 @@ $list-item-logo-width: 80px;
   }
 
   &-content {
+    width: 100%;
     height: $list-item-content-height;
     display: flex;
-    flex-direction: row;
-    align-items: center;
-    color: $text-white;
+    flex-direction: column;
+    color: $layout-text;
   }
 
   &-logo {
-    height: 100%;
-    width: $list-item-logo-width;
+    width: 100%;
+    height: $list-item-content-height/2 + 10px;
     background-color: $background-white;
     display: flex;
     align-items: center;
     justify-content: center;
-
-    img {
-      width: 70%;
-      max-height: 100%;
-    }
   }
 
   &-info {
     position: relative;
     flex: 1;
-    height: 100%;
-    padding: 1em;
+    border-top: 1px solid $border-color;
+    padding: 0 1em;
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
+    justify-content: center;
     word-wrap: break-word;
-    overflow: hidden;
+    text-align: center;
   }
 }
