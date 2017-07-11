@@ -5,7 +5,7 @@ import { PageNotFoundComponent } from './page-not-found.component';
 
 describe('Component: PageNotFound', () => {
   it('should create an instance', () => {
-    let component = TestBed.createComponent(PageNotFoundComponent);
+    let component = new PageNotFoundComponent();
     expect(component).toBeTruthy();
   });
 });

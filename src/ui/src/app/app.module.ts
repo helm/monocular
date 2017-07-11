@@ -50,7 +50,7 @@ import { DeploymentComponent } from './deployment/deployment.component';
 import { DeploymentControlsComponent } from './deployment-controls/deployment-controls.component';
 import { ChartsFiltersComponent } from './charts-filters/charts-filters.component';
 import { LoaderComponent } from './loader/loader.component';
-import { ConfirmDialog } from './confirm-dialog/confirm-dialog.component';
+import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 import { DeploymentResourceComponent } from './deployment/deployment-resource/deployment-resource.component';
 import 'hammerjs';
 
@@ -90,7 +90,7 @@ export function metaFactory(): MetaLoader {
     DeploymentControlsComponent,
     DeploymentsComponent,
     DeploymentComponent,
-    ConfirmDialog,
+    ConfirmDialogComponent,
     DeploymentResourceComponent
   ],
   imports: [
@@ -116,7 +116,7 @@ export function metaFactory(): MetaLoader {
     SeoService,
     DialogsService
   ],
-  entryComponents: [ConfirmDialog],
+  entryComponents: [ConfirmDialogComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule {}
