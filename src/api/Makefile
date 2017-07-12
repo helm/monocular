@@ -4,7 +4,7 @@ include versioning.mk
 include includes.mk
 
 # dockerized development environment variables
-REPO_PATH := github.com/helm/${SHORT_NAME}
+REPO_PATH := github.com/kubernetes-helm/${SHORT_NAME}
 DEV_ENV_IMAGE := quay.io/deis/go-dev:v0.22.0
 SWAGGER_IMAGE := quay.io/goswagger/swagger:0.6.0
 DEV_ENV_WORK_DIR := /go/src/${REPO_PATH}/src/api

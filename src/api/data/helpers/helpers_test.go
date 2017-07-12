@@ -5,9 +5,9 @@ import (
 	"testing"
 
 	"github.com/arschles/assert"
-	"github.com/helm/monocular/src/api/config"
-	"github.com/helm/monocular/src/api/data/cache/charthelper"
-	"github.com/helm/monocular/src/api/swagger/models"
+	"github.com/kubernetes-helm/monocular/src/api/config"
+	"github.com/kubernetes-helm/monocular/src/api/data/cache/charthelper"
+	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
 )
 
 const (

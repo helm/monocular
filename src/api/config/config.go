@@ -8,8 +8,8 @@ import (
 	yaml "gopkg.in/yaml.v2"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/helm/monocular/src/api/config/cors"
-	"github.com/helm/monocular/src/api/config/repos"
+	"github.com/kubernetes-helm/monocular/src/api/config/cors"
+	"github.com/kubernetes-helm/monocular/src/api/config/repos"
 )
 
 // ConfigurationWithOverrides includes default Configuration values

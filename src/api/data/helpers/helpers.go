@@ -5,11 +5,11 @@ import (
 
 	"github.com/Masterminds/semver"
 	"github.com/ghodss/yaml"
-	"github.com/helm/monocular/src/api/config"
-	"github.com/helm/monocular/src/api/config/repos"
-	"github.com/helm/monocular/src/api/swagger/models"
+	"github.com/kubernetes-helm/monocular/src/api/config"
+	"github.com/kubernetes-helm/monocular/src/api/config/repos"
+	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
 
-	"github.com/helm/monocular/src/api/data/cache/charthelper"
+	"github.com/kubernetes-helm/monocular/src/api/data/cache/charthelper"
 )
 
 // APIVer1String is the API version 1 string we include in route URLs

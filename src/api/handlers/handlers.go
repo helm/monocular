@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"github.com/helm/monocular/src/api/swagger/models"
+	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
 )
 
 // DataResourceBody returns an data encapsulated version of a resource

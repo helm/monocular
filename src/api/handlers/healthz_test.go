@@ -7,7 +7,7 @@ import (
 
 	"github.com/arschles/assert"
 	"github.com/go-openapi/runtime"
-	"github.com/helm/monocular/src/api/swagger/restapi/operations"
+	"github.com/kubernetes-helm/monocular/src/api/swagger/restapi/operations"
 )
 
 func TestHealthz(t *testing.T) {

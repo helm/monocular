@@ -8,7 +8,7 @@ import (
 	httpmock "gopkg.in/jarcoal/httpmock.v1"
 
 	"github.com/arschles/assert"
-	"github.com/helm/monocular/src/api/swagger/models"
+	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
 )
 
 func TestDownloadAndProcessChartIconNoIcon(t *testing.T) {

@@ -10,8 +10,8 @@ import (
 	httpmock "gopkg.in/jarcoal/httpmock.v1"
 
 	"github.com/arschles/assert"
-	"github.com/helm/monocular/src/api/config"
-	"github.com/helm/monocular/src/api/swagger/models"
+	"github.com/kubernetes-helm/monocular/src/api/config"
+	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
 )
 
 func TestDownloadAndExtractChartTarballOk(t *testing.T) {

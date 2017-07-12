@@ -15,7 +15,7 @@ services:
     ports:
       - 8080:8080
     volumes:
-      - ./src/api:/go/src/github.com/helm/monocular/src/api
+      - ./src/api:/go/src/github.com/kubernetes-helm/monocular/src/api
       # Config example file
       - ./docs/config.example.yaml:/root/monocular/config/monocular.yaml
       # Used for loading kubernetes context used on Helm releases integration

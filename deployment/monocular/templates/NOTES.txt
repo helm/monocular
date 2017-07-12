@@ -11,7 +11,7 @@ Point your Ingress hosts to the address from the output of the above command:
 {{ else -}}
 {{ if not (join "" .Values.api.config.cors.allowed_origins) -}}
 **ERROR**: You have not configured the UI hostname on the server to accept Cross-Origin Resource Sharing requests.
-           See https://github.com/helm/monocular/blob/master/deployment/monocular/README.md#serve-monocular-frontend-and-api-on-different-domains for more information
+           See https://github.com/kubernetes-helm/monocular/blob/master/deployment/monocular/README.md#serve-monocular-frontend-and-api-on-different-domains for more information
 {{ else -}}
 
 You can access Monocular on the following domains:
@@ -19,7 +19,7 @@ You can access Monocular on the following domains:
 {{- end }}
 {{ end -}}
 
-Visit https://github.com/helm/monocular for more information.
+Visit https://github.com/kubernetes-helm/monocular for more information.
 
 {{ if .Values.api.config.releasesEnabled -}}
 **IMPORTANT**: Releases are enabled, which will allow anybody with access to the running instance to create, list and delete any Helm release existing in your cluster.
