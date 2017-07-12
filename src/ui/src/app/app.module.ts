@@ -4,7 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { Angulartics2Module, Angulartics2GoogleAnalytics } from 'angulartics2';
 import { ClipboardModule } from 'ngx-clipboard';
-import { MetaModule, MetaConfig } from 'ng2-meta';
+import {
+  MetaModule,
+  MetaLoader,
+  MetaStaticLoader,
+  PageTitlePositioning
+} from '@ngx-meta/core';
 import { routing, appRoutingProviders } from './app.routing';
 
 /* Material library */
@@ -45,18 +50,20 @@ import { DeploymentComponent } from './deployment/deployment.component';
 import { DeploymentControlsComponent } from './deployment-controls/deployment-controls.component';
 import { ChartsFiltersComponent } from './charts-filters/charts-filters.component';
 import { LoaderComponent } from './loader/loader.component';
-import { ConfirmDialog }   from './confirm-dialog/confirm-dialog.component';
+import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 import { DeploymentResourceComponent } from './deployment/deployment-resource/deployment-resource.component';
+import 'hammerjs';
 
-require('hammerjs');
-
-const metaConfig: MetaConfig = {
-  //Append a title suffix such as a site name to all titles
-  useTitleSuffix: true,
-  defaults: {
-    description: 'Discover & launch great Kubernetes-ready apps'
-  }
-};
+export function metaFactory(): MetaLoader {
+  return new MetaStaticLoader({
+    pageTitlePositioning: PageTitlePositioning.PrependPageTitle,
+    pageTitleSeparator: ' | ',
+    applicationName: 'Monocular',
+    defaults: {
+      description: 'Discover & launch great Kubernetes-ready apps'
+    }
+  });
+}
 
 @NgModule({
   declarations: [
@@ -83,7 +90,7 @@ const metaConfig: MetaConfig = {
     DeploymentControlsComponent,
     DeploymentsComponent,
     DeploymentComponent,
-    ConfirmDialog,
+    ConfirmDialogComponent,
     DeploymentResourceComponent
   ],
   imports: [
@@ -91,10 +98,13 @@ const metaConfig: MetaConfig = {
     BrowserModule,
     FormsModule,
     HttpModule,
-		routing,
+    routing,
     Angulartics2Module.forRoot([Angulartics2GoogleAnalytics]),
     ClipboardModule,
-    MetaModule.forRoot(metaConfig)
+    MetaModule.forRoot({
+      provide: MetaLoader,
+      useFactory: metaFactory
+    })
   ],
   providers: [
     appRoutingProviders,
@@ -106,9 +116,7 @@ const metaConfig: MetaConfig = {
     SeoService,
     DialogsService
   ],
-  entryComponents: [
-    ConfirmDialog
-  ],
+  entryComponents: [ConfirmDialogComponent],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}

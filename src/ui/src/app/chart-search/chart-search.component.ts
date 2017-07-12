@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { ChartsService } from '../shared/services/charts.service';
-import { MetaService } from 'ng2-meta';
 import { Chart } from '../shared/models/chart';
 import { ConfigService } from '../shared/services/config.service';
 import { SeoService } from '../shared/services/seo.service';

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ConfigService } from './config.service';
-import { MetaService } from 'ng2-meta';
+import { MetaService } from '@ngx-meta/core';
 
 // Import SEO data
 import SeoData from '../seo.data';
@@ -45,9 +45,8 @@ export class SeoService {
    */
   setMetaTags(page, data = {}) {
     let content = this.getMetaContent(page, data);
-    let suffix = page === 'index' ? '' : ` | ${this.appName}`;
     // Set tags
-    this.metaService.setTitle(content.title, suffix);
+    this.metaService.setTitle(content.title);
     this.metaService.setTag('description', content.description);
     this.metaService.setTag('og:title', content.title);
     this.metaService.setTag('og:description', content.description);
