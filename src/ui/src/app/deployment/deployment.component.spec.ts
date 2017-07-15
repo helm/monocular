@@ -16,7 +16,7 @@ import { HeaderBarComponent } from '../header-bar/header-bar.component';
 describe('Component: Deployment View', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [MaterialModule.forRoot()],
+      imports: [MaterialModule],
       declarations: [
         DeploymentComponent,
         DeploymentControlsComponent,

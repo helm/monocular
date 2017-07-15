@@ -1,5 +1,3 @@
-// Imports
-@import '~@angular/material/core/theming/theming';
 // Import your custom theme
 @import '../../theme.scss';
 
@@ -9,7 +7,7 @@ $main-header-height: 400px;
 .main-header {
   height: $main-header-height;
   //background-color: $layout_base;
-  background: linear-gradient(to left, $layout_base, md-color($monocular-app-primary, 900));
+  background: linear-gradient(to left, $layout_base, mat-color($monocular-app-primary, 900));
   border-bottom: 3px solid black;
 
   &-content {
@@ -65,7 +63,7 @@ $main-header-height: 400px;
       font-style: italic;
       margin: 0;
       text-align: center;
-      color: lighten(md-color($monocular-app-primary), 10%);
+      color: lighten(mat-color($monocular-app-primary), 10%);
     }
   }
 }

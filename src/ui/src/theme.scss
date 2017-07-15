@@ -1,14 +1,14 @@
-@import '~@angular/material/core/theming/all-theme';
+@import '~@angular/material/_theming';
 // Plus imports for other components in your app.
 
 // Include the base styles for Angular Material core. We include this here so that you only
 // have to load a single css file for Angular Material in your app.
-@include md-core();
+@include mat-core();
 
 // Custom palette for monocular.
 $color-base: #3371e3;
 
-$md-monocular: (
+$mat-monocular: (
   50:  #bdd1f6, // #e3f2fd,
   100: #adc6f4, // #bbdefb,
   200: #8fb1f0, // #90caf9,
@@ -44,14 +44,14 @@ $md-monocular: (
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue.
-$monocular-app-primary: md-palette($md-monocular);
-$monocular-app-accent:  md-palette($md-light-blue);
+$monocular-app-primary: mat-palette($mat-monocular);
+$monocular-app-accent:  mat-palette($mat-light-blue);
 
 // The warn palette is optional (defaults to red).
-$monocular-app-warn:    md-palette($md-deep-orange);
+$monocular-app-warn:    mat-palette($mat-deep-orange);
 
 // Create the theme object (a Sass map containing all of the palettes).
-$monocular-app-theme: md-light-theme($monocular-app-primary, $monocular-app-accent, $monocular-app-warn);
+$monocular-app-theme: mat-light-theme($monocular-app-primary, $monocular-app-accent, $monocular-app-warn);
 
 // Include theme styles for core and each component used in your app.
 // Alternatively, you can import and @include the theme mixins for each component
@@ -91,16 +91,20 @@ md-input-container {
     width: 100%;
   }
 
+  .mat-input-infix {
+    border-top: 0;
+  }
+
   &.md-input--reverse {
-    .md-input-placeholder:not(.md-focused) {
-      color: darken($layout_light, 25);
+    .mat-input-underline {
+      background-color: $layout_light;
     }
-    .md-input-underline {
-      border-color: $layout_light;
-    }
-    .md-input-element {
+    .mat-input-element {
       color: $layout_light;
     }
+  }
+  &:not(.mat-focused) .mat-input-placeholder {
+    color: darken($layout_light, 25);
   }
 
   &.md-input--big {

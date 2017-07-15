@@ -14,6 +14,7 @@ import { routing, appRoutingProviders } from './app.routing';
 
 /* Material library */
 import { MaterialModule } from '@angular/material';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 /* Pipes */
 import { TruncatePipe } from './shared/pipes/truncate.pipe';
@@ -94,7 +95,8 @@ export function metaFactory(): MetaLoader {
     DeploymentResourceComponent
   ],
   imports: [
-    MaterialModule.forRoot(),
+    MaterialModule,
+    NoopAnimationsModule,
     BrowserModule,
     FormsModule,
     HttpModule,

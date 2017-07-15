@@ -78,7 +78,7 @@ describe('ChartDetailsComponent', () => {
   beforeEach(
     async(() => {
       TestBed.configureTestingModule({
-        imports: [RouterTestingModule, MaterialModule.forRoot()],
+        imports: [RouterTestingModule, MaterialModule],
         declarations: [
           ChartDetailsComponent,
           ChartDetailsVersionsComponent,

@@ -12,7 +12,7 @@ describe('LoaderComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [MaterialModule.forRoot()],
+      imports: [MaterialModule],
       declarations: [LoaderComponent]
     }).compileComponents();
     fixture = TestBed.createComponent(LoaderComponent);

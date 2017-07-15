@@ -15,7 +15,7 @@ import { DeploymentsService } from '../shared/services/deployments.service';
 describe('Component: Deployments', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [MaterialModule.forRoot()],
+      imports: [MaterialModule],
       declarations: [
         DeploymentsComponent,
         HeaderBarComponent,

@@ -11,7 +11,7 @@
       <md-tab label="Helm CLI">
         <div *ngIf=showRepoInstructions class="chart-details-usage__repository">
           <h2 class="chart-details-usage__label">Add {{ chart.attributes.repo.name }} repository</h2>
-          <md-input floatingPlaceholder=false [value]=repoAddInstructions></md-input>
+          <input mdInput floatingPlaceholder=false [value]=repoAddInstructions>
           <button md-button ngxClipboard [cbContent]="repoAddInstructions" (cbOnSuccess)="showSnackBar()"
             angulartics2On="click" angularticsEvent="RepositoryCopy" angularticsCategory="{{ chart.id }}"
             [angularticsProperties]="{ label: currentVersion }">
@@ -20,7 +20,7 @@
         </div>
         <div>
           <h2 class="chart-details-usage__label">Install chart</h2>
-          <md-input readonly=true floatingPlaceholder=false [value]=installInstructions></md-input>
+          <input mdInput readonly floatingPlaceholder=false [value]=installInstructions>
           <button md-button ngxClipboard [cbContent]="installInstructions" (cbOnSuccess)="showSnackBar()"
             angulartics2On="click" angularticsEvent="ChartInstallationCopy"
             angularticsCategory="{{ chart.id }}" [angularticsProperties]="{ label: currentVersion }">

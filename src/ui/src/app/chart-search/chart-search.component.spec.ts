@@ -18,7 +18,7 @@ import { ConfigService } from '../shared/services/config.service';
 describe('Component: ChartSearch', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [MaterialModule.forRoot()],
+      imports: [MaterialModule],
       declarations: [
         ChartSearchComponent,
         ChartListComponent,
