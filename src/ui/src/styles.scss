@@ -33,22 +33,22 @@ h1 {
 a {
   text-decoration: none;
   transition: color .1s ease-out;
-  color: md-color($monocular-app-primary);
+  color: mat-color($monocular-app-primary);
   cursor: pointer;
 
   &:hover {
-    color: darken(md-color($monocular-app-primary), 10%);
+    color: darken(mat-color($monocular-app-primary), 10%);
   }
 
   &.reverse {
     color: $layout_light;
 
     &:hover {
-      color: lighten(md-color($monocular-app-primary), 10%);
+      color: lighten(mat-color($monocular-app-primary), 10%);
     }
 
     &.active {
-      color: md-color($monocular-app-primary);
+      color: mat-color($monocular-app-primary);
     }
   }
 }

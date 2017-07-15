@@ -10,7 +10,7 @@ import { MaterialModule } from '@angular/material';
 describe('Component: DeploymentControls', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [MaterialModule.forRoot()],
+      imports: [MaterialModule],
       declarations: [DeploymentControlsComponent],
       providers: [DeploymentsService, DialogsService, ConfigService]
     }).compileComponents();

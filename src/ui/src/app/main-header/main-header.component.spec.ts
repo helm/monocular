@@ -13,7 +13,7 @@ describe('Component: MainHeader', () => {
     async(() => {
       TestBed.configureTestingModule({
         declarations: [MainHeaderComponent, HeaderBarComponent],
-        imports: [MaterialModule.forRoot()],
+        imports: [MaterialModule],
         providers: [
           { provide: Router },
           { provide: ConfigService, useValue: { appName: 'app-name' } },

@@ -20,7 +20,7 @@ import { MenuService } from '../shared/services/menu.service';
 describe('Component: ChartIndex', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [MaterialModule.forRoot()],
+      imports: [MaterialModule],
       declarations: [
         ChartIndexComponent,
         ChartListComponent,

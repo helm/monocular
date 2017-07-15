@@ -7,7 +7,7 @@ import { ConfirmDialogComponent } from './confirm-dialog.component';
 describe('Component: ConfirmDialog', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [MaterialModule.forRoot()],
+      imports: [MaterialModule],
       declarations: [ConfirmDialogComponent],
       providers: [{ provide: MdDialogRef }]
     }).compileComponents();

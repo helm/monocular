@@ -12,7 +12,7 @@ import { DialogsService } from '../../shared/services/dialogs.service';
 describe('Component: ChartDetailsUsage', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [MaterialModule.forRoot()],
+      imports: [MaterialModule],
       declarations: [ChartDetailsUsageComponent],
       providers: [
         DeploymentsService,

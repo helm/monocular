@@ -20,7 +20,7 @@ import { ConfigService } from '../shared/services/config.service';
 describe('Component: Charts', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [MaterialModule.forRoot()],
+      imports: [MaterialModule],
       declarations: [
         ChartsComponent,
         ChartListComponent,

@@ -1,5 +1,4 @@
 // Imports
-@import '~@angular/material/core/theming/theming';
 @import './theme.scss';
 
 /**
@@ -54,7 +53,7 @@
     .path {
       stroke-dasharray: 1, 200;
       stroke-dashoffset: 0;
-      stroke: md-color($monocular-app-primary);
+      stroke: mat-color($monocular-app-primary);
       animation: dash 1.5s ease-in-out infinite;
     }
   }
