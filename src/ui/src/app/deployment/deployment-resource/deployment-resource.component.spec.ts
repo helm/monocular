@@ -1,25 +1,23 @@
 /* tslint:disable:no-unused-variable */
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { MaterialModule } from '@angular/material';
 import { DebugElement } from '@angular/core';
 
-import { LoaderComponent } from './loader.component';
+import { DeploymentResourceComponent } from './deployment-resource.component';
 
-describe('LoaderComponent', () => {
-  let component: LoaderComponent;
-  let fixture: ComponentFixture<LoaderComponent>;
+describe('DeploymentResourceComponent', () => {
+  let component: DeploymentResourceComponent;
+  let fixture: ComponentFixture<DeploymentResourceComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ MaterialModule.forRoot() ],
-      declarations: [ LoaderComponent ]
+      declarations: [ DeploymentResourceComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(LoaderComponent);
+    fixture = TestBed.createComponent(DeploymentResourceComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

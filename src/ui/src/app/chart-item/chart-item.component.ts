@@ -16,13 +16,15 @@ export class ChartItemComponent implements OnInit {
   // Truncate the description
   public showDescription: boolean = true;
 
-  constructor(private config: ConfigService) {}
+  constructor(
+    private config: ConfigService
+  ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+  }
 
   goToDetailUrl(): string {
-    return `/charts/${this.chart.attributes.repo.name}/${this.chart.attributes
-      .name}`;
+    return `/charts/${this.chart.attributes.repo.name}/${this.chart.attributes.name}`;
   }
 
   goToRepoUrl(): string {
@@ -38,10 +40,7 @@ export class ChartItemComponent implements OnInit {
   getIconUrl(): string {
     let icons = this.chart.relationships.latestChartVersion.data.icons;
     if (icons !== undefined && icons.length > 0) {
-      return (
-        this.config.backendHostname +
-        icons.find(icon => icon.name === '160x160-fit').path
-      );
+      return this.config.backendHostname + icons.find(icon => icon.name === '160x160-fit').path;
     } else {
       return '/assets/images/placeholder.png';
     }

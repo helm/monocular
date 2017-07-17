@@ -2,16 +2,19 @@ import { MdDialogRef } from '@angular/material';
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'confirm-dialog',
-  templateUrl: './confirm-dialog.component.html',
-  styleUrls: ['./confirm-dialog.component.scss']
+    selector: 'confirm-dialog',
+    templateUrl: './confirm-dialog.component.html',
+    styleUrls: ['./confirm-dialog.component.scss'],
 })
-export class ConfirmDialogComponent {
-  public title: string;
-  public message: string;
-  public ok: string;
-  public cancel: string;
-  public actionButtonClass: string;
+export class ConfirmDialog {
 
-  constructor(public dialogRef: MdDialogRef<ConfirmDialogComponent>) {}
+    public title: string;
+    public message: string;
+    public ok: string;
+    public cancel: string;
+    public actionButtonClass: string;
+
+    constructor(public dialogRef: MdDialogRef<ConfirmDialog>) {
+
+    }
 }
