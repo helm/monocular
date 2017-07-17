@@ -1,10 +1,4 @@
-import {
-  Component,
-  OnInit,
-  Input,
-  ViewEncapsulation,
-  ChangeDetectionStrategy
-} from '@angular/core';
+import { Component, OnInit, Input, ViewEncapsulation, ChangeDetectionStrategy } from '@angular/core';
 import { Chart } from '../../shared/models/chart';
 import { Deployment } from '../../shared/models/deployment';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -24,23 +18,25 @@ import { Router } from '@angular/router';
   encapsulation: ViewEncapsulation.None
 })
 export class ChartDetailsUsageComponent implements OnInit {
-  @Input() chart: Chart;
-  @Input() currentVersion: string;
+  @Input() chart: Chart
+  @Input() currentVersion: string
   installing: boolean;
+  // Config
+  public config;
 
   constructor(
     mdIconRegistry: MdIconRegistry,
     sanitizer: DomSanitizer,
-    public config: ConfigService,
+    config: ConfigService,
     private deploymentsService: DeploymentsService,
     private router: Router,
     private dialogsService: DialogsService,
     public snackBar: MdSnackBar
   ) {
-    mdIconRegistry.addSvgIcon(
-      'content-copy',
-      sanitizer.bypassSecurityTrustResourceUrl('/assets/icons/content-copy.svg')
-    );
+    this.config = config;
+    mdIconRegistry
+      .addSvgIcon('content-copy',
+        sanitizer.bypassSecurityTrustResourceUrl('/assets/icons/content-copy.svg'));
   }
 
   ngOnInit() {}
@@ -48,17 +44,16 @@ export class ChartDetailsUsageComponent implements OnInit {
   // Show an snack bar to confirm the user that the code has been copied
   showSnackBar(): void {
     this.snackBar.open('Copied to the clipboard', '', {
-      duration: 1500
+      duration: 1500,
     });
   }
 
   get showRepoInstructions(): boolean {
-    return this.chart.attributes.repo.name != 'stable';
+    return this.chart.attributes.repo.name != 'stable'
   }
 
   get repoAddInstructions(): string {
-    return `helm repo add ${this.chart.attributes.repo.name} ${this.chart
-      .attributes.repo.URL}`;
+    return `helm repo add ${this.chart.attributes.repo.name} ${this.chart.attributes.repo.URL}`;
   }
 
   get installInstructions(): string {
@@ -74,33 +69,29 @@ export class ChartDetailsUsageComponent implements OnInit {
         'Cancel'
       )
       .subscribe(res => {
-        if (res) this.performInstallation(chartID, version);
+        if (res)
+          this.performInstallation(chartID, version);
       });
+
   }
 
   performInstallation(chartID: string, version: string): void {
     this.installing = true;
 
-    this.deploymentsService
-      .installDeployment(chartID, version)
-      .finally(() => {
-        this.installing = false;
-      })
-      .subscribe(
-        deployment => {
-          this.installOK(deployment);
-        },
-        error => {
-          this.snackBar.open(
-            `Error installing the application, please try later`,
-            'close',
-            { duration: 5000 }
-          );
-        }
-      );
+    this.deploymentsService.installDeployment(chartID, version)
+    .finally(() => {
+      this.installing = false
+    }).subscribe(
+      deployment => {
+        this.installOK(deployment)
+      },
+      error => {
+        this.snackBar.open(`Error installing the application, please try later`, 'close', { duration: 5000 });
+      }
+    );
   }
 
-  installOK(deployment: Deployment): void {
+  installOK(deployment: Deployment) :void {
     this.router.navigate(['/deployments', deployment.id]);
   }
 }

@@ -22,29 +22,26 @@ export class DeploymentsComponent implements OnInit {
     private config: ConfigService,
     private mdIconRegistry: MdIconRegistry,
     private sanitizer: DomSanitizer
-  ) {
-    mdIconRegistry.addSvgIcon(
-      'layers',
-      sanitizer.bypassSecurityTrustResourceUrl(`/assets/icons/layers.svg`)
-    );
+  ){
+    mdIconRegistry
+      .addSvgIcon('layers',
+        sanitizer.bypassSecurityTrustResourceUrl(`/assets/icons/layers.svg`));
   }
 
   ngOnInit() {
     // Do not show the page if the feature is not enabled
-    if (!this.config.releasesEnabled) {
+    if(!this.config.releasesEnabled) {
       return this.router.navigate(['/404']);
     }
     this.loadDeployments();
   }
 
   loadDeployments(): void {
-    this.deploymentsService
-      .getDeployments()
-      .finally(() => {
-        this.loading = false;
-      })
-      .subscribe(deployments => {
-        this.deployments = deployments;
-      });
+    this.deploymentsService.getDeployments()
+    .finally(()=> {
+      this.loading = false;
+    }).subscribe(deployments => {
+      this.deployments = deployments;
+    })
   }
 }
