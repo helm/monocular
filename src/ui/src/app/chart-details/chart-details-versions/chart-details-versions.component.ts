@@ -24,7 +24,11 @@ export class ChartDetailsVersionsComponent implements OnInit {
     return version.attributes.version == this.currentVersion.attributes.version;
   }
 
-  showAll() {
+  showMoreLink(): boolean {
+    return this.versions && this.versions.length > 5 && !this.showAllVersions;
+  }
+
+  setShowAllVersions() {
     this.showAllVersions = true;
   }
 

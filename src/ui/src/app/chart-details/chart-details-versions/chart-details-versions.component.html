@@ -7,8 +7,8 @@
     </span> -
     <span class='creation-date'>{{ version.attributes.created | date: 'MMM d, y' }}</span>
   </div>
-  <div class="more-link" *ngIf="!showAllVersions">
-    <a (click)="showAll()">show all...</a>
+  <div class="more-link" *ngIf="showMoreLink()">
+    <a (click)="setShowAllVersions()">show all...</a>
   </div>
 </div>
 <div class="app-version" *ngIf="currentVersion && currentVersion.attributes.app_version">
