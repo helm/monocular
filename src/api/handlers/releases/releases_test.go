@@ -8,11 +8,11 @@ import (
 
 	"github.com/arschles/assert"
 	"github.com/go-openapi/runtime"
-	"github.com/helm/monocular/src/api/data/helpers"
-	"github.com/helm/monocular/src/api/mocks"
-	"github.com/helm/monocular/src/api/swagger/models"
-	releasesapi "github.com/helm/monocular/src/api/swagger/restapi/operations/releases"
-	"github.com/helm/monocular/src/api/testutil"
+	"github.com/kubernetes-helm/monocular/src/api/data/helpers"
+	"github.com/kubernetes-helm/monocular/src/api/mocks"
+	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
+	releasesapi "github.com/kubernetes-helm/monocular/src/api/swagger/restapi/operations/releases"
+	"github.com/kubernetes-helm/monocular/src/api/testutil"
 )
 
 var helmClient = mocks.NewMockedClient()

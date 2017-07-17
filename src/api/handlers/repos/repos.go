@@ -2,10 +2,10 @@ package repos
 
 import (
 	middleware "github.com/go-openapi/runtime/middleware"
-	"github.com/helm/monocular/src/api/config"
-	"github.com/helm/monocular/src/api/data/helpers"
-	"github.com/helm/monocular/src/api/handlers"
-	reposapi "github.com/helm/monocular/src/api/swagger/restapi/operations/repositories"
+	"github.com/kubernetes-helm/monocular/src/api/config"
+	"github.com/kubernetes-helm/monocular/src/api/data/helpers"
+	"github.com/kubernetes-helm/monocular/src/api/handlers"
+	reposapi "github.com/kubernetes-helm/monocular/src/api/swagger/restapi/operations/repositories"
 )
 
 // GetRepos returns all the enabled repositories

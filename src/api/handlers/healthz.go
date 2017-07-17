@@ -2,7 +2,7 @@ package handlers
 
 import (
 	middleware "github.com/go-openapi/runtime/middleware"
-	"github.com/helm/monocular/src/api/swagger/restapi/operations"
+	"github.com/kubernetes-helm/monocular/src/api/swagger/restapi/operations"
 )
 
 // Healthz is the handler for the /healthz endpoint

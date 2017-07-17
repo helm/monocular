@@ -3,9 +3,9 @@ name: monocular
 description: Monocular is a search and discovery front end for Helm Charts Repositories.
 version: 0.4.4
 appVersion: v0.2.1
-home: https://github.com/helm/monocular
+home: https://github.com/kubernetes-helm/monocular
 sources:
-- https://github.com/helm/monocular
+- https://github.com/kubernetes-helm/monocular
 maintainers:
 - name: prydonius
   email: adnan@bitnami.com

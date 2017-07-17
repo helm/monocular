@@ -5,13 +5,13 @@ import (
 	"testing"
 
 	"github.com/arschles/assert"
-	"github.com/helm/monocular/src/api/config/repos"
-	"github.com/helm/monocular/src/api/data"
-	"github.com/helm/monocular/src/api/data/cache/charthelper"
-	"github.com/helm/monocular/src/api/data/helpers"
-	"github.com/helm/monocular/src/api/swagger/models"
-	"github.com/helm/monocular/src/api/swagger/restapi/operations/charts"
-	"github.com/helm/monocular/src/api/testutil"
+	"github.com/kubernetes-helm/monocular/src/api/config/repos"
+	"github.com/kubernetes-helm/monocular/src/api/data"
+	"github.com/kubernetes-helm/monocular/src/api/data/cache/charthelper"
+	"github.com/kubernetes-helm/monocular/src/api/data/helpers"
+	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
+	"github.com/kubernetes-helm/monocular/src/api/swagger/restapi/operations/charts"
+	"github.com/kubernetes-helm/monocular/src/api/testutil"
 )
 
 var chartsImplementation = getChartsImplementation()

@@ -10,7 +10,7 @@ import (
 	middleware "github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/validate"
-	"github.com/helm/monocular/src/api/swagger/models"
+	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
 )
 
 // GetChartsInRepoHandlerFunc turns a function with the right signature into a get charts in repo handler

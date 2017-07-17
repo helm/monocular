@@ -1,6 +1,6 @@
 package data
 
-import releasesapi "github.com/helm/monocular/src/api/swagger/restapi/operations/releases"
+import releasesapi "github.com/kubernetes-helm/monocular/src/api/swagger/restapi/operations/releases"
 import rls "k8s.io/helm/pkg/proto/hapi/services"
 
 // Client is an interface for managing Helm Chart releases

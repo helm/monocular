@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/arschles/assert"
-	"github.com/helm/monocular/src/api/config/repos"
+	"github.com/kubernetes-helm/monocular/src/api/config/repos"
 )
 
 func TestNewRefreshData(t *testing.T) {
