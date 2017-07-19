@@ -3,7 +3,7 @@ import { ChartsService } from '../../shared/services/charts.service';
 import { Chart } from '../../shared/models/chart';
 import { Maintainer } from '../../shared/models/maintainer';
 import { ChartVersion } from '../../shared/models/chart-version';
-import urljoin from 'url-join';
+import * as urljoin from 'url-join';
 
 @Component({
   selector: 'app-chart-details-info',
@@ -11,15 +11,13 @@ import urljoin from 'url-join';
   styleUrls: ['./chart-details-info.component.scss']
 })
 export class ChartDetailsInfoComponent implements OnInit {
-  @Input() chart: Chart
-  @Input() currentVersion: ChartVersion
-  versions: ChartVersion[]
-  constructor(
-    private chartsService: ChartsService,
-  ) { }
+  @Input() chart: Chart;
+  @Input() currentVersion: ChartVersion;
+  versions: ChartVersion[];
+  constructor(private chartsService: ChartsService) {}
 
   ngOnInit() {
-    this.loadVersions(this.chart)
+    this.loadVersions(this.chart);
   }
 
   get sources() {
@@ -28,7 +26,7 @@ export class ChartDetailsInfoComponent implements OnInit {
 
   get sourceUrl(): string {
     var chartSource = this.chart.attributes.repo.source;
-    if (!chartSource) return
+    if (!chartSource) return;
 
     return urljoin(chartSource, this.chart.attributes.name);
   }
@@ -42,10 +40,13 @@ export class ChartDetailsInfoComponent implements OnInit {
     parser.href = this.chart.attributes.repo.source;
     return parser.hostname;
   }
-  
+
   loadVersions(chart: Chart): void {
-    this.chartsService.getVersions(chart.attributes.repo.name, chart.attributes.name)
-      .subscribe(versions => { this.versions = versions })
+    this.chartsService
+      .getVersions(chart.attributes.repo.name, chart.attributes.name)
+      .subscribe(versions => {
+        this.versions = versions;
+      });
   }
 
   maintainerUrl(maintainer: Maintainer): string {

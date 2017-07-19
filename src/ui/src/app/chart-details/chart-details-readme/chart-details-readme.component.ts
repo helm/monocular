@@ -1,5 +1,5 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
-import markdown from 'marked';
+import * as markdown from 'marked';
 import { Chart } from '../../shared/models/chart';
 import { ChartsService } from '../../shared/services/charts.service';
 import { ChartVersion } from '../../shared/models/chart-version';
