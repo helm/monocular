@@ -51,6 +51,19 @@ func TestParseYAMLRepo(t *testing.T) {
 	assert.ExistsErr(t, err, "sent bogus repo yaml ParseYAMLRepo")
 }
 
+func TestParseYAMLRepoWithDeprecatedChart(t *testing.T) {
+	charts, err := ParseYAMLRepo(getTestRepoYAMLWithDeprecatedChart(), repoName)
+	assert.NoErr(t, err)
+	assert.Equal(t, len(charts), 1, "charts slice response from ParseYAMLRepo")
+	assert.Equal(t, *charts[0].Name, chartName, "chart name field value")
+	assert.Equal(t, *charts[0].Created, chartCreated, "chart created field value")
+	assert.Equal(t, *charts[0].Digest, chartDigest, "chart checksum field value")
+	assert.Equal(t, *charts[0].Description, chartDescription, "chart description field value")
+	assert.Equal(t, *charts[0].Version, chartVersion, "chart version field value")
+	assert.Equal(t, *charts[0].AppVersion, chartAppVersion, "chart app version field value")
+	assert.Equal(t, *charts[0].Home, chartHome, "chart home field value")
+}
+
 func TestMakeChartResource(t *testing.T) {
 	charts, err := ParseYAMLRepo(getTestRepoYAML(), repoName)
 	repo := getRepoObject(charts[0])
@@ -276,6 +289,53 @@ entries:
       version: %s
       appVersion: %s
 generated: 2016-10-06T16:23:20.499029981-06:00`, APIVer1String, chartCreated, chartDescription, chartDigest, chartHome, chartName, chartSource, chartURL, chartVersion, chartAppVersion))
+}
+
+func getTestRepoYAMLWithDeprecatedChart() []byte {
+	return []byte(fmt.Sprintf(`
+apiVersion: %s
+entries:
+  apache:
+    - created: %s
+      description: %s
+      digest: %s
+      home: %s
+      name: %s
+      sources:
+        - %s
+      urls:
+        - %s
+      version: %s
+      appVersion: %s
+  deprecated:
+    - created: %s
+      deprecated: true
+      description: %s
+      digest: %s
+      home: %s
+      name: deprecated
+      sources:
+        - %s
+      urls:
+        - %s
+      version: 1.0.0
+      appVersion: %s
+    - created: %s
+      description: %s
+      digest: %s
+      home: %s
+      name: deprecated
+      sources:
+        - %s
+      urls:
+        - %s
+      version: %s
+      appVersion: %s
+generated: 2016-10-06T16:23:20.499029981-06:00`,
+		APIVer1String, chartCreated, chartDescription, chartDigest, chartHome, chartName, chartSource, chartURL, chartVersion, chartAppVersion,
+		chartCreated, chartDescription, chartDigest, chartHome, chartSource, chartURL, chartAppVersion,
+		chartCreated, chartDescription, chartDigest, chartHome, chartSource, chartURL, chartVersion, chartAppVersion,
+	))
 }
 
 func TestMakeAvailableIcons(t *testing.T) {
