@@ -88,7 +88,7 @@ describe('ChartDetailsComponent', () => {
           BrowserModule,
           Angulartics2Module,
           RouterTestingModule,
-          MaterialModule.forRoot()
+          MaterialModule
         ],
         declarations: [
           ChartDetailsComponent,

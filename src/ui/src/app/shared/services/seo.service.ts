@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ConfigService } from './config.service';
-import { MetaService } from 'ng2-meta';
+import { MetaService } from '@ngx-meta/core';
 
 // Import SEO data
 import SeoData from '../seo.data';
@@ -11,10 +11,7 @@ export class SeoService {
   // Current name of the application
   appName: string = '';
 
-  constructor(
-    private config: ConfigService,
-    private metaService: MetaService
-  ) {
+  constructor(private config: ConfigService, private metaService: MetaService) {
     this.appName = config.appName;
   }
 
@@ -27,7 +24,7 @@ export class SeoService {
     let regex = /{ (\w+) }/i;
     let match;
     Object.keys(metadata).forEach(key => {
-      while (match = regex.exec(metadata[key])) {
+      while ((match = regex.exec(metadata[key]))) {
         if (match[1] === 'appName') {
           metadata[key] = metadata[key].replace(match[0], this.appName);
         } else {
@@ -44,9 +41,8 @@ export class SeoService {
    */
   setMetaTags(page, data = {}) {
     let content = this.getMetaContent(page, data);
-    let suffix = page === 'index' ? '' : ` | ${this.appName}`;
     // Set tags
-    this.metaService.setTitle(content.title, suffix);
+    this.metaService.setTitle(content.title);
     this.metaService.setTag('description', content.description);
     this.metaService.setTag('og:title', content.title);
     this.metaService.setTag('og:description', content.description);

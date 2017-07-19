@@ -37,4 +37,3 @@ The web application is based on the components listed below.
 See below a representation of the implemented Angular components tree.
 
 ![components tree](https://cloud.githubusercontent.com/assets/24523/23182395/3ff0382a-f82d-11e6-9b64-2b8b0a9e45e9.png)
-

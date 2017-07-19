@@ -1,5 +1,3 @@
-// Imports
-@import '~@angular/material/core/theming/theming';
 // Import your custom theme
 @import '../../theme.scss';
 
@@ -33,7 +31,7 @@ $chart-item-logo-width: 80px;
     // Remove this when chips are ready:
     // https://github.com/angular/material2/issues/120
     &__repo {
-      color: md-color($monocular-app-accent);
+      color: mat-color($monocular-app-accent);
       font-size: .8em;
       padding: 2px 4px;
       border-radius: 4px;
@@ -43,7 +41,7 @@ $chart-item-logo-width: 80px;
       }
 
       &.repo-incubator {
-        color: md-color($monocular-app-warn, 600);
+        color: mat-color($monocular-app-warn, 600);
       }
 
       a {
