@@ -31,6 +31,12 @@ type ChartPackage struct {
 	*/
 	Created *string `json:"created"`
 
+	/* deprecated
+
+	Required: true
+	*/
+	Deprecated *bool `json:"deprecated"`
+
 	/* description
 
 	Required: true
@@ -113,6 +119,11 @@ func (m *ChartPackage) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateDeprecated(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
 	if err := m.validateDescription(formats); err != nil {
 		// prop
 		res = append(res, err)
@@ -189,6 +200,15 @@ func (m *ChartPackage) validateCreated(formats strfmt.Registry) error {
 	}
 
 	if err := validate.MinLength("created", "body", string(*m.Created), 1); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *ChartPackage) validateDeprecated(formats strfmt.Registry) error {
+
+	if err := validate.Required("deprecated", "body", m.Deprecated); err != nil {
 		return err
 	}
 

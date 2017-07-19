@@ -330,6 +330,7 @@ definitions:
       - urls
       - version
       - appVersion
+      - deprecated
     properties:
       repo:
         type: string
@@ -373,6 +374,8 @@ definitions:
         type: array
         items:
           type: string
+      deprecated:
+        type: boolean
   chart: # a data type that describes a "chart"
     type: object
     required:
