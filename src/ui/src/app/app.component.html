@@ -3,8 +3,13 @@
   <nav class="App__Menu">
     <ul>
       <li>
-        <a routerLink="/charts" routerLinkActive="active">
+        <a class="reverse" routerLink="/charts" routerLinkActive="active">
           Charts
+        </a>
+      </li>
+      <li *ngIf="config.releasesEnabled">
+        <a class="reverse" routerLink="/deployments" routerLinkActive="active">
+          Deployments
         </a>
       </li>
       <li>

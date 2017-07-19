@@ -1,7 +1,22 @@
 <app-header-bar></app-header-bar>
-<app-charts-filters (onChange)="onChangeFilter($event)" [currentRepo]="currentRepo" [repositories]="repositories"></app-charts-filters>
 <app-loader [loading]="loading">
   <app-panel>
-    <app-chart-list [charts]="orderedCharts"></app-chart-list>
+    <section class="charts">
+      <header class="charts__header">
+        <div class="charts__header__block">
+          <h1 class="charts__header__title">Charts</h1>
+        </div>
+      </header>
+      <div class="charts__gallery">
+        <app-list-filters [filters]="filters"></app-list-filters>
+        <div class="charts__gallery__content">
+          <div class="charts__gallery__content__topbar">
+            <md-icon svgIcon="search"></md-icon>
+            <input type="text" placeholder="Search charts..." value="{{searchTerm}}" (keyup)="searchChange($event)" />
+          </div>
+          <app-chart-list [charts]="orderedCharts"></app-chart-list>
+        </div>
+      </div>
+    </section>
   </app-panel>
 </app-loader>

@@ -16,6 +16,12 @@ swagger:model releaseExtended
 */
 type ReleaseExtended struct {
 
+	/* chart icon
+
+	Required: true
+	*/
+	ChartIcon *string `json:"chartIcon"`
+
 	/* chart name
 
 	Required: true
@@ -69,6 +75,11 @@ type ReleaseExtended struct {
 func (m *ReleaseExtended) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateChartIcon(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
 	if err := m.validateChartName(formats); err != nil {
 		// prop
 		res = append(res, err)
@@ -112,6 +123,15 @@ func (m *ReleaseExtended) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *ReleaseExtended) validateChartIcon(formats strfmt.Registry) error {
+
+	if err := validate.Required("chartIcon", "body", m.ChartIcon); err != nil {
+		return err
+	}
+
 	return nil
 }
 

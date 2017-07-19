@@ -4,7 +4,6 @@ import { ModuleWithProviders }  from '@angular/core';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { ChartIndexComponent } from './chart-index/chart-index.component';
 import { ChartDetailsComponent } from './chart-details/chart-details.component';
-import { ChartSearchComponent } from './chart-search/chart-search.component';
 import { ChartsComponent } from './charts/charts.component';
 import { DeploymentsComponent } from './deployments/deployments.component';
 import { DeploymentComponent } from './deployment/deployment.component';
@@ -35,10 +34,6 @@ const appRoutes: Routes = [
   {
     path: 'charts',
     component: ChartsComponent
-  },
-  {
-    path: 'charts/search',
-    component: ChartSearchComponent
   },
   {
     path: 'charts/:repo',

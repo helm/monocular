@@ -3,9 +3,12 @@
 // Import your custom theme
 @import '../theme.scss';
 
+$menu-height: 120px;
+
 .App {
 
   &__Wrap {
+    background: $background-white;
     display: flex;
     min-height: 100vh;
     flex-direction: column;
@@ -14,40 +17,43 @@
 
     .App__Content {
       flex: 1;
+      padding-top: 70px;
     }
   }
 
   &__Menu {
     position: absolute;
+    background-color: $layout-base;
     top: 0;
-    visibility: hidden;
-    transition: transform .3s ease-out;
-    will-change: transform;
+    height: 0;
+    width: 100%;
+    transition: height .3s ease-out;
+    will-change: height;
 
     ul {
       list-style: none;
     }
 
     li {
-      font-weight: bold;
+      font-weight: normal;
       margin-bottom: .5em;
       font-size: 1.2em;
       color: md-color($monocular-app-primary);
+      a.active {
+        font-weight: bold;
+        color: $text-white;
+      }
     }
   }
 
   &--openMenu {
 
     .App__Wrap {
-      display: block;
-      position: relative;
-      transform: translateY(120px);
-      box-shadow: 0px 0px 20px rgba(0, 0, 0, .3);
+      transform: translateY($menu-height);
     }
 
     .App__Menu {
-      visibility: visible;
-      transform: translateY(1em);
+      height: $menu-height;
     }
   }
 }

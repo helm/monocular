@@ -22,37 +22,42 @@ export class HeaderBarComponent implements OnInit {
   // Check if  the menu is opened
   public openedMenu: boolean = false;
   // Config
-  public config;
 
-  appName: string
+  appName: string;
   constructor(
     private router: Router,
-    config: ConfigService,
+    public config: ConfigService,
     private menuService: MenuService,
     private mdIconRegistry: MdIconRegistry,
-    private sanitizer: DomSanitizer,
-  ) {
-    this.appName = config.appName;
-    this.config = config;
+    private sanitizer: DomSanitizer
+  ) {}
+
+  ngOnInit() {
     // Set the icon
-    mdIconRegistry
-      .addSvgIcon('menu',
-        sanitizer.bypassSecurityTrustResourceUrl('/assets/icons/menu.svg'))
-    mdIconRegistry
-      .addSvgIcon('close',
-        sanitizer.bypassSecurityTrustResourceUrl('/assets/icons/close.svg'))
+    this.mdIconRegistry.addSvgIcon(
+      'menu',
+      this.sanitizer.bypassSecurityTrustResourceUrl('/assets/icons/menu.svg')
+    );
+    this.mdIconRegistry.addSvgIcon(
+      'close',
+      this.sanitizer.bypassSecurityTrustResourceUrl('/assets/icons/close.svg')
+    );
+    this.mdIconRegistry.addSvgIcon(
+      'search',
+      this.sanitizer.bypassSecurityTrustResourceUrl('/assets/icons/search.svg')
+    );
+    this.appName = this.config.appName;
   }
-  ngOnInit() { }
 
   searchCharts(input: HTMLInputElement): void {
     // Empty query
-    if(input.value === ''){
-      this.router.navigate(['/']);
+    if (input.value === '') {
+      this.router.navigate(['/charts']);
     } else {
       let navigationExtras: NavigationExtras = {
-        queryParams: { 'q': input.value }
+        queryParams: { q: input.value }
       };
-      this.router.navigate(['/charts/search'], navigationExtras);
+      this.router.navigate(['/charts'], navigationExtras);
     }
   }
 

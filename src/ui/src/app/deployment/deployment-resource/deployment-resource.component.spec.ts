@@ -19,6 +19,7 @@ describe('DeploymentResourceComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(DeploymentResourceComponent);
     component = fixture.componentInstance;
+    component.resource = { services: [['serviceKeyA']]}
     fixture.detectChanges();
   });
 

@@ -125,6 +125,7 @@ func makeReleaseResource(release *hapi_release5.Release) *models.Resource {
 	ret.Attributes = &models.Release{
 		ChartName:    &release.Chart.Metadata.Name,
 		ChartVersion: &release.Chart.Metadata.Version,
+		ChartIcon:    &release.Chart.Metadata.Icon,
 		Updated:      helpers.StrToPtr(timeconv.String(release.Info.LastDeployed)),
 		Name:         &release.Name,
 		Namespace:    &release.Namespace,
@@ -143,6 +144,7 @@ func makeReleaseExtendedResource(release *hapi_release5.Release) *models.Resourc
 	ret.Attributes = &models.ReleaseExtended{
 		ChartName:    &release.Chart.Metadata.Name,
 		ChartVersion: &release.Chart.Metadata.Version,
+		ChartIcon:    &release.Chart.Metadata.Icon,
 		Updated:      helpers.StrToPtr(timeconv.String(release.Info.LastDeployed)),
 		Name:         &release.Name,
 		Namespace:    &release.Namespace,

@@ -1,45 +1,39 @@
 // Import your custom theme
 @import '../../theme.scss';
 
+.deployment-details__header {
+  width: 100%;
+  max-width: $layout-max-width;
+  margin: auto;
+  padding: 2em;
+  h1 {
+    margin: 0;
+  }
+  a {
+    display: flex;
+    align-items: center ;
+  }
+}
+
 .deployment-details {
   width: 100%;
-  margin: 3em 0;
+  max-width: $layout-max-width;
+  margin: auto;
   padding: 0 2em;
   display: flex;
-  flex-direction: column-reverse;
+  flex-direction: column;
   flex-wrap: wrap;
 
-  &__breadcrumb {
-    margin: 2em 2em 0;
-
-    ul {
-      padding: 0;
-      list-style: none;
-
-      li {
-        display: inline-block;
-
-        &:before {
-          content: '/';
-          color: darken($layout_light, 20%);
-          padding: 0 .5em 0 .4em;
-        }
-
-        &:first-child:before {
-          display: none;
-        }
-      }
-    }
-  }
 
   &__main {
+    padding-bottom: 2em;
     &__notes {
       margin: 2em 0;
 
       pre {
         padding: 1em;
         margin-bottom: 0;
-        background-color: $layout_light;
+        background-color: $layout-light;
         white-space: pre-wrap;       /* css-3 */
         white-space: -o-pre-wrap;    /* Opera 7 */
         word-break: break-all;
@@ -48,29 +42,57 @@
   }
 
   &__title {
-    font-size: 2em;
     padding-bottom: .3em;
-    margin: 0 0 .5em;
-    border-bottom: 1px solid $layout_light;
+    margin: 0;
+    border-bottom: 1px solid $layout-light;
   }
 
   &__info {
-    &__title {
-      color: md-color($monocular-app-primary);
-      margin: 0 0 .5em;
-      font-weight: 300;
-    }
 
-    &__list {
-      md-icon {
-        color: darken($layout_light, 20%);
+    &__container {
+      background: $background-light;
+      border: 1px solid $border-color;
+      border-radius: $border-radius;
+      margin-bottom: 1em;
+      overflow: hidden;
+      &.actions {
+        padding: 1em;
+        margin-top: 2em;
+        h3 {
+          margin-top: 0;
+          margin-bottom: .5em;
+        }
       }
     }
 
-    &__actions {
-      display: block;
-      margin: 2em 0;
+    &__icon {
+      height: 100px;
+      background: $background-white;
+      border-bottom: 1px solid $border-color;
+      display: flex;
+      img {
+        width: auto;
+        height: auto;
+        max-height: 60%;
+        max-width: 80%;
+        margin: auto;
+      }
     }
+
+    &__list {
+      padding: 1em;
+      &__item {
+        margin-bottom: 1em;
+        p {
+          margin: 0;
+          font-size: 0.7em;
+        }
+        h4 {
+          margin: 0;
+        }
+      }
+    }
+
   }
 
 
@@ -78,16 +100,13 @@
     flex-direction: row;
     flex-wrap: nowrap;
 
-    &__info {
-      padding-left: 1em;
-    }
-
     &__main {
-      padding-right: 1em;
+      padding-left: 3em;
     }
 
     &__info {
-      width: 35%;
+      width: 30%;
+      max-width: 250px;
     }
 
     &__main {

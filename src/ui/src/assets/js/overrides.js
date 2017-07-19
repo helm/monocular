@@ -1,7 +1,9 @@
 window.monocular = {
   overrides: {
     googleAnalyticsId: 'UA-XXXXXXXX-X',
-    appName: "Monocular",
-    releasesEnabled: false
+    appName: 'Monocular',
+    releasesEnabled: true,
+    tillerPortForward: true,
+    backendHostname: 'http://localhost:8080'
   }
 };

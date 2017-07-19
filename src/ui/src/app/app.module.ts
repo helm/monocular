@@ -29,7 +29,6 @@ import { ChartListComponent } from './chart-list/chart-list.component';
 import { ChartItemComponent } from './chart-item/chart-item.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { ChartDetailsComponent } from './chart-details/chart-details.component';
-import { ChartSearchComponent } from './chart-search/chart-search.component';
 import { HeaderBarComponent } from './header-bar/header-bar.component';
 import { ChartDetailsUsageComponent } from './chart-details/chart-details-usage/chart-details-usage.component';
 import { ChartDetailsReadmeComponent } from './chart-details/chart-details-readme/chart-details-readme.component';
@@ -41,14 +40,16 @@ import { ChartDetailsInfoComponent } from './chart-details/chart-details-info/ch
 import { ChartDetailsVersionsComponent } from './chart-details/chart-details-versions/chart-details-versions.component';
 import { ChartsComponent } from './charts/charts.component';
 import { DeploymentsComponent } from './deployments/deployments.component';
+import { DeploymentItemComponent } from './deployment-item/deployment-item.component';
 import { DeploymentComponent } from './deployment/deployment.component';
 import { DeploymentControlsComponent } from './deployment-controls/deployment-controls.component';
-import { ChartsFiltersComponent } from './charts-filters/charts-filters.component';
 import { LoaderComponent } from './loader/loader.component';
 import { ConfirmDialog }   from './confirm-dialog/confirm-dialog.component';
 import { DeploymentResourceComponent } from './deployment/deployment-resource/deployment-resource.component';
+import { ListItemComponent } from './list-item/list-item.component';
+import { ListFiltersComponent } from './list-filters/list-filters.component';
 
-require('hammerjs');
+import 'hammerjs';
 
 const metaConfig: MetaConfig = {
   //Append a title suffix such as a site name to all titles
@@ -66,7 +67,6 @@ const metaConfig: MetaConfig = {
     ChartItemComponent,
     PageNotFoundComponent,
     ChartDetailsComponent,
-    ChartSearchComponent,
     HeaderBarComponent,
     ChartDetailsUsageComponent,
     ChartDetailsVersionsComponent,
@@ -78,13 +78,15 @@ const metaConfig: MetaConfig = {
     FooterListComponent,
     ChartDetailsInfoComponent,
     ChartsComponent,
-    ChartsFiltersComponent,
     LoaderComponent,
     DeploymentControlsComponent,
     DeploymentsComponent,
+    DeploymentItemComponent,
     DeploymentComponent,
     ConfirmDialog,
-    DeploymentResourceComponent
+    DeploymentResourceComponent,
+    ListItemComponent,
+    ListFiltersComponent
   ],
   imports: [
     MaterialModule.forRoot(),

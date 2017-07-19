@@ -16,12 +16,12 @@ export class MainHeaderComponent implements OnInit {
   searchCharts(input: HTMLInputElement): void {
     // Empty query
     if(input.value === ''){
-      this.router.navigate(['/']);
+      this.router.navigate(['/charts']);
     } else {
       let navigationExtras: NavigationExtras = {
         queryParams: { 'q': input.value }
       };
-      this.router.navigate(['/charts/search'], navigationExtras);
+      this.router.navigate(['/charts'], navigationExtras);
     }
   }
 }

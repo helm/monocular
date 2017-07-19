@@ -4,15 +4,27 @@
 @import '../../theme.scss';
 
 // Variables
-$header-bar-padding: 1.5em 2em;
-$header-bar-padding-small: 1.5em;
+$header-bar-padding: 0 2em;
+$header-bar-padding-small: 0 2em;
 
 .header-bar {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: $header-bar-height;
+  background-color: $layout-base;
+  background: $header-backgound-gradient;
+  z-index: 10;
   padding: $header-bar-padding;
-  background-color: $layout_base;
+  display: flex;
+  justify-content: center;
 
-  &--transparent {
-    background-color: transparent;
+  &__content {
+    flex: 1;
+    max-width: $layout-max-width;
+    display: flex;
+    align-items: center;
   }
 
   &__logo {
@@ -25,19 +37,51 @@ $header-bar-padding-small: 1.5em;
       margin: 0;
       font-family: 'Ubuntu', sans-serif;
     }
+    a:hover {
+      color: $text-white;
+    }
   }
 
   &__search {
     margin-top: .5em;
+    background: rgba($background-white, 0.125);
+    border-radius: 4px;
+    transition: background 0.2s ease;
+    padding: 0.3em 0.5em;
 
-    .md-input-wrapper {
-      margin: .4em 0;
+    svg {
+      fill: rgba($text-white, 0.6);
+    }
+
+    form {
+      display: flex;
+      align-items: center;
+      flex-direction: row;
+    }
+
+    &.focused {
+      background: rgba($background-white, 0.175);
+
+      svg {
+        fill: $text-white;
+      }
+    }
+
+    input {
+      background: none;
+      border: 0;
+      color: $text-white;
+      font-size: 1em;
+      outline: none;
+
+      @include placeholder {
+        color: rgba($text-white, 0.6);
+      }
     }
   }
 
   &__navigation {
-    float: right;
-    margin-right: 2em;
+    margin-left: auto;
     display: none;
 
     ul {
@@ -45,19 +89,64 @@ $header-bar-padding-small: 1.5em;
 
       li {
         display: inline-block;
+        position: relative;
+        margin: 0;
+        vertical-align: middle;
+
+        &.separator {
+          width: 4px;
+          height: 4px;
+          background: $background-white;
+          border-radius: 2px;
+          margin: 0 1em;
+          margin-bottom: 2px;
+        }
 
         a {
-          padding: 1em;
+          transition: opacity 0.2s ease;
+
+          &:hover {
+            color: $text-white;
+            opacity: 0.5;
+          }
+
+          &::after{
+            background: $background-white none repeat scroll 0 0;
+            bottom: -10px;
+            content: "";
+            display: inline-block;
+            height: 2px;
+            left: 0;
+            position: absolute;
+            width: 0;
+            z-index: 1;
+            transition: width 0.3s ease;
+          }
+        }
+
+        &.active {
+
+          a {
+            color: $text-white;
+            font-weight: 600;
+
+            &::after {
+              width: 100%;
+            }
+
+            &:hover {
+              opacity: 1;
+            }
+          }
         }
       }
     }
   }
 
   &__open {
-    color: white;
-    float: right;
+    color: $text-white;
+    margin-left: auto;
     margin-right: 4em;
-
     svg {
       cursor: pointer;
       width: 32px;
@@ -65,15 +154,11 @@ $header-bar-padding-small: 1.5em;
     }
   }
 
-  @include mappy-bp(max-width small) {
+  @include mappy-bp(max-width medium) {
     padding: $header-bar-padding-small;
   }
 
-  @include mappy-bp(small) {
-    &__search {
-      margin-top: 0;
-      float: right;
-    }
+  @include mappy-bp(medium) {
 
     &__open {
       display: none;
@@ -81,6 +166,12 @@ $header-bar-padding-small: 1.5em;
 
     &__navigation {
       display: block;
+    }
+  }
+
+  @include mappy-bp(max-width $layout-max-width + 80px) {
+    &__navigation {
+      margin-right: 2em;
     }
   }
 }

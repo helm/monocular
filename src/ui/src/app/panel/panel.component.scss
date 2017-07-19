@@ -10,12 +10,12 @@
   }
 
   &--background {
-    background-color: $layout_light;
+    background-color: $layout-light;
   }
 
   &--border {
     border-radius: $border-radius;
-    border: 1px solid darken($layout_light, 5);
+    border: 1px solid darken($layout-light, 5);
   }
 
   &__title {

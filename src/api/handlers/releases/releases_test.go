@@ -192,6 +192,7 @@ func TestMakeReleaseResource(t *testing.T) {
 	assert.Equal(t, *res.Attributes.(*models.Release).Namespace, "my-namespace", "namespace")
 	assert.Equal(t, *res.Attributes.(*models.Release).ChartVersion, "1.2.3", "version")
 	assert.Equal(t, *res.Attributes.(*models.Release).ChartName, "my-chart", "chart name")
+	assert.Equal(t, *res.Attributes.(*models.Release).ChartIcon, "chart-icon", "chart icon")
 	assert.Equal(t, *res.Attributes.(*models.Release).Status, "200", "Status")
 	assert.NotNil(t, res.Attributes.(*models.Release).Updated, "Has updated at timestamp")
 
@@ -207,6 +208,7 @@ func TestMakeReleaseExtendedResource(t *testing.T) {
 	assert.Equal(t, *res.Attributes.(*models.ReleaseExtended).Namespace, "my-namespace", "namespace")
 	assert.Equal(t, *res.Attributes.(*models.ReleaseExtended).ChartVersion, "1.2.3", "version")
 	assert.Equal(t, *res.Attributes.(*models.ReleaseExtended).ChartName, "my-chart", "chart name")
+	assert.Equal(t, *res.Attributes.(*models.ReleaseExtended).ChartIcon, "chart-icon", "chart icon")
 	assert.Equal(t, *res.Attributes.(*models.ReleaseExtended).Status, "200", "Status")
 	assert.NotNil(t, res.Attributes.(*models.ReleaseExtended).Updated, "Has updated at timestamp")
 	assert.Equal(t, *res.Attributes.(*models.ReleaseExtended).Notes, "my-notes", "Notes")

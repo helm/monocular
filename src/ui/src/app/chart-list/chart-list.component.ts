@@ -7,12 +7,9 @@ import { Chart } from '../shared/models/chart';
   styleUrls: ['./chart-list.component.scss']
 })
 export class ChartListComponent implements OnInit {
-  @Input()
-  charts: Chart[]
+  @Input() charts: Chart[];
 
-  constructor() { }
+  constructor() {}
 
-  ngOnInit() {
-  }
-
+  ngOnInit() {}
 }

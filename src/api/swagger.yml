@@ -531,6 +531,7 @@ definitions:
       - updated
       - chartName
       - chartVersion
+      - chartIcon
       - namespace
     properties:
       name:
@@ -543,6 +544,8 @@ definitions:
         type: string
       chartVersion:
         type: string
+      chartIcon:
+        type: string
       namespace:
         type: string
   releaseExtended:
@@ -553,6 +556,7 @@ definitions:
       - updated
       - chartName
       - chartVersion
+      - chartIcon
       - namespace
       - resources
       - notes
@@ -566,6 +570,8 @@ definitions:
       chartName:
         type: string
       chartVersion:
+        type: string
+      chartIcon:
         type: string
       namespace:
         type: string

@@ -1,11 +1,11 @@
 /* tslint:disable:no-unused-variable */
 
 import { TestBed, async } from '@angular/core/testing';
-import { ChartsFiltersComponent } from './charts-filters.component';
+import { ListItemComponent } from './list-item.component';
 
-describe('Component: ChartsFilters', () => {
+describe('Component: ListItem', () => {
   it('should create an instance', () => {
-    let component = new ChartsFiltersComponent();
+    let component = new ListItemComponent();
     expect(component).toBeTruthy();
   });
 });

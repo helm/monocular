@@ -1,5 +1,5 @@
 import { Router, ActivatedRoute, Params } from '@angular/router';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { DeploymentsService } from '../shared/services/deployments.service';
 import { Deployment } from '../shared/models/deployment';
 import { Chart } from '../shared/models/chart';
@@ -26,19 +26,27 @@ export class DeploymentComponent implements OnInit {
     private config: ConfigService,
     private mdIconRegistry: MdIconRegistry,
     private sanitizer: DomSanitizer
-  ) {
-    const icons = ['layers', 'schedule', 'web-asset', 'info-outline', 'arrow-back'];
-
-    icons.forEach(icon => {
-      mdIconRegistry
-        .addSvgIcon(icon,
-          sanitizer.bypassSecurityTrustResourceUrl(`/assets/icons/${icon}.svg`));
-    });
-  }
+  ) {}
 
   ngOnInit() {
+    const icons = [
+      'layers',
+      'schedule',
+      'web-asset',
+      'info-outline',
+      'arrow-back'
+    ];
+
+    icons.forEach(icon => {
+      this.mdIconRegistry.addSvgIcon(
+        icon,
+        this.sanitizer.bypassSecurityTrustResourceUrl(
+          `/assets/icons/${icon}.svg`
+        )
+      );
+    });
     // Do not show the page if the feature is not enabled
-    if(!this.config.releasesEnabled) {
+    if (!this.config.releasesEnabled) {
       return this.router.navigate(['/404']);
     }
 
@@ -46,22 +54,29 @@ export class DeploymentComponent implements OnInit {
       this.name = params['deploymentName'];
       this.loadDeployment(params['deploymentName']);
     });
-
   }
 
   loadDeployment(deploymentName: string): void {
-    this.deploymentsService.getDeployment(deploymentName)
-    .finally(()=> {
-      this.loading = false;
-    }).subscribe(deployment => {
-      this.deployment = deployment;
-      this.resources = this.deploymentsService.loadResources(deployment);
-    })
+    this.deploymentsService
+      .getDeployment(deploymentName)
+      .finally(() => {
+        this.loading = false;
+      })
+      .subscribe(deployment => {
+        this.deployment = deployment;
+        this.resources = this.deploymentsService.loadResources(deployment);
+      });
   }
 
   deploymentDeleted(event) {
-    if (event.state == "deleted") {
+    if (event.state == 'deleted') {
       return this.router.navigate(['/deployments']);
     }
+  }
+
+  getIconUrl(): string {
+    return this.deployment.attributes.chartIcon
+      ? this.deployment.attributes.chartIcon
+      : '/assets/images/placeholder.png';
   }
 }

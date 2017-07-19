@@ -16,6 +16,7 @@ export class ChartDetailsComponent implements OnInit {
   chart: Chart;
   loading: boolean = true;
   currentVersion: ChartVersion;
+  iconUrl: string;
   titleVersion: string;
 
   constructor(
@@ -23,22 +24,27 @@ export class ChartDetailsComponent implements OnInit {
     private chartsService: ChartsService,
     private config: ConfigService,
     private seo: SeoService
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.route.params.forEach((params: Params) => {
       let repo = params['repo'];
-      let chartName = params['chartName']
-      this.chartsService.getChart(repo, chartName)
-        .subscribe(chart => {
-          this.loading = false;
-          this.chart = chart;
-          let version = params['version'] || this.chart.relationships.latestChartVersion.data.version;
-          this.chartsService.getVersion(repo, chartName, version)
-            .subscribe(chartVersion => { this.currentVersion = chartVersion });
-          this.titleVersion = params['version'] || '';
-          this.updateMetaTags();
-        });
+      let chartName = params['chartName'];
+      this.chartsService.getChart(repo, chartName).subscribe(chart => {
+        this.loading = false;
+        this.chart = chart;
+        let version =
+          params['version'] ||
+          this.chart.relationships.latestChartVersion.data.version;
+        this.chartsService
+          .getVersion(repo, chartName, version)
+          .subscribe(chartVersion => {
+            this.currentVersion = chartVersion;
+          });
+        this.titleVersion = params['version'] || '';
+        this.updateMetaTags();
+        this.iconUrl = this.getIconUrl();
+      });
     });
   }
 
@@ -57,6 +63,22 @@ export class ChartDetailsComponent implements OnInit {
         name: this.chart.attributes.name,
         description: this.chart.attributes.description
       });
+    }
+  }
+
+  goToRepoUrl(): string {
+    return `/charts/${this.chart.attributes.repo.name}`;
+  }
+
+  getIconUrl(): string {
+    let icons = this.chart.relationships.latestChartVersion.data.icons;
+    if (icons !== undefined && icons.length > 0) {
+      const icon =
+        this.config.backendHostname +
+        icons.find(icon => icon.name === '160x160-fit').path;
+      return icon;
+    } else {
+      return '/assets/images/placeholder.png';
     }
   }
 }
