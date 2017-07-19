@@ -3,3 +3,4 @@ repo-data/
 coverage.txt
 *.log
 src/api/.glide
+.vscode

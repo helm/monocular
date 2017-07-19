@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/Masterminds/semver"
+	log "github.com/Sirupsen/logrus"
 	"github.com/ghodss/yaml"
 	"github.com/kubernetes-helm/monocular/src/api/config"
 	"github.com/kubernetes-helm/monocular/src/api/config/repos"
@@ -40,6 +41,12 @@ func ParseYAMLRepo(rawYAML []byte, repoName string) ([]*models.ChartPackage, err
 		return nil, err
 	}
 	for entry := range chartEntries {
+		if chartEntries[entry][0].Deprecated != nil && *chartEntries[entry][0].Deprecated {
+			log.WithFields(log.Fields{
+				"name": entry,
+			}).Info("Deprecated chart skipped")
+			continue
+		}
 		for i := range chartEntries[entry] {
 			chartEntries[entry][i].Repo = repoName
 			ret = append(ret, &chartEntries[entry][i])
