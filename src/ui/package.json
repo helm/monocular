@@ -19,8 +19,8 @@
     "test-ci": "ng test --single-run",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "compile": "ng build --prod --progress=false -o rootfs/dist",
-    "compile-aot": "ng build --prod --aot --progress=false -o rootfs/dist"
+    "compile": "ng build --prod --progress=false --output-path rootfs/dist",
+    "compile-aot": "ng build --prod --aot --progress=false --output-path rootfs/dist"
   },
   "dependencies": {
     "@angular/animations": "^4.0.0",

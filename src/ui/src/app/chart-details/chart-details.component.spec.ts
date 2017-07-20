@@ -5,8 +5,10 @@ import { MaterialModule } from '@angular/material';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { HttpModule } from '@angular/http';
 import { Angulartics2Module, Angulartics2GoogleAnalytics } from 'angulartics2';
 import { ClipboardModule } from 'ngx-clipboard';
+import { Observable } from 'rxjs/Rx';
 
 // Shared
 import { TruncatePipe } from '../shared/pipes/truncate.pipe';
@@ -30,49 +32,47 @@ import { ChartDetailsUsageComponent } from './chart-details-usage/chart-details-
 import 'hammerjs';
 
 // Stub
-const chartsServiceStub = {
-  getChart: {
-    data: {
-      attributes: {
-        description: 'Testing the chart',
-        home: 'helm.sh',
-        keywords: ['artifactory'],
-        maintainers: [
-          {
-            email: 'test@example.com',
-            name: 'Test'
-          }
-        ],
-        name: 'test',
-        repo: 'incubator',
-        sources: ['https://github.com/']
-      },
-      id: 'incubator/test',
-      relationships: {
-        latestChartVersion: {
-          data: {
-            created: '2017-02-13T04:33:57.218083521Z',
-            digest:
-              'eba0c51d4bc5b88d84f83d8b2ba0c5e5a3aad8bc19875598198bdbb0b675f683',
-            icons: [
-              {
-                name: '160x160-fit',
-                path: '/assets/incubator/test/4.16.0/logo-160x160-fit.png'
-              }
-            ],
-            readme: '/assets/incubator/test/4.16.0/README.md',
-            urls: [
-              'https://kubernetes-charts-incubator.storage.googleapis.com/test-4.16.0.tgz'
-            ],
-            version: '4.16.0'
-          },
-          links: {
-            self: '/v1/charts/incubator/test/versions/4.16.0'
-          }
+const mockData = {
+  data: {
+    attributes: {
+      description: 'Testing the chart',
+      home: 'helm.sh',
+      keywords: ['artifactory'],
+      maintainers: [
+        {
+          email: 'test@example.com',
+          name: 'Test'
         }
-      },
-      type: 'chart'
-    }
+      ],
+      name: 'test',
+      repo: 'incubator',
+      sources: ['https://github.com/']
+    },
+    id: 'incubator/test',
+    relationships: {
+      latestChartVersion: {
+        data: {
+          created: '2017-02-13T04:33:57.218083521Z',
+          digest:
+            'eba0c51d4bc5b88d84f83d8b2ba0c5e5a3aad8bc19875598198bdbb0b675f683',
+          icons: [
+            {
+              name: '160x160-fit',
+              path: '/assets/incubator/test/4.16.0/logo-160x160-fit.png'
+            }
+          ],
+          readme: '/assets/incubator/test/4.16.0/README.md',
+          urls: [
+            'https://kubernetes-charts-incubator.storage.googleapis.com/test-4.16.0.tgz'
+          ],
+          version: '4.16.0'
+        },
+        links: {
+          self: '/v1/charts/incubator/test/versions/4.16.0'
+        }
+      }
+    },
+    type: 'chart'
   }
 };
 
@@ -88,7 +88,8 @@ describe('ChartDetailsComponent', () => {
           BrowserModule,
           Angulartics2Module,
           RouterTestingModule,
-          MaterialModule
+          MaterialModule,
+          HttpModule
         ],
         declarations: [
           ChartDetailsComponent,
@@ -104,7 +105,7 @@ describe('ChartDetailsComponent', () => {
           ListItemComponent
         ],
         providers: [
-          { provide: ChartsService, useValue: chartsServiceStub },
+          { provide: ChartsService },
           { provide: ConfigService, useValue: { appName: 'appName' } },
           { provide: SeoService },
           { provide: MenuService }
