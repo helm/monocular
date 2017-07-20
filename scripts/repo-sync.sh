@@ -76,7 +76,7 @@ update_chart_version() {
 
   if [ $COMMIT_CHANGES != "false" ]; then
     log "Commiting chart source changes to master branch"
-    git add $1/Chart.yaml $1/values.yaml
+    git add $CHART_PATH/Chart.yaml $CHART_PATH/values.yaml
     git commit --message "chart: bump to $CHART_VERSION_NEXT [skip ci]" --message "travis build #$TRAVIS_BUILD_NUMBER"
     git push -q upstream HEAD:master
   fi
