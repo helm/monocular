@@ -26,7 +26,7 @@ Refer to [Running a development environment](src/README.md) for more details.
 The web application is based on the components listed below.
 
 * [Angular 2](https://angular.io/)
-* [angular-cli](https://github.com/angular/angular-cli)
+* [angular/cli](https://github.com/angular/angular-cli)
 * Typescript
 * Sass
 * [Webpack](https://webpack.github.io/)
