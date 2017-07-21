@@ -123,6 +123,7 @@ $filters-width: 175px;
     &__header {
       flex-direction: column-reverse;
     }
+
     &__header__filters {
       display: inline-block;
     }
@@ -133,12 +134,14 @@ $filters-width: 175px;
       &__toggle {
         display: inline-block;
       }
+
       app-list-filters {
         position: relative;
         left: -100%;
         width: auto;
         height: 0;
         transition: left .2s ease-out;
+
         &.open {
           height: auto;
           left: 0;

@@ -28,8 +28,11 @@ $main-header-height: 400px - $header-bar-height;
 
     &__slogan {
       color: $layout-light;
-      padding: 3em 0 1em;
       font-weight: 100;
+
+      @include mappy-bp(medium) {
+        padding: 3em 0 1em;
+      }
 
       p {
         font-size: 2em;
