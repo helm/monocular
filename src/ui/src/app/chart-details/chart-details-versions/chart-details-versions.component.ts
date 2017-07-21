@@ -21,7 +21,7 @@ export class ChartDetailsVersionsComponent implements OnInit {
   }
 
   isSelected(version: ChartVersion): boolean {
-    return version.attributes.version == this.currentVersion.attributes.version;
+    return this.currentVersion && version.attributes.version == this.currentVersion.attributes.version;
   }
 
   showMoreLink(): boolean {
