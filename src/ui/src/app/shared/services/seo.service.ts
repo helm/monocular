@@ -24,9 +24,8 @@ export class SeoService {
   getMetaContent(page, data = {}) {
     let metadata = Object.assign({}, SeoData[page]);
     // Regex of custom data
-    let regex = /{ (\w+) }/gi;
+    let regex = /{ (\w+) }/i;
     let match;
-
     Object.keys(metadata).forEach(key => {
       while (match = regex.exec(metadata[key])) {
         if (match[1] === 'appName') {
