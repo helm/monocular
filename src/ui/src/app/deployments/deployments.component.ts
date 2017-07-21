@@ -16,7 +16,7 @@ export class DeploymentsComponent implements OnInit {
   deployments: Deployment[] = [];
   visibleDeployments: Deployment[] = [];
   loading: boolean = true;
-
+  filtersOpen: boolean = false;
   orderBy: string = 'Date';
   namespace: string = 'All';
   filters: Array<any> = [

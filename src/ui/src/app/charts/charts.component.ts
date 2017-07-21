@@ -21,6 +21,7 @@ export class ChartsComponent implements OnInit {
   loading: boolean = true;
   searchTerm: string;
   searchTimeout: any;
+  filtersOpen: boolean = false;
 
   // Default filters
   filters = [
