@@ -8,16 +8,28 @@ $filters-width: 175px;
   &__header {
     width: 100%;
     display: flex;
+    flex-wrap: wrap;
 
     &__title {
       margin-top: 0;
     }
 
+    &__filters {
+      display: none;
+      font-size: 0.5em;
+
+      md-icon {
+        margin-left: 10px;
+        top: 6px;
+        position: relative;
+      }
+    }
+
     &__new {
-      margin-left: 1em;
       margin-bottom: 1em;
       text-align: center;
     }
+
   }
 
   &__gallery {
@@ -76,11 +88,7 @@ $filters-width: 175px;
 
         app-deployment-item {
           padding-bottom: 1.5em;
-
-          @include mappy-bp(small) {
-            width: 100%;
-            padding-right: 0;
-          }
+          width: 100%;
 
           @include mappy-bp(medium large) {
             width: 50%;
@@ -105,6 +113,47 @@ $filters-width: 175px;
               padding-right: 0;
             }
           }
+        }
+      }
+    }
+  }
+
+  @include mappy-bp(max-width small) {
+
+    &__header {
+      flex-direction: column-reverse;
+    }
+    &__header__filters {
+      display: inline-block;
+    }
+
+    &__gallery {
+      flex-direction: column;
+
+      &__toggle {
+        display: inline-block;
+      }
+      app-list-filters {
+        position: relative;
+        left: -100%;
+        width: auto;
+        height: 0;
+        transition: left .2s ease-out;
+        &.open {
+          height: auto;
+          left: 0;
+        }
+      }
+
+      &__content {
+        border: 0;
+
+        &__topbar {
+          padding-left: 0;
+        }
+
+        &__list {
+          padding: 1.5em 0 0 0;
         }
       }
     }
