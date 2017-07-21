@@ -24,7 +24,7 @@ export default {
                  'Helm Charts'
   },
   details: {
-    title: 'Latest { name } for Kubernetes',
+    title: '{ name } for Kubernetes',
     description: 'Deploy the latest { name } in Kubernetes. { description }'
   },
   detailsWithVersion: {

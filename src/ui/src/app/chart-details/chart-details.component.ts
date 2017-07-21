@@ -40,9 +40,9 @@ export class ChartDetailsComponent implements OnInit {
           .getVersion(repo, chartName, version)
           .subscribe(chartVersion => {
             this.currentVersion = chartVersion;
+            this.titleVersion = this.currentVersion.attributes.app_version || '';
+            this.updateMetaTags();
           });
-        this.titleVersion = params['version'] || '';
-        this.updateMetaTags();
         this.iconUrl = this.getIconUrl();
       });
     });
