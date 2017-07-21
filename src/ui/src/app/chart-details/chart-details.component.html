@@ -14,7 +14,7 @@
           <div class="chart-details__header__text">
             <h1>{{ chart.attributes.name }}</h1>
             <p>
-              <span>{{ chart.relationships.latestChartVersion.data.app_version }}</span> -
+              <span *ngIf="currentVersion && currentVersion.attributes.app_version">{{ currentVersion.attributes.app_version }} -</span>
               <span class="chart-details__header__text__repo">
                 <a [href]="goToRepoUrl()" [routerLink]="goToRepoUrl()">{{ chart.attributes.repo.name }}</a>
               </span><br/>
