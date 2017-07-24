@@ -73,6 +73,7 @@ $icon-height: 150px;
   }
 
   &__content {
+    width: 100%;
     max-width: $layout-max-width;
     margin: auto;
     display: flex;
