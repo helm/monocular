@@ -21,6 +21,7 @@ export class ChartsComponent implements OnInit {
   loading: boolean = true;
   searchTerm: string;
   searchTimeout: any;
+  filtersOpen: boolean = false;
 
   // Default filters
   filters = [
@@ -61,6 +62,14 @@ export class ChartsComponent implements OnInit {
     this.mdIconRegistry.addSvgIcon(
       'search',
       this.sanitizer.bypassSecurityTrustResourceUrl(`/assets/icons/search.svg`)
+    );
+    this.mdIconRegistry.addSvgIcon(
+      'close',
+      this.sanitizer.bypassSecurityTrustResourceUrl(`/assets/icons/close.svg`)
+    );
+    this.mdIconRegistry.addSvgIcon(
+      'menu',
+      this.sanitizer.bypassSecurityTrustResourceUrl(`/assets/icons/menu.svg`)
     );
     this.allRepo = new Repo();
     this.allRepo.id = 'all';

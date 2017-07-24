@@ -16,17 +16,17 @@ export class DeploymentsComponent implements OnInit {
   deployments: Deployment[] = [];
   visibleDeployments: Deployment[] = [];
   loading: boolean = true;
-
+  filtersOpen: boolean = false;
   orderBy: string = 'Date';
   namespace: string = 'All';
   filters: Array<any> = [
-    { title: 'Namespace',
+    {
+      title: 'Namespace',
       onSelect: i => this.onSelectNamespace(i),
-      items: [
-        { title: 'All', selected: true }
-      ]
+      items: [{ title: 'All', selected: true }]
     },
-    { title: 'Order By',
+    {
+      title: 'Order By',
       onSelect: i => this.onSelectOrderBy(i),
       items: [
         { title: 'Name', selected: false },
@@ -48,6 +48,14 @@ export class DeploymentsComponent implements OnInit {
     this.mdIconRegistry.addSvgIcon(
       'search',
       this.sanitizer.bypassSecurityTrustResourceUrl(`/assets/icons/search.svg`)
+    );
+    this.mdIconRegistry.addSvgIcon(
+      'close',
+      this.sanitizer.bypassSecurityTrustResourceUrl(`/assets/icons/close.svg`)
+    );
+    this.mdIconRegistry.addSvgIcon(
+      'menu',
+      this.sanitizer.bypassSecurityTrustResourceUrl(`/assets/icons/menu.svg`)
     );
     // Do not show the page if the feature is not enabled
     if (!this.config.releasesEnabled) {
@@ -71,7 +79,9 @@ export class DeploymentsComponent implements OnInit {
 
   exportNamespaces() {
     var flags = {};
-    var list: { title: string, selected: boolean }[] = [{title: 'All', selected: true}];
+    var list: { title: string; selected: boolean }[] = [
+      { title: 'All', selected: true }
+    ];
     this.deployments.forEach(dp => {
       if (!flags[dp.attributes.namespace]) {
         list.push({
@@ -81,7 +91,7 @@ export class DeploymentsComponent implements OnInit {
         flags[dp.attributes.namespace] = true;
       }
     });
-    this.filters[0].items = list
+    this.filters[0].items = list;
   }
 
   filterDeployments() {

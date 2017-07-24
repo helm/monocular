@@ -3,8 +3,9 @@
 
 .deployment-item {
 
+
   &-logo {
-    max-height: 80%;
+    max-height: 70%;
     max-width: 80%;
   }
 
@@ -31,11 +32,12 @@
       }
     }
 
-    &__date {
+    &__version {
       position: absolute;
-      top: 10px;
-      right: 10px;
-      font-size: 0.6em;
+      top: -18px;
+      right: 6px;
+      font-size: 0.7em;
+      background: white;
     }
   }
 }

@@ -14,11 +14,7 @@
 
   app-chart-item {
     padding-bottom: 1.5em;
-
-    @include mappy-bp(small) {
-      width: 100%;
-      padding-right: 0;
-    }
+    width: 100%;
 
     @include mappy-bp(medium large) {
       width: 50%;

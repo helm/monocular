@@ -5,11 +5,12 @@
       {{ deployment.id }}
     </h2>
     <div class="deployment-item-info__subtitle">
-        {{ deployment.attributes.chartName }} v.{{ deployment.attributes.chartVersion }} <b>{{ deployment.attributes.status }}</b> <br/>
+        {{ deployment.attributes.updated | date }} <b>{{ deployment.attributes.status }}</b> <br/>
         Namespace: <b>{{ deployment.attributes.namespace }}</b>
     </div>
-    <div class="deployment-item-info__date">
-      {{ deployment.attributes.updated | date }}
+    <div class="deployment-item-info__version">
+      {{ deployment.attributes.chartName }} v.{{ deployment.attributes.chartVersion }}
+
     </div>
   </div>
 </app-list-item>

@@ -11,6 +11,17 @@ $filters-width: 175px;
     &__title {
       margin-top: 0;
     }
+
+    &__filters {
+      display: none;
+      font-size: 0.5em;
+
+      md-icon {
+        margin-left: 10px;
+        top: 6px;
+        position: relative;
+      }
+    }
   }
 
   &__gallery {
@@ -21,6 +32,7 @@ $filters-width: 175px;
     app-list-filters {
       width: $filters-width;
       display: flex;
+      overflow: hidden;
     }
 
     &__content {
@@ -58,6 +70,41 @@ $filters-width: 175px;
           @include placeholder {
             color: lighten($layout-base, 50%);
           }
+        }
+      }
+    }
+  }
+
+  @include mappy-bp(max-width small) {
+
+    &__header__filters {
+      display: inline-block;
+    }
+
+    &__gallery {
+      flex-direction: column;
+
+      app-list-filters {
+        position: relative;
+        left: -100%;
+        width: auto;
+        height: 0;
+        transition: left .2s ease-out;
+        &.open {
+          height: auto;
+          left: 0;
+        }
+      }
+
+      &__content {
+        border: 0;
+
+        &__topbar {
+          padding-left: 0;
+        }
+
+        app-chart-list {
+          padding: 1.5em 0 0 0;
         }
       }
     }
