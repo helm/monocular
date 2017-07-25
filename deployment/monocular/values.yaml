@@ -102,10 +102,10 @@ ingress:
     ## Nginx ingress controller (default)
     ingress.kubernetes.io/rewrite-target: /
     kubernetes.io/ingress.class: nginx
-  #  kubernetes.io/tls-acme: 'true'
+    # kubernetes.io/tls-acme: 'true'
     ## Traefik ingress controller
-  #  traefik.frontend.rule.type: PathPrefixStrip
-  #  kubernetes.io/ingress.class: traefik
+    # traefik.frontend.rule.type: PathPrefixStrip
+    # kubernetes.io/ingress.class: traefik
 
   ## Ingress TLS configuration
   ## Secrets must be manually created in the namespace
