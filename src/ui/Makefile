@@ -17,4 +17,4 @@ compile-aot:
 	npm run compile-aot
 
 docker-build: compile-aot
-	docker build --rm -t ${IMAGE_REPO}:${IMAGE_TAG} rootfs/
+	docker build --pull --rm -t ${IMAGE_REPO}:${IMAGE_TAG} rootfs/
