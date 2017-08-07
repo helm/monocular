@@ -10,6 +10,7 @@ cache:
     - src/ui/node_modules
 services:
   - docker
+  - redis-server
 # UI dependencies
 before_install:
   - export CHROME_BIN=chromium-browser
