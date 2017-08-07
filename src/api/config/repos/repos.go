@@ -5,33 +5,27 @@ import (
 	"os"
 
 	log "github.com/Sirupsen/logrus"
+	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
 
 	yaml "gopkg.in/yaml.v2"
 )
 
-// Repos is an array of Repo
-type Repos []Repo
+// Repos is an array of models.Repo
+type Repos []models.Repo
 
 type reposYAML struct {
 	Repos Repos
 }
 
-// Repo is a map name => URL
-type Repo struct {
-	Name   string
-	URL    string
-	Source string
-}
-
 var official = Repos{
-	Repo{
-		Name:   "stable",
-		URL:    "https://kubernetes-charts.storage.googleapis.com",
+	models.Repo{
+		Name:   strToPtr("stable"),
+		URL:    strToPtr("https://kubernetes-charts.storage.googleapis.com"),
 		Source: "https://github.com/kubernetes/charts/tree/master/stable",
 	},
-	Repo{
-		Name:   "incubator",
-		URL:    "https://kubernetes-charts-incubator.storage.googleapis.com",
+	models.Repo{
+		Name:   strToPtr("incubator"),
+		URL:    strToPtr("https://kubernetes-charts-incubator.storage.googleapis.com"),
 		Source: "https://github.com/kubernetes/charts/tree/master/incubator",
 	},
 }
@@ -68,4 +62,8 @@ func loadReposFromFile(filePath string) (Repos, error) {
 		return nil, err
 	}
 	return yamlStruct.Repos, nil
+}
+
+func strToPtr(s string) *string {
+	return &s
 }

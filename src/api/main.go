@@ -7,6 +7,7 @@ import (
 	loads "github.com/go-openapi/loads"
 	flags "github.com/jessevdk/go-flags"
 
+	"github.com/kubernetes-helm/monocular/src/api/config"
 	"github.com/kubernetes-helm/monocular/src/api/swagger/restapi"
 	"github.com/kubernetes-helm/monocular/src/api/swagger/restapi/operations"
 )
@@ -45,6 +46,13 @@ func main() {
 		}
 		os.Exit(code)
 	}
+
+	config.NewRedisPool()
+	defer func() {
+		if err := config.Pool.Close(); err != nil {
+			log.Println("could not close redis pool")
+		}
+	}()
 
 	server.ConfigureAPI()
 

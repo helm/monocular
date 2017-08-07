@@ -7,7 +7,7 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/ghodss/yaml"
 	"github.com/kubernetes-helm/monocular/src/api/config"
-	"github.com/kubernetes-helm/monocular/src/api/config/repos"
+	"github.com/kubernetes-helm/monocular/src/api/data"
 	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
 
 	"github.com/kubernetes-helm/monocular/src/api/data/cache/charthelper"
@@ -74,23 +74,19 @@ func MakeChartResource(chart *models.ChartPackage) *models.Resource {
 }
 
 // MakeRepoResource composes a Resource type that represents a repository
-func MakeRepoResource(repo repos.Repo) *models.Resource {
+func MakeRepoResource(repo models.Repo) *models.Resource {
 	var ret models.Resource
 	ret.Type = StrToPtr("repository")
-	ret.ID = StrToPtr(repo.Name)
-	ret.Attributes = &models.Repo{
-		Name:   &repo.Name,
-		URL:    &repo.URL,
-		Source: repo.Source,
-	}
+	ret.ID = repo.Name
+	ret.Attributes = &repo
 	return &ret
 }
 
 // MakeRepoResources returns an array of RepoResources
-func MakeRepoResources(repos []repos.Repo) []*models.Resource {
+func MakeRepoResources(repos []*data.Repo) []*models.Resource {
 	var reposResource []*models.Resource
 	for _, repo := range repos {
-		resource := MakeRepoResource(repo)
+		resource := MakeRepoResource(models.Repo(*repo))
 		reposResource = append(reposResource, resource)
 	}
 	return reposResource
@@ -309,10 +305,10 @@ func getRepoObject(chart *models.ChartPackage) *models.Repo {
 
 	config, _ := config.GetConfig()
 	for _, repo := range config.Repos {
-		if repo.Name == chart.Repo {
+		if *repo.Name == chart.Repo {
 			repoPayload = models.Repo{
-				Name:   &repo.Name,
-				URL:    &repo.URL,
+				Name:   repo.Name,
+				URL:    repo.URL,
 				Source: repo.Source,
 			}
 			return &repoPayload

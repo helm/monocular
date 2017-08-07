@@ -4,7 +4,9 @@ import (
 	"errors"
 	"testing"
 
+	log "github.com/Sirupsen/logrus"
 	"github.com/arschles/assert"
+	"github.com/kubernetes-helm/monocular/src/api/config"
 	"github.com/kubernetes-helm/monocular/src/api/config/repos"
 	"github.com/kubernetes-helm/monocular/src/api/data"
 	"github.com/kubernetes-helm/monocular/src/api/data/cache/charthelper"
@@ -17,6 +19,8 @@ import (
 var chartsImplementation = getChartsImplementation()
 
 func TestCachedChartsChartFromRepo(t *testing.T) {
+	setupTestRepoCache(nil)
+	defer teardownTestRepoCache()
 	// TODO: validate chart data
 	_, err := chartsImplementation.ChartFromRepo(testutil.RepoName, testutil.ChartName)
 	assert.NoErr(t, err)
@@ -27,6 +31,8 @@ func TestCachedChartsChartFromRepo(t *testing.T) {
 }
 
 func TestCachedChartsChartVersionFromRepo(t *testing.T) {
+	setupTestRepoCache(nil)
+	defer teardownTestRepoCache()
 	chart, err := chartsImplementation.ChartVersionFromRepo(testutil.RepoName, testutil.ChartName, testutil.ChartVersionString)
 	assert.NoErr(t, err)
 	assert.Equal(t, *chart.Name, testutil.ChartName, "chart name")
@@ -40,6 +46,8 @@ func TestCachedChartsChartVersionFromRepo(t *testing.T) {
 }
 
 func TestCachedChartsChartVersionsFromRepo(t *testing.T) {
+	setupTestRepoCache(nil)
+	defer teardownTestRepoCache()
 	charts, err := chartsImplementation.ChartVersionsFromRepo(testutil.RepoName, testutil.ChartName)
 	assert.NoErr(t, err)
 	assert.True(t, len(charts) > 0, "returned charts")
@@ -49,11 +57,15 @@ func TestCachedChartsChartVersionsFromRepo(t *testing.T) {
 }
 
 func TestCachedChartsAll(t *testing.T) {
+	setupTestRepoCache(nil)
+	defer teardownTestRepoCache()
 	_, err := chartsImplementation.All()
 	assert.NoErr(t, err)
 }
 
 func TestCachedChartsSearch(t *testing.T) {
+	setupTestRepoCache(nil)
+	defer teardownTestRepoCache()
 	params := charts.SearchChartsParams{
 		Name: "drupal",
 	}
@@ -65,7 +77,8 @@ func TestCachedChartsSearch(t *testing.T) {
 }
 
 func TestCachedChartsAllFromRepo(t *testing.T) {
-
+	setupTestRepoCache(nil)
+	defer teardownTestRepoCache()
 	charts, err := chartsImplementation.AllFromRepo(testutil.RepoName)
 	assert.NoErr(t, err)
 	assert.True(t, len(charts) > 0, "returned charts")
@@ -75,6 +88,8 @@ func TestCachedChartsAllFromRepo(t *testing.T) {
 }
 
 func TestCachedChartsRefresh(t *testing.T) {
+	setupTestRepoCache(nil)
+	defer teardownTestRepoCache()
 	// Stubs Download and processing
 	DownloadAndExtractChartTarballOrig := charthelper.DownloadAndExtractChartTarball
 	defer func() { charthelper.DownloadAndExtractChartTarball = DownloadAndExtractChartTarballOrig }()
@@ -92,23 +107,28 @@ func TestCachedChartsRefresh(t *testing.T) {
 
 func TestCachedChartsRefreshErrorPropagation(t *testing.T) {
 	// Invalid repo URL
-	rep := repos.Repos{
-		repos.Repo{
-			Name: "stable",
-			URL:  "./localhost",
+	rep := []models.Repo{
+		models.Repo{
+			Name: helpers.StrToPtr("stable"),
+			URL:  helpers.StrToPtr("./localhost"),
 		},
 	}
-	chImplementation := NewCachedCharts(rep)
+	setupTestRepoCache(&rep)
+	chImplementation := NewCachedCharts()
 	err := chImplementation.Refresh()
 	assert.ExistsErr(t, err, "Invalid Repo URL")
+
+	teardownTestRepoCache()
 	// Repo does not exist
 	rep = repos.Repos{
-		repos.Repo{
-			Name: "stable",
-			URL:  "http://localhost",
+		models.Repo{
+			Name: helpers.StrToPtr("stable"),
+			URL:  helpers.StrToPtr("http://localhost"),
 		},
 	}
-	chImplementation = NewCachedCharts(rep)
+	setupTestRepoCache(&rep)
+	defer teardownTestRepoCache()
+	chImplementation = NewCachedCharts()
 	err = chImplementation.Refresh()
 	assert.ExistsErr(t, err, "Repo does not exist")
 }
@@ -125,13 +145,15 @@ func TestCachedChartsRefreshErrorDownloadingPackage(t *testing.T) {
 		return knownError
 	}
 
-	repos := repos.Repos{
-		repos.Repo{
-			Name: "stable",
-			URL:  "http://storage.googleapis.com/kubernetes-charts",
+	repos := []models.Repo{
+		models.Repo{
+			Name: helpers.StrToPtr("stable"),
+			URL:  helpers.StrToPtr("http://storage.googleapis.com/kubernetes-charts"),
 		},
 	}
-	chImplementation := NewCachedCharts(repos)
+	setupTestRepoCache(&repos)
+	defer teardownTestRepoCache()
+	chImplementation := NewCachedCharts()
 	// It does not return error
 	err := chImplementation.Refresh()
 	assert.NoErr(t, err)
@@ -144,17 +166,35 @@ func getChartsImplementation() data.Charts {
 	charthelper.ChartDataExists = func(chart *models.ChartPackage) (bool, error) {
 		return true, nil
 	}
-	repos := repos.Repos{
-		repos.Repo{
-			Name: "stable",
-			URL:  "http://storage.googleapis.com/kubernetes-charts",
-		},
-		repos.Repo{
-			Name: "incubator",
-			URL:  "http://storage.googleapis.com/kubernetes-charts-incubator",
-		},
-	}
-	chImplementation := NewCachedCharts(repos)
-	chImplementation.Refresh()
+
+	// configure the api here
+	chImplementation := NewCachedCharts()
 	return chImplementation
+}
+
+func setupTestRepoCache(repos *[]models.Repo) {
+	config.NewRedisPool()
+	if repos == nil {
+		repos = &[]models.Repo{
+			models.Repo{
+				Name: helpers.StrToPtr("stable"),
+				URL:  helpers.StrToPtr("http://storage.googleapis.com/kubernetes-charts"),
+			},
+			models.Repo{
+				Name: helpers.StrToPtr("incubator"),
+				URL:  helpers.StrToPtr("http://storage.googleapis.com/kubernetes-charts-incubator"),
+			},
+		}
+	}
+	NewCachedRepos(*repos)
+	chartsImplementation.Refresh()
+}
+
+func teardownTestRepoCache() {
+	if _, err := Repos.DeleteAll(); err != nil {
+		log.Fatal("could not clear cache")
+	}
+	if err := config.Pool.Close(); err != nil {
+		log.Fatal("could not close redis pool")
+	}
 }

@@ -57,3 +57,8 @@ import:
   - pkg/util/wait
   - pkg/version
   - pkg/watch
+- package: github.com/albrow/zoom
+  version: ~0.18.0
+- package: github.com/dchest/uniuri
+- package: github.com/garyburd/redigo/redis
+- package: github.com/tv42/base58

@@ -13,7 +13,7 @@ services:
     tty: true
     build: ./dev_env/api
     ports:
-      - 8080:8080
+    - 8080:8080
     volumes:
       - ./src/api:/go/src/github.com/kubernetes-helm/monocular/src/api
       # Config example file
@@ -22,3 +22,14 @@ services:
       - $HOME/.kube/:/root/.kube
     environment:
       - ENVIRONMENT=development
+  redis:
+    image: bitnami/redis
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    volumes:
+      - 'redis_data:/bitnami/redis'
+    ports:
+      - 6379:6379
+volumes:
+  redis_data:
+    driver: local

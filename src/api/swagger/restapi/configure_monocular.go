@@ -37,17 +37,18 @@ func configureFlags(api *operations.MonocularAPI) {
 }
 
 func configureAPI(api *operations.MonocularAPI) http.Handler {
-	config, err := config.GetConfig()
-
+	conf, err := config.GetConfig()
 	if err != nil {
 		log.Fatalf("Can not load configuration %v\n", err)
 	}
+
 	// configure the api here
-	chartsImplementation := cache.NewCachedCharts(config.Repos)
+	cache.NewCachedRepos(conf.Repos)
+	chartsImplementation := cache.NewCachedCharts()
 	// Run foreground repository refresh
 	chartsImplementation.Refresh()
 	// Setup background index refreshes
-	cacheRefreshInterval := config.CacheRefreshInterval
+	cacheRefreshInterval := conf.CacheRefreshInterval
 	if cacheRefreshInterval <= 0 {
 		cacheRefreshInterval = 3600
 	}
@@ -70,19 +71,19 @@ func configureAPI(api *operations.MonocularAPI) http.Handler {
 
 	// Releases
 	api.ReleasesGetAllReleasesHandler = releases.GetAllReleasesHandlerFunc(func(params releases.GetAllReleasesParams) middleware.Responder {
-		return hreleases.GetReleases(helmClient, params, config.ReleasesEnabled)
+		return hreleases.GetReleases(helmClient, params, conf.ReleasesEnabled)
 	})
 
 	api.ReleasesGetReleaseHandler = releases.GetReleaseHandlerFunc(func(params releases.GetReleaseParams) middleware.Responder {
-		return hreleases.GetRelease(helmClient, params, config.ReleasesEnabled)
+		return hreleases.GetRelease(helmClient, params, conf.ReleasesEnabled)
 	})
 
 	api.ReleasesCreateReleaseHandler = releases.CreateReleaseHandlerFunc(func(params releases.CreateReleaseParams) middleware.Responder {
-		return hreleases.CreateRelease(helmClient, params, chartsImplementation, config.ReleasesEnabled)
+		return hreleases.CreateRelease(helmClient, params, chartsImplementation, conf.ReleasesEnabled)
 	})
 
 	api.ReleasesDeleteReleaseHandler = releases.DeleteReleaseHandlerFunc(func(params releases.DeleteReleaseParams) middleware.Responder {
-		return hreleases.DeleteRelease(helmClient, params, config.ReleasesEnabled)
+		return hreleases.DeleteRelease(helmClient, params, conf.ReleasesEnabled)
 	})
 
 	// Repos
