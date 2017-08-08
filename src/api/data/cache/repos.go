@@ -11,7 +11,7 @@ import (
 // Repos is a Zoom Collection for the Repo model
 var Repos *zoom.Collection
 
-// NewCachedRepos returns a data.Repos object to manage repositories
+// NewCachedRepos sets up a Zoom collection of repositories
 func NewCachedRepos(repos []models.Repo) {
 	log.Info("setting up Repos collection")
 	var err error

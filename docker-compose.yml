@@ -23,7 +23,7 @@ services:
     environment:
       - ENVIRONMENT=development
   redis:
-    image: bitnami/redis
+    image: bitnami/redis:4.0
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
     volumes:
