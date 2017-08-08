@@ -8,7 +8,7 @@ import (
 
 	"github.com/arschles/assert"
 	"github.com/go-openapi/runtime"
-	"github.com/kubernetes-helm/monocular/src/api/data/helpers"
+	"github.com/kubernetes-helm/monocular/src/api/data/util"
 	"github.com/kubernetes-helm/monocular/src/api/mocks"
 	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
 	releasesapi "github.com/kubernetes-helm/monocular/src/api/swagger/restapi/operations/releases"
@@ -25,7 +25,7 @@ func validParams() releasesapi.CreateReleaseParams {
 	chartID := fmt.Sprintf("%s/%s", firstChart.Repo, *firstChart.Name)
 	return releasesapi.CreateReleaseParams{
 		Data: releasesapi.CreateReleaseBody{
-			ChartID:      helpers.StrToPtr(chartID),
+			ChartID:      util.StrToPtr(chartID),
 			ChartVersion: firstChart.Version,
 		},
 	}
@@ -79,7 +79,7 @@ func TestCreateRelease400(t *testing.T) {
 	// No ChartVersion
 	params := releasesapi.CreateReleaseParams{
 		Data: releasesapi.CreateReleaseBody{
-			ChartID: helpers.StrToPtr("waps"),
+			ChartID: util.StrToPtr("waps"),
 		},
 	}
 	resp := CreateRelease(helmClient, params, chartsImplementation, true)
@@ -90,7 +90,7 @@ func TestCreateRelease400(t *testing.T) {
 	// No ChartId
 	params = releasesapi.CreateReleaseParams{
 		Data: releasesapi.CreateReleaseBody{
-			ChartVersion: helpers.StrToPtr("waps"),
+			ChartVersion: util.StrToPtr("waps"),
 		},
 	}
 	resp = CreateRelease(helmClient, params, chartsImplementation, true)
@@ -100,8 +100,8 @@ func TestCreateRelease400(t *testing.T) {
 	// Invalid ChartId
 	params = releasesapi.CreateReleaseParams{
 		Data: releasesapi.CreateReleaseBody{
-			ChartID:      helpers.StrToPtr("foo"),
-			ChartVersion: helpers.StrToPtr("waps"),
+			ChartID:      util.StrToPtr("foo"),
+			ChartVersion: util.StrToPtr("waps"),
 		},
 	}
 	resp = CreateRelease(helmClient, params, chartsImplementation, true)
@@ -112,8 +112,8 @@ func TestCreateRelease400(t *testing.T) {
 	// Chart not found
 	params = releasesapi.CreateReleaseParams{
 		Data: releasesapi.CreateReleaseBody{
-			ChartID:      helpers.StrToPtr("stable/foo"),
-			ChartVersion: helpers.StrToPtr("does not exist"),
+			ChartID:      util.StrToPtr("stable/foo"),
+			ChartVersion: util.StrToPtr("does not exist"),
 		},
 	}
 	resp = CreateRelease(helmClient, params, chartsImplementation, true)

@@ -4,6 +4,8 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/kubernetes-helm/monocular/src/api/data/util"
+
 	"github.com/arschles/assert"
 	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
 )
@@ -15,10 +17,10 @@ var configFileNoRepos = filepath.Join("..", "testdata", "norepos_config.yaml")
 func TestOfficial(t *testing.T) {
 	offRepo := []models.Repo{
 		{
-			Name: strToPtr("stable"),
+			Name: util.StrToPtr("stable"),
 		},
 		{
-			Name: strToPtr("incubator"),
+			Name: util.StrToPtr("incubator"),
 		},
 	}
 	for i, repo := range official {
@@ -44,13 +46,13 @@ func TestEnabledReposInFile(t *testing.T) {
 	assert.NoErr(t, err)
 	offRepo := []models.Repo{
 		{
-			Name:   strToPtr("repoName"),
-			URL:    strToPtr("http://myrepobucket"),
+			Name:   util.StrToPtr("repoName"),
+			URL:    util.StrToPtr("http://myrepobucket"),
 			Source: "http://github.com/my-repo",
 		},
 		{
-			Name: strToPtr("repoName2"),
-			URL:  strToPtr("http://myrepobucket2"),
+			Name: util.StrToPtr("repoName2"),
+			URL:  util.StrToPtr("http://myrepobucket2"),
 		},
 	}
 

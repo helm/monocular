@@ -11,6 +11,7 @@ import (
 	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
 
 	"github.com/kubernetes-helm/monocular/src/api/data/cache/charthelper"
+	"github.com/kubernetes-helm/monocular/src/api/data/util"
 )
 
 // APIVer1String is the API version 1 string we include in route URLs
@@ -58,8 +59,8 @@ func ParseYAMLRepo(rawYAML []byte, repoName string) ([]*models.ChartPackage, err
 // MakeChartResource composes a Resource type that represents a repo+chart
 func MakeChartResource(chart *models.ChartPackage) *models.Resource {
 	var ret models.Resource
-	ret.Type = StrToPtr("chart")
-	ret.ID = StrToPtr(MakeChartID(chart.Repo, *chart.Name))
+	ret.Type = util.StrToPtr("chart")
+	ret.ID = util.StrToPtr(MakeChartID(chart.Repo, *chart.Name))
 	ret.Attributes = &models.Chart{
 		Repo:        getRepoObject(chart),
 		Name:        chart.Name,
@@ -76,7 +77,7 @@ func MakeChartResource(chart *models.ChartPackage) *models.Resource {
 // MakeRepoResource composes a Resource type that represents a repository
 func MakeRepoResource(repo models.Repo) *models.Resource {
 	var ret models.Resource
-	ret.Type = StrToPtr("repository")
+	ret.Type = util.StrToPtr("repository")
 	ret.ID = repo.Name
 	ret.Attributes = &repo
 	return &ret
@@ -114,8 +115,8 @@ func MakeChartResources(charts []*models.ChartPackage) []*models.Resource {
 // MakeChartVersionResource composes a Resource type that represents a chartVersion
 func MakeChartVersionResource(chart *models.ChartPackage) *models.Resource {
 	var ret models.Resource
-	ret.Type = StrToPtr("chartVersion")
-	ret.ID = StrToPtr(MakeChartVersionID(chart.Repo, *chart.Name, *chart.Version))
+	ret.Type = util.StrToPtr("chartVersion")
+	ret.ID = util.StrToPtr(MakeChartVersionID(chart.Repo, *chart.Name, *chart.Version))
 	ret.Attributes = &models.ChartVersion{
 		Created:    chart.Created,
 		Digest:     chart.Digest,
@@ -145,7 +146,7 @@ func AddChartRelationship(resource *models.Resource, chartPackage *models.ChartP
 	resource.Relationships = &models.ChartRelationship{
 		Chart: &models.ChartAsRelationship{
 			Links: &models.ResourceLink{
-				Self: StrToPtr(MakeRepoChartRouteURL(APIVer1String, chartPackage.Repo, *chartPackage.Name)),
+				Self: util.StrToPtr(MakeRepoChartRouteURL(APIVer1String, chartPackage.Repo, *chartPackage.Name)),
 			},
 			Data: &models.Chart{
 				Name:        chartPackage.Name,
@@ -164,7 +165,7 @@ func AddLatestChartVersionRelationship(resource *models.Resource, chartPackage *
 	resource.Relationships = &models.LatestChartVersionRelationship{
 		LatestChartVersion: &models.ChartVersionAsRelationship{
 			Links: &models.ResourceLink{
-				Self: StrToPtr(MakeRepoChartVersionRouteURL(APIVer1String, chartPackage.Repo, *chartPackage.Name, *chartPackage.Version)),
+				Self: util.StrToPtr(MakeRepoChartVersionRouteURL(APIVer1String, chartPackage.Repo, *chartPackage.Name, *chartPackage.Version)),
 			},
 			Data: &models.ChartVersion{
 				Created:    chartPackage.Created,
@@ -182,7 +183,7 @@ func AddLatestChartVersionRelationship(resource *models.Resource, chartPackage *
 // AddCanonicalLink adds a "self" link to a chart resource's canonical API endpoint
 func AddCanonicalLink(resource *models.Resource) {
 	resource.Links = &models.ResourceLink{
-		Self: StrToPtr(MakeRepoChartRouteURL(APIVer1String, *resource.Attributes.(*models.Chart).Repo.Name, *resource.Attributes.(*models.Chart).Name)),
+		Self: util.StrToPtr(MakeRepoChartRouteURL(APIVer1String, *resource.Attributes.(*models.Chart).Repo.Name, *resource.Attributes.(*models.Chart).Name)),
 	}
 }
 
@@ -274,16 +275,6 @@ func newestSemVer(v1 string, v2 string) (string, error) {
 		return v2, nil
 	}
 	return v1, nil
-}
-
-// Int64ToPtr converts an int64 to an *int64
-func Int64ToPtr(n int64) *int64 {
-	return &n
-}
-
-// StrToPtr converts a string to a *string
-func StrToPtr(s string) *string {
-	return &s
 }
 
 func makeAvailableIcons(chart *models.ChartPackage) []*models.Icon {
