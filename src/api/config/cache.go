@@ -8,6 +8,8 @@ import (
 // Pool is a pool of Zoom connections used by other packages
 var Pool *zoom.Pool
 
+const defaultHost = "localhost:6379"
+
 type redisConfig struct {
 	Host string
 }
@@ -27,7 +29,7 @@ func getRedisConf() redisConfig {
 	redis := config.Redis
 	// Set default Redis host
 	if redis.Host == "" {
-		redis.Host = "localhost:6379"
+		redis.Host = defaultHost
 	}
 	return redis
 }

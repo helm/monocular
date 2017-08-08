@@ -9,6 +9,7 @@ import (
 )
 
 func TestGetConfig(t *testing.T) {
+	currentConfig = Configuration{}
 	configFileOrig := configFile
 	defer func() { configFile = configFileOrig }()
 	configFile = func() string {
