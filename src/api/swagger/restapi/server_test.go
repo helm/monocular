@@ -26,6 +26,8 @@ var chartsImplementation = getChartsImplementation()
 
 // tests the GET /healthz endpoint
 func TestGetHealthz(t *testing.T) {
+	setupTestRepoCache()
+	defer teardownTestRepoCache()
 	srv, err := newServer()
 	assert.NoErr(t, err)
 	defer srv.Close()
@@ -37,11 +39,12 @@ func TestGetHealthz(t *testing.T) {
 
 // tests the GET /{:apiVersion}/charts endpoint
 func TestGetCharts(t *testing.T) {
-	srv, err := newServer()
-	setupTestRepoCache(nil)
+	setupTestRepoCache()
 	defer teardownTestRepoCache()
+	srv, err := newServer()
 	assert.NoErr(t, err)
 	defer srv.Close()
+	chartsImplementation.Refresh()
 	charts, err := chartsImplementation.All()
 	assert.NoErr(t, err)
 	resp, err := httpGet(srv, urlPath("v1", handlerscharts.ChartResourceName+"s"))
@@ -55,11 +58,12 @@ func TestGetCharts(t *testing.T) {
 
 // tests the GET /{:apiVersion}/charts/{:repo} endpoint 200 response
 func TestGetChartsInRepo200(t *testing.T) {
-	srv, err := newServer()
-	setupTestRepoCache(nil)
+	setupTestRepoCache()
 	defer teardownTestRepoCache()
+	srv, err := newServer()
 	assert.NoErr(t, err)
 	defer srv.Close()
+	chartsImplementation.Refresh()
 	charts, err := chartsImplementation.AllFromRepo(testutil.RepoName)
 	numCharts := len(helpers.MakeChartResources(charts))
 	assert.NoErr(t, err)
@@ -74,9 +78,9 @@ func TestGetChartsInRepo200(t *testing.T) {
 
 // tests the GET /{:apiVersion}/charts/{:repo} endpoint 404 response
 func TestGetChartsInRepo404(t *testing.T) {
-	srv, err := newServer()
-	setupTestRepoCache(nil)
+	setupTestRepoCache()
 	defer teardownTestRepoCache()
+	srv, err := newServer()
 	assert.NoErr(t, err)
 	defer srv.Close()
 	resp, err := httpGet(srv, urlPath("v1", handlerscharts.ChartResourceName+"s", testutil.BogusRepo))
@@ -90,11 +94,12 @@ func TestGetChartsInRepo404(t *testing.T) {
 
 // tests the GET /{:apiVersion}/charts/{:repo}/{:chart} endpoint 200 response
 func TestGetChartInRepo200(t *testing.T) {
-	srv, err := newServer()
-	setupTestRepoCache(nil)
+	setupTestRepoCache()
 	defer teardownTestRepoCache()
+	srv, err := newServer()
 	assert.NoErr(t, err)
 	defer srv.Close()
+	chartsImplementation.Refresh()
 	chart, err := chartsImplementation.ChartFromRepo(testutil.RepoName, testutil.ChartName)
 	assert.NoErr(t, err)
 	resp, err := httpGet(srv, urlPath("v1", handlerscharts.ChartResourceName+"s", testutil.RepoName, testutil.ChartName))
@@ -109,9 +114,9 @@ func TestGetChartInRepo200(t *testing.T) {
 
 // tests the GET /{:apiVersion}/charts/{:repo}/{:chart} endpoint 404 response
 func TestGetChartInRepo404(t *testing.T) {
-	srv, err := newServer()
-	setupTestRepoCache(nil)
+	setupTestRepoCache()
 	defer teardownTestRepoCache()
+	srv, err := newServer()
 	assert.NoErr(t, err)
 	defer srv.Close()
 	resp, err := httpGet(srv, urlPath("v1", handlerscharts.ChartResourceName+"s", testutil.BogusRepo, testutil.ChartName))
@@ -125,11 +130,12 @@ func TestGetChartInRepo404(t *testing.T) {
 
 // tests the GET /{:apiVersion}/charts/{:repo}/{:chart}/version endpoint 200 response
 func TestGetChartVersion200(t *testing.T) {
-	srv, err := newServer()
-	setupTestRepoCache(nil)
+	setupTestRepoCache()
 	defer teardownTestRepoCache()
+	srv, err := newServer()
 	assert.NoErr(t, err)
 	defer srv.Close()
+	chartsImplementation.Refresh()
 	chart, err := chartsImplementation.ChartVersionFromRepo(testutil.RepoName, testutil.ChartName, testutil.ChartVersionString)
 	assert.NoErr(t, err)
 	resp, err := httpGet(srv, urlPath("v1", handlerscharts.ChartResourceName+"s", testutil.RepoName, testutil.ChartName, versionsRouteString, testutil.ChartVersionString))
@@ -144,9 +150,9 @@ func TestGetChartVersion200(t *testing.T) {
 
 // tests the GET /{:apiVersion}/charts/{:repo}/{:chart}/version endpoint 404 response
 func TestGetChartVersion404(t *testing.T) {
-	srv, err := newServer()
-	setupTestRepoCache(nil)
+	setupTestRepoCache()
 	defer teardownTestRepoCache()
+	srv, err := newServer()
 	assert.NoErr(t, err)
 	defer srv.Close()
 	resp, err := httpGet(srv, urlPath("v1", handlerscharts.ChartResourceName+"s", testutil.RepoName, testutil.ChartName, versionsRouteString, "99.99.99"))
@@ -160,11 +166,12 @@ func TestGetChartVersion404(t *testing.T) {
 
 // tests the GET /{:apiVersion}/charts/{:repo}/{:chart}/version endpoint 200 response
 func TestGetChartVersions200(t *testing.T) {
-	srv, err := newServer()
-	setupTestRepoCache(nil)
+	setupTestRepoCache()
 	defer teardownTestRepoCache()
+	srv, err := newServer()
 	assert.NoErr(t, err)
 	defer srv.Close()
+	chartsImplementation.Refresh()
 	charts, err := chartsImplementation.ChartVersionsFromRepo(testutil.RepoName, testutil.ChartName)
 	assert.NoErr(t, err)
 	resp, err := httpGet(srv, urlPath("v1", handlerscharts.ChartResourceName+"s", testutil.RepoName, testutil.ChartName, versionsRouteString))
@@ -178,9 +185,9 @@ func TestGetChartVersions200(t *testing.T) {
 
 // tests the GET /{:apiVersion}/charts/{:repo}/{:chart}/version endpoint 404 response
 func TestGetChartVersions404(t *testing.T) {
-	srv, err := newServer()
-	setupTestRepoCache(nil)
+	setupTestRepoCache()
 	defer teardownTestRepoCache()
+	srv, err := newServer()
 	assert.NoErr(t, err)
 	defer srv.Close()
 	resp, err := httpGet(srv, urlPath("v1", handlerscharts.ChartResourceName+"s", testutil.BogusRepo, testutil.ChartName, versionsRouteString))
@@ -214,22 +221,8 @@ func getChartsImplementation() data.Charts {
 	return chartsImplementation
 }
 
-func setupTestRepoCache(repos *[]models.Repo) {
+func setupTestRepoCache() {
 	config.NewRedisPool()
-	if repos == nil {
-		repos = &[]models.Repo{
-			models.Repo{
-				Name: helpers.StrToPtr("stable"),
-				URL:  helpers.StrToPtr("http://storage.googleapis.com/kubernetes-charts"),
-			},
-			models.Repo{
-				Name: helpers.StrToPtr("incubator"),
-				URL:  helpers.StrToPtr("http://storage.googleapis.com/kubernetes-charts-incubator"),
-			},
-		}
-	}
-	cache.NewCachedRepos(*repos)
-	chartsImplementation.Refresh()
 }
 
 func teardownTestRepoCache() {
