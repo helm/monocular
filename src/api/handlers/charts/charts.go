@@ -100,7 +100,7 @@ func SearchCharts(params chartsapi.SearchChartsParams, c data.Charts) middleware
 		message := fmt.Sprintf("data.Charts Search() error (%s)", err)
 		log.Printf(message)
 		return chartsapi.NewSearchChartsDefault(http.StatusBadRequest).WithPayload(
-			&models.Error{Code: util.Int64ToPtr(http.StatusNotFound), Message: &message},
+			&models.Error{Code: util.Int64ToPtr(http.StatusBadRequest), Message: &message},
 		)
 	}
 	resources := helpers.MakeChartResources(charts)

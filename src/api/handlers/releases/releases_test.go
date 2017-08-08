@@ -17,7 +17,7 @@ import (
 
 var helmClient = mocks.NewMockedClient()
 var helmClientBroken = mocks.NewMockedBrokenClient()
-var chartsImplementation = mocks.NewMockCharts()
+var chartsImplementation = mocks.NewMockCharts(mocks.MockedMethods{})
 
 func validParams() releasesapi.CreateReleaseParams {
 	charts, _ := chartsImplementation.All()

@@ -11,7 +11,7 @@ import (
 )
 
 func TestSortedByName(t *testing.T) {
-	chartsImplementation := mocks.NewMockCharts()
+	chartsImplementation := mocks.NewMockCharts(mocks.MockedMethods{})
 	charts, err := chartsImplementation.All()
 	assert.NoErr(t, err)
 	// Randomize slice before sorting
@@ -28,7 +28,7 @@ func TestSortedByName(t *testing.T) {
 }
 
 func TestSortedBySemver(t *testing.T) {
-	chartsImplementation := mocks.NewMockCharts()
+	chartsImplementation := mocks.NewMockCharts(mocks.MockedMethods{})
 	charts, err := chartsImplementation.All()
 	chart := charts[0]
 	assert.NoErr(t, err)
@@ -51,7 +51,7 @@ func TestSortedBySemver(t *testing.T) {
 
 // If it is not a valid semver, it still sorts
 func TestSortedBySemverWrongVersion(t *testing.T) {
-	chartsImplementation := mocks.NewMockCharts()
+	chartsImplementation := mocks.NewMockCharts(mocks.MockedMethods{})
 	charts, err := chartsImplementation.All()
 	assert.NoErr(t, err)
 	// Bogus versions

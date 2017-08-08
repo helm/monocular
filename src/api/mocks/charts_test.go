@@ -1,15 +1,17 @@
 package mocks
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/arschles/assert"
 	"github.com/kubernetes-helm/monocular/src/api/data/helpers"
+	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
 	"github.com/kubernetes-helm/monocular/src/api/swagger/restapi/operations/charts"
 	"github.com/kubernetes-helm/monocular/src/api/testutil"
 )
 
-var chartsImplementation = NewMockCharts()
+var chartsImplementation = NewMockCharts(MockedMethods{})
 
 func TestMockChartsChartFromRepo(t *testing.T) {
 	// TODO: validate chart data
@@ -56,6 +58,17 @@ func TestMockChartsAll(t *testing.T) {
 	assert.NoErr(t, err)
 }
 
+func TestMockChartsAllWithMockedMethod(t *testing.T) {
+	chImplementation := NewMockCharts(MockedMethods{
+		All: func() ([]*models.ChartPackage, error) {
+			var ret []*models.ChartPackage
+			return ret, errors.New("error getting all charts")
+		},
+	})
+	_, err := chImplementation.All()
+	assert.ExistsErr(t, err, "mocked error")
+}
+
 func TestMockChartsSearch(t *testing.T) {
 	params := charts.SearchChartsParams{
 		Name: "drupal",
@@ -65,6 +78,20 @@ func TestMockChartsSearch(t *testing.T) {
 	// flatten chart+version results into a chart resource array
 	resources := helpers.MakeChartResources(charts)
 	assert.Equal(t, len(resources), 1, "number of unique chart results")
+}
+
+func TestMockChartsSearchWithMockedMethod(t *testing.T) {
+	chImplementation := NewMockCharts(MockedMethods{
+		Search: func(params charts.SearchChartsParams) ([]*models.ChartPackage, error) {
+			var ret []*models.ChartPackage
+			return ret, errors.New("error searching charts")
+		},
+	})
+	params := charts.SearchChartsParams{
+		Name: "drupal",
+	}
+	_, err := chImplementation.Search(params)
+	assert.ExistsErr(t, err, "mocked error")
 }
 
 func TestMockChartsAllFromRepo(t *testing.T) {
