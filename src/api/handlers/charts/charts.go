@@ -10,7 +10,7 @@ import (
 	"github.com/kubernetes-helm/monocular/src/api/chartpackagesort"
 	"github.com/kubernetes-helm/monocular/src/api/data"
 	"github.com/kubernetes-helm/monocular/src/api/data/helpers"
-	"github.com/kubernetes-helm/monocular/src/api/data/util"
+	"github.com/kubernetes-helm/monocular/src/api/data/pointerto"
 	"github.com/kubernetes-helm/monocular/src/api/handlers"
 	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
 	chartsapi "github.com/kubernetes-helm/monocular/src/api/swagger/restapi/operations/charts"
@@ -100,7 +100,7 @@ func SearchCharts(params chartsapi.SearchChartsParams, c data.Charts) middleware
 		message := fmt.Sprintf("data.Charts Search() error (%s)", err)
 		log.Printf(message)
 		return chartsapi.NewSearchChartsDefault(http.StatusBadRequest).WithPayload(
-			&models.Error{Code: util.Int64ToPtr(http.StatusBadRequest), Message: &message},
+			&models.Error{Code: pointerto.Int64(http.StatusBadRequest), Message: &message},
 		)
 	}
 	resources := helpers.MakeChartResources(charts)
@@ -112,6 +112,6 @@ func SearchCharts(params chartsapi.SearchChartsParams, c data.Charts) middleware
 func notFound(resource string) middleware.Responder {
 	message := fmt.Sprintf("404 %s not found", resource)
 	return chartsapi.NewGetChartDefault(http.StatusNotFound).WithPayload(
-		&models.Error{Code: util.Int64ToPtr(http.StatusNotFound), Message: &message},
+		&models.Error{Code: pointerto.Int64(http.StatusNotFound), Message: &message},
 	)
 }

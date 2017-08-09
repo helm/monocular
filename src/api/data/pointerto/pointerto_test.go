@@ -1,4 +1,4 @@
-package util
+package pointerto
 
 import (
 	"testing"
@@ -6,16 +6,16 @@ import (
 	"github.com/arschles/assert"
 )
 
-func TestInt64ToPtr(t *testing.T) {
+func TestInt64(t *testing.T) {
 	var number int64
 	number = 13
-	ptr := Int64ToPtr(number)
+	ptr := Int64(number)
 	assert.Equal(t, number, *ptr, "int64 to ptr conversion")
 }
 
-func TestStrToPtr(t *testing.T) {
+func TestString(t *testing.T) {
 	var str string
 	str = "string"
-	ptr := StrToPtr(str)
+	ptr := String(str)
 	assert.Equal(t, str, *ptr, "string to ptr conversion")
 }

@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/arschles/assert"
-	"github.com/kubernetes-helm/monocular/src/api/data/util"
+	"github.com/kubernetes-helm/monocular/src/api/data/pointerto"
 )
 
 func TestRepo_ModelId(t *testing.T) {
@@ -13,7 +13,7 @@ func TestRepo_ModelId(t *testing.T) {
 		r    *Repo
 		want string
 	}{
-		{"stable repo id", &Repo{Name: util.StrToPtr("stable")}, "stable"},
+		{"stable repo id", &Repo{Name: pointerto.String("stable")}, "stable"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

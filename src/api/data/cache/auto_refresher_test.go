@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/arschles/assert"
-	"github.com/kubernetes-helm/monocular/src/api/data/util"
+	"github.com/kubernetes-helm/monocular/src/api/data/pointerto"
 	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
 )
 
@@ -27,8 +27,8 @@ func TestNewRefreshData(t *testing.T) {
 func TestNewRefreshDataError(t *testing.T) {
 	repos := []models.Repo{
 		models.Repo{
-			Name: util.StrToPtr("waps"),
-			URL:  util.StrToPtr("./localhost"),
+			Name: pointerto.String("waps"),
+			URL:  pointerto.String("./localhost"),
 		},
 	}
 	setupTestRepoCache(&repos)

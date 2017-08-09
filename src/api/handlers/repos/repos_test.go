@@ -10,7 +10,7 @@ import (
 	"github.com/go-openapi/runtime"
 	"github.com/kubernetes-helm/monocular/src/api/config"
 	"github.com/kubernetes-helm/monocular/src/api/data/cache"
-	"github.com/kubernetes-helm/monocular/src/api/data/util"
+	"github.com/kubernetes-helm/monocular/src/api/data/pointerto"
 	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
 	reposapi "github.com/kubernetes-helm/monocular/src/api/swagger/restapi/operations/repositories"
 	"github.com/kubernetes-helm/monocular/src/api/testutil"
@@ -35,12 +35,12 @@ func TestGetAllRepos200(t *testing.T) {
 func setupTestRepoCache() {
 	repos := []models.Repo{
 		models.Repo{
-			Name: util.StrToPtr("stable"),
-			URL:  util.StrToPtr("http://storage.googleapis.com/kubernetes-charts"),
+			Name: pointerto.String("stable"),
+			URL:  pointerto.String("http://storage.googleapis.com/kubernetes-charts"),
 		},
 		models.Repo{
-			Name: util.StrToPtr("incubator"),
-			URL:  util.StrToPtr("http://storage.googleapis.com/kubernetes-charts-incubator"),
+			Name: pointerto.String("incubator"),
+			URL:  pointerto.String("http://storage.googleapis.com/kubernetes-charts-incubator"),
 		},
 	}
 	cache.NewCachedRepos(repos)

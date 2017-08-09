@@ -6,19 +6,19 @@ import (
 	"github.com/arschles/assert"
 
 	"github.com/kubernetes-helm/monocular/src/api/data"
-	"github.com/kubernetes-helm/monocular/src/api/data/util"
+	"github.com/kubernetes-helm/monocular/src/api/data/pointerto"
 	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
 )
 
 func TestNewCachedRepos(t *testing.T) {
 	testRepo := models.Repo{
-		Name:   util.StrToPtr("repoName"),
-		URL:    util.StrToPtr("http://myrepobucket"),
+		Name:   pointerto.String("repoName"),
+		URL:    pointerto.String("http://myrepobucket"),
 		Source: "http://github.com/my-repo",
 	}
 	testRepo2 := models.Repo{
-		Name: util.StrToPtr("repoName2"),
-		URL:  util.StrToPtr("http://myrepobucket2"),
+		Name: pointerto.String("repoName2"),
+		URL:  pointerto.String("http://myrepobucket2"),
 	}
 	tests := []struct {
 		name     string

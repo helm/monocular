@@ -4,9 +4,8 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/kubernetes-helm/monocular/src/api/data/util"
-
 	log "github.com/Sirupsen/logrus"
+	"github.com/kubernetes-helm/monocular/src/api/data/pointerto"
 	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
 
 	yaml "gopkg.in/yaml.v2"
@@ -21,13 +20,13 @@ type reposYAML struct {
 
 var official = Repos{
 	models.Repo{
-		Name:   util.StrToPtr("stable"),
-		URL:    util.StrToPtr("https://kubernetes-charts.storage.googleapis.com"),
+		Name:   pointerto.String("stable"),
+		URL:    pointerto.String("https://kubernetes-charts.storage.googleapis.com"),
 		Source: "https://github.com/kubernetes/charts/tree/master/stable",
 	},
 	models.Repo{
-		Name:   util.StrToPtr("incubator"),
-		URL:    util.StrToPtr("https://kubernetes-charts-incubator.storage.googleapis.com"),
+		Name:   pointerto.String("incubator"),
+		URL:    pointerto.String("https://kubernetes-charts-incubator.storage.googleapis.com"),
 		Source: "https://github.com/kubernetes/charts/tree/master/incubator",
 	},
 }

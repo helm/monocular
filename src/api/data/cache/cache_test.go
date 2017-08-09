@@ -10,7 +10,7 @@ import (
 	"github.com/kubernetes-helm/monocular/src/api/data"
 	"github.com/kubernetes-helm/monocular/src/api/data/cache/charthelper"
 	"github.com/kubernetes-helm/monocular/src/api/data/helpers"
-	"github.com/kubernetes-helm/monocular/src/api/data/util"
+	"github.com/kubernetes-helm/monocular/src/api/data/pointerto"
 	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
 	"github.com/kubernetes-helm/monocular/src/api/swagger/restapi/operations/charts"
 	"github.com/kubernetes-helm/monocular/src/api/testutil"
@@ -109,8 +109,8 @@ func TestCachedChartsRefreshErrorPropagation(t *testing.T) {
 	// Invalid repo URL
 	rep := []models.Repo{
 		models.Repo{
-			Name: util.StrToPtr("stable"),
-			URL:  util.StrToPtr("./localhost"),
+			Name: pointerto.String("stable"),
+			URL:  pointerto.String("./localhost"),
 		},
 	}
 	setupTestRepoCache(&rep)
@@ -122,8 +122,8 @@ func TestCachedChartsRefreshErrorPropagation(t *testing.T) {
 	// Repo does not exist
 	rep = repos.Repos{
 		models.Repo{
-			Name: util.StrToPtr("stable"),
-			URL:  util.StrToPtr("http://localhost"),
+			Name: pointerto.String("stable"),
+			URL:  pointerto.String("http://localhost"),
 		},
 	}
 	setupTestRepoCache(&rep)
@@ -147,8 +147,8 @@ func TestCachedChartsRefreshErrorDownloadingPackage(t *testing.T) {
 
 	repos := []models.Repo{
 		models.Repo{
-			Name: util.StrToPtr("stable"),
-			URL:  util.StrToPtr("http://storage.googleapis.com/kubernetes-charts"),
+			Name: pointerto.String("stable"),
+			URL:  pointerto.String("http://storage.googleapis.com/kubernetes-charts"),
 		},
 	}
 	setupTestRepoCache(&repos)
@@ -176,12 +176,12 @@ func setupTestRepoCache(repos *[]models.Repo) {
 	if repos == nil {
 		repos = &[]models.Repo{
 			models.Repo{
-				Name: util.StrToPtr("stable"),
-				URL:  util.StrToPtr("http://storage.googleapis.com/kubernetes-charts"),
+				Name: pointerto.String("stable"),
+				URL:  pointerto.String("http://storage.googleapis.com/kubernetes-charts"),
 			},
 			models.Repo{
-				Name: util.StrToPtr("incubator"),
-				URL:  util.StrToPtr("http://storage.googleapis.com/kubernetes-charts-incubator"),
+				Name: pointerto.String("incubator"),
+				URL:  pointerto.String("http://storage.googleapis.com/kubernetes-charts-incubator"),
 			},
 		}
 	}
