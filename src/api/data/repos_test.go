@@ -14,6 +14,7 @@ func TestRepo_ModelId(t *testing.T) {
 		want string
 	}{
 		{"stable repo id", &Repo{Name: pointerto.String("stable")}, "stable"},
+		{"no id (unexpected)", &Repo{}, "<nil>"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
