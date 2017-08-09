@@ -6,7 +6,6 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/arschles/assert"
-	"github.com/kubernetes-helm/monocular/src/api/config"
 	"github.com/kubernetes-helm/monocular/src/api/config/repos"
 	"github.com/kubernetes-helm/monocular/src/api/data"
 	"github.com/kubernetes-helm/monocular/src/api/data/cache/charthelper"
@@ -174,7 +173,6 @@ func getChartsImplementation() data.Charts {
 }
 
 func setupTestRepoCache(repos *[]models.Repo) {
-	config.NewRedisPool()
 	if repos == nil {
 		repos = &[]models.Repo{
 			models.Repo{
@@ -193,9 +191,6 @@ func setupTestRepoCache(repos *[]models.Repo) {
 
 func teardownTestRepoCache() {
 	if _, err := Repos.DeleteAll(); err != nil {
-		log.Fatal("could not clear cache")
-	}
-	if err := config.Pool.Close(); err != nil {
-		log.Fatal("could not close redis pool")
+		log.Fatal("could not clear cache ", err)
 	}
 }

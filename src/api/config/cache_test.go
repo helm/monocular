@@ -7,12 +7,11 @@ import (
 	"github.com/arschles/assert"
 )
 
-func TestNewRedisPool(t *testing.T) {
+func TestGetRedisPool(t *testing.T) {
 	currentConfig = Configuration{}
-	NewRedisPool()
-	assert.NotNil(t, Pool, "Redis Pool")
-	err := Pool.Close()
-	assert.NoErr(t, err)
+	pool := GetRedisPool()
+	assert.NotNil(t, pool, "Redis Pool")
+	CloseRedisPool()
 }
 
 func Test_getRedisConf(t *testing.T) {

@@ -1,6 +1,8 @@
 package cache
 
 import (
+	"sync"
+
 	log "github.com/Sirupsen/logrus"
 	"github.com/albrow/zoom"
 	"github.com/kubernetes-helm/monocular/src/api/config"
@@ -11,14 +13,18 @@ import (
 // Repos is a Zoom Collection for the Repo model
 var Repos *zoom.Collection
 
+var once sync.Once
+
 // NewCachedRepos sets up a Zoom collection of repositories
 func NewCachedRepos(repos []models.Repo) {
 	log.Info("setting up Repos collection")
 	var err error
-	Repos, err = config.Pool.NewCollectionWithOptions(&data.Repo{}, zoom.DefaultCollectionOptions.WithIndex(true))
-	if err != nil {
-		log.Fatal("unable to create new Repo collection: ", err)
-	}
+	once.Do(func() {
+		Repos, err = config.GetRedisPool().NewCollectionWithOptions(&data.Repo{}, zoom.DefaultCollectionOptions.WithIndex(true))
+		if err != nil {
+			log.Fatal("unable to create new Repo collection: ", err)
+		}
+	})
 	for _, r := range repos {
 		// Convert to Zoom model
 		repo := data.Repo(r)

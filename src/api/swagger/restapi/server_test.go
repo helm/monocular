@@ -10,7 +10,6 @@ import (
 
 	"github.com/arschles/assert"
 	"github.com/go-openapi/loads"
-	"github.com/kubernetes-helm/monocular/src/api/config"
 	"github.com/kubernetes-helm/monocular/src/api/data"
 	"github.com/kubernetes-helm/monocular/src/api/data/cache"
 	"github.com/kubernetes-helm/monocular/src/api/data/helpers"
@@ -26,7 +25,6 @@ var chartsImplementation = getChartsImplementation()
 
 // tests the GET /healthz endpoint
 func TestGetHealthz(t *testing.T) {
-	setupTestRepoCache()
 	defer teardownTestRepoCache()
 	srv, err := newServer()
 	assert.NoErr(t, err)
@@ -39,7 +37,6 @@ func TestGetHealthz(t *testing.T) {
 
 // tests the GET /{:apiVersion}/charts endpoint
 func TestGetCharts(t *testing.T) {
-	setupTestRepoCache()
 	defer teardownTestRepoCache()
 	srv, err := newServer()
 	assert.NoErr(t, err)
@@ -58,7 +55,6 @@ func TestGetCharts(t *testing.T) {
 
 // tests the GET /{:apiVersion}/charts/{:repo} endpoint 200 response
 func TestGetChartsInRepo200(t *testing.T) {
-	setupTestRepoCache()
 	defer teardownTestRepoCache()
 	srv, err := newServer()
 	assert.NoErr(t, err)
@@ -78,7 +74,6 @@ func TestGetChartsInRepo200(t *testing.T) {
 
 // tests the GET /{:apiVersion}/charts/{:repo} endpoint 404 response
 func TestGetChartsInRepo404(t *testing.T) {
-	setupTestRepoCache()
 	defer teardownTestRepoCache()
 	srv, err := newServer()
 	assert.NoErr(t, err)
@@ -94,7 +89,6 @@ func TestGetChartsInRepo404(t *testing.T) {
 
 // tests the GET /{:apiVersion}/charts/{:repo}/{:chart} endpoint 200 response
 func TestGetChartInRepo200(t *testing.T) {
-	setupTestRepoCache()
 	defer teardownTestRepoCache()
 	srv, err := newServer()
 	assert.NoErr(t, err)
@@ -114,7 +108,6 @@ func TestGetChartInRepo200(t *testing.T) {
 
 // tests the GET /{:apiVersion}/charts/{:repo}/{:chart} endpoint 404 response
 func TestGetChartInRepo404(t *testing.T) {
-	setupTestRepoCache()
 	defer teardownTestRepoCache()
 	srv, err := newServer()
 	assert.NoErr(t, err)
@@ -130,7 +123,6 @@ func TestGetChartInRepo404(t *testing.T) {
 
 // tests the GET /{:apiVersion}/charts/{:repo}/{:chart}/version endpoint 200 response
 func TestGetChartVersion200(t *testing.T) {
-	setupTestRepoCache()
 	defer teardownTestRepoCache()
 	srv, err := newServer()
 	assert.NoErr(t, err)
@@ -150,7 +142,6 @@ func TestGetChartVersion200(t *testing.T) {
 
 // tests the GET /{:apiVersion}/charts/{:repo}/{:chart}/version endpoint 404 response
 func TestGetChartVersion404(t *testing.T) {
-	setupTestRepoCache()
 	defer teardownTestRepoCache()
 	srv, err := newServer()
 	assert.NoErr(t, err)
@@ -166,7 +157,6 @@ func TestGetChartVersion404(t *testing.T) {
 
 // tests the GET /{:apiVersion}/charts/{:repo}/{:chart}/version endpoint 200 response
 func TestGetChartVersions200(t *testing.T) {
-	setupTestRepoCache()
 	defer teardownTestRepoCache()
 	srv, err := newServer()
 	assert.NoErr(t, err)
@@ -185,7 +175,6 @@ func TestGetChartVersions200(t *testing.T) {
 
 // tests the GET /{:apiVersion}/charts/{:repo}/{:chart}/version endpoint 404 response
 func TestGetChartVersions404(t *testing.T) {
-	setupTestRepoCache()
 	defer teardownTestRepoCache()
 	srv, err := newServer()
 	assert.NoErr(t, err)
@@ -221,15 +210,8 @@ func getChartsImplementation() data.Charts {
 	return chartsImplementation
 }
 
-func setupTestRepoCache() {
-	config.NewRedisPool()
-}
-
 func teardownTestRepoCache() {
 	if _, err := cache.Repos.DeleteAll(); err != nil {
 		log.Fatal("could not clear cache: ", err)
-	}
-	if err := config.Pool.Close(); err != nil {
-		log.Fatal("could not close redis pool")
 	}
 }

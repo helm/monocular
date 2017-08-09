@@ -47,13 +47,7 @@ func main() {
 		os.Exit(code)
 	}
 
-	config.NewRedisPool()
-	defer func() {
-		if err := config.Pool.Close(); err != nil {
-			log.Println("could not close redis pool")
-		}
-	}()
-
+	defer config.CloseRedisPool()
 	server.ConfigureAPI()
 
 	if err := server.Serve(); err != nil {

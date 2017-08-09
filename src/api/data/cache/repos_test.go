@@ -5,7 +5,6 @@ import (
 
 	"github.com/arschles/assert"
 
-	"github.com/kubernetes-helm/monocular/src/api/config"
 	"github.com/kubernetes-helm/monocular/src/api/data"
 	"github.com/kubernetes-helm/monocular/src/api/data/util"
 	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
@@ -32,7 +31,6 @@ func TestNewCachedRepos(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			config.NewRedisPool()
 			defer teardownTestRepoCache()
 			NewCachedRepos(tt.repos)
 			assert.NotNil(t, Repos, "Repos collection created")

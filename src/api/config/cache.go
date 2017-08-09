@@ -1,24 +1,45 @@
 package config
 
 import (
+	"sync"
+
 	log "github.com/Sirupsen/logrus"
 	"github.com/albrow/zoom"
 )
 
-// Pool is a pool of Zoom connections used by other packages
-var Pool *zoom.Pool
-
 const defaultHost = "localhost:6379"
+
+// Pool is a pool of Zoom connections used by other packages
+var pool *zoom.Pool
+
+var once sync.Once
 
 type redisConfig struct {
 	Host string
 }
 
-// NewRedisPool initializes the pool of Zoom connections
-func NewRedisPool() *zoom.Pool {
+// GetRedisPool returns a pool of Zoom connections
+func GetRedisPool() *zoom.Pool {
+	once.Do(func() {
+		pool = newRedisPool()
+	})
+	return pool
+}
+
+// CloseRedisPool closes a pool of Zoom connections
+func CloseRedisPool() {
+	if pool == nil {
+		return
+	}
+	if err := pool.Close(); err != nil {
+		log.Fatalf("unable to close pool")
+	}
+	pool = nil
+}
+
+func newRedisPool() *zoom.Pool {
 	config := getRedisConf()
-	Pool = zoom.NewPool(config.Host)
-	return Pool
+	return zoom.NewPool(config.Host)
 }
 
 func getRedisConf() redisConfig {

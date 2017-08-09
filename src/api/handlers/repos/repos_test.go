@@ -17,7 +17,7 @@ import (
 )
 
 func TestGetAllRepos200(t *testing.T) {
-	setupTestRepoCache(nil)
+	setupTestRepoCache()
 	defer teardownTestRepoCache()
 	w := httptest.NewRecorder()
 	params := reposapi.GetAllReposParams{}
@@ -32,28 +32,22 @@ func TestGetAllRepos200(t *testing.T) {
 	assert.Equal(t, len(config.Repos), len(httpBody.Data), "Returns the enabled repos")
 }
 
-func setupTestRepoCache(repos *[]models.Repo) {
-	config.NewRedisPool()
-	if repos == nil {
-		repos = &[]models.Repo{
-			models.Repo{
-				Name: util.StrToPtr("stable"),
-				URL:  util.StrToPtr("http://storage.googleapis.com/kubernetes-charts"),
-			},
-			models.Repo{
-				Name: util.StrToPtr("incubator"),
-				URL:  util.StrToPtr("http://storage.googleapis.com/kubernetes-charts-incubator"),
-			},
-		}
+func setupTestRepoCache() {
+	repos := []models.Repo{
+		models.Repo{
+			Name: util.StrToPtr("stable"),
+			URL:  util.StrToPtr("http://storage.googleapis.com/kubernetes-charts"),
+		},
+		models.Repo{
+			Name: util.StrToPtr("incubator"),
+			URL:  util.StrToPtr("http://storage.googleapis.com/kubernetes-charts-incubator"),
+		},
 	}
-	cache.NewCachedRepos(*repos)
+	cache.NewCachedRepos(repos)
 }
 
 func teardownTestRepoCache() {
 	if _, err := cache.Repos.DeleteAll(); err != nil {
 		log.Fatal("could not clear cache")
-	}
-	if err := config.Pool.Close(); err != nil {
-		log.Fatal("could not close redis pool")
 	}
 }
