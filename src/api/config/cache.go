@@ -26,17 +26,6 @@ func GetRedisPool() *zoom.Pool {
 	return pool
 }
 
-// CloseRedisPool closes a pool of Zoom connections
-func CloseRedisPool() {
-	if pool == nil {
-		return
-	}
-	if err := pool.Close(); err != nil {
-		log.Fatalf("unable to close pool")
-	}
-	pool = nil
-}
-
 func newRedisPool() *zoom.Pool {
 	config := getRedisConf()
 	return zoom.NewPool(config.Host)

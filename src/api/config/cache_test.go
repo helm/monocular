@@ -11,7 +11,6 @@ func TestGetRedisPool(t *testing.T) {
 	currentConfig = Configuration{}
 	pool := GetRedisPool()
 	assert.NotNil(t, pool, "Redis Pool")
-	CloseRedisPool()
 }
 
 func Test_getRedisConf(t *testing.T) {
