@@ -26,7 +26,7 @@ func TestNewRefreshData(t *testing.T) {
 
 func TestNewRefreshDataError(t *testing.T) {
 	repos := []models.Repo{
-		models.Repo{
+		{
 			Name: pointerto.String("waps"),
 			URL:  pointerto.String("./localhost"),
 		},

@@ -108,7 +108,7 @@ func TestCachedChartsRefresh(t *testing.T) {
 func TestCachedChartsRefreshErrorPropagation(t *testing.T) {
 	// Invalid repo URL
 	rep := []models.Repo{
-		models.Repo{
+		{
 			Name: pointerto.String("stable"),
 			URL:  pointerto.String("./localhost"),
 		},
@@ -121,7 +121,7 @@ func TestCachedChartsRefreshErrorPropagation(t *testing.T) {
 	teardownTestRepoCache()
 	// Repo does not exist
 	rep = repos.Repos{
-		models.Repo{
+		{
 			Name: pointerto.String("stable"),
 			URL:  pointerto.String("http://localhost"),
 		},
@@ -146,7 +146,7 @@ func TestCachedChartsRefreshErrorDownloadingPackage(t *testing.T) {
 	}
 
 	repos := []models.Repo{
-		models.Repo{
+		{
 			Name: pointerto.String("stable"),
 			URL:  pointerto.String("http://storage.googleapis.com/kubernetes-charts"),
 		},
@@ -175,11 +175,11 @@ func getChartsImplementation() data.Charts {
 func setupTestRepoCache(repos *[]models.Repo) {
 	if repos == nil {
 		repos = &[]models.Repo{
-			models.Repo{
+			{
 				Name: pointerto.String("stable"),
 				URL:  pointerto.String("http://storage.googleapis.com/kubernetes-charts"),
 			},
-			models.Repo{
+			{
 				Name: pointerto.String("incubator"),
 				URL:  pointerto.String("http://storage.googleapis.com/kubernetes-charts-incubator"),
 			},
