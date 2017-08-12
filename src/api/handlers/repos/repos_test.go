@@ -34,20 +34,25 @@ func TestGetAllRepos200(t *testing.T) {
 
 func setupTestRepoCache() {
 	repos := []models.Repo{
-		models.Repo{
+		{
 			Name: pointerto.String("stable"),
 			URL:  pointerto.String("http://storage.googleapis.com/kubernetes-charts"),
 		},
-		models.Repo{
+		{
 			Name: pointerto.String("incubator"),
 			URL:  pointerto.String("http://storage.googleapis.com/kubernetes-charts-incubator"),
 		},
 	}
-	cache.NewCachedRepos(repos)
+	cache.UpdateCache(repos)
 }
 
 func teardownTestRepoCache() {
-	if _, err := cache.Repos.DeleteAll(); err != nil {
-		log.Fatal("could not clear cache")
+	reposCollection, err := cache.GetRepos()
+	if err != nil {
+		log.Fatal("could not get Repos collection ", err)
+	}
+	_, err = reposCollection.DeleteAll()
+	if err != nil {
+		log.Fatal("could not clear cache ", err)
 	}
 }

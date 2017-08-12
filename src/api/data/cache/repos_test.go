@@ -10,7 +10,7 @@ import (
 	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
 )
 
-func TestNewCachedRepos(t *testing.T) {
+func TestUpdateCache(t *testing.T) {
 	testRepo := models.Repo{
 		Name:   pointerto.String("repoName"),
 		URL:    pointerto.String("http://myrepobucket"),
@@ -32,14 +32,15 @@ func TestNewCachedRepos(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			defer teardownTestRepoCache()
-			NewCachedRepos(tt.repos)
-			assert.NotNil(t, Repos, "Repos collection created")
-			numRepos, err := Repos.Count()
+			UpdateCache(tt.repos)
+			reposCollection, err := GetRepos()
+			assert.NotNil(t, reposCollection, "Repos collection created")
+			numRepos, err := reposCollection.Count()
 			assert.NoErr(t, err)
 			assert.Equal(t, numRepos, tt.numRepos, tt.name)
 			for _, r := range tt.repos {
 				repo := data.Repo{}
-				err := Repos.Find(*r.Name, &repo)
+				err := reposCollection.Find(*r.Name, &repo)
 				assert.NoErr(t, err)
 				assert.Equal(t, *repo.Name, *r.Name, tt.name)
 				assert.Equal(t, *repo.URL, *r.URL, tt.name)

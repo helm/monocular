@@ -9,10 +9,10 @@ import (
 
 const defaultHost = "localhost:6379"
 
-// Pool is a pool of Zoom connections used by other packages
-var pool *zoom.Pool
-
-var once sync.Once
+var (
+	pool *zoom.Pool
+	once sync.Once
+)
 
 type redisConfig struct {
 	Host string

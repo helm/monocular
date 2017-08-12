@@ -211,7 +211,12 @@ func getChartsImplementation() data.Charts {
 }
 
 func teardownTestRepoCache() {
-	if _, err := cache.Repos.DeleteAll(); err != nil {
-		log.Fatal("could not clear cache: ", err)
+	reposCollection, err := cache.GetRepos()
+	if err != nil {
+		log.Fatal("could not get Repos collection ", err)
+	}
+	_, err = reposCollection.DeleteAll()
+	if err != nil {
+		log.Fatal("could not clear cache ", err)
 	}
 }

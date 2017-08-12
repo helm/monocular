@@ -185,12 +185,17 @@ func setupTestRepoCache(repos *[]models.Repo) {
 			},
 		}
 	}
-	NewCachedRepos(*repos)
+	UpdateCache(*repos)
 	chartsImplementation.Refresh()
 }
 
 func teardownTestRepoCache() {
-	if _, err := Repos.DeleteAll(); err != nil {
+	reposCollection, err := GetRepos()
+	if err != nil {
+		log.Fatal("could not get Repos collection ", err)
+	}
+	_, err = reposCollection.DeleteAll()
+	if err != nil {
 		log.Fatal("could not clear cache ", err)
 	}
 }

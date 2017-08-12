@@ -43,7 +43,7 @@ func configureAPI(api *operations.MonocularAPI) http.Handler {
 	}
 
 	// configure the api here
-	cache.NewCachedRepos(conf.Repos)
+	cache.UpdateCache(conf.Repos)
 	chartsImplementation := cache.NewCachedCharts()
 	// Run foreground repository refresh
 	chartsImplementation.Refresh()

@@ -93,8 +93,12 @@ func (c *cachedCharts) All() ([]*models.ChartPackage, error) {
 	c.rwm.RLock()
 	defer c.rwm.RUnlock()
 	var allCharts []*models.ChartPackage
+	reposCollection, err := GetRepos()
+	if err != nil {
+		return nil, err
+	}
 	repos := []*data.Repo{}
-	Repos.FindAll(&repos)
+	reposCollection.FindAll(&repos)
 	// TODO: parallellize this, it won't scale well with lots of repos
 	for _, repo := range repos {
 		var charts []*models.ChartPackage
@@ -132,8 +136,12 @@ func (c *cachedCharts) Refresh() error {
 		"path": charthelper.DataDirBase(),
 	}).Info("Using cache directory")
 
+	reposCollection, err := GetRepos()
+	if err != nil {
+		return err
+	}
 	repos := []*data.Repo{}
-	Repos.FindAll(&repos)
+	reposCollection.FindAll(&repos)
 	for _, repo := range repos {
 		u, _ := url.Parse(*repo.URL)
 		u.Path = path.Join(u.Path, "index.yaml")
