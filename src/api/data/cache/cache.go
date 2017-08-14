@@ -97,7 +97,7 @@ func (c *cachedCharts) All() ([]*models.ChartPackage, error) {
 	if err != nil {
 		return nil, err
 	}
-	repos := []*data.Repo{}
+	var repos []*data.Repo
 	reposCollection.FindAll(&repos)
 	// TODO: parallellize this, it won't scale well with lots of repos
 	for _, repo := range repos {
@@ -140,7 +140,7 @@ func (c *cachedCharts) Refresh() error {
 	if err != nil {
 		return err
 	}
-	repos := []*data.Repo{}
+	var repos []*data.Repo
 	reposCollection.FindAll(&repos)
 	for _, repo := range repos {
 		u, _ := url.Parse(*repo.URL)

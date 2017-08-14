@@ -116,7 +116,7 @@ func TestMakeRepoResource(t *testing.T) {
 func TestMakeRepoResources(t *testing.T) {
 	config, err := config.GetConfig()
 	assert.NoErr(t, err)
-	repos := []*data.Repo{}
+	var repos []*data.Repo
 	for _, r := range config.Repos {
 		repo := data.Repo(r)
 		repos = append(repos, &repo)

@@ -295,7 +295,7 @@ func getRepoObject(chart *models.ChartPackage) *models.Repo {
 	if err != nil {
 		log.Fatal("could not get Repo collection", err)
 	}
-	repos := []*data.Repo{}
+	var repos []*data.Repo
 	reposCollection.FindAll(&repos)
 
 	var repoPayload models.Repo

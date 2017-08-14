@@ -20,7 +20,7 @@ func GetRepos(params reposapi.GetAllReposParams) middleware.Responder {
 			&models.Error{Code: pointerto.Int64(http.StatusInternalServerError), Message: pointerto.String("Internal server error")},
 		)
 	}
-	repos := []*data.Repo{}
+	var repos []*data.Repo
 	reposCollection.FindAll(&repos)
 	resources := helpers.MakeRepoResources(repos)
 

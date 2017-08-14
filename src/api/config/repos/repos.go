@@ -19,12 +19,12 @@ type reposYAML struct {
 }
 
 var official = Repos{
-	models.Repo{
+	{
 		Name:   pointerto.String("stable"),
 		URL:    pointerto.String("https://kubernetes-charts.storage.googleapis.com"),
 		Source: "https://github.com/kubernetes/charts/tree/master/stable",
 	},
-	models.Repo{
+	{
 		Name:   pointerto.String("incubator"),
 		URL:    pointerto.String("https://kubernetes-charts-incubator.storage.googleapis.com"),
 		Source: "https://github.com/kubernetes/charts/tree/master/incubator",
