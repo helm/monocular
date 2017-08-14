@@ -2,10 +2,13 @@ package mocks
 
 import (
 	"errors"
+	"log"
 	"testing"
 
 	"github.com/arschles/assert"
+	"github.com/kubernetes-helm/monocular/src/api/data"
 	"github.com/kubernetes-helm/monocular/src/api/data/helpers"
+	"github.com/kubernetes-helm/monocular/src/api/data/pointerto"
 	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
 	"github.com/kubernetes-helm/monocular/src/api/swagger/restapi/operations/charts"
 	"github.com/kubernetes-helm/monocular/src/api/testutil"
@@ -70,6 +73,8 @@ func TestMockChartsAllWithMockedMethod(t *testing.T) {
 }
 
 func TestMockChartsSearch(t *testing.T) {
+	setupTestRepoCache()
+	defer teardownTestRepoCache()
 	params := charts.SearchChartsParams{
 		Name: "drupal",
 	}
@@ -101,4 +106,25 @@ func TestMockChartsAllFromRepo(t *testing.T) {
 	noCharts, err := chartsImplementation.AllFromRepo(testutil.BogusRepo)
 	assert.ExistsErr(t, err, "sent bogus repo name to GetChartsInRepo")
 	assert.True(t, len(noCharts) == 0, "empty charts slice")
+}
+
+func setupTestRepoCache() {
+	repos := []models.Repo{
+		{
+			Name: pointerto.String(testutil.RepoName),
+			URL:  pointerto.String("http://myrepobucket"),
+		},
+	}
+	data.UpdateCache(repos)
+}
+
+func teardownTestRepoCache() {
+	reposCollection, err := data.GetRepos()
+	if err != nil {
+		log.Fatal("could not get Repos collection ", err)
+	}
+	_, err = reposCollection.DeleteAll()
+	if err != nil {
+		log.Fatal("could not clear cache ", err)
+	}
 }

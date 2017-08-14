@@ -305,5 +305,6 @@ func getRepoObject(chart *models.ChartPackage) *models.Repo {
 			return &repoPayload
 		}
 	}
+	log.WithFields(log.Fields{"repo": chart.Repo, "chart": *chart.Name}).Error("could not find repo for chart")
 	return &repoPayload
 }

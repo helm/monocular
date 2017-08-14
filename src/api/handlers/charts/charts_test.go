@@ -2,13 +2,16 @@ package charts
 
 import (
 	"errors"
+	"log"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	"github.com/arschles/assert"
 	"github.com/go-openapi/runtime"
+	"github.com/kubernetes-helm/monocular/src/api/data"
 	"github.com/kubernetes-helm/monocular/src/api/data/helpers"
+	"github.com/kubernetes-helm/monocular/src/api/data/pointerto"
 	"github.com/kubernetes-helm/monocular/src/api/handlers"
 	"github.com/kubernetes-helm/monocular/src/api/mocks"
 	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
@@ -117,6 +120,8 @@ func TestGetChartVersions404(t *testing.T) {
 }
 
 func TestGetAllCharts200(t *testing.T) {
+	setupTestRepoCache()
+	defer teardownTestRepoCache()
 	w := httptest.NewRecorder()
 	params := chartsapi.GetAllChartsParams{}
 	resp := GetAllCharts(params, chartsImplementation)
@@ -149,6 +154,8 @@ func TestGetAllCharts404(t *testing.T) {
 }
 
 func TestSearchCharts200(t *testing.T) {
+	setupTestRepoCache()
+	defer teardownTestRepoCache()
 	w := httptest.NewRecorder()
 	params := chartsapi.SearchChartsParams{
 		Name: "drupal",
@@ -186,6 +193,8 @@ func TestSearchCharts404(t *testing.T) {
 }
 
 func TestGetChartsInRepo200(t *testing.T) {
+	setupTestRepoCache()
+	defer teardownTestRepoCache()
 	charts, err := chartsImplementation.AllFromRepo(testutil.RepoName)
 	numCharts := len(helpers.MakeChartResources(charts))
 	assert.NoErr(t, err)
@@ -233,6 +242,8 @@ func TestChartHTTPBody(t *testing.T) {
 }
 
 func TestChartsHTTPBody(t *testing.T) {
+	setupTestRepoCache()
+	defer teardownTestRepoCache()
 	w := httptest.NewRecorder()
 	charts, err := chartsImplementation.All()
 	assert.NoErr(t, err)
@@ -266,4 +277,29 @@ func TestNotFound(t *testing.T) {
 	assert.Equal(t, w.Code, http.StatusNotFound, "expect a 404 response code")
 	assert.NoErr(t, testutil.ErrorModelFromJSON(w.Body, &httpBody2))
 	testutil.AssertErrBodyData(t, http.StatusNotFound, resource2, httpBody2)
+}
+
+func setupTestRepoCache() {
+	repos := []models.Repo{
+		{
+			Name: pointerto.String("stable"),
+			URL:  pointerto.String("http://storage.googleapis.com/kubernetes-charts"),
+		},
+		{
+			Name: pointerto.String("incubator"),
+			URL:  pointerto.String("http://storage.googleapis.com/kubernetes-charts-incubator"),
+		},
+	}
+	data.UpdateCache(repos)
+}
+
+func teardownTestRepoCache() {
+	reposCollection, err := data.GetRepos()
+	if err != nil {
+		log.Fatal("could not get Repos collection ", err)
+	}
+	_, err = reposCollection.DeleteAll()
+	if err != nil {
+		log.Fatal("could not clear cache ", err)
+	}
 }
