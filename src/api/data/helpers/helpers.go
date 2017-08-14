@@ -6,11 +6,11 @@ import (
 	"github.com/Masterminds/semver"
 	log "github.com/Sirupsen/logrus"
 	"github.com/ghodss/yaml"
-	"github.com/kubernetes-helm/monocular/src/api/config"
-	"github.com/kubernetes-helm/monocular/src/api/config/repos"
+	"github.com/kubernetes-helm/monocular/src/api/data"
 	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
 
 	"github.com/kubernetes-helm/monocular/src/api/data/cache/charthelper"
+	"github.com/kubernetes-helm/monocular/src/api/data/pointerto"
 )
 
 // APIVer1String is the API version 1 string we include in route URLs
@@ -58,8 +58,8 @@ func ParseYAMLRepo(rawYAML []byte, repoName string) ([]*models.ChartPackage, err
 // MakeChartResource composes a Resource type that represents a repo+chart
 func MakeChartResource(chart *models.ChartPackage) *models.Resource {
 	var ret models.Resource
-	ret.Type = StrToPtr("chart")
-	ret.ID = StrToPtr(MakeChartID(chart.Repo, *chart.Name))
+	ret.Type = pointerto.String("chart")
+	ret.ID = pointerto.String(MakeChartID(chart.Repo, *chart.Name))
 	ret.Attributes = &models.Chart{
 		Repo:        getRepoObject(chart),
 		Name:        chart.Name,
@@ -74,23 +74,19 @@ func MakeChartResource(chart *models.ChartPackage) *models.Resource {
 }
 
 // MakeRepoResource composes a Resource type that represents a repository
-func MakeRepoResource(repo repos.Repo) *models.Resource {
+func MakeRepoResource(repo models.Repo) *models.Resource {
 	var ret models.Resource
-	ret.Type = StrToPtr("repository")
-	ret.ID = StrToPtr(repo.Name)
-	ret.Attributes = &models.Repo{
-		Name:   &repo.Name,
-		URL:    &repo.URL,
-		Source: repo.Source,
-	}
+	ret.Type = pointerto.String("repository")
+	ret.ID = repo.Name
+	ret.Attributes = &repo
 	return &ret
 }
 
 // MakeRepoResources returns an array of RepoResources
-func MakeRepoResources(repos []repos.Repo) []*models.Resource {
+func MakeRepoResources(repos []*data.Repo) []*models.Resource {
 	var reposResource []*models.Resource
 	for _, repo := range repos {
-		resource := MakeRepoResource(repo)
+		resource := MakeRepoResource(models.Repo(*repo))
 		reposResource = append(reposResource, resource)
 	}
 	return reposResource
@@ -118,8 +114,8 @@ func MakeChartResources(charts []*models.ChartPackage) []*models.Resource {
 // MakeChartVersionResource composes a Resource type that represents a chartVersion
 func MakeChartVersionResource(chart *models.ChartPackage) *models.Resource {
 	var ret models.Resource
-	ret.Type = StrToPtr("chartVersion")
-	ret.ID = StrToPtr(MakeChartVersionID(chart.Repo, *chart.Name, *chart.Version))
+	ret.Type = pointerto.String("chartVersion")
+	ret.ID = pointerto.String(MakeChartVersionID(chart.Repo, *chart.Name, *chart.Version))
 	ret.Attributes = &models.ChartVersion{
 		Created:    chart.Created,
 		Digest:     chart.Digest,
@@ -149,7 +145,7 @@ func AddChartRelationship(resource *models.Resource, chartPackage *models.ChartP
 	resource.Relationships = &models.ChartRelationship{
 		Chart: &models.ChartAsRelationship{
 			Links: &models.ResourceLink{
-				Self: StrToPtr(MakeRepoChartRouteURL(APIVer1String, chartPackage.Repo, *chartPackage.Name)),
+				Self: pointerto.String(MakeRepoChartRouteURL(APIVer1String, chartPackage.Repo, *chartPackage.Name)),
 			},
 			Data: &models.Chart{
 				Name:        chartPackage.Name,
@@ -168,7 +164,7 @@ func AddLatestChartVersionRelationship(resource *models.Resource, chartPackage *
 	resource.Relationships = &models.LatestChartVersionRelationship{
 		LatestChartVersion: &models.ChartVersionAsRelationship{
 			Links: &models.ResourceLink{
-				Self: StrToPtr(MakeRepoChartVersionRouteURL(APIVer1String, chartPackage.Repo, *chartPackage.Name, *chartPackage.Version)),
+				Self: pointerto.String(MakeRepoChartVersionRouteURL(APIVer1String, chartPackage.Repo, *chartPackage.Name, *chartPackage.Version)),
 			},
 			Data: &models.ChartVersion{
 				Created:    chartPackage.Created,
@@ -186,7 +182,7 @@ func AddLatestChartVersionRelationship(resource *models.Resource, chartPackage *
 // AddCanonicalLink adds a "self" link to a chart resource's canonical API endpoint
 func AddCanonicalLink(resource *models.Resource) {
 	resource.Links = &models.ResourceLink{
-		Self: StrToPtr(MakeRepoChartRouteURL(APIVer1String, *resource.Attributes.(*models.Chart).Repo.Name, *resource.Attributes.(*models.Chart).Name)),
+		Self: pointerto.String(MakeRepoChartRouteURL(APIVer1String, *resource.Attributes.(*models.Chart).Repo.Name, *resource.Attributes.(*models.Chart).Name)),
 	}
 }
 
@@ -280,16 +276,6 @@ func newestSemVer(v1 string, v2 string) (string, error) {
 	return v1, nil
 }
 
-// Int64ToPtr converts an int64 to an *int64
-func Int64ToPtr(n int64) *int64 {
-	return &n
-}
-
-// StrToPtr converts a string to a *string
-func StrToPtr(s string) *string {
-	return &s
-}
-
 func makeAvailableIcons(chart *models.ChartPackage) []*models.Icon {
 	var res []*models.Icon
 	icons := charthelper.AvailableIcons(chart, "/assets")
@@ -305,18 +291,20 @@ func makeReadmeURL(chart *models.ChartPackage) *string {
 }
 
 func getRepoObject(chart *models.ChartPackage) *models.Repo {
-	var repoPayload models.Repo
+	reposCollection, err := data.GetRepos()
+	if err != nil {
+		log.Fatal("could not get Repo collection", err)
+	}
+	var repos []*data.Repo
+	reposCollection.FindAll(&repos)
 
-	config, _ := config.GetConfig()
-	for _, repo := range config.Repos {
-		if repo.Name == chart.Repo {
-			repoPayload = models.Repo{
-				Name:   &repo.Name,
-				URL:    &repo.URL,
-				Source: repo.Source,
-			}
+	var repoPayload models.Repo
+	for _, repo := range repos {
+		if *repo.Name == chart.Repo {
+			repoPayload = models.Repo(*repo)
 			return &repoPayload
 		}
 	}
+	log.WithFields(log.Fields{"repo": chart.Repo, "chart": *chart.Name}).Error("could not find repo for chart")
 	return &repoPayload
 }

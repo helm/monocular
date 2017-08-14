@@ -4,14 +4,17 @@ import (
 	"fmt"
 	"testing"
 
+	log "github.com/Sirupsen/logrus"
 	"github.com/arschles/assert"
 	"github.com/kubernetes-helm/monocular/src/api/config"
+	"github.com/kubernetes-helm/monocular/src/api/data"
 	"github.com/kubernetes-helm/monocular/src/api/data/cache/charthelper"
+	"github.com/kubernetes-helm/monocular/src/api/data/pointerto"
 	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
 )
 
 const (
-	repoName         = "stable"
+	repoName         = "testRepo"
 	chartName        = "apache"
 	chartURL         = "https://storage.googleapis.com/kubernetes-charts/apache-0.0.1.tgz"
 	chartSource      = "https://github.com/kubernetes/charts/apache"
@@ -65,6 +68,8 @@ func TestParseYAMLRepoWithDeprecatedChart(t *testing.T) {
 }
 
 func TestMakeChartResource(t *testing.T) {
+	setupTestRepoCache()
+	defer teardownTestRepoCache()
 	charts, err := ParseYAMLRepo(getTestRepoYAML(), repoName)
 	repo := getRepoObject(charts[0])
 	assert.NoErr(t, err)
@@ -80,6 +85,8 @@ func TestMakeChartResource(t *testing.T) {
 }
 
 func TestMakeChartResources(t *testing.T) {
+	setupTestRepoCache()
+	defer teardownTestRepoCache()
 	charts, err := ParseYAMLRepo(getTestRepoYAML(), repoName)
 	assert.NoErr(t, err)
 	chartsResource := MakeChartResources(charts)
@@ -100,21 +107,25 @@ func TestMakeRepoResource(t *testing.T) {
 	repo := config.Repos[0]
 	repoResource := MakeRepoResource(repo)
 	assert.Equal(t, *repoResource.Type, "repository", "repo resource type field value")
-	assert.Equal(t, *repoResource.ID, repo.Name, "repo resource ID field value")
-	assert.Equal(t, *repoResource.Attributes.(*models.Repo).Name, repo.Name, "repo name")
-	assert.Equal(t, *repoResource.Attributes.(*models.Repo).URL, repo.URL, "repo URL")
+	assert.Equal(t, *repoResource.ID, *repo.Name, "repo resource ID field value")
+	assert.Equal(t, *repoResource.Attributes.(*models.Repo).Name, *repo.Name, "repo name")
+	assert.Equal(t, *repoResource.Attributes.(*models.Repo).URL, *repo.URL, "repo URL")
 	assert.Equal(t, repoResource.Attributes.(*models.Repo).Source, repo.Source, "chart resource Attributes.URL field value")
 }
 
 func TestMakeRepoResources(t *testing.T) {
 	config, err := config.GetConfig()
 	assert.NoErr(t, err)
-	repos := config.Repos
+	var repos []*data.Repo
+	for _, r := range config.Repos {
+		repo := data.Repo(r)
+		repos = append(repos, &repo)
+	}
 	repoResource := MakeRepoResources(repos)[0]
 	assert.Equal(t, *repoResource.Type, "repository", "repo resource type field value")
-	assert.Equal(t, *repoResource.ID, repos[0].Name, "repo resource ID field value")
-	assert.Equal(t, *repoResource.Attributes.(*models.Repo).Name, repos[0].Name, "repo name")
-	assert.Equal(t, *repoResource.Attributes.(*models.Repo).URL, repos[0].URL, "repo URL")
+	assert.Equal(t, *repoResource.ID, *repos[0].Name, "repo resource ID field value")
+	assert.Equal(t, *repoResource.Attributes.(*models.Repo).Name, *repos[0].Name, "repo name")
+	assert.Equal(t, *repoResource.Attributes.(*models.Repo).URL, *repos[0].URL, "repo URL")
 	assert.Equal(t, repoResource.Attributes.(*models.Repo).Source, repos[0].Source, "chart resource Attributes.URL field value")
 }
 
@@ -171,6 +182,8 @@ func TestAddLatestChartVersionRelationship(t *testing.T) {
 }
 
 func TestAddCanonicalLink(t *testing.T) {
+	setupTestRepoCache()
+	defer teardownTestRepoCache()
 	charts, err := ParseYAMLRepo(getTestRepoYAML(), repoName)
 	assert.NoErr(t, err)
 	chartResource := MakeChartResource(charts[0])
@@ -256,20 +269,6 @@ func TestNewestSemVer(t *testing.T) {
 	newest, err = newestSemVer("this is bogus", "1.0.0")
 	assert.ExistsErr(t, err, "sent bogus version as 2nd arg to newestSemVer")
 	assert.Equal(t, newest, "", "newestSemVer response should be an empty string in an error case")
-}
-
-func TestInt64ToPtr(t *testing.T) {
-	var number int64
-	number = 13
-	ptr := Int64ToPtr(number)
-	assert.Equal(t, number, *ptr, "int64 to ptr conversion")
-}
-
-func TestStrToPtr(t *testing.T) {
-	var str string
-	str = "string"
-	ptr := StrToPtr(str)
-	assert.Equal(t, str, *ptr, "string to ptr conversion")
 }
 
 func getTestRepoYAML() []byte {
@@ -359,6 +358,8 @@ func TestMakeAvailableIcons(t *testing.T) {
 }
 
 func TestGetRepoObject(t *testing.T) {
+	setupTestRepoCache()
+	defer teardownTestRepoCache()
 	charts, err := ParseYAMLRepo(getTestRepoYAML(), repoName)
 	assert.NoErr(t, err)
 	chart := charts[0]
@@ -370,5 +371,26 @@ func TestGetRepoObject(t *testing.T) {
 	repo = getRepoObject(chart)
 	if repo.Name != nil || repo.URL != nil {
 		t.Errorf("Repo Name and URL should be nil")
+	}
+}
+
+func setupTestRepoCache() {
+	repos := []models.Repo{
+		{
+			Name: pointerto.String("testRepo"),
+			URL:  pointerto.String("http://myrepobucket"),
+		},
+	}
+	data.UpdateCache(repos)
+}
+
+func teardownTestRepoCache() {
+	reposCollection, err := data.GetRepos()
+	if err != nil {
+		log.Fatal("could not get Repos collection ", err)
+	}
+	_, err = reposCollection.DeleteAll()
+	if err != nil {
+		log.Fatal("could not clear cache ", err)
 	}
 }

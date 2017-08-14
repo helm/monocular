@@ -5,33 +5,28 @@ import (
 	"os"
 
 	log "github.com/Sirupsen/logrus"
+	"github.com/kubernetes-helm/monocular/src/api/data/pointerto"
+	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
 
 	yaml "gopkg.in/yaml.v2"
 )
 
-// Repos is an array of Repo
-type Repos []Repo
+// Repos is an array of models.Repo
+type Repos []models.Repo
 
 type reposYAML struct {
 	Repos Repos
 }
 
-// Repo is a map name => URL
-type Repo struct {
-	Name   string
-	URL    string
-	Source string
-}
-
 var official = Repos{
-	Repo{
-		Name:   "stable",
-		URL:    "https://kubernetes-charts.storage.googleapis.com",
+	{
+		Name:   pointerto.String("stable"),
+		URL:    pointerto.String("https://kubernetes-charts.storage.googleapis.com"),
 		Source: "https://github.com/kubernetes/charts/tree/master/stable",
 	},
-	Repo{
-		Name:   "incubator",
-		URL:    "https://kubernetes-charts-incubator.storage.googleapis.com",
+	{
+		Name:   pointerto.String("incubator"),
+		URL:    pointerto.String("https://kubernetes-charts-incubator.storage.googleapis.com"),
 		Source: "https://github.com/kubernetes/charts/tree/master/incubator",
 	},
 }

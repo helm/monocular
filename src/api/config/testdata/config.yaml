@@ -12,3 +12,5 @@ cors:
     - "x-xsrf-token"
 releasesEnabled: true
 cacheRefreshInterval: 3600
+redis:
+  host: myredis:1234

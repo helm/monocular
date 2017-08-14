@@ -11,7 +11,6 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 
-	"github.com/kubernetes-helm/monocular/src/api/config/repos"
 	"github.com/kubernetes-helm/monocular/src/api/data"
 	"github.com/kubernetes-helm/monocular/src/api/data/cache/charthelper"
 	"github.com/kubernetes-helm/monocular/src/api/data/helpers"
@@ -20,18 +19,15 @@ import (
 )
 
 type cachedCharts struct {
-	// knownRepos is a slice of maps, each of which looks like this: "reponame": "https://repo.url/"
-	knownRepos repos.Repos
-	allCharts  map[string][]*models.ChartPackage
-	rwm        *sync.RWMutex
+	allCharts map[string][]*models.ChartPackage
+	rwm       *sync.RWMutex
 }
 
 // NewCachedCharts returns a new data.Charts implementation
-func NewCachedCharts(repos repos.Repos) data.Charts {
+func NewCachedCharts() data.Charts {
 	return &cachedCharts{
-		knownRepos: repos,
-		rwm:        new(sync.RWMutex),
-		allCharts:  make(map[string][]*models.ChartPackage),
+		rwm:       new(sync.RWMutex),
+		allCharts: make(map[string][]*models.ChartPackage),
 	}
 }
 
@@ -97,10 +93,16 @@ func (c *cachedCharts) All() ([]*models.ChartPackage, error) {
 	c.rwm.RLock()
 	defer c.rwm.RUnlock()
 	var allCharts []*models.ChartPackage
+	reposCollection, err := data.GetRepos()
+	if err != nil {
+		return nil, err
+	}
+	var repos []*data.Repo
+	reposCollection.FindAll(&repos)
 	// TODO: parallellize this, it won't scale well with lots of repos
-	for _, repo := range c.knownRepos {
+	for _, repo := range repos {
 		var charts []*models.ChartPackage
-		for _, chart := range c.allCharts[repo.Name] {
+		for _, chart := range c.allCharts[*repo.Name] {
 			charts = append(charts, chart)
 		}
 		allCharts = append(allCharts, charts...)
@@ -134,8 +136,14 @@ func (c *cachedCharts) Refresh() error {
 		"path": charthelper.DataDirBase(),
 	}).Info("Using cache directory")
 
-	for _, repo := range c.knownRepos {
-		u, _ := url.Parse(repo.URL)
+	reposCollection, err := data.GetRepos()
+	if err != nil {
+		return err
+	}
+	var repos []*data.Repo
+	reposCollection.FindAll(&repos)
+	for _, repo := range repos {
+		u, _ := url.Parse(*repo.URL)
 		u.Path = path.Join(u.Path, "index.yaml")
 
 		// 1 - Download repo index
@@ -150,7 +158,7 @@ func (c *cachedCharts) Refresh() error {
 		}
 
 		// 2 - Parse repo index
-		charts, err := helpers.ParseYAMLRepo(body, repo.Name)
+		charts, err := helpers.ParseYAMLRepo(body, *repo.Name)
 		if err != nil {
 			return err
 		}
@@ -173,7 +181,7 @@ func (c *cachedCharts) Refresh() error {
 				chartsWithData = append(chartsWithData, it.chart)
 			}
 		}
-		updatedCharts[repo.Name] = chartsWithData
+		updatedCharts[*repo.Name] = chartsWithData
 	}
 
 	// 4 - Update the stored cache with the new elements if everything went well

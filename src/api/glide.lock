@@ -1,11 +1,13 @@
-hash: fe15a69f8f76feec7f59f73452c161cfd7f47585f5691550117153b782a59c19
-updated: 2017-06-26T15:34:35.87063994Z
+hash: cc82fc68bf55f0dba003b52864f41329d40bf2243aadd651fb83c91deb1dccc8
+updated: 2017-08-03T14:20:28.305697876Z
 imports:
 - name: cloud.google.com/go
   version: 3b1ae45394a234c385be014e9a488f2bb6eef821
   subpackages:
   - compute/metadata
   - internal
+- name: github.com/albrow/zoom
+  version: d56f99c176184375ba9e28bdc96286825f206711
 - name: github.com/arschles/assert
   version: bb58b908265b5931732079df03f2818bf2167ba0
 - name: github.com/asaskevich/govalidator
@@ -36,6 +38,8 @@ imports:
   version: 5215b55f46b2b919f50a1df0eaa5886afe4e3b3d
   subpackages:
   - spew
+- name: github.com/dchest/uniuri
+  version: 8902c56451e9b58ff940bbe5fec35d5f9c04584a
 - name: github.com/dgrijalva/jwt-go
   version: 01aeca54ebda6e0fbfafd0a524d234159c05ec20
 - name: github.com/disintegration/imaging
@@ -96,6 +100,10 @@ imports:
   version: d6023ce2651d8eafb5c75bb0c7167536102ec9f5
 - name: github.com/facebookgo/symwalk
   version: 42004b9f322246749dd73ad71008b1f3160c0052
+- name: github.com/garyburd/redigo
+  version: 9e66b83d15a259978be267d0b61838c42c3904e3
+  subpackages:
+  - redis
 - name: github.com/ghodss/yaml
   version: 73d445a93680fa1a78ae23a5839bad48f32ba1ee
 - name: github.com/go-openapi/analysis
@@ -226,6 +234,8 @@ imports:
   version: f62e98d28ab7ad31d707ba837a966378465c7b57
 - name: github.com/spf13/pflag
   version: 5ccb023bc27df288a957c5e994cd44fd19619465
+- name: github.com/tv42/base58
+  version: b6649477bfe6276322b4eeaae8f5e947b49cec92
 - name: github.com/tylerb/graceful
   version: 4654dfbb6ad53cb5e27f37d99b02e16c1872fbbb
 - name: github.com/ugorji/go

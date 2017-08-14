@@ -9,7 +9,7 @@ import (
 	"github.com/go-openapi/strfmt"
 	"github.com/kubernetes-helm/monocular/src/api/data"
 	"github.com/kubernetes-helm/monocular/src/api/data/cache/charthelper"
-	"github.com/kubernetes-helm/monocular/src/api/data/helpers"
+	"github.com/kubernetes-helm/monocular/src/api/data/pointerto"
 	"github.com/kubernetes-helm/monocular/src/api/handlers"
 	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
 	releasesapi "github.com/kubernetes-helm/monocular/src/api/swagger/restapi/operations/releases"
@@ -102,7 +102,7 @@ func DeleteRelease(helmclient data.Client, params releasesapi.DeleteReleaseParam
 
 func errorResponse(message string, errorCode int64) middleware.Responder {
 	return releasesapi.NewGetAllReleasesDefault(int(errorCode)).WithPayload(
-		&models.Error{Code: helpers.Int64ToPtr(errorCode), Message: &message},
+		&models.Error{Code: pointerto.Int64(errorCode), Message: &message},
 	)
 }
 
@@ -120,16 +120,16 @@ func makeReleaseResource(release *hapi_release5.Release) *models.Resource {
 	if release == nil {
 		return &ret
 	}
-	ret.Type = helpers.StrToPtr("release")
-	ret.ID = helpers.StrToPtr(release.Name)
+	ret.Type = pointerto.String("release")
+	ret.ID = pointerto.String(release.Name)
 	ret.Attributes = &models.Release{
 		ChartName:    &release.Chart.Metadata.Name,
 		ChartVersion: &release.Chart.Metadata.Version,
 		ChartIcon:    &release.Chart.Metadata.Icon,
-		Updated:      helpers.StrToPtr(timeconv.String(release.Info.LastDeployed)),
+		Updated:      pointerto.String(timeconv.String(release.Info.LastDeployed)),
 		Name:         &release.Name,
 		Namespace:    &release.Namespace,
-		Status:       helpers.StrToPtr(release.Info.Status.Code.String()),
+		Status:       pointerto.String(release.Info.Status.Code.String()),
 	}
 	return &ret
 }
@@ -139,18 +139,18 @@ func makeReleaseExtendedResource(release *hapi_release5.Release) *models.Resourc
 	if release == nil {
 		return &ret
 	}
-	ret.Type = helpers.StrToPtr("release")
-	ret.ID = helpers.StrToPtr(release.Name)
+	ret.Type = pointerto.String("release")
+	ret.ID = pointerto.String(release.Name)
 	ret.Attributes = &models.ReleaseExtended{
 		ChartName:    &release.Chart.Metadata.Name,
 		ChartVersion: &release.Chart.Metadata.Version,
 		ChartIcon:    &release.Chart.Metadata.Icon,
-		Updated:      helpers.StrToPtr(timeconv.String(release.Info.LastDeployed)),
+		Updated:      pointerto.String(timeconv.String(release.Info.LastDeployed)),
 		Name:         &release.Name,
 		Namespace:    &release.Namespace,
-		Status:       helpers.StrToPtr(release.Info.Status.Code.String()),
-		Resources:    helpers.StrToPtr(release.Info.Status.Resources),
-		Notes:        helpers.StrToPtr(release.Info.Status.Notes),
+		Status:       pointerto.String(release.Info.Status.Code.String()),
+		Resources:    pointerto.String(release.Info.Status.Resources),
+		Notes:        pointerto.String(release.Info.Status.Notes),
 	}
 	return &ret
 }

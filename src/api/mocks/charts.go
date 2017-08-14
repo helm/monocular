@@ -11,12 +11,20 @@ import (
 	chartsapi "github.com/kubernetes-helm/monocular/src/api/swagger/restapi/operations/charts"
 )
 
+// MockedMethods contains pointers to mocked implementations of methods
+type MockedMethods struct {
+	All    func() ([]*models.ChartPackage, error)
+	Search func(params chartsapi.SearchChartsParams) ([]*models.ChartPackage, error)
+}
+
 // mockCharts fulfills the data.Charts interface
-type mockCharts struct{}
+type mockCharts struct {
+	mockedMethods MockedMethods
+}
 
 // NewMockCharts returns a new mockCharts
-func NewMockCharts() data.Charts {
-	return &mockCharts{}
+func NewMockCharts(m MockedMethods) data.Charts {
+	return &mockCharts{m}
 }
 
 // ChartFromRepo method for mockCharts
@@ -95,6 +103,9 @@ func (c *mockCharts) AllFromRepo(repo string) ([]*models.ChartPackage, error) {
 
 // All method for mockCharts
 func (c *mockCharts) All() ([]*models.ChartPackage, error) {
+	if c.mockedMethods.All != nil {
+		return c.mockedMethods.All()
+	}
 	var allCharts []*models.ChartPackage
 	repos := []string{"stable", "incubator"}
 	for _, repo := range repos {
@@ -118,6 +129,9 @@ func (c *mockCharts) All() ([]*models.ChartPackage, error) {
 }
 
 func (c *mockCharts) Search(params chartsapi.SearchChartsParams) ([]*models.ChartPackage, error) {
+	if c.mockedMethods.Search != nil {
+		return c.mockedMethods.Search(params)
+	}
 	var ret []*models.ChartPackage
 	charts, _ := c.All()
 	for _, chart := range charts {
