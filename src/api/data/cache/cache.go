@@ -93,7 +93,7 @@ func (c *cachedCharts) All() ([]*models.ChartPackage, error) {
 	c.rwm.RLock()
 	defer c.rwm.RUnlock()
 	var allCharts []*models.ChartPackage
-	reposCollection, err := GetRepos()
+	reposCollection, err := data.GetRepos()
 	if err != nil {
 		return nil, err
 	}
@@ -136,7 +136,7 @@ func (c *cachedCharts) Refresh() error {
 		"path": charthelper.DataDirBase(),
 	}).Info("Using cache directory")
 
-	reposCollection, err := GetRepos()
+	reposCollection, err := data.GetRepos()
 	if err != nil {
 		return err
 	}

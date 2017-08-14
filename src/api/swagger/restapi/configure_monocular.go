@@ -11,6 +11,7 @@ import (
 	errors "github.com/go-openapi/errors"
 	runtime "github.com/go-openapi/runtime"
 	middleware "github.com/go-openapi/runtime/middleware"
+	"github.com/kubernetes-helm/monocular/src/api/data"
 	helmclient "github.com/kubernetes-helm/monocular/src/api/data/helm/client"
 
 	"github.com/kubernetes-helm/monocular/src/api/config"
@@ -43,7 +44,7 @@ func configureAPI(api *operations.MonocularAPI) http.Handler {
 	}
 
 	// configure the api here
-	cache.UpdateCache(conf.Repos)
+	data.UpdateCache(conf.Repos)
 	chartsImplementation := cache.NewCachedCharts()
 	// Run foreground repository refresh
 	chartsImplementation.Refresh()

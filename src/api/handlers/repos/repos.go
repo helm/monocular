@@ -5,7 +5,6 @@ import (
 
 	middleware "github.com/go-openapi/runtime/middleware"
 	"github.com/kubernetes-helm/monocular/src/api/data"
-	"github.com/kubernetes-helm/monocular/src/api/data/cache"
 	"github.com/kubernetes-helm/monocular/src/api/data/helpers"
 	"github.com/kubernetes-helm/monocular/src/api/data/pointerto"
 	"github.com/kubernetes-helm/monocular/src/api/handlers"
@@ -15,7 +14,7 @@ import (
 
 // GetRepos returns all the enabled repositories
 func GetRepos(params reposapi.GetAllReposParams) middleware.Responder {
-	reposCollection, err := cache.GetRepos()
+	reposCollection, err := data.GetRepos()
 	if err != nil {
 		return reposapi.NewGetAllReposDefault(http.StatusInternalServerError).WithPayload(
 			&models.Error{Code: pointerto.Int64(http.StatusInternalServerError), Message: pointerto.String("Internal server error")},

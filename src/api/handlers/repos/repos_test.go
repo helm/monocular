@@ -9,7 +9,7 @@ import (
 	"github.com/arschles/assert"
 	"github.com/go-openapi/runtime"
 	"github.com/kubernetes-helm/monocular/src/api/config"
-	"github.com/kubernetes-helm/monocular/src/api/data/cache"
+	"github.com/kubernetes-helm/monocular/src/api/data"
 	"github.com/kubernetes-helm/monocular/src/api/data/pointerto"
 	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
 	reposapi "github.com/kubernetes-helm/monocular/src/api/swagger/restapi/operations/repositories"
@@ -43,11 +43,11 @@ func setupTestRepoCache() {
 			URL:  pointerto.String("http://storage.googleapis.com/kubernetes-charts-incubator"),
 		},
 	}
-	cache.UpdateCache(repos)
+	data.UpdateCache(repos)
 }
 
 func teardownTestRepoCache() {
-	reposCollection, err := cache.GetRepos()
+	reposCollection, err := data.GetRepos()
 	if err != nil {
 		log.Fatal("could not get Repos collection ", err)
 	}

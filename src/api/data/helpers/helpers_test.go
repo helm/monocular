@@ -4,15 +4,17 @@ import (
 	"fmt"
 	"testing"
 
+	log "github.com/Sirupsen/logrus"
 	"github.com/arschles/assert"
 	"github.com/kubernetes-helm/monocular/src/api/config"
 	"github.com/kubernetes-helm/monocular/src/api/data"
 	"github.com/kubernetes-helm/monocular/src/api/data/cache/charthelper"
+	"github.com/kubernetes-helm/monocular/src/api/data/pointerto"
 	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
 )
 
 const (
-	repoName         = "stable"
+	repoName         = "testRepo"
 	chartName        = "apache"
 	chartURL         = "https://storage.googleapis.com/kubernetes-charts/apache-0.0.1.tgz"
 	chartSource      = "https://github.com/kubernetes/charts/apache"
@@ -66,6 +68,8 @@ func TestParseYAMLRepoWithDeprecatedChart(t *testing.T) {
 }
 
 func TestMakeChartResource(t *testing.T) {
+	setupTestRepoCache()
+	defer teardownTestRepoCache()
 	charts, err := ParseYAMLRepo(getTestRepoYAML(), repoName)
 	repo := getRepoObject(charts[0])
 	assert.NoErr(t, err)
@@ -81,6 +85,8 @@ func TestMakeChartResource(t *testing.T) {
 }
 
 func TestMakeChartResources(t *testing.T) {
+	setupTestRepoCache()
+	defer teardownTestRepoCache()
 	charts, err := ParseYAMLRepo(getTestRepoYAML(), repoName)
 	assert.NoErr(t, err)
 	chartsResource := MakeChartResources(charts)
@@ -176,6 +182,8 @@ func TestAddLatestChartVersionRelationship(t *testing.T) {
 }
 
 func TestAddCanonicalLink(t *testing.T) {
+	setupTestRepoCache()
+	defer teardownTestRepoCache()
 	charts, err := ParseYAMLRepo(getTestRepoYAML(), repoName)
 	assert.NoErr(t, err)
 	chartResource := MakeChartResource(charts[0])
@@ -350,6 +358,8 @@ func TestMakeAvailableIcons(t *testing.T) {
 }
 
 func TestGetRepoObject(t *testing.T) {
+	setupTestRepoCache()
+	defer teardownTestRepoCache()
 	charts, err := ParseYAMLRepo(getTestRepoYAML(), repoName)
 	assert.NoErr(t, err)
 	chart := charts[0]
@@ -361,5 +371,26 @@ func TestGetRepoObject(t *testing.T) {
 	repo = getRepoObject(chart)
 	if repo.Name != nil || repo.URL != nil {
 		t.Errorf("Repo Name and URL should be nil")
+	}
+}
+
+func setupTestRepoCache() {
+	repos := []models.Repo{
+		{
+			Name: pointerto.String("testRepo"),
+			URL:  pointerto.String("http://myrepobucket"),
+		},
+	}
+	data.UpdateCache(repos)
+}
+
+func teardownTestRepoCache() {
+	reposCollection, err := data.GetRepos()
+	if err != nil {
+		log.Fatal("could not get Repos collection ", err)
+	}
+	_, err = reposCollection.DeleteAll()
+	if err != nil {
+		log.Fatal("could not clear cache ", err)
 	}
 }

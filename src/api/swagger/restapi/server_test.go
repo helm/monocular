@@ -211,7 +211,7 @@ func getChartsImplementation() data.Charts {
 }
 
 func teardownTestRepoCache() {
-	reposCollection, err := cache.GetRepos()
+	reposCollection, err := data.GetRepos()
 	if err != nil {
 		log.Fatal("could not get Repos collection ", err)
 	}

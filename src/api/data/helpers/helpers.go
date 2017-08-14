@@ -6,7 +6,6 @@ import (
 	"github.com/Masterminds/semver"
 	log "github.com/Sirupsen/logrus"
 	"github.com/ghodss/yaml"
-	"github.com/kubernetes-helm/monocular/src/api/config"
 	"github.com/kubernetes-helm/monocular/src/api/data"
 	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
 
@@ -292,16 +291,17 @@ func makeReadmeURL(chart *models.ChartPackage) *string {
 }
 
 func getRepoObject(chart *models.ChartPackage) *models.Repo {
-	var repoPayload models.Repo
+	reposCollection, err := data.GetRepos()
+	if err != nil {
+		log.Fatal("could not get Repo collection", err)
+	}
+	repos := []*data.Repo{}
+	reposCollection.FindAll(&repos)
 
-	config, _ := config.GetConfig()
-	for _, repo := range config.Repos {
+	var repoPayload models.Repo
+	for _, repo := range repos {
 		if *repo.Name == chart.Repo {
-			repoPayload = models.Repo{
-				Name:   repo.Name,
-				URL:    repo.URL,
-				Source: repo.Source,
-			}
+			repoPayload = models.Repo(*repo)
 			return &repoPayload
 		}
 	}
