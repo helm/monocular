@@ -7,6 +7,7 @@ import { ChartDetailsComponent } from './chart-details/chart-details.component';
 import { ChartsComponent } from './charts/charts.component';
 import { DeploymentsComponent } from './deployments/deployments.component';
 import { DeploymentComponent } from './deployment/deployment.component';
+import { RepositoriesComponent } from './repositories/repositories.component';
 
 const appRoutes: Routes = [
   {
@@ -30,6 +31,10 @@ const appRoutes: Routes = [
         title: 'Deployment information'
       }
     }
+  },
+  {
+    path: 'repos',
+    component: RepositoriesComponent
   },
   {
     path: 'charts',

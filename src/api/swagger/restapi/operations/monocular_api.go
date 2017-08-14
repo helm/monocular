@@ -48,8 +48,12 @@ type MonocularAPI struct {
 
 	// ReleasesCreateReleaseHandler sets the operation handler for the create release operation
 	ReleasesCreateReleaseHandler releases.CreateReleaseHandler
+	// RepositoriesCreateRepoHandler sets the operation handler for the create repo operation
+	RepositoriesCreateRepoHandler repositories.CreateRepoHandler
 	// ReleasesDeleteReleaseHandler sets the operation handler for the delete release operation
 	ReleasesDeleteReleaseHandler releases.DeleteReleaseHandler
+	// RepositoriesDeleteRepoHandler sets the operation handler for the delete repo operation
+	RepositoriesDeleteRepoHandler repositories.DeleteRepoHandler
 	// ChartsGetAllChartsHandler sets the operation handler for the get all charts operation
 	ChartsGetAllChartsHandler charts.GetAllChartsHandler
 	// ReleasesGetAllReleasesHandler sets the operation handler for the get all releases operation
@@ -66,6 +70,8 @@ type MonocularAPI struct {
 	ChartsGetChartsInRepoHandler charts.GetChartsInRepoHandler
 	// ReleasesGetReleaseHandler sets the operation handler for the get release operation
 	ReleasesGetReleaseHandler releases.GetReleaseHandler
+	// RepositoriesGetRepoHandler sets the operation handler for the get repo operation
+	RepositoriesGetRepoHandler repositories.GetRepoHandler
 	// HealthzHandler sets the operation handler for the healthz operation
 	HealthzHandler HealthzHandler
 	// ChartsSearchChartsHandler sets the operation handler for the search charts operation
@@ -137,8 +143,16 @@ func (o *MonocularAPI) Validate() error {
 		unregistered = append(unregistered, "releases.CreateReleaseHandler")
 	}
 
+	if o.RepositoriesCreateRepoHandler == nil {
+		unregistered = append(unregistered, "repositories.CreateRepoHandler")
+	}
+
 	if o.ReleasesDeleteReleaseHandler == nil {
 		unregistered = append(unregistered, "releases.DeleteReleaseHandler")
+	}
+
+	if o.RepositoriesDeleteRepoHandler == nil {
+		unregistered = append(unregistered, "repositories.DeleteRepoHandler")
 	}
 
 	if o.ChartsGetAllChartsHandler == nil {
@@ -171,6 +185,10 @@ func (o *MonocularAPI) Validate() error {
 
 	if o.ReleasesGetReleaseHandler == nil {
 		unregistered = append(unregistered, "releases.GetReleaseHandler")
+	}
+
+	if o.RepositoriesGetRepoHandler == nil {
+		unregistered = append(unregistered, "repositories.GetRepoHandler")
 	}
 
 	if o.HealthzHandler == nil {
@@ -259,10 +277,20 @@ func (o *MonocularAPI) initHandlerCache() {
 	}
 	o.handlers["POST"]["/v1/releases"] = releases.NewCreateRelease(o.context, o.ReleasesCreateReleaseHandler)
 
+	if o.handlers["POST"] == nil {
+		o.handlers[strings.ToUpper("POST")] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/v1/repos"] = repositories.NewCreateRepo(o.context, o.RepositoriesCreateRepoHandler)
+
 	if o.handlers["DELETE"] == nil {
 		o.handlers[strings.ToUpper("DELETE")] = make(map[string]http.Handler)
 	}
 	o.handlers["DELETE"]["/v1/releases/{releaseName}"] = releases.NewDeleteRelease(o.context, o.ReleasesDeleteReleaseHandler)
+
+	if o.handlers["DELETE"] == nil {
+		o.handlers[strings.ToUpper("DELETE")] = make(map[string]http.Handler)
+	}
+	o.handlers["DELETE"]["/v1/repos/{repoName}"] = repositories.NewDeleteRepo(o.context, o.RepositoriesDeleteRepoHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)
@@ -303,6 +331,11 @@ func (o *MonocularAPI) initHandlerCache() {
 		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/v1/releases/{releaseName}"] = releases.NewGetRelease(o.context, o.ReleasesGetReleaseHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v1/repos/{repoName}"] = repositories.NewGetRepo(o.context, o.RepositoriesGetRepoHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers[strings.ToUpper("GET")] = make(map[string]http.Handler)

@@ -167,6 +167,61 @@ paths:
           description: unexpected error
           schema:
             $ref: "#/definitions/error"
+    post:
+      operationId: createRepo
+      summary: "add a repository to be indexed"
+      tags:
+        - repositories
+      parameters:
+        - $ref: '#/parameters/createRepoParams'
+      responses:
+        201:
+          description: Repository added
+          schema:
+            $ref: "#/definitions/resourceData"
+        default:
+          description: unexpected error
+          schema:
+            $ref: "#/definitions/error"
+  /v1/repos/{repoName}:
+    get:
+      operationId: getRepo
+      summary: get a repository enabled in the backend
+      tags:
+        - repositories
+      parameters:
+        - name: repoName
+          in: path
+          type: string
+          required: true
+      responses:
+        200:
+          description: repo information
+          schema:
+            $ref: "#/definitions/resourceData"
+        default:
+          description: unexpected error
+          schema:
+            $ref: "#/definitions/error"
+    delete:
+      operationId: deleteRepo
+      summary: delete a repository enabled in the backend
+      tags:
+        - repositories
+      parameters:
+        - name: repoName
+          in: path
+          type: string
+          required: true
+      responses:
+        200:
+          description: repo deleted
+          schema:
+            $ref: "#/definitions/resourceData"
+        default:
+          description: unexpected error
+          schema:
+            $ref: "#/definitions/error"
   /v1/releases:
     get:
       operationId: getAllReleases
@@ -244,6 +299,13 @@ parameters:
     type: string
     description: chart name substring pattern match
     required: true
+  createRepoParams:
+    name: data
+    description: Repository information
+    in: body
+    type: object
+    schema:
+      $ref: "#/definitions/repo"
   createReleaseParams:
     name: data
     description: Information related with the new Helm release.

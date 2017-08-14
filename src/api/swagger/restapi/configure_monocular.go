@@ -92,6 +92,18 @@ func configureAPI(api *operations.MonocularAPI) http.Handler {
 		return hrepos.GetRepos(params)
 	})
 
+	api.RepositoriesGetRepoHandler = repositories.GetRepoHandlerFunc(func(params repositories.GetRepoParams) middleware.Responder {
+		return hrepos.GetRepo(params)
+	})
+
+	api.RepositoriesCreateRepoHandler = repositories.CreateRepoHandlerFunc(func(params repositories.CreateRepoParams) middleware.Responder {
+		return hrepos.CreateRepo(params, conf.ReleasesEnabled)
+	})
+
+	api.RepositoriesDeleteRepoHandler = repositories.DeleteRepoHandlerFunc(func(params repositories.DeleteRepoParams) middleware.Responder {
+		return hrepos.DeleteRepo(params, conf.ReleasesEnabled)
+	})
+
 	// Charts
 	api.ChartsSearchChartsHandler = charts.SearchChartsHandlerFunc(func(params charts.SearchChartsParams) middleware.Responder {
 		return hcharts.SearchCharts(params, chartsImplementation)

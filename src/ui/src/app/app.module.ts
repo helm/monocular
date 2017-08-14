@@ -43,6 +43,8 @@ import { DeploymentsComponent } from './deployments/deployments.component';
 import { DeploymentItemComponent } from './deployment-item/deployment-item.component';
 import { DeploymentComponent } from './deployment/deployment.component';
 import { DeploymentControlsComponent } from './deployment-controls/deployment-controls.component';
+import { RepositoriesComponent } from './repositories/repositories.component';
+import { RepositoryNewComponent } from './repository-new/repository-new.component';
 import { LoaderComponent } from './loader/loader.component';
 import { ConfirmDialog }   from './confirm-dialog/confirm-dialog.component';
 import { DeploymentResourceComponent } from './deployment/deployment-resource/deployment-resource.component';
@@ -83,10 +85,12 @@ const metaConfig: MetaConfig = {
     DeploymentsComponent,
     DeploymentItemComponent,
     DeploymentComponent,
+    RepositoriesComponent,
+    RepositoryNewComponent,
     ConfirmDialog,
     DeploymentResourceComponent,
     ListItemComponent,
-    ListFiltersComponent
+    ListFiltersComponent,
   ],
   imports: [
     MaterialModule.forRoot(),
@@ -109,7 +113,8 @@ const metaConfig: MetaConfig = {
     DialogsService
   ],
   entryComponents: [
-    ConfirmDialog
+    ConfirmDialog,
+    RepositoryNewComponent
   ],
   bootstrap: [AppComponent]
 })

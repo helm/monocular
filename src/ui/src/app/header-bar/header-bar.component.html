@@ -20,6 +20,12 @@
           </a>
         </li>
         <li class="separator"></li>
+        <li *ngIf="config.releasesEnabled" routerLink="/repos" routerLinkActive="active">
+          <a class="reverse">
+            Repositories
+          </a>
+        </li>
+        <li *ngIf="config.releasesEnabled" class="separator"></li>
         <li *ngIf="config.releasesEnabled" routerLink="/deployments" routerLinkActive="active">
           <a class="reverse">
             Deployments

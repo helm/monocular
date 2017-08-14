@@ -5,7 +5,7 @@ export class Repo {
 }
 
 export class RepoAttributes {
-  name: string;
-  URL: string;
-  source: string;
+  name: string = "";
+  URL: string = "";
+  source: string = "";
 }

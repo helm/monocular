@@ -1,0 +1,25 @@
+<div class="repository-new">
+  <h2 class="repository-new__title">Add Repository</h2>
+  <form #repositoryForm="ngForm" (ngSubmit)="addRepo()" class="repository-new__form">
+    <div class="repository-new__form__errors" *ngIf="formError">
+      {{formError}}
+    </div>
+    <md-input-container class="repository-new__form__field">
+      <input md-input name="repository-name" placeholder="Name" required [(ngModel)]="repoAttributes.name">
+    </md-input-container>
+    <md-input-container class="repository-new__form__field">
+      <input md-input name="repository-url" placeholder="URL" required [(ngModel)]="repoAttributes.URL">
+    </md-input-container>
+    <md-input-container class="repository-new__form__field">
+      <input md-input name="repository-source" placeholder="Source" [(ngModel)]="repoAttributes.source">
+    </md-input-container>
+
+    <div class="repository-new__buttons">
+      <button type="submit" md-raised-button color="primary"
+        [disabled]="!repositoryForm.form.valid">Add</button>
+      <button type="button" md-button md-raised-button
+        (click)="dialogRef.close()">Cancel</button>
+    </div>
+  </form>
+</div>
+
