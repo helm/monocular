@@ -14,7 +14,7 @@ export class RepositoryNewComponent {
   formError: string;
 
   constructor(
-    private dialogRef: MdDialogRef<RepositoryNewComponent>,
+    public dialogRef: MdDialogRef<RepositoryNewComponent>,
     private reposService: ReposService,
     private router: Router
   ) {}
