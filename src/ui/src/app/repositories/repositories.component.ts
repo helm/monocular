@@ -31,18 +31,6 @@ export class RepositoriesComponent implements OnInit {
 
   ngOnInit() {
     this.mdIconRegistry.addSvgIcon(
-      'search',
-      this.sanitizer.bypassSecurityTrustResourceUrl(`/assets/icons/search.svg`)
-    );
-    this.mdIconRegistry.addSvgIcon(
-      'close',
-      this.sanitizer.bypassSecurityTrustResourceUrl(`/assets/icons/close.svg`)
-    );
-    this.mdIconRegistry.addSvgIcon(
-      'menu',
-      this.sanitizer.bypassSecurityTrustResourceUrl(`/assets/icons/menu.svg`)
-    );
-    this.mdIconRegistry.addSvgIcon(
       'delete',
       this.sanitizer.bypassSecurityTrustResourceUrl(
         '/assets/icons/delete.svg'
