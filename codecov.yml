@@ -1,5 +1,8 @@
 codecov:
   branch: master
+coverage:
+  ignore:
+    - "src/api/swagger/*"
   status:
     project:
       default:
