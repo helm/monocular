@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { MenuService } from './shared/services/menu.service';
 import { ChartsService } from './shared/services/charts.service';
 import { ConfigService } from './shared/services/config.service';
+import { SeoService } from './shared/services/seo.service';
 
 @Component({
   selector: 'app-root',
@@ -21,7 +22,8 @@ export class AppComponent {
     angulartics2GoogleAnalytics: Angulartics2GoogleAnalytics,
     config: ConfigService,
     private menuService: MenuService,
-    private router: Router
+    private router: Router,
+    private seo: SeoService
   ) {
     menuService.menuOpen$.subscribe(show => {
       this.showMenu = show;

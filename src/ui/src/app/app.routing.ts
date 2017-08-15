@@ -34,7 +34,12 @@ const appRoutes: Routes = [
   },
   {
     path: 'repos',
-    component: RepositoriesComponent
+    component: RepositoriesComponent,
+    data: {
+      meta: {
+        title: 'Repositories'
+      }
+    }
   },
   {
     path: 'charts',
