@@ -3,7 +3,7 @@
 // Import your custom theme
 @import '../theme.scss';
 
-$menu-height: 120px;
+$menu-height: 140px;
 
 .App {
 
@@ -29,6 +29,8 @@ $menu-height: 120px;
     width: 100%;
     transition: height .3s ease-out;
     will-change: height;
+    display: flex;
+    align-items: center;
 
     ul {
       list-style: none;
