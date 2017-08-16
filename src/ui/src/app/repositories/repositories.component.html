@@ -23,9 +23,9 @@
             <th></th>
           </tr>
           <tr *ngFor="let repo of repos">
-            <td class="name repo-{{repo.attributes.name}}">{{repo.attributes.name}}</td>
-            <td>{{repo.attributes.URL}}</td>
-            <td>{{repo.attributes.source}}</td>
+            <td data-label="Name" class="name repo-{{repo.attributes.name}}">{{repo.attributes.name}}</td>
+            <td data-label="URL">{{repo.attributes.URL}}</td>
+            <td data-label="Source">{{repo.attributes.source}}</td>
             <td class="actions">
               <button color="warn" md-icon-button (click)="deleteRepo(repo)">
                 <md-icon svgIcon="delete"></md-icon>
