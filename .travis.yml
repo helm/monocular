@@ -19,6 +19,10 @@ before_install:
 install:
   - make -C src/api bootstrap
   - make -C src/ui install
+  - |
+    if [[ -n "$TRAVIS_TAG" ]]; then
+      make VERSION=$TRAVIS_TAG set-version
+    fi
 script:
   - make -C src/api test test-cover docker-build
   - make -C src/ui docker-build # Tests disabled for now
