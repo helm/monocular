@@ -30,51 +30,69 @@ $filters-width: 175px;
 
   }
 
-  // CSS from https://codepen.io/AllThingsSmitty/pen/MyqmdM
   table {
-    border: 1px solid $layout-light;
     border-collapse: collapse;
     margin: 0;
     padding: 0;
     width: 100%;
-    table-layout: fixed;
+    word-break: break-word;
 
     tr {
-      background: $background-light;
-      border: 1px solid $layout-light;
+      border-bottom: 1px solid $border-color;
       padding: .35em;
+
+      &:nth-child(even) {
+        background-color: $layout-light;
+      }
+
+      &:not(:first-child):hover {
+        background-color: $background-light;
+      }
     }
-    
+
     th,
     td {
       padding: .625em;
-      text-align: center;
+      text-align: left;
       text-overflow: ellipsis;
-      overflow: hidden;
+      min-width: 150px;
+
+      &.name {
+        font-weight: 500;
+        color: md-color($monocular-app-accent);
+
+        &.repo-incubator {
+          color: md-color($monocular-app-warn, 600);
+        }
+      }
+      &.actions {
+        text-align: right;
+      }
     }
-    
+
     th {
       font-size: .85em;
       letter-spacing: .1em;
       text-transform: uppercase;
+      opacity: 0.5;
     }
   }
-  
-  @media screen and (max-width: 600px) {
+
+  @include mappy-bp(max-width medium) {
     table {
       border: 0;
-      
+
       tr {
         border-bottom: 3px solid $layout-light;
         display: block;
         margin-bottom: .625em;
       }
-      
+
       td {
         border-bottom: 1px solid $layout-light;
         display: block;
         font-size: .8em;
-        text-align: right;
+        text-align: left;
 
         &:before {
           /*

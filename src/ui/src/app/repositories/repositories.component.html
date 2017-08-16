@@ -23,10 +23,10 @@
             <th></th>
           </tr>
           <tr *ngFor="let repo of repos">
-            <td>{{repo.attributes.name}}</td>
+            <td class="name repo-{{repo.attributes.name}}">{{repo.attributes.name}}</td>
             <td>{{repo.attributes.URL}}</td>
             <td>{{repo.attributes.source}}</td>
-            <td>
+            <td class="actions">
               <button color="warn" md-icon-button (click)="deleteRepo(repo)">
                 <md-icon svgIcon="delete"></md-icon>
               </button>
