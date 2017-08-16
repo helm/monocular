@@ -40,6 +40,7 @@ import { ChartDetailsInfoComponent } from './chart-details/chart-details-info/ch
 import { ChartDetailsVersionsComponent } from './chart-details/chart-details-versions/chart-details-versions.component';
 import { ChartsComponent } from './charts/charts.component';
 import { DeploymentsComponent } from './deployments/deployments.component';
+import { DeploymentNewComponent } from './deployment-new/deployment-new.component';
 import { DeploymentItemComponent } from './deployment-item/deployment-item.component';
 import { DeploymentComponent } from './deployment/deployment.component';
 import { DeploymentControlsComponent } from './deployment-controls/deployment-controls.component';
@@ -83,6 +84,7 @@ const metaConfig: MetaConfig = {
     LoaderComponent,
     DeploymentControlsComponent,
     DeploymentsComponent,
+    DeploymentNewComponent,
     DeploymentItemComponent,
     DeploymentComponent,
     RepositoriesComponent,
@@ -114,7 +116,8 @@ const metaConfig: MetaConfig = {
   ],
   entryComponents: [
     ConfirmDialog,
-    RepositoryNewComponent
+    RepositoryNewComponent,
+    DeploymentNewComponent
   ],
   bootstrap: [AppComponent]
 })

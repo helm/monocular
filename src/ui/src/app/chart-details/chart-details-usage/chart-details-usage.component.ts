@@ -8,12 +8,10 @@ import {
 import { Chart } from '../../shared/models/chart';
 import { Deployment } from '../../shared/models/deployment';
 import { DomSanitizer } from '@angular/platform-browser';
-import { MdIconRegistry } from '@angular/material';
-import { MdSnackBar } from '@angular/material';
+import { MdIconRegistry, MdSnackBar, MdDialog, MdDialogRef } from '@angular/material';
 import { ConfigService } from '../../shared/services/config.service';
-import { DialogsService } from '../../shared/services/dialogs.service';
-
 import { DeploymentsService } from '../../shared/services/deployments.service';
+import { DeploymentNewComponent } from '../../deployment-new/deployment-new.component';
 import { Router } from '@angular/router';
 
 @Component({
@@ -34,7 +32,7 @@ export class ChartDetailsUsageComponent implements OnInit {
     public config: ConfigService,
     private deploymentsService: DeploymentsService,
     private router: Router,
-    private dialogsService: DialogsService,
+    private dialog: MdDialog,
     public snackBar: MdSnackBar
   ) {}
 
@@ -68,23 +66,21 @@ export class ChartDetailsUsageComponent implements OnInit {
   }
 
   installDeployment(chartID: string, version: string): void {
-    this.dialogsService
-      .confirm(
-        `Deploy ${chartID} v${version}`,
-        'You are going to deploy this chart in your cluster',
-        'Deploy it',
-        'Cancel'
-      )
-      .subscribe(res => {
-        if (res) this.performInstallation(chartID, version);
+    let dialogRef: MdDialogRef<DeploymentNewComponent>;
+    dialogRef = this.dialog.open(DeploymentNewComponent);
+    dialogRef.afterClosed()
+      .subscribe(namespace => {
+        if (namespace) this.performInstallation(chartID, version, namespace);
       });
+    dialogRef.componentInstance.chartID = chartID;
+    dialogRef.componentInstance.version = version;
   }
 
-  performInstallation(chartID: string, version: string): void {
+  performInstallation(chartID: string, version: string, namespace: string): void {
     this.installing = true;
 
     this.deploymentsService
-      .installDeployment(chartID, version)
+      .installDeployment(chartID, version, namespace)
       .finally(() => {
         this.installing = false;
       })
