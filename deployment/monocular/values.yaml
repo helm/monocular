@@ -88,6 +88,8 @@ prerender:
     requests:
       cpu: 100m
       memory: 128Mi
+redis:
+  usePassword: false
 
 ingress:
   enabled: true

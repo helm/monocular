@@ -9,4 +9,7 @@ metadata:
     heritage: "{{ .Release.Service }}"
 data:
   monocular.yaml: |-
-{{ toYaml .Values.api.config | indent 4 }}
+{{ toYaml .Values.api.config | indent 4 -}}
+    redis:
+      host: {{ template "redis.fullname" . }}:6379
+

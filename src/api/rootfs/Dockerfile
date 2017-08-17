@@ -1,4 +1,4 @@
-FROM alpine:3.3
+FROM alpine:3.6
 
 RUN apk -U add ca-certificates && \
     rm -Rf /var/cache/apk/*
