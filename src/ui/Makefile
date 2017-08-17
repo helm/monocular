@@ -1,6 +1,9 @@
 IMAGE_REPO ?= bitnami/monocular-ui
 IMAGE_TAG ?= latest
-VERSION ?= dev
+
+ifeq "$(VERSION)" ""
+	override VERSION = dev
+endif
 
 install:
 	npm install
