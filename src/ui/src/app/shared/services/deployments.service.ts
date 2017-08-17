@@ -35,8 +35,8 @@ export class DeploymentsService {
                     }).catch(this.handleError);
   }
 
-  installDeployment(chartID: string, version: string): Observable<Deployment> {
-      var params = { "chartId": chartID, "chartVersion": version }
+  installDeployment(chartID: string, version: string, namespace: string): Observable<Deployment> {
+      var params = { "chartId": chartID, "chartVersion": version, "namespace": namespace }
       return this.http.post(`${this.hostname}/v1/releases`, params)
                     .map(this.extractData)
                     .catch(this.handleError);
