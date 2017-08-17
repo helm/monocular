@@ -40,7 +40,7 @@ show_important_vars() {
 }
 
 # https://github.com/bitnami/test-infra/blob/master/circle/docker-release-image.sh#L234
-HELM_VERSION=2.4.2
+HELM_VERSION=2.5.1
 install_helm() {
   if ! which helm >/dev/null ; then
     log "Downloading helm..."
