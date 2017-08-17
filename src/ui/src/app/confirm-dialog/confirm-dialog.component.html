@@ -2,9 +2,9 @@
   <h2 class="confirm-dialog__title">{{ title }}</h2>
   <p>{{ message }}</p>
   <div class="confirm-dialog__buttons">
+    <button type="button" md-button
+      (click)="dialogRef.close()">{{ cancel }}</button>
     <button type="button" md-raised-button [color]="actionButtonClass"
       (click)="dialogRef.close(true)">{{ ok }}</button>
-    <button type="button" md-button md-raised-button
-      (click)="dialogRef.close()">{{ cancel }}</button>
   </div>
 </div>

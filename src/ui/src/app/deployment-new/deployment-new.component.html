@@ -3,13 +3,15 @@
   <p>You are going to deploy this chart in your cluster</p>
   <form #deploymentForm="ngForm" (ngSubmit)="dialogRef.close(namespace)" class="deployment-new__form">
     <md-input-container class="deployment-new__form__field">
-      <input md-input name="deployment-namespace" placeholder="Namespace" required [(ngModel)]="namespace">
+      <input md-input name="deployment-namespace" placeholder="Namespace" required
+        [(ngModel)]="namespace" (ngModelChange)="formError=null">
     </md-input-container>
 
     <div class="deployment-new__buttons">
-      <button type="submit" md-raised-button color="primary">Deploy it</button>
-      <button type="button" md-button md-raised-button
+      <button type="button" md-button
         (click)="dialogRef.close()">Cancel</button>
+      <button type="submit" md-raised-button color="accent"
+        [disabled]="!deploymentForm.form.valid">Deploy</button>
     </div>
   </form>
 </div>

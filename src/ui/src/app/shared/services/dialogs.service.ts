@@ -9,7 +9,7 @@ export class DialogsService {
     constructor(private dialog: MdDialog) { }
 
     public confirm(title: string, message: string, ok = 'Continue',
-      cancel = 'Cancel', actionButtonClass = 'primary'): Observable<boolean> {
+      cancel = 'Cancel', actionButtonClass = 'accent'): Observable<boolean> {
       let dialogRef: MdDialogRef<ConfirmDialog>;
 
       dialogRef = this.dialog.open(ConfirmDialog);
