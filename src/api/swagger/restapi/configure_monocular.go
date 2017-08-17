@@ -44,7 +44,10 @@ func configureAPI(api *operations.MonocularAPI) http.Handler {
 	}
 
 	// configure the api here
-	data.UpdateCache(conf.Repos)
+	if err := data.UpdateCache(conf.Repos); err != nil {
+		log.Fatalf("Can not configure repository cache %v\n", err)
+	}
+
 	chartsImplementation := cache.NewCachedCharts()
 	// Run foreground repository refresh
 	chartsImplementation.Refresh()

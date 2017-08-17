@@ -112,6 +112,7 @@ install_helm
 log "Packaging charts from source code"
 pushd $BUILD_DIR
   log "Packaging chart"
+  helm dep build $CHART_PATH
   helm package $CHART_PATH
 
   log "Indexing repository"
