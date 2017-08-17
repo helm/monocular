@@ -7,5 +7,5 @@ import { MONOCULAR_VERSION } from '../../version';
   styleUrls: ['./footer.component.scss']
 })
 export class FooterComponent {
-  private monocularVersion: string = MONOCULAR_VERSION;
+  monocularVersion: string = MONOCULAR_VERSION;
 }
