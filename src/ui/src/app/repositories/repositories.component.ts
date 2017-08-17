@@ -17,7 +17,7 @@ import { RepositoryNewComponent } from '../repository-new/repository-new.compone
 export class RepositoriesComponent implements OnInit {
   loading: boolean = true;
   repos: Repo[] = [];
-  
+
   constructor(
     private reposService: ReposService,
     private router: Router,
@@ -52,6 +52,10 @@ export class RepositoriesComponent implements OnInit {
       .subscribe(repos => {
         this.repos = repos;
       });
+  }
+
+  goToRepoUrl(repo): string {
+    return `/charts/${repo.attributes.name}`;
   }
 
   deleteRepo(repo: Repo) {

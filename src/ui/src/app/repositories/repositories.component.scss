@@ -63,6 +63,10 @@
         &.repo-incubator {
           color: md-color($monocular-app-warn, 600);
         }
+
+        a {
+          color: inherit ;
+        }
       }
       &.actions {
         text-align: right;
@@ -102,7 +106,7 @@
         font-size: .8em;
         text-align: left;
         padding: .5em .625em;
-        
+
         &.actions {
           position: absolute;
           right: .35em;

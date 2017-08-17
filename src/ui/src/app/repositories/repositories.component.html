@@ -23,7 +23,11 @@
             <th></th>
           </tr>
           <tr *ngFor="let repo of repos">
-            <td data-label="Name" class="name repo-{{repo.attributes.name}}">{{repo.attributes.name}}</td>
+            <td data-label="Name" class="name repo-{{repo.attributes.name}}">
+              <a [href]="goToRepoUrl(repo)" [routerLink]="goToRepoUrl(repo)">
+                {{repo.attributes.name}}
+              </a>
+            </td>
             <td data-label="URL">{{repo.attributes.URL}}</td>
             <td data-label="Source">{{repo.attributes.source}}</td>
             <td class="actions">
