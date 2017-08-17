@@ -1,5 +1,4 @@
 @import '../../theme.scss';
-$filters-width: 175px;
 
 .repositories {
   &__header {
@@ -30,51 +29,89 @@ $filters-width: 175px;
 
   }
 
-  // CSS from https://codepen.io/AllThingsSmitty/pen/MyqmdM
   table {
-    border: 1px solid $layout-light;
     border-collapse: collapse;
     margin: 0;
     padding: 0;
     width: 100%;
-    table-layout: fixed;
+    word-break: break-word;
 
     tr {
-      background: $background-light;
-      border: 1px solid $layout-light;
+      border-bottom: 1px solid $border-color;
       padding: .35em;
+
+      &:nth-child(even) {
+        background-color: $layout-light;
+      }
+
+      &:not(:first-child):hover {
+        background-color: $background-light;
+      }
     }
-    
+
     th,
     td {
       padding: .625em;
-      text-align: center;
+      text-align: left;
       text-overflow: ellipsis;
-      overflow: hidden;
+      min-width: 150px;
+
+      &.name {
+        font-weight: 500;
+        color: md-color($monocular-app-accent);
+
+        &.repo-incubator {
+          color: md-color($monocular-app-warn, 600);
+        }
+
+        a {
+          color: inherit ;
+        }
+      }
+      &.actions {
+        text-align: right;
+      }
     }
-    
+
     th {
       font-size: .85em;
       letter-spacing: .1em;
       text-transform: uppercase;
+      opacity: 0.5;
     }
   }
-  
-  @media screen and (max-width: 600px) {
+
+  @include mappy-bp(max-width medium) {
     table {
       border: 0;
-      
+
       tr {
-        border-bottom: 3px solid $layout-light;
         display: block;
-        margin-bottom: .625em;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 1em;
+        background-color: $layout-light !important;
+        border-radius: $border-radius;
+        border: 1px solid $border-color;
+        padding-right: 100px;
+        &:first-child {
+          display: none;
+        }
+
       }
-      
+
       td {
-        border-bottom: 1px solid $layout-light;
+        border: 0;
         display: block;
         font-size: .8em;
-        text-align: right;
+        text-align: left;
+        padding: .5em .625em;
+
+        &.actions {
+          position: absolute;
+          right: .35em;
+          bottom: .35em;
+        }
 
         &:before {
           /*
@@ -82,14 +119,14 @@ $filters-width: 175px;
           content: attr(aria-label);
           */
           content: attr(data-label);
-          float: left;
-          font-weight: bold;
+          display: block;
+          font-size: .85em;
+          letter-spacing: .1em;
           text-transform: uppercase;
+          opacity: 0.5;
+          color: black;
         }
 
-        &:last-child {
-          border-bottom: 0;
-        }
       }
     }
   }
