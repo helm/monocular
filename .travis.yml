@@ -3,8 +3,9 @@ group: deprecated-2017Q2
 filter_secrets: false
 language: node_js
 node_js:
-  - '6.9.5'
+  - '8.1.4'
 cache:
+  yarn: true
   directories:
     - src/api/vendor
     - src/ui/node_modules

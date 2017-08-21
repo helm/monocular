@@ -37,6 +37,7 @@
     "@ngx-meta/core": "^0.4.0-rc.2",
     "angulartics2": "^2.2.2",
     "core-js": "^2.4.1",
+    "enhanced-resolve": "3.3.0",
     "intl": "^1.2.5",
     "marked": "^0.3.6",
     "ngx-clipboard": "^8.0.3",
