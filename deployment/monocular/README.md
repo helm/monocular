@@ -67,7 +67,7 @@ You can configure the chart repositories you want to see in Monocular with the `
 
 ```console
 $ cat > custom-repos.yaml <<<EOF
-api
+api:
   config:
     repos:
       - name: stable
