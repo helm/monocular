@@ -24,8 +24,13 @@ type Configuration struct {
 	ReleasesEnabled      bool  `yaml:"releasesEnabled"`
 	TillerPortForward    bool  `yaml:"tillerPortForward"`
 	CacheRefreshInterval int64 `yaml:"cacheRefreshInterval"`
-	Redis                redisConfig
+	Storage              StorageConfig
 	Initialized          bool
+}
+
+type StorageConfig struct {
+	Driver string
+	Host   string
 }
 
 // Cached version of the config

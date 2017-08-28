@@ -1,7 +1,9 @@
 package helpers
 
 import (
+	"flag"
 	"fmt"
+	"os"
 	"testing"
 
 	log "github.com/Sirupsen/logrus"
@@ -10,6 +12,7 @@ import (
 	"github.com/kubernetes-helm/monocular/src/api/data"
 	"github.com/kubernetes-helm/monocular/src/api/data/cache/charthelper"
 	"github.com/kubernetes-helm/monocular/src/api/data/pointerto"
+	"github.com/kubernetes-helm/monocular/src/api/storage"
 	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
 )
 
@@ -25,6 +28,12 @@ const (
 	chartAppVersion  = "1.0.0"
 	chartHome        = "https://k8s.io/helm"
 )
+
+func TestMain(m *testing.M) {
+	flag.Parse()
+	storage.Init(config.StorageConfig{"redis", ""})
+	os.Exit(m.Run())
+}
 
 func TestIsYAML(t *testing.T) {
 	yaml := []byte(fmt.Sprintf(`
@@ -381,16 +390,11 @@ func setupTestRepoCache() {
 			URL:  pointerto.String("http://myrepobucket"),
 		},
 	}
-	data.UpdateCache(repos)
+	storage.Driver.MergeRepos(repos)
 }
 
 func teardownTestRepoCache() {
-	reposCollection, err := data.GetRepos()
-	if err != nil {
-		log.Fatal("could not get Repos collection ", err)
-	}
-	_, err = reposCollection.DeleteAll()
-	if err != nil {
-		log.Fatal("could not clear cache ", err)
+	if _, err := storage.Driver.DeleteRepos(); err != nil {
+		log.Fatal("Could not clear cache ", err)
 	}
 }

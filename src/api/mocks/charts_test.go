@@ -2,17 +2,26 @@ package mocks
 
 import (
 	"errors"
+	"flag"
 	"log"
+	"os"
 	"testing"
 
 	"github.com/arschles/assert"
-	"github.com/kubernetes-helm/monocular/src/api/data"
+	"github.com/kubernetes-helm/monocular/src/api/config"
 	"github.com/kubernetes-helm/monocular/src/api/data/helpers"
 	"github.com/kubernetes-helm/monocular/src/api/data/pointerto"
+	"github.com/kubernetes-helm/monocular/src/api/storage"
 	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
 	"github.com/kubernetes-helm/monocular/src/api/swagger/restapi/operations/charts"
 	"github.com/kubernetes-helm/monocular/src/api/testutil"
 )
+
+func TestMain(m *testing.M) {
+	flag.Parse()
+	storage.Init(config.StorageConfig{"redis", ""})
+	os.Exit(m.Run())
+}
 
 var chartsImplementation = NewMockCharts(MockedMethods{})
 
@@ -115,16 +124,11 @@ func setupTestRepoCache() {
 			URL:  pointerto.String("http://myrepobucket"),
 		},
 	}
-	data.UpdateCache(repos)
+	storage.Driver.MergeRepos(repos)
 }
 
 func teardownTestRepoCache() {
-	reposCollection, err := data.GetRepos()
-	if err != nil {
-		log.Fatal("could not get Repos collection ", err)
-	}
-	_, err = reposCollection.DeleteAll()
-	if err != nil {
+	if _, err := storage.Driver.DeleteRepos(); err != nil {
 		log.Fatal("could not clear cache ", err)
 	}
 }

@@ -1,13 +1,23 @@
 package cache
 
 import (
+	"flag"
+	"os"
 	"testing"
 	"time"
 
 	"github.com/arschles/assert"
+	"github.com/kubernetes-helm/monocular/src/api/config"
 	"github.com/kubernetes-helm/monocular/src/api/data/pointerto"
+	"github.com/kubernetes-helm/monocular/src/api/storage"
 	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
 )
+
+func TestMain(m *testing.M) {
+	flag.Parse()
+	storage.Init(config.StorageConfig{"redis", ""})
+	os.Exit(m.Run())
+}
 
 func TestNewRefreshData(t *testing.T) {
 	setupTestRepoCache(nil)

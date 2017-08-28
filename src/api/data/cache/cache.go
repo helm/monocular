@@ -14,6 +14,7 @@ import (
 	"github.com/kubernetes-helm/monocular/src/api/data"
 	"github.com/kubernetes-helm/monocular/src/api/data/cache/charthelper"
 	"github.com/kubernetes-helm/monocular/src/api/data/helpers"
+	"github.com/kubernetes-helm/monocular/src/api/storage"
 	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
 	"github.com/kubernetes-helm/monocular/src/api/swagger/restapi/operations/charts"
 )
@@ -93,12 +94,11 @@ func (c *cachedCharts) All() ([]*models.ChartPackage, error) {
 	c.rwm.RLock()
 	defer c.rwm.RUnlock()
 	var allCharts []*models.ChartPackage
-	reposCollection, err := data.GetRepos()
+
+	repos, err := storage.Driver.GetRepos()
 	if err != nil {
 		return nil, err
 	}
-	var repos []*data.Repo
-	reposCollection.FindAll(&repos)
 	// TODO: parallellize this, it won't scale well with lots of repos
 	for _, repo := range repos {
 		var charts []*models.ChartPackage
@@ -136,12 +136,10 @@ func (c *cachedCharts) Refresh() error {
 		"path": charthelper.DataDirBase(),
 	}).Info("Using cache directory")
 
-	reposCollection, err := data.GetRepos()
+	repos, err := storage.Driver.GetRepos()
 	if err != nil {
 		return err
 	}
-	var repos []*data.Repo
-	reposCollection.FindAll(&repos)
 	for _, repo := range repos {
 		u, _ := url.Parse(*repo.URL)
 		u.Path = path.Join(u.Path, "index.yaml")
