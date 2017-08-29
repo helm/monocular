@@ -1,36 +1,43 @@
-# Development
+# Developers Guide
 
-## App Structure
+This guide explains how to set up your environment for developing on Helm and Tiller.
 
-Monocular comprises a UI front end, and a RESTFul HTTP back end API.
+## Prerequisites
+* Docker 1.10 or later
+* Docker Compose 1.6 or later
+* A Kubernetes cluster with Helm/Tiller installed (optional)
+* kubectl 1.2 or later (optional)
+* Git
 
-### UI Prerequisites
+## Running Monocular
 
-The UI is an angular 2 client application located in `src/ui/`.
+We use [Docker Compose](https://docs.docker.com/compose/) to orchestrate the UI frontend and API backend containers for local development. The simplest way to get started is:
 
-More UI docs are [here](src/ui/README.md).
+```
+$ docker-compose up
+```
 
-### API Prerequisites
+After a few minutes, you will be able to visit http://localhost:4200/ in your browser.
 
-The API is a golang HTTP server located in `src/api/`.
+### Running a local cluster
 
-`Makefile` assumes [docker](https://www.docker.com) for containerized development; and [glide](http://glide.sh) for dependency enforcement.
+For development, we highly recommend using the Kubernetes Minikube developer-oriented distribution. Once this is installed, you can use helm init to install Tiller into the cluster.
 
-`cd src/api/ && make bootstrap` will launch a docker container, and run a `glide install` command to install all API dependencies in the `src/api/vendor/` directory.
+```
+$ minikube start
+$ helm init
+$ kubectl config set-credentials minikube --client-certificate=$HOME/.minikube/apiserver.crt --client-key=$HOME/.minikube/apiserver.key --embed-certs
+$ kubectl config set-cluster minikube --certificate-authority=$HOME/.minikube/ca.crt --embed-certs
+```
 
-More API docs are [here](src/api/README.md).
+Since your kubeconfig is mounted into the API container, we embed the certificates to authenticate with the cluster.
 
-## Running a development environment
+## Architecture
 
-We leverage [docker](https://www.docker.com) (via `docker-compose`) to provide a multi-tier setup for development.
+The UI is an Angular 2 application located in `src/ui/`. This path is mounted into the UI container. The server watches for file changes and automatically rebuilds the application.
 
-Running `docker-compose up` from the root directory will expose:
+* [UI documentation](src/ui/README.md)
 
-* API backend endpoint via `http://{your-docker-machine-ip-address}:8080`
-* UI frontend via `http://{your-docker-machine-ip-address}:4200`  
+The API is a Go HTTP server located in `src/api/`.
 
-**IMPORTANT**:
-* If your Docker Machine hostname is different than *localhost*, you need to change
-the `backendHostname` value in the file `src/ui/src/app/shared/services/config.service.ts`.
-
-You can restart individual services doing `docker-compose restart api|ui`
+* [API documentation](src/api/README.md)
