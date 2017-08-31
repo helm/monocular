@@ -53,13 +53,13 @@ export class ChartDetailsComponent implements OnInit {
    */
   updateMetaTags(): void {
     if (this.titleVersion.length > 0) {
-      this.seo.setMetaTags('detailsWithVersion', {
+      this.seo.setMetaTags('chartDetailsWithVersion', {
         name: this.chart.attributes.name,
         description: this.chart.attributes.description,
         version: this.titleVersion
       });
     } else {
-      this.seo.setMetaTags('details', {
+      this.seo.setMetaTags('chartDetails', {
         name: this.chart.attributes.name,
         description: this.chart.attributes.description
       });

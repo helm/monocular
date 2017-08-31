@@ -3,7 +3,7 @@
   <p>You are going to deploy this chart in your cluster</p>
   <form #deploymentForm="ngForm" (ngSubmit)="dialogRef.close(namespace)" class="deployment-new__form">
     <md-input-container class="deployment-new__form__field">
-      <input md-input name="deployment-namespace" placeholder="Namespace" required
+      <input mdInput name="deployment-namespace" placeholder="Namespace" required
         [(ngModel)]="namespace">
     </md-input-container>
 
@@ -15,4 +15,3 @@
     </div>
   </form>
 </div>
-

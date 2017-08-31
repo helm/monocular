@@ -3,6 +3,7 @@ import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { DeploymentsService } from '../shared/services/deployments.service';
 import { Deployment } from '../shared/models/deployment';
 import { Chart } from '../shared/models/chart';
+import { SeoService } from '../shared/services/seo.service';
 import { ConfigService } from '../shared/services/config.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MdIconRegistry } from '@angular/material';
@@ -23,6 +24,7 @@ export class DeploymentComponent implements OnInit {
     private deploymentsService: DeploymentsService,
     private router: Router,
     private route: ActivatedRoute,
+    private seo: SeoService,
     private config: ConfigService,
     private mdIconRegistry: MdIconRegistry,
     private sanitizer: DomSanitizer
@@ -65,6 +67,10 @@ export class DeploymentComponent implements OnInit {
       .subscribe(deployment => {
         this.deployment = deployment;
         this.resources = this.deploymentsService.loadResources(deployment);
+        this.seo.setMetaTags('deploymentDetails', {
+          name: this.name,
+          description: this.deployment.attributes.chartName
+        });
       });
   }
 

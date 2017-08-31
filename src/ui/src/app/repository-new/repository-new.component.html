@@ -5,15 +5,15 @@
       {{formError}}
     </div>
     <md-input-container class="repository-new__form__field">
-      <input md-input name="repository-name" placeholder="Name" required
+      <input mdInput name="repository-name" placeholder="Name" required
         [(ngModel)]="repoAttributes.name" (ngModelChange)="formError=null">
     </md-input-container>
     <md-input-container class="repository-new__form__field">
-      <input md-input name="repository-url" placeholder="URL" required
+      <input mdInput name="repository-url" placeholder="URL" required
         [(ngModel)]="repoAttributes.URL" (ngModelChange)="formError=null">
     </md-input-container>
     <md-input-container class="repository-new__form__field">
-      <input md-input name="repository-source" placeholder="Source"
+      <input mdInput name="repository-source" placeholder="Source"
         [(ngModel)]="repoAttributes.source" (ngModelChange)="formError=null">
     </md-input-container>
 
