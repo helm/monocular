@@ -21,7 +21,7 @@ After a few minutes, you will be able to visit http://localhost:4200/ in your br
 
 ### Running a local cluster
 
-For development, we highly recommend using the Kubernetes Minikube developer-oriented distribution. Once this is installed, you can use helm init to install Tiller into the cluster.
+Monocular allows you to install and view installed charts in your Kubernetes cluster, to test and develop these features we highly recommend using the Kubernetes Minikube developer-oriented distribution. Once this is installed, you can use helm init to install Tiller into the cluster.
 
 ```
 $ minikube start
