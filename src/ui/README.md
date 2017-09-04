@@ -4,12 +4,13 @@ The UI is a web client for the [Monocular
 API](https://github.com/kubernetes-helm/monocular/tree/master/src/api), which exposes an easy way to
 navigate and search [Helm Charts](https://github.com/kubernetes/charts).
 
-Regarding its functionality we can highlight:
+Features of the UI includes:
 
-* Listing of available and curated charts.
-* Search mechanism.
-* Chart information page, which includes instructions on how to use the
-  chart, how to install it, etc.
+* Listing of available charts from multiple repositories.
+* Search charts by name, keywords, maintainer, etc.
+* View chart information, e.g. installation notes, usage, versions.
+* Install charts in the cluster
+* Add and manage indexed chart repositories
 
 ## Developers
 
@@ -19,7 +20,7 @@ Monocular UI requires a running instance of the Monocular backend.
 
 The easiest way to have a running multi-tier development environment is to use the the `docker-compose.yml` file placed at the project root directory.
 
-Refer to [Running a development environment](src/README.md) for more details.
+Refer to [the Developer Guide](../../docs/development.md) for more details.
 
 ### Stack
 
@@ -31,6 +32,22 @@ The web application is based on the components listed below.
 * Sass
 * [Webpack](https://webpack.github.io/)
 * Bootstrap
+
+### Building
+
+`Makefile` provides a convenience for building locally:
+
+- `make compile-aot`
+
+The resulting compiled static Angular application will be placed inside `rootfs/dist`, which is coincidentally where `rootfs/Dockerfile` expects to find it.
+
+### Building Docker Images
+
+To build a docker image locally:
+
+- `make docker-build`
+
+The image will be tagged as `bitnami/monocular-ui:latest` by default. Set `IMAGE_REPO` and `IMAGE_TAG` to override this.
 
 ### Components tree
 

@@ -27,13 +27,9 @@ The resulting will be placed inside `rootfs/usr/bin`, which is not coincidentall
 
 To build a docker image locally:
 
-- `IMAGE_PREFIX=superdev make docker-build`
+- `make docker-build`
 
-Currently, you must provide an `IMAGE_PREFIX` to properly associate the resultant image with a registry (e.g., dockerhub) account. The image will be tagged with the current short git SHA (e.g., `c1c0e7f`) for an "immutable" reference, and a "mutable" tag of `canary` to reflect "latest".
-
-And to push to a public registry, assuming the image has been built on your system previously following the example above:
-
-- `IMAGE_PREFIX=superdev make docker-push`
+The image will be tagged as `bitnami/monocular-api:latest` by default. Set `IMAGE_REPO` and `IMAGE_TAG` to override this.
 
 # Running Monocular
 
