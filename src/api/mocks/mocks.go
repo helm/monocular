@@ -33,6 +33,7 @@ var getTestDataWd = func() (string, error) {
 	if err != nil {
 		return "", err
 	}
+	log.Printf("GOT WD: %s", cwd)
 	cwdSplit := strings.Split(cwd, "/")
 	// are we in the repo root dir?
 	if cwdSplit[len(cwdSplit)-1] == "monocular" {

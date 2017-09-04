@@ -3,6 +3,7 @@ package mocks
 import (
 	"errors"
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"testing"
@@ -19,8 +20,19 @@ import (
 
 func TestMain(m *testing.M) {
 	flag.Parse()
-	storage.Init(config.StorageConfig{"redis", ""})
-	os.Exit(m.Run())
+	storageDrivers := []string{"redis", "mysql"}
+	for _, storageDriver := range storageDrivers {
+		err := storage.Init(config.StorageConfig{storageDriver, ""})
+		if err != nil {
+			fmt.Printf("Failed to initialize storage driver: %v\n", err)
+			os.Exit(1)
+		}
+		returnCode := m.Run()
+		if returnCode != 0 {
+			os.Exit(returnCode)
+		}
+	}
+	os.Exit(0)
 }
 
 var chartsImplementation = NewMockCharts(MockedMethods{})

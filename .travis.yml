@@ -11,11 +11,16 @@ cache:
 services:
   - docker
   - redis-server
-# UI dependencies
+  - mysql
 before_install:
+  # UI dependencies
   - export CHROME_BIN=chromium-browser
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
+  # MySQL Database dependencies
+  - mysql -e 'CREATE DATABASE monocular;'
+  - mysql -e "GRANT ALL PRIVILEGES ON monocular.* To 'monocular'@'localhost' IDENTIFIED BY 'monocular';"
+  - mysql monocular -e "source src/api/storage/mysql/migrations/20170901000000_repos_table.up.sql"
 install:
   - make -C src/api bootstrap
   - make -C src/ui install

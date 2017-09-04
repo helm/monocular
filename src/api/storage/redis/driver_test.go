@@ -8,15 +8,21 @@ import (
 
 var testDriver *Driver
 
-func getTestDriver() *Driver {
+func getTestDriver() (*Driver, error) {
 	if testDriver == nil {
-		testDriver = New(defaultHost)
+		var err error
+		testDriver, err = New(defaultHost)
+		if err != nil {
+			return nil, err
+		}
 	}
-	return testDriver
+	return testDriver, nil
 }
 
 func TestGetRedisPool(t *testing.T) {
-	driver := getTestDriver()
+	driver, err := getTestDriver()
+	assert.Nil(t, err, "Error initializing driver")
+
 	pool := driver.getRedisPool()
 	assert.NotNil(t, pool, "Redis Pool")
 }

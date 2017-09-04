@@ -23,11 +23,11 @@ type Driver struct {
 	Host string
 }
 
-func New(host string) *Driver {
+func New(host string) (*Driver, error) {
 	if host == "" {
 		host = defaultHost
 	}
-	return &Driver{host}
+	return &Driver{host}, nil
 }
 
 // getRedisPool returns a pool of Zoom connections
@@ -84,12 +84,13 @@ func (d *Driver) GetRepos() ([]*data.Repo, error) {
 	return repos, err
 }
 
-func (d *Driver) DeleteRepos() (int, error) {
+func (d *Driver) DeleteRepos() (int64, error) {
 	reposCollection, err := d.getReposCollection()
 	if err != nil {
 		return 0, err
 	}
-	return reposCollection.DeleteAll()
+	numDeleted, err := reposCollection.DeleteAll()
+	return int64(numDeleted), err
 }
 
 func (d *Driver) DeleteRepo(name string) (bool, error) {
