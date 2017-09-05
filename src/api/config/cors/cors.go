@@ -36,11 +36,11 @@ func defaultCors() (Cors, error) {
 func Config(configFile string) (Cors, error) {
 	_, err := os.Stat(configFile)
 	if os.IsNotExist(err) {
-		log.Info("Loading default repositories")
+		log.Info("Loading default CORS config")
 		return defaultCors()
 	}
 
-	log.Info("Loading repositories from config file")
+	log.Info("Loading CORS from config file")
 	cors, err := loadCorsFromFile(configFile)
 	if err != nil {
 		return Cors{}, err
