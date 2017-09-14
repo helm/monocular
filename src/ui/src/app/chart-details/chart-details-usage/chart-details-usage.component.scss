@@ -1,5 +1,3 @@
-// Imports
-@import '~@angular/material/core/theming/theming';
 // Import your custom theme
 @import '../../../theme.scss';
 
@@ -23,10 +21,10 @@ md-tab-body {
     margin-bottom: 1.5em;
   }
 
-  md-input {
+  .mat-input-element {
     width: calc(100% - 5em);
 
-    .md-input-wrapper {
+    .mat-input-wrapper {
       margin: 1em 0 .5em;
     }
   }
@@ -41,7 +39,7 @@ md-tab-body {
   }
 
   svg {
-    fill: md-color($monocular-app-primary);
+    fill: mat-color($monocular-app-primary);
   }
 
   p {

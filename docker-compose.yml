@@ -3,7 +3,7 @@ version: '2'
 services:
   ui:
     tty: true # Enables debugging capabilities when attached to this container.
-    image: bitnami/angular:2.0.0
+    build: ./dev_env/ui
     ports:
       - 4200:4200
     volumes:

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { DeploymentsService } from '../shared/services/deployments.service';
 import { Deployment } from '../shared/models/deployment';
 import { Router } from '@angular/router';
+import { SeoService } from '../shared/services/seo.service';
 import { ConfigService } from '../shared/services/config.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MdIconRegistry } from '@angular/material';
@@ -39,6 +40,7 @@ export class DeploymentsComponent implements OnInit {
   constructor(
     private deploymentsService: DeploymentsService,
     private router: Router,
+    private seo: SeoService,
     private config: ConfigService,
     private mdIconRegistry: MdIconRegistry,
     private sanitizer: DomSanitizer
@@ -61,6 +63,7 @@ export class DeploymentsComponent implements OnInit {
     if (!this.config.releasesEnabled) {
       return this.router.navigate(['/404']);
     }
+    this.seo.setMetaTags('deployments');
     this.loadDeployments();
   }
 

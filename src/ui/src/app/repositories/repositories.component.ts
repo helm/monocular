@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ReposService } from '../shared/services/repos.service';
 import { Repo } from '../shared/models/repo';
 import { Router } from '@angular/router';
+import { SeoService } from '../shared/services/seo.service';
 import { ConfigService } from '../shared/services/config.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MdDialogRef, MdDialog, MdDialogConfig, MdIconRegistry, MdSnackBar } from '@angular/material';
@@ -21,6 +22,7 @@ export class RepositoriesComponent implements OnInit {
   constructor(
     private reposService: ReposService,
     private router: Router,
+    private seo: SeoService,
     private config: ConfigService,
     private mdIconRegistry: MdIconRegistry,
     private sanitizer: DomSanitizer,
@@ -40,6 +42,7 @@ export class RepositoriesComponent implements OnInit {
     if (!this.config.releasesEnabled) {
       return this.router.navigate(['/404']);
     }
+    this.seo.setMetaTags('repositories');
     this.loadRepos();
   }
 

@@ -6,19 +6,19 @@ ifeq "$(VERSION)" ""
 endif
 
 install:
-	npm install
+	yarn install
 
 test:
-	npm test
+	yarn test
 
 test-ci:
-	npm run test-ci
+	yarn run test-ci
 
 compile:
-	npm run compile
+	yarn run compile
 
 compile-aot:
-	npm run compile-aot
+	yarn run compile-aot
 
 docker-build: compile-aot
 	docker build --pull --rm -t ${IMAGE_REPO}:${IMAGE_TAG} rootfs/
