@@ -1,8 +1,11 @@
 package repos
 
 import (
+	"flag"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"strings"
 	"testing"
 
@@ -10,12 +13,29 @@ import (
 	"github.com/arschles/assert"
 	"github.com/go-openapi/runtime"
 	"github.com/kubernetes-helm/monocular/src/api/config"
-	"github.com/kubernetes-helm/monocular/src/api/data"
 	"github.com/kubernetes-helm/monocular/src/api/data/pointerto"
+	"github.com/kubernetes-helm/monocular/src/api/storage"
 	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
 	reposapi "github.com/kubernetes-helm/monocular/src/api/swagger/restapi/operations/repositories"
 	"github.com/kubernetes-helm/monocular/src/api/testutil"
 )
+
+func TestMain(m *testing.M) {
+	flag.Parse()
+	storageDrivers := []string{"redis", "mysql"}
+	for _, storageDriver := range storageDrivers {
+		err := storage.Init(config.StorageConfig{storageDriver, ""})
+		if err != nil {
+			fmt.Printf("Failed to initialize storage driver: %v\n", err)
+			os.Exit(1)
+		}
+		returnCode := m.Run()
+		if returnCode != 0 {
+			os.Exit(returnCode)
+		}
+	}
+	os.Exit(0)
+}
 
 func TestGetAllRepos200(t *testing.T) {
 	setupTestRepoCache()
@@ -78,8 +98,9 @@ func TestCreateRepo201(t *testing.T) {
 	var httpBody models.ResourceData
 	assert.NoErr(t, testutil.ResourceDataFromJSON(w.Body, &httpBody))
 	assert.Equal(t, *httpBody.Data.ID, *testRepo.Name, "returns the stable repo")
-	reposCollection, _ := data.GetRepos()
-	assert.NoErr(t, reposCollection.Find(*testRepo.Name, &data.Repo{}))
+	_, found, err := storage.Driver.GetRepo(*testRepo.Name)
+	assert.NoErr(t, err)
+	assert.True(t, found, "Stable repo not found")
 }
 
 func TestCreateRepo400(t *testing.T) {
@@ -115,8 +136,9 @@ func TestCreateRepo400(t *testing.T) {
 		assert.NotNil(t, httpBody.Message, tt.name+" error response")
 		assert.Equal(t, *httpBody.Code, int64(http.StatusBadRequest), "response code in HTTP body data")
 		assert.True(t, strings.Contains(*httpBody.Message, tt.errorMsg), "error message in HTTP body data")
-		reposCollection, _ := data.GetRepos()
-		assert.ExistsErr(t, reposCollection.Find(*testRepo.Name, &data.Repo{}), "invalid repo")
+		_, found, err := storage.Driver.GetRepo(*testRepo.Name)
+		assert.NoErr(t, err)
+		assert.False(t, found, "Unexpected repo")
 	}
 }
 
@@ -138,8 +160,9 @@ func TestCreateRepo403(t *testing.T) {
 	assert.NoErr(t, testutil.ErrorModelFromJSON(w.Body, &httpBody))
 	assert.Equal(t, *httpBody.Code, int64(http.StatusForbidden), "response code in HTTP body data")
 	assert.True(t, strings.Contains(*httpBody.Message, "Feature not enabled"), "error message in HTTP body data")
-	reposCollection, _ := data.GetRepos()
-	assert.ExistsErr(t, reposCollection.Find(*testRepo.Name, &data.Repo{}), "invalid repo")
+	_, found, err := storage.Driver.GetRepo(*testRepo.Name)
+	assert.NoErr(t, err)
+	assert.False(t, found, "Unexpected repo")
 }
 
 func TestDeleteRepo200(t *testing.T) {
@@ -154,8 +177,9 @@ func TestDeleteRepo200(t *testing.T) {
 	var httpBody models.ResourceData
 	assert.NoErr(t, testutil.ResourceDataFromJSON(w.Body, &httpBody))
 	assert.Nil(t, httpBody.Data.ID, "deleted repo")
-	reposCollection, _ := data.GetRepos()
-	assert.ExistsErr(t, reposCollection.Find("stable", &data.Repo{}), "deleted repo")
+	_, found, err := storage.Driver.GetRepo("stable")
+	assert.NoErr(t, err)
+	assert.False(t, found, "Unexpected repo")
 }
 
 func TestDeleteRepo403(t *testing.T) {
@@ -171,8 +195,9 @@ func TestDeleteRepo403(t *testing.T) {
 	assert.NoErr(t, testutil.ErrorModelFromJSON(w.Body, &httpBody))
 	assert.Equal(t, *httpBody.Code, int64(http.StatusForbidden), "response code in HTTP body data")
 	assert.True(t, strings.Contains(*httpBody.Message, "Feature not enabled"), "error message in HTTP body data")
-	reposCollection, _ := data.GetRepos()
-	assert.NoErr(t, reposCollection.Find("stable", &data.Repo{}))
+	_, found, err := storage.Driver.GetRepo("stable")
+	assert.NoErr(t, err)
+	assert.True(t, found, "Did not find \"stable\" repo")
 }
 
 func TestDeleteRepo404(t *testing.T) {
@@ -200,16 +225,11 @@ func setupTestRepoCache() {
 			URL:  pointerto.String("http://storage.googleapis.com/kubernetes-charts-incubator"),
 		},
 	}
-	data.UpdateCache(repos)
+	storage.Driver.MergeRepos(repos)
 }
 
 func teardownTestRepoCache() {
-	reposCollection, err := data.GetRepos()
-	if err != nil {
-		log.Fatal("could not get Repos collection ", err)
-	}
-	_, err = reposCollection.DeleteAll()
-	if err != nil {
-		log.Fatal("could not clear cache ", err)
+	if _, err := storage.Driver.DeleteRepos(); err != nil {
+		log.Fatal("Could not clear cache ", err)
 	}
 }

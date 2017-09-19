@@ -24,6 +24,9 @@ func TestGetYAML(t *testing.T) {
 }
 
 func TestGetMocksWd(t *testing.T) {
+	originalCwd, err := os.Getwd()
+	assert.NoErr(t, err)
+	fmt.Printf("START MOCK WD TEST: %s\n", originalCwd)
 	path, err := getTestDataWd()
 	assert.NoErr(t, err)
 	assertMocksDir(t, path)
@@ -41,6 +44,9 @@ func TestGetMocksWd(t *testing.T) {
 	assert.NoErr(t, err)
 	_, err = getTestDataWd()
 	assert.ExistsErr(t, err, "couldn't locate ourselves in relation to the 'src/api' directory of the monocular repo")
+	err = os.Chdir(originalCwd) // change to original path
+	assert.NoErr(t, err)
+	fmt.Printf("END MOCK WD TEST\n")
 }
 
 func assertMocksDir(t *testing.T, path string) {

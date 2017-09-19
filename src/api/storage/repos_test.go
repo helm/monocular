@@ -1,15 +1,37 @@
-package data
+package storage
 
 import (
+	"flag"
+	"fmt"
 	"log"
+	"os"
 	"testing"
 
 	"github.com/arschles/assert"
+	"github.com/kubernetes-helm/monocular/src/api/config"
+	"github.com/kubernetes-helm/monocular/src/api/data"
 	"github.com/kubernetes-helm/monocular/src/api/data/pointerto"
 	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
 )
 
-func TestUpdateCache(t *testing.T) {
+func TestMain(m *testing.M) {
+	flag.Parse()
+	storageDrivers := []string{"redis", "mysql"}
+	for _, storageDriver := range storageDrivers {
+		err := Init(config.StorageConfig{storageDriver, ""})
+		if err != nil {
+			fmt.Printf("Failed to initialize storage driver: %v\n", err)
+			os.Exit(1)
+		}
+		returnCode := m.Run()
+		if returnCode != 0 {
+			os.Exit(returnCode)
+		}
+	}
+	os.Exit(0)
+}
+
+func TestMergeRepos(t *testing.T) {
 	testRepo := models.Repo{
 		Name:   pointerto.String("repoName"),
 		URL:    pointerto.String("http://myrepobucket"),
@@ -31,15 +53,16 @@ func TestUpdateCache(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			defer teardownTestRepoCache()
-			UpdateCache(tt.repos)
-			reposCollection, err := GetRepos()
-			assert.NotNil(t, reposCollection, "Repos collection created")
-			numRepos, err := reposCollection.Count()
+			err := Driver.MergeRepos(tt.repos)
+			if err != nil {
+				log.Fatal("Could not merge repos:", err)
+			}
+			repos, err := Driver.GetRepos()
 			assert.NoErr(t, err)
-			assert.Equal(t, numRepos, tt.numRepos, tt.name)
+			assert.Equal(t, len(repos), tt.numRepos, tt.name)
+
 			for _, r := range tt.repos {
-				repo := Repo{}
-				err := reposCollection.Find(*r.Name, &repo)
+				repo, _, err := Driver.GetRepo(*r.Name)
 				assert.NoErr(t, err)
 				assert.Equal(t, *repo.Name, *r.Name, tt.name)
 				assert.Equal(t, *repo.URL, *r.URL, tt.name)
@@ -52,11 +75,11 @@ func TestUpdateCache(t *testing.T) {
 func TestRepo_ModelId(t *testing.T) {
 	tests := []struct {
 		name string
-		r    *Repo
+		r    *data.Repo
 		want string
 	}{
-		{"stable repo id", &Repo{Name: pointerto.String("stable")}, "stable"},
-		{"no id (unexpected)", &Repo{}, "<nil>"},
+		{"stable repo id", &data.Repo{Name: pointerto.String("stable")}, "stable"},
+		{"no id (unexpected)", &data.Repo{}, "<nil>"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -71,10 +94,10 @@ func TestRepo_SetModelId(t *testing.T) {
 	}
 	tests := []struct {
 		name string
-		r    *Repo
+		r    *data.Repo
 		args args
 	}{
-		{"stable repo id", &Repo{}, args{"stable"}},
+		{"stable repo id", &data.Repo{}, args{"stable"}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -85,12 +108,7 @@ func TestRepo_SetModelId(t *testing.T) {
 }
 
 func teardownTestRepoCache() {
-	reposCollection, err := GetRepos()
-	if err != nil {
-		log.Fatal("could not get Repos collection ", err)
-	}
-	_, err = reposCollection.DeleteAll()
-	if err != nil {
-		log.Fatal("could not clear cache ", err)
+	if _, err := Driver.DeleteRepos(); err != nil {
+		log.Fatal("Could not clear cache ", err)
 	}
 }

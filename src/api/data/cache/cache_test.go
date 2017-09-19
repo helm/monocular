@@ -11,6 +11,7 @@ import (
 	"github.com/kubernetes-helm/monocular/src/api/data/cache/charthelper"
 	"github.com/kubernetes-helm/monocular/src/api/data/helpers"
 	"github.com/kubernetes-helm/monocular/src/api/data/pointerto"
+	"github.com/kubernetes-helm/monocular/src/api/storage"
 	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
 	"github.com/kubernetes-helm/monocular/src/api/swagger/restapi/operations/charts"
 	"github.com/kubernetes-helm/monocular/src/api/testutil"
@@ -185,17 +186,13 @@ func setupTestRepoCache(repos *[]models.Repo) {
 			},
 		}
 	}
-	data.UpdateCache(*repos)
+	storage.Driver.MergeRepos(*repos)
 	chartsImplementation.Refresh()
 }
 
 func teardownTestRepoCache() {
-	reposCollection, err := data.GetRepos()
-	if err != nil {
-		log.Fatal("could not get Repos collection ", err)
+	if _, err := storage.Driver.DeleteRepos(); err != nil {
+		log.Fatal("Could not clear cache ", err)
 	}
-	_, err = reposCollection.DeleteAll()
-	if err != nil {
-		log.Fatal("could not clear cache ", err)
-	}
+
 }

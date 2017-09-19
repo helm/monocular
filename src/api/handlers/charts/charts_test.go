@@ -2,22 +2,43 @@ package charts
 
 import (
 	"errors"
+	"flag"
+	"fmt"
 	"log"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 
 	"github.com/arschles/assert"
 	"github.com/go-openapi/runtime"
-	"github.com/kubernetes-helm/monocular/src/api/data"
+	"github.com/kubernetes-helm/monocular/src/api/config"
 	"github.com/kubernetes-helm/monocular/src/api/data/helpers"
 	"github.com/kubernetes-helm/monocular/src/api/data/pointerto"
 	"github.com/kubernetes-helm/monocular/src/api/handlers"
 	"github.com/kubernetes-helm/monocular/src/api/mocks"
+	"github.com/kubernetes-helm/monocular/src/api/storage"
 	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
 	chartsapi "github.com/kubernetes-helm/monocular/src/api/swagger/restapi/operations/charts"
 	"github.com/kubernetes-helm/monocular/src/api/testutil"
 )
+
+func TestMain(m *testing.M) {
+	flag.Parse()
+	storageDrivers := []string{"redis", "mysql"}
+	for _, storageDriver := range storageDrivers {
+		err := storage.Init(config.StorageConfig{storageDriver, ""})
+		if err != nil {
+			fmt.Printf("Failed to initialize storage driver: %v\n", err)
+			os.Exit(1)
+		}
+		returnCode := m.Run()
+		if returnCode != 0 {
+			os.Exit(returnCode)
+		}
+	}
+	os.Exit(0)
+}
 
 var chartsImplementation = mocks.NewMockCharts(mocks.MockedMethods{})
 
@@ -290,16 +311,11 @@ func setupTestRepoCache() {
 			URL:  pointerto.String("http://storage.googleapis.com/kubernetes-charts-incubator"),
 		},
 	}
-	data.UpdateCache(repos)
+	storage.Driver.MergeRepos(repos)
 }
 
 func teardownTestRepoCache() {
-	reposCollection, err := data.GetRepos()
-	if err != nil {
-		log.Fatal("could not get Repos collection ", err)
-	}
-	_, err = reposCollection.DeleteAll()
-	if err != nil {
-		log.Fatal("could not clear cache ", err)
+	if _, err := storage.Driver.DeleteRepos(); err != nil {
+		log.Fatal("Could not clear cache ", err)
 	}
 }

@@ -11,7 +11,6 @@ import (
 	errors "github.com/go-openapi/errors"
 	runtime "github.com/go-openapi/runtime"
 	middleware "github.com/go-openapi/runtime/middleware"
-	"github.com/kubernetes-helm/monocular/src/api/data"
 	helmclient "github.com/kubernetes-helm/monocular/src/api/data/helm/client"
 
 	"github.com/kubernetes-helm/monocular/src/api/config"
@@ -22,6 +21,7 @@ import (
 	hreleases "github.com/kubernetes-helm/monocular/src/api/handlers/releases"
 	hrepos "github.com/kubernetes-helm/monocular/src/api/handlers/repos"
 	"github.com/kubernetes-helm/monocular/src/api/jobs"
+	"github.com/kubernetes-helm/monocular/src/api/storage"
 	"github.com/kubernetes-helm/monocular/src/api/swagger/restapi/operations"
 	"github.com/kubernetes-helm/monocular/src/api/swagger/restapi/operations/charts"
 	"github.com/kubernetes-helm/monocular/src/api/swagger/restapi/operations/releases"
@@ -43,10 +43,16 @@ func configureAPI(api *operations.MonocularAPI) http.Handler {
 		log.Fatalf("Can not load configuration %v\n", err)
 	}
 
-	// configure the api here
-	if err := data.UpdateCache(conf.Repos); err != nil {
+	if err := storage.Init(conf.Storage); err != nil {
+		log.Fatalf("Can not load storage.Driver: %v", err)
+	}
+
+	// Merge repo configuration into storage
+	if err := storage.Driver.MergeRepos(conf.Repos); err != nil {
 		log.Fatalf("Can not configure repository cache %v\n", err)
 	}
+
+	log.Println("Loaded config and cache. Configuring server...")
 
 	chartsImplementation := cache.NewCachedCharts()
 	// Run foreground repository refresh

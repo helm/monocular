@@ -1,23 +1,44 @@
 package restapi
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"strings"
 	"testing"
 
 	"github.com/arschles/assert"
 	"github.com/go-openapi/loads"
+	"github.com/kubernetes-helm/monocular/src/api/config"
 	"github.com/kubernetes-helm/monocular/src/api/data"
 	"github.com/kubernetes-helm/monocular/src/api/data/cache"
 	"github.com/kubernetes-helm/monocular/src/api/data/helpers"
 	handlerscharts "github.com/kubernetes-helm/monocular/src/api/handlers/charts"
+	"github.com/kubernetes-helm/monocular/src/api/storage"
 	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
 	"github.com/kubernetes-helm/monocular/src/api/swagger/restapi/operations"
 	"github.com/kubernetes-helm/monocular/src/api/testutil"
 )
+
+func TestMain(m *testing.M) {
+	flag.Parse()
+	storageDrivers := []string{"redis", "mysql"}
+	for _, storageDriver := range storageDrivers {
+		err := storage.Init(config.StorageConfig{storageDriver, ""})
+		if err != nil {
+			fmt.Printf("Failed to initialize storage driver: %v\n", err)
+			os.Exit(1)
+		}
+		returnCode := m.Run()
+		if returnCode != 0 {
+			os.Exit(returnCode)
+		}
+	}
+	os.Exit(0)
+}
 
 const versionsRouteString = "versions"
 
@@ -211,12 +232,7 @@ func getChartsImplementation() data.Charts {
 }
 
 func teardownTestRepoCache() {
-	reposCollection, err := data.GetRepos()
-	if err != nil {
-		log.Fatal("could not get Repos collection ", err)
-	}
-	_, err = reposCollection.DeleteAll()
-	if err != nil {
+	if _, err := storage.Driver.DeleteRepos(); err != nil {
 		log.Fatal("could not clear cache ", err)
 	}
 }

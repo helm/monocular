@@ -148,7 +148,14 @@ func (c *mockCharts) Refresh() error {
 
 // getMockRepo is a convenience that loads a yaml repo from the filesystem
 func getMockRepo(repo string) ([]byte, error) {
-	path, _ := getTestDataWd()
+	log.Printf("GETTING MOCK REPO: %s\n", repo)
+	path, err := getTestDataWd()
+	if err != nil {
+		log.Printf("couldn't load mock repo test data working dir %s!\n", path)
+		return nil, err
+	}
+	log.Printf("TESTDATA WDE %v\n", err)
+	log.Printf("TESTDATA WD %s\n", path)
 	path += fmt.Sprintf("repo-%s.yaml", repo)
 	y, err := getYAML(path)
 	if err != nil {

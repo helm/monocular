@@ -11,6 +11,7 @@ import (
 
 	"github.com/kubernetes-helm/monocular/src/api/data/cache/charthelper"
 	"github.com/kubernetes-helm/monocular/src/api/data/pointerto"
+	"github.com/kubernetes-helm/monocular/src/api/storage"
 )
 
 // APIVer1String is the API version 1 string we include in route URLs
@@ -291,12 +292,10 @@ func makeReadmeURL(chart *models.ChartPackage) *string {
 }
 
 func getRepoObject(chart *models.ChartPackage) *models.Repo {
-	reposCollection, err := data.GetRepos()
+	repos, err := storage.Driver.GetRepos()
 	if err != nil {
 		log.Fatal("could not get Repo collection", err)
 	}
-	var repos []*data.Repo
-	reposCollection.FindAll(&repos)
 
 	var repoPayload models.Repo
 	for _, repo := range repos {
