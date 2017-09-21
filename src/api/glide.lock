@@ -1,5 +1,5 @@
-hash: cc82fc68bf55f0dba003b52864f41329d40bf2243aadd651fb83c91deb1dccc8
-updated: 2017-08-03T14:20:28.305697876Z
+hash: 2108ae1782273e29383d5e89a8b6cdbfde783a5fb86cfd8893d17d4165cdee55
+updated: 2017-09-20T09:09:12.686523429Z
 imports:
 - name: cloud.google.com/go
   version: 3b1ae45394a234c385be014e9a488f2bb6eef821
@@ -103,11 +103,12 @@ imports:
 - name: github.com/garyburd/redigo
   version: 9e66b83d15a259978be267d0b61838c42c3904e3
   subpackages:
+  - internal
   - redis
 - name: github.com/ghodss/yaml
   version: 73d445a93680fa1a78ae23a5839bad48f32ba1ee
 - name: github.com/go-openapi/analysis
-  version: d5a75b7d751ca3f11ad5d93cfe97405f2c3f6a47
+  version: b44dc874b601d9e4e2f6e19140e794ba24bead3b
 - name: github.com/go-openapi/errors
   version: d24ebc2075bad502fac3a8ae27aa6dd58e1952dc
 - name: github.com/go-openapi/jsonpointer
@@ -115,9 +116,7 @@ imports:
 - name: github.com/go-openapi/jsonreference
   version: 13c6e3589ad90f49bd3e3bbe2c2cb3d7a4142272
 - name: github.com/go-openapi/loads
-  version: 6bb6486231e079ea125c0f39994ed3d0c53399ed
-  subpackages:
-  - fmts
+  version: 18441dfa706d924a39a030ee2c3b1d8d81917b38
 - name: github.com/go-openapi/runtime
   version: 11e322eeecc1032d5a0a96c566ed53f2b5c26e22
   subpackages:
@@ -127,11 +126,11 @@ imports:
   - middleware/untyped
   - security
 - name: github.com/go-openapi/spec
-  version: 02fb9cd3430ed0581e0ceb4804d5d4b3cc702694
+  version: 6aced65f8501fe1217321abf0749d354824ba2ff
 - name: github.com/go-openapi/strfmt
   version: d65c7fdb29eca313476e529628176fe17e58c488
 - name: github.com/go-openapi/swag
-  version: d5f8ebc3b1c55a4cf6489eeae7354f338cfe299e
+  version: 1d0bd113de87027671077d3c71eb3ac5d7dbba72
 - name: github.com/go-openapi/validate
   version: deaf2c9013bc1a7f4c774662259a506ba874d80f
 - name: github.com/go-swagger/go-swagger
@@ -146,6 +145,8 @@ imports:
   - syntax/lexer
   - util/runes
   - util/strings
+- name: github.com/gocraft/work
+  version: 2a383f87e013a086dac00a8d4a8138c909d2bd17
 - name: github.com/gogo/protobuf
   version: e18d7aa8f8c624c915db340349aad4c49b10d173
   subpackages:
@@ -224,6 +225,8 @@ imports:
   version: 8a290539e2e8629dbc4e6bad948158f790ec31f4
 - name: github.com/PuerkitoBio/urlesc
   version: 5bd2802263f21d8788851d5305584c82a5c75d7e
+- name: github.com/robfig/cron
+  version: 736158dc09e10f1911ca3a1e1b01f11b566ce5db
 - name: github.com/rs/cors
   version: a62a804a8a009876ca59105f7899938a1349f4b3
 - name: github.com/rs/xhandler
@@ -243,6 +246,10 @@ imports:
   subpackages:
   - codec
   - codec/codecgen
+- name: github.com/unrolled/render
+  version: a0ec58421ddf111bd7efd3b7087399ca7d5da2f1
+- name: github.com/urfave/negroni
+  version: ccc4a14984828dcb944e6f17fa4a967b18624f2b
 - name: golang.org/x/crypto
   version: 1f22c0103821b9390939b6776727195525381532
   subpackages:

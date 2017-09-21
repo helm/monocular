@@ -6,12 +6,12 @@ import (
 	"net/http"
 	"sort"
 
-	middleware "github.com/go-openapi/runtime/middleware"
 	"github.com/kubernetes-helm/monocular/src/api/chartpackagesort"
 	"github.com/kubernetes-helm/monocular/src/api/data"
 	"github.com/kubernetes-helm/monocular/src/api/data/helpers"
 	"github.com/kubernetes-helm/monocular/src/api/data/pointerto"
 	"github.com/kubernetes-helm/monocular/src/api/handlers"
+	"github.com/kubernetes-helm/monocular/src/api/handlers/renderer"
 	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
 	chartsapi "github.com/kubernetes-helm/monocular/src/api/swagger/restapi/operations/charts"
 )
@@ -23,37 +23,50 @@ const (
 	ChartVersionResourceName = "chartVersion"
 )
 
+// ChartHandlers defines handlers that serve chart data
+type ChartHandlers struct {
+	chartsImplementation data.Charts
+}
+
+// NewChartHandlers takes a data.Charts implementation and returns a ChartHandlers struct
+func NewChartHandlers(ch data.Charts) *ChartHandlers {
+	return &ChartHandlers{ch}
+}
+
 // GetChart is the handler for the /charts/{repo}/{name} endpoint
-func GetChart(params chartsapi.GetChartParams, c data.Charts) middleware.Responder {
-	chartPackage, err := c.ChartFromRepo(params.Repo, params.ChartName)
+func (c *ChartHandlers) GetChart(w http.ResponseWriter, req *http.Request, params handlers.Params) {
+	chartPackage, err := c.chartsImplementation.ChartFromRepo(params["repo"], params["chartName"])
 	if err != nil {
-		log.Printf("data.chartsapi.ChartFromRepo(%s, %s) error (%s)", params.Repo, params.ChartName, err)
-		return notFound(ChartResourceName)
+		log.Printf("data.chartsapi.ChartFromRepo(%s, %s) error (%s)", params["repo"], params["chartName"], err)
+		notFound(w, ChartResourceName)
+		return
 	}
 	chartResource := helpers.MakeChartResource(chartPackage)
 
 	payload := handlers.DataResourceBody(chartResource)
-	return chartsapi.NewGetChartOK().WithPayload(payload)
+	renderer.Render.JSON(w, http.StatusOK, payload)
 }
 
 // GetChartVersion is the handler for the /charts/{repo}/{name}/versions/{version} endpoint
-func GetChartVersion(params chartsapi.GetChartVersionParams, c data.Charts) middleware.Responder {
-	chartPackage, err := c.ChartVersionFromRepo(params.Repo, params.ChartName, params.Version)
+func (c *ChartHandlers) GetChartVersion(w http.ResponseWriter, req *http.Request, params handlers.Params) {
+	chartPackage, err := c.chartsImplementation.ChartVersionFromRepo(params["repo"], params["chartName"], params["version"])
 	if err != nil {
-		log.Printf("data.chartsapi.ChartVersionFromRepo(%s, %s, %s) error (%s)", params.Repo, params.ChartName, params.Version, err)
-		return notFound(ChartVersionResourceName)
+		log.Printf("data.chartsapi.ChartVersionFromRepo(%s, %s, %s) error (%s)", params["repo"], params["chartName"], params["version"], err)
+		notFound(w, ChartVersionResourceName)
+		return
 	}
 	chartVersionResource := helpers.MakeChartVersionResource(chartPackage)
 	payload := handlers.DataResourceBody(chartVersionResource)
-	return chartsapi.NewGetChartOK().WithPayload(payload)
+	renderer.Render.JSON(w, http.StatusOK, payload)
 }
 
 // GetChartVersions is the handler for the /charts/{repo}/{name}/versions endpoint
-func GetChartVersions(params chartsapi.GetChartVersionsParams, c data.Charts) middleware.Responder {
-	chartPackages, err := c.ChartVersionsFromRepo(params.Repo, params.ChartName)
+func (c *ChartHandlers) GetChartVersions(w http.ResponseWriter, req *http.Request, params handlers.Params) {
+	chartPackages, err := c.chartsImplementation.ChartVersionsFromRepo(params["repo"], params["chartName"])
 	if err != nil {
-		log.Printf("data.chartsapi.ChartVersionsFromRepo(%s, %s) error (%s)", params.Repo, params.ChartName, err)
-		return notFound(ChartVersionResourceName)
+		log.Printf("data.chartsapi.ChartVersionsFromRepo(%s, %s) error (%s)", params["repo"], params["chartName"], err)
+		notFound(w, ChartVersionResourceName)
+		return
 	}
 
 	// Sort by semver reverse order
@@ -61,57 +74,57 @@ func GetChartVersions(params chartsapi.GetChartVersionsParams, c data.Charts) mi
 
 	chartVersionResources := helpers.MakeChartVersionResources(chartPackages)
 	payload := handlers.DataResourcesBody(chartVersionResources)
-	return chartsapi.NewGetAllChartsOK().WithPayload(payload)
+	renderer.Render.JSON(w, http.StatusOK, payload)
 }
 
 // GetAllCharts is the handler for the /charts endpoint
-func GetAllCharts(params chartsapi.GetAllChartsParams, c data.Charts) middleware.Responder {
-	charts, err := c.All()
+func (c *ChartHandlers) GetAllCharts(w http.ResponseWriter, req *http.Request) {
+	charts, err := c.chartsImplementation.All()
 	if err != nil {
 		log.Printf("data.Charts All() error (%s)", err)
-		return notFound(ChartResourceName + "s")
+		notFound(w, ChartResourceName+"s")
+		return
 	}
 
 	// For now we only sort by name
 	sort.Sort(chartpackagesort.ByName(charts))
 	resources := helpers.MakeChartResources(charts)
 	payload := handlers.DataResourcesBody(resources)
-	return chartsapi.NewGetAllChartsOK().WithPayload(payload)
+	renderer.Render.JSON(w, http.StatusOK, payload)
 }
 
 // GetChartsInRepo is the handler for the /charts/{repo} endpoint
-func GetChartsInRepo(params chartsapi.GetChartsInRepoParams, c data.Charts) middleware.Responder {
-	charts, err := c.AllFromRepo(params.Repo)
+func (c *ChartHandlers) GetChartsInRepo(w http.ResponseWriter, req *http.Request, params handlers.Params) {
+	charts, err := c.chartsImplementation.AllFromRepo(params["repo"])
 	if err != nil {
-		log.Printf("data.Charts AllFromRepo(%s) error (%s)", params.Repo, err)
-		return notFound(ChartResourceName + "s")
+		log.Printf("data.Charts AllFromRepo(%s) error (%s)", params["repo"], err)
+		notFound(w, ChartResourceName+"s")
+		return
 	}
 	// For now we only sort by name
 	sort.Sort(chartpackagesort.ByName(charts))
 	chartsResource := helpers.MakeChartResources(charts)
 	payload := handlers.DataResourcesBody(chartsResource)
-	return chartsapi.NewGetAllChartsOK().WithPayload(payload)
+	renderer.Render.JSON(w, http.StatusOK, payload)
 }
 
 // SearchCharts is the handler for the /charts/search endpoint
-func SearchCharts(params chartsapi.SearchChartsParams, c data.Charts) middleware.Responder {
-	charts, err := c.Search(params)
+func (c *ChartHandlers) SearchCharts(w http.ResponseWriter, req *http.Request) {
+	fmt.Println("query", req.URL)
+	fmt.Println(req.URL.Query().Get("name"))
+	charts, err := c.chartsImplementation.Search(chartsapi.SearchChartsParams{Name: req.URL.Query().Get("name")})
 	if err != nil {
 		message := fmt.Sprintf("data.Charts Search() error (%s)", err)
 		log.Printf(message)
-		return chartsapi.NewSearchChartsDefault(http.StatusBadRequest).WithPayload(
-			&models.Error{Code: pointerto.Int64(http.StatusBadRequest), Message: &message},
-		)
+		renderer.Render.JSON(w, http.StatusBadRequest, models.Error{Code: pointerto.Int64(http.StatusBadRequest), Message: &message})
+		return
 	}
 	resources := helpers.MakeChartResources(charts)
 	payload := handlers.DataResourcesBody(resources)
-	return chartsapi.NewGetAllChartsOK().WithPayload(payload)
+	renderer.Render.JSON(w, http.StatusOK, payload)
 }
 
-// notFound is a convenience that contains a swagger-friendly 404 given a resource string
-func notFound(resource string) middleware.Responder {
+func notFound(w http.ResponseWriter, resource string) {
 	message := fmt.Sprintf("404 %s not found", resource)
-	return chartsapi.NewGetChartDefault(http.StatusNotFound).WithPayload(
-		&models.Error{Code: pointerto.Int64(http.StatusNotFound), Message: &message},
-	)
+	renderer.Render.JSON(w, http.StatusNotFound, &models.Error{Code: pointerto.Int64(http.StatusNotFound), Message: &message})
 }

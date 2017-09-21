@@ -1,14 +1,16 @@
 package releases
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	"github.com/arschles/assert"
-	"github.com/go-openapi/runtime"
 	"github.com/kubernetes-helm/monocular/src/api/data/pointerto"
+	"github.com/kubernetes-helm/monocular/src/api/handlers"
 	"github.com/kubernetes-helm/monocular/src/api/mocks"
 	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
 	releasesapi "github.com/kubernetes-helm/monocular/src/api/swagger/restapi/operations/releases"
@@ -18,170 +20,113 @@ import (
 var helmClient = mocks.NewMockedClient()
 var helmClientBroken = mocks.NewMockedBrokenClient()
 var chartsImplementation = mocks.NewMockCharts(mocks.MockedMethods{})
+var releaseHandlers = NewReleaseHandlers(chartsImplementation, helmClient)
+var brokenReleaseHandlers = NewReleaseHandlers(chartsImplementation, helmClientBroken)
 
-func validParams() releasesapi.CreateReleaseParams {
+func validParams() releasesapi.CreateReleaseBody {
 	charts, _ := chartsImplementation.All()
 	firstChart := charts[0]
 	chartID := fmt.Sprintf("%s/%s", firstChart.Repo, *firstChart.Name)
-	return releasesapi.CreateReleaseParams{
-		Data: releasesapi.CreateReleaseBody{
-			ChartID:      pointerto.String(chartID),
-			ChartVersion: firstChart.Version,
-		},
+	return releasesapi.CreateReleaseBody{
+		ChartID:      pointerto.String(chartID),
+		ChartVersion: firstChart.Version,
 	}
-}
-
-func TestGetReleasesNotEnabled(t *testing.T) {
-	w := httptest.NewRecorder()
-	params := releasesapi.GetAllReleasesParams{}
-	resp := GetReleases(helmClient, params, false)
-	assert.NotNil(t, resp, "GetReleases response")
-	resp.WriteResponse(w, runtime.JSONProducer())
-	assert.Equal(t, w.Code, http.StatusForbidden, "expect a 403 response code")
 }
 
 func TestGetReleases200(t *testing.T) {
-	w := httptest.NewRecorder()
-	params := releasesapi.GetAllReleasesParams{}
-	resp := GetReleases(helmClient, params, true)
-	assert.NotNil(t, resp, "GetReleases response")
-	resp.WriteResponse(w, runtime.JSONProducer())
-	assert.Equal(t, w.Code, http.StatusOK, "expect a 200 response code")
+	req, err := http.NewRequest("GET", "/v1/releases", nil)
+	assert.NoErr(t, err)
+	res := httptest.NewRecorder()
+	releaseHandlers.GetReleases(res, req)
+	assert.Equal(t, res.Code, http.StatusOK, "expect a 200 response code")
 }
 
 func TestGetReleases500(t *testing.T) {
-	w := httptest.NewRecorder()
-	params := releasesapi.GetAllReleasesParams{}
-	resp := GetReleases(helmClientBroken, params, true)
-	assert.NotNil(t, resp, "Create response")
-	resp.WriteResponse(w, runtime.JSONProducer())
-	assert.Equal(t, w.Code, http.StatusInternalServerError, "expect a 500 response code")
-}
-
-func TestCreateReleaseNotEnabled(t *testing.T) {
-	w := httptest.NewRecorder()
-	resp := CreateRelease(helmClient, validParams(), chartsImplementation, false)
-	assert.NotNil(t, resp, "Create response")
-	resp.WriteResponse(w, runtime.JSONProducer())
-	assert.Equal(t, w.Code, http.StatusForbidden, "expect a 403 response code")
+	req, err := http.NewRequest("GET", "/v1/releases", nil)
+	assert.NoErr(t, err)
+	res := httptest.NewRecorder()
+	brokenReleaseHandlers.GetReleases(res, req)
+	assert.Equal(t, res.Code, http.StatusInternalServerError, "expect a 500 response code")
 }
 
 func TestCreateRelease201(t *testing.T) {
-	w := httptest.NewRecorder()
-	resp := CreateRelease(helmClient, validParams(), chartsImplementation, true)
-	assert.NotNil(t, resp, "Create response")
-	resp.WriteResponse(w, runtime.JSONProducer())
-	assert.Equal(t, w.Code, http.StatusCreated, "expect a 201 response code")
+	jsonParams, err := json.Marshal(validParams())
+	assert.NoErr(t, err)
+	req, err := http.NewRequest("POST", "/v1/releases", bytes.NewBuffer(jsonParams))
+	assert.NoErr(t, err)
+	res := httptest.NewRecorder()
+	releaseHandlers.CreateRelease(res, req)
+	assert.Equal(t, res.Code, http.StatusCreated, "expect a 201 response code")
 }
 
-func TestCreateRelease400(t *testing.T) {
-	w := httptest.NewRecorder()
-	// No ChartVersion
-	params := releasesapi.CreateReleaseParams{
-		Data: releasesapi.CreateReleaseBody{
-			ChartID: pointerto.String("waps"),
-		},
+func TestCreateReleaseErrors(t *testing.T) {
+	tests := []struct {
+		name           string
+		params         releasesapi.CreateReleaseBody
+		expectedStatus int
+	}{
+		{"no chartVersion", releasesapi.CreateReleaseBody{ChartID: pointerto.String("waps")}, http.StatusBadRequest},
+		{"no chartId", releasesapi.CreateReleaseBody{ChartVersion: pointerto.String("waps")}, http.StatusBadRequest},
+		{"invalid chartId", releasesapi.CreateReleaseBody{ChartID: pointerto.String("foo"), ChartVersion: pointerto.String("0.1.0")}, http.StatusBadRequest},
+		{"non existant chart", releasesapi.CreateReleaseBody{ChartID: pointerto.String("stable/foo"), ChartVersion: pointerto.String("does not exist")}, http.StatusNotFound},
 	}
-	resp := CreateRelease(helmClient, params, chartsImplementation, true)
-	assert.NotNil(t, resp, "Create response")
-	resp.WriteResponse(w, runtime.JSONProducer())
-	assert.Equal(t, w.Code, http.StatusBadRequest, "expect a 400 response code")
 
-	// No ChartId
-	params = releasesapi.CreateReleaseParams{
-		Data: releasesapi.CreateReleaseBody{
-			ChartVersion: pointerto.String("waps"),
-		},
+	for _, tt := range tests {
+		jsonParams, err := json.Marshal(tt.params)
+		assert.NoErr(t, err)
+		req, err := http.NewRequest("POST", "/v1/releases", bytes.NewBuffer(jsonParams))
+		assert.NoErr(t, err)
+		res := httptest.NewRecorder()
+		releaseHandlers.CreateRelease(res, req)
+		assert.Equal(t, res.Code, tt.expectedStatus,
+			fmt.Sprintf("got %d, expected %d for request with %s", res.Code, tt.expectedStatus, tt.name))
 	}
-	resp = CreateRelease(helmClient, params, chartsImplementation, true)
-	assert.NotNil(t, resp, "Create response")
-	resp.WriteResponse(w, runtime.JSONProducer())
-	assert.Equal(t, w.Code, http.StatusBadRequest, "expect a 400  response code")
-	// Invalid ChartId
-	params = releasesapi.CreateReleaseParams{
-		Data: releasesapi.CreateReleaseBody{
-			ChartID:      pointerto.String("foo"),
-			ChartVersion: pointerto.String("waps"),
-		},
-	}
-	resp = CreateRelease(helmClient, params, chartsImplementation, true)
-	assert.NotNil(t, resp, "Create response")
-	resp.WriteResponse(w, runtime.JSONProducer())
-	assert.Equal(t, w.Code, http.StatusBadRequest, "expect a 400 response code")
-
-	// Chart not found
-	params = releasesapi.CreateReleaseParams{
-		Data: releasesapi.CreateReleaseBody{
-			ChartID:      pointerto.String("stable/foo"),
-			ChartVersion: pointerto.String("does not exist"),
-		},
-	}
-	resp = CreateRelease(helmClient, params, chartsImplementation, true)
-	assert.NotNil(t, resp, "Create response")
-	resp.WriteResponse(w, runtime.JSONProducer())
-	assert.Equal(t, w.Code, http.StatusBadRequest, "expect a 401 response code")
 }
 
 func TestCreateRelease500(t *testing.T) {
-	w := httptest.NewRecorder()
-	resp := CreateRelease(helmClientBroken, validParams(), chartsImplementation, true)
-	assert.NotNil(t, resp, "Create response")
-	resp.WriteResponse(w, runtime.JSONProducer())
-	assert.Equal(t, w.Code, http.StatusInternalServerError, "expect a 500 response code")
-}
-
-func TestDeleteReleaseNotEnabled(t *testing.T) {
-	w := httptest.NewRecorder()
-	params := releasesapi.DeleteReleaseParams{ReleaseName: "foo"}
-	resp := DeleteRelease(helmClient, params, false)
-	assert.NotNil(t, resp, "Delete response")
-	resp.WriteResponse(w, runtime.JSONProducer())
-	assert.Equal(t, w.Code, http.StatusForbidden, "expect a 403 response code")
+	jsonParams, err := json.Marshal(validParams())
+	assert.NoErr(t, err)
+	req, err := http.NewRequest("POST", "/v1/releases", bytes.NewBuffer(jsonParams))
+	assert.NoErr(t, err)
+	res := httptest.NewRecorder()
+	brokenReleaseHandlers.CreateRelease(res, req)
+	assert.Equal(t, res.Code, http.StatusInternalServerError, "expect a 500 response code")
 }
 
 func TestDeleteRelease200(t *testing.T) {
-	w := httptest.NewRecorder()
-	params := releasesapi.DeleteReleaseParams{ReleaseName: "foo"}
-	resp := DeleteRelease(helmClient, params, true)
-	assert.NotNil(t, resp, "Delete response")
-	resp.WriteResponse(w, runtime.JSONProducer())
-	assert.Equal(t, w.Code, http.StatusOK, "expect a 200 response code")
+	releaseName := "foo"
+	req, err := http.NewRequest("DELETE", "/v1/releases/"+releaseName, nil)
+	assert.NoErr(t, err)
+	res := httptest.NewRecorder()
+	releaseHandlers.DeleteRelease(res, req, handlers.Params{"releaseName": releaseName})
+	assert.Equal(t, res.Code, http.StatusOK, "expect a 200 response code")
 }
 
 func TestDeleteRelease400(t *testing.T) {
-	w := httptest.NewRecorder()
-	params := releasesapi.DeleteReleaseParams{}
-	resp := DeleteRelease(helmClientBroken, params, true)
-	assert.NotNil(t, resp, "Delete response")
-	resp.WriteResponse(w, runtime.JSONProducer())
-	assert.Equal(t, w.Code, http.StatusBadRequest, "expect a 400 response code")
+	releaseName := "foo"
+	req, err := http.NewRequest("DELETE", "/v1/releases/"+releaseName, nil)
+	assert.NoErr(t, err)
+	res := httptest.NewRecorder()
+	brokenReleaseHandlers.DeleteRelease(res, req, handlers.Params{"releaseName": releaseName})
+	assert.Equal(t, res.Code, http.StatusBadRequest, "expect a 400 response code")
 }
 
 func TestGetRelease200(t *testing.T) {
-	w := httptest.NewRecorder()
-	params := releasesapi.GetReleaseParams{ReleaseName: "foo"}
-	resp := GetRelease(helmClient, params, true)
-	assert.NotNil(t, resp, "Get response")
-	resp.WriteResponse(w, runtime.JSONProducer())
-	assert.Equal(t, w.Code, http.StatusOK, "expect a 200 response code")
+	releaseName := "foo"
+	req, err := http.NewRequest("GET", "/v1/releases/"+releaseName, nil)
+	assert.NoErr(t, err)
+	res := httptest.NewRecorder()
+	releaseHandlers.GetRelease(res, req, handlers.Params{"releaseName": releaseName})
+	assert.Equal(t, res.Code, http.StatusOK, "expect a 200 response code")
 }
 
 func TestGetRelease500(t *testing.T) {
-	w := httptest.NewRecorder()
-	params := releasesapi.GetReleaseParams{ReleaseName: "foo"}
-	resp := GetRelease(helmClientBroken, params, true)
-	assert.NotNil(t, resp, "Get response")
-	resp.WriteResponse(w, runtime.JSONProducer())
-	assert.Equal(t, w.Code, http.StatusInternalServerError, "expect a 500 response code")
-}
-
-func TestGetRelease403(t *testing.T) {
-	w := httptest.NewRecorder()
-	params := releasesapi.GetReleaseParams{ReleaseName: "foo"}
-	resp := GetRelease(helmClient, params, false)
-	assert.NotNil(t, resp, "Get response")
-	resp.WriteResponse(w, runtime.JSONProducer())
-	assert.Equal(t, w.Code, http.StatusForbidden, "expect a 403 response code")
+	releaseName := "foo"
+	req, err := http.NewRequest("GET", "/v1/releases/"+releaseName, nil)
+	assert.NoErr(t, err)
+	res := httptest.NewRecorder()
+	brokenReleaseHandlers.GetRelease(res, req, handlers.Params{"releaseName": releaseName})
+	assert.Equal(t, res.Code, http.StatusInternalServerError, "expect a 500 response code")
 }
 
 func TestMakeReleaseResource(t *testing.T) {
@@ -220,11 +165,9 @@ func TestMakeReleaseExtendedResource(t *testing.T) {
 
 func TestErrorResponse(t *testing.T) {
 	const resource1 = "release"
-	w := httptest.NewRecorder()
-	resp := errorResponse(resource1, http.StatusBadRequest)
-	assert.NotNil(t, resp, "error response")
-	resp.WriteResponse(w, runtime.JSONProducer())
-	assert.Equal(t, w.Code, http.StatusBadRequest, "expect a 400 response code")
+	res := httptest.NewRecorder()
+	errorResponse(res, http.StatusBadRequest, resource1)
+	assert.Equal(t, res.Code, http.StatusBadRequest, "expect a 400 response code")
 	var httpBody1 models.Error
-	assert.NoErr(t, testutil.ErrorModelFromJSON(w.Body, &httpBody1))
+	assert.NoErr(t, testutil.ErrorModelFromJSON(res.Body, &httpBody1))
 }

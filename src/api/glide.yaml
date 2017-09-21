@@ -62,3 +62,5 @@ import:
 - package: github.com/dchest/uniuri
 - package: github.com/garyburd/redigo/redis
 - package: github.com/tv42/base58
+- package: github.com/urfave/negroni
+- package: github.com/unrolled/render

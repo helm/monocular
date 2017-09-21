@@ -1,16 +1,16 @@
 package releases
 
 import (
-	"fmt"
+	"encoding/json"
 	"net/http"
 	"strings"
 
-	middleware "github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/strfmt"
 	"github.com/kubernetes-helm/monocular/src/api/data"
 	"github.com/kubernetes-helm/monocular/src/api/data/cache/charthelper"
 	"github.com/kubernetes-helm/monocular/src/api/data/pointerto"
 	"github.com/kubernetes-helm/monocular/src/api/handlers"
+	"github.com/kubernetes-helm/monocular/src/api/handlers/renderer"
 	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
 	releasesapi "github.com/kubernetes-helm/monocular/src/api/swagger/restapi/operations/releases"
 	hapi_release5 "k8s.io/helm/pkg/proto/hapi/release"
@@ -18,92 +18,101 @@ import (
 	"k8s.io/helm/pkg/timeconv"
 )
 
-// GetReleases returns all the existing releases in your cluster
-func GetReleases(helmclient data.Client, params releasesapi.GetAllReleasesParams, releasesEnabled bool) middleware.Responder {
-	if !releasesEnabled {
-		return errorResponse("Feature not enabled", http.StatusForbidden)
-	}
+// ReleaseHandlers defines handlers that serve Helm release data
+type ReleaseHandlers struct {
+	chartsImplementation data.Charts
+	helmClient           data.Client
+}
 
-	releases, err := helmclient.ListReleases(params)
+// NewReleaseHandlers takes a data.Client implementation and returns a ReleaseHandlers struct
+func NewReleaseHandlers(ch data.Charts, hc data.Client) *ReleaseHandlers {
+	return &ReleaseHandlers{helmClient: hc, chartsImplementation: ch}
+}
+
+// GetReleases returns all the existing releases in your cluster
+func (r *ReleaseHandlers) GetReleases(w http.ResponseWriter, req *http.Request) {
+	releases, err := r.helmClient.ListReleases(releasesapi.GetAllReleasesParams{})
 	if err != nil {
-		return errorResponse(err.Error(), http.StatusInternalServerError)
+		errorResponse(w, http.StatusInternalServerError, err.Error())
+		return
 	}
 
 	resources := makeReleaseResources(releases)
 	payload := handlers.DataResourcesBody(resources)
-	return releasesapi.NewGetAllReleasesOK().WithPayload(payload)
+	renderer.Render.JSON(w, http.StatusOK, payload)
 }
 
 // GetRelease returns the extended version of a release
-func GetRelease(helmclient data.Client, params releasesapi.GetReleaseParams, releasesEnabled bool) middleware.Responder {
-	if !releasesEnabled {
-		return errorResponse("Feature not enabled", http.StatusForbidden)
-	}
-
-	release, err := helmclient.GetRelease(params.ReleaseName)
+func (r *ReleaseHandlers) GetRelease(w http.ResponseWriter, req *http.Request, params handlers.Params) {
+	release, err := r.helmClient.GetRelease(params["releaseName"])
 	if err != nil {
-		return errorResponse(err.Error(), http.StatusInternalServerError)
+		errorResponse(w, http.StatusInternalServerError, err.Error())
+		return
 	}
 
 	resource := makeReleaseExtendedResource(release.Release)
 	payload := handlers.DataResourceBody(resource)
-	return releasesapi.NewGetReleaseOK().WithPayload(payload)
+	renderer.Render.JSON(w, http.StatusOK, payload)
 }
 
 // CreateRelease installs a chart version
-func CreateRelease(helmclient data.Client, params releasesapi.CreateReleaseParams, c data.Charts, releasesEnabled bool) middleware.Responder {
-	if !releasesEnabled {
-		return errorResponse("Feature not enabled", http.StatusForbidden)
-	}
-
+func (r *ReleaseHandlers) CreateRelease(w http.ResponseWriter, req *http.Request) {
 	// Params validation
 	format := strfmt.NewFormats()
-	err := params.Data.Validate(format)
+	var params releasesapi.CreateReleaseBody
+	decoder := json.NewDecoder(req.Body)
+	err := decoder.Decode(&params)
 	if err != nil {
-		return errorResponse(err.Error(), http.StatusBadRequest)
+		errorResponse(w, http.StatusBadRequest, "unable to parse request body")
+		return
+	}
+	err = params.Validate(format)
+	if err != nil {
+		errorResponse(w, http.StatusBadRequest, err.Error())
+		return
 	}
 
-	idSplit := strings.Split(*params.Data.ChartID, "/")
+	idSplit := strings.Split(*params.ChartID, "/")
 	if len(idSplit) != 2 || idSplit[0] == "" || idSplit[1] == "" {
-		return errorResponse("chartId must include the repository name. i.e: stable/wordpress", http.StatusBadRequest)
+		errorResponse(w, http.StatusBadRequest, "chartId must include the repository name. i.e: stable/wordpress")
+		return
 	}
 
 	// Search chart package and get local path
 	repo, chartName := idSplit[0], idSplit[1]
-	chartPackage, err := c.ChartVersionFromRepo(repo, chartName, *params.Data.ChartVersion)
+	chartPackage, err := r.chartsImplementation.ChartVersionFromRepo(repo, chartName, *params.ChartVersion)
 	if err != nil {
-		return errorResponse("chart not found", http.StatusBadRequest)
+		errorResponse(w, http.StatusNotFound, "404 chart not found")
+		return
 	}
 	chartPath := charthelper.TarballPath(chartPackage)
 
-	release, err := helmclient.InstallRelease(chartPath, params)
+	release, err := r.helmClient.InstallRelease(chartPath, releasesapi.CreateReleaseParams{Data: params})
 	if err != nil {
-		return errorResponse(fmt.Sprintf("Can't create the release: %s", err), http.StatusInternalServerError)
+		errorResponse(w, http.StatusInternalServerError, "Can't create the release: "+err.Error())
+		return
 	}
 
 	resource := makeReleaseResource(release.Release)
 	payload := handlers.DataResourceBody(resource)
-	return releasesapi.NewCreateReleaseCreated().WithPayload(payload)
+	renderer.Render.JSON(w, http.StatusCreated, payload)
 }
 
 // DeleteRelease deletes an existing release
-func DeleteRelease(helmclient data.Client, params releasesapi.DeleteReleaseParams, releasesEnabled bool) middleware.Responder {
-	if !releasesEnabled {
-		return errorResponse("Feature not enabled", http.StatusForbidden)
-	}
-	release, err := helmclient.DeleteRelease(params.ReleaseName)
+func (r *ReleaseHandlers) DeleteRelease(w http.ResponseWriter, req *http.Request, params handlers.Params) {
+	release, err := r.helmClient.DeleteRelease(params["releaseName"])
 	if err != nil {
-		return errorResponse(fmt.Sprintf("Can't delete the release: %s", err), http.StatusBadRequest)
+		errorResponse(w, http.StatusBadRequest, "Can't delete the release: "+err.Error())
+		return
 	}
 	resource := makeReleaseResource(release.Release)
 	payload := handlers.DataResourceBody(resource)
-	return releasesapi.NewDeleteReleaseOK().WithPayload(payload)
+	renderer.Render.JSON(w, http.StatusOK, payload)
 }
 
-func errorResponse(message string, errorCode int64) middleware.Responder {
-	return releasesapi.NewGetAllReleasesDefault(int(errorCode)).WithPayload(
-		&models.Error{Code: pointerto.Int64(errorCode), Message: &message},
-	)
+func errorResponse(w http.ResponseWriter, errorCode int64, message string) {
+	renderer.Render.JSON(w, int(errorCode),
+		models.Error{Code: pointerto.Int64(errorCode), Message: &message})
 }
 
 func makeReleaseResources(releases *rls.ListReleasesResponse) []*models.Resource {
