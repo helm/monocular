@@ -19,7 +19,6 @@ import (
 )
 
 const (
-	tillerNamespace   = "kube-system"
 	tillerServiceName = "tiller-deploy"
 	tillerPort        = 44134
 )
@@ -39,6 +38,11 @@ func NewHelmClient() data.Client {
 // InitializeClient returns a helm.client
 func (c *helmClient) initialize() (*helm.Client, error) {
 	// From helm.setupConnection
+	conf, err := config.GetConfig()
+	if err != nil {
+		return nil, err
+	}
+	tillerNamespace := conf.TillerNamespace
 	var tillerHost = fmt.Sprintf("%s.%s:%d", tillerServiceName, tillerNamespace, tillerPort)
 
 	if c.portForward {
