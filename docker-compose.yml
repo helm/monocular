@@ -13,7 +13,7 @@ services:
     tty: true
     build: ./dev_env/api
     ports:
-    - 8080:8080
+    - 8080:3000
     volumes:
       - ./src/api:/go/src/github.com/kubernetes-helm/monocular/src/api
       # Config example file

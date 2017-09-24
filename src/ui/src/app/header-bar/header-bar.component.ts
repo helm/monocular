@@ -5,6 +5,7 @@ import { MenuService } from '../shared/services/menu.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MdIconRegistry } from '@angular/material';
 import { MdSnackBar } from '@angular/material';
+import { CookieService } from 'ngx-cookie';
 
 @Component({
   selector: 'app-header-bar',
@@ -15,6 +16,8 @@ import { MdSnackBar } from '@angular/material';
   inputs: ['showSearch', 'transparent']
 })
 export class HeaderBarComponent implements OnInit {
+  // public loggedIn
+  public loggedIn: boolean;
   // Show search form by default
   public showSearch: boolean = true;
   // Set the background as transparent
@@ -29,7 +32,8 @@ export class HeaderBarComponent implements OnInit {
     public config: ConfigService,
     private menuService: MenuService,
     private mdIconRegistry: MdIconRegistry,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private cookieService: CookieService,
   ) {}
 
   ngOnInit() {
@@ -47,6 +51,11 @@ export class HeaderBarComponent implements OnInit {
       this.sanitizer.bypassSecurityTrustResourceUrl('/assets/icons/search.svg')
     );
     this.appName = this.config.appName;
+
+    let userClaims = this.cookieService.get("ka_claims")
+    if (userClaims) {
+      this.loggedIn = true;
+    }
   }
 
   searchCharts(input: HTMLInputElement): void {

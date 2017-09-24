@@ -11,6 +11,7 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/arschles/assert"
+	"github.com/gorilla/sessions"
 	"github.com/kubernetes-helm/monocular/src/api/config"
 	"github.com/kubernetes-helm/monocular/src/api/config/repos"
 	"github.com/kubernetes-helm/monocular/src/api/data"
@@ -29,11 +30,12 @@ const versionsRouteString = "versions"
 var helmClient = mocks.NewMockedClient()
 var helmClientBroken = mocks.NewMockedBrokenClient()
 var chartsImplementation = getChartsImplementation()
+var sessionStore = sessions.NewCookieStore([]byte("test"))
 var conf, _ = config.GetConfig()
 
 // tests the GET /healthz endpoint
 func TestGetHealthz(t *testing.T) {
-	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient))
+	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient, sessionStore))
 	defer ts.Close()
 
 	res, err := http.Get(ts.URL + "/healthz")
@@ -46,7 +48,7 @@ func TestGetHealthz(t *testing.T) {
 func TestGetCharts(t *testing.T) {
 	setupTestRepoCache()
 	defer teardownTestRepoCache()
-	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient))
+	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient, sessionStore))
 	defer ts.Close()
 	charts, err := chartsImplementation.All()
 	assert.NoErr(t, err)
@@ -63,7 +65,7 @@ func TestGetCharts(t *testing.T) {
 func TestGetChartsInRepo200(t *testing.T) {
 	setupTestRepoCache()
 	defer teardownTestRepoCache()
-	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient))
+	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient, sessionStore))
 	defer ts.Close()
 	charts, err := chartsImplementation.AllFromRepo(testutil.RepoName)
 	numCharts := len(helpers.MakeChartResources(charts))
@@ -81,7 +83,7 @@ func TestGetChartsInRepo200(t *testing.T) {
 func TestGetChartsInRepo404(t *testing.T) {
 	setupTestRepoCache()
 	defer teardownTestRepoCache()
-	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient))
+	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient, sessionStore))
 	defer ts.Close()
 	res, err := http.Get(urlPath(ts.URL, "v1", handlerscharts.ChartResourceName+"s", testutil.BogusRepo))
 	assert.NoErr(t, err)
@@ -96,7 +98,7 @@ func TestGetChartsInRepo404(t *testing.T) {
 func TestGetChartInRepo200(t *testing.T) {
 	setupTestRepoCache()
 	defer teardownTestRepoCache()
-	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient))
+	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient, sessionStore))
 	defer ts.Close()
 	chart, err := chartsImplementation.ChartFromRepo(testutil.RepoName, testutil.ChartName)
 	assert.NoErr(t, err)
@@ -114,7 +116,7 @@ func TestGetChartInRepo200(t *testing.T) {
 func TestGetChartInRepo404(t *testing.T) {
 	setupTestRepoCache()
 	defer teardownTestRepoCache()
-	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient))
+	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient, sessionStore))
 	defer ts.Close()
 	res, err := http.Get(urlPath(ts.URL, "v1", handlerscharts.ChartResourceName+"s", testutil.BogusRepo, testutil.ChartName))
 	assert.NoErr(t, err)
@@ -129,7 +131,7 @@ func TestGetChartInRepo404(t *testing.T) {
 func TestGetChartVersion200(t *testing.T) {
 	setupTestRepoCache()
 	defer teardownTestRepoCache()
-	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient))
+	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient, sessionStore))
 	defer ts.Close()
 	chart, err := chartsImplementation.ChartVersionFromRepo(testutil.RepoName, testutil.ChartName, testutil.ChartVersionString)
 	assert.NoErr(t, err)
@@ -147,7 +149,7 @@ func TestGetChartVersion200(t *testing.T) {
 func TestGetChartVersion404(t *testing.T) {
 	setupTestRepoCache()
 	defer teardownTestRepoCache()
-	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient))
+	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient, sessionStore))
 	defer ts.Close()
 	res, err := http.Get(urlPath(ts.URL, "v1", handlerscharts.ChartResourceName+"s", testutil.RepoName, testutil.ChartName, versionsRouteString, "99.99.99"))
 	assert.NoErr(t, err)
@@ -162,7 +164,7 @@ func TestGetChartVersion404(t *testing.T) {
 func TestGetChartVersions200(t *testing.T) {
 	setupTestRepoCache()
 	defer teardownTestRepoCache()
-	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient))
+	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient, sessionStore))
 	defer ts.Close()
 	charts, err := chartsImplementation.ChartVersionsFromRepo(testutil.RepoName, testutil.ChartName)
 	assert.NoErr(t, err)
@@ -179,7 +181,7 @@ func TestGetChartVersions200(t *testing.T) {
 func TestGetChartVersions404(t *testing.T) {
 	setupTestRepoCache()
 	defer teardownTestRepoCache()
-	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient))
+	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient, sessionStore))
 	defer ts.Close()
 	res, err := http.Get(urlPath(ts.URL, "v1", handlerscharts.ChartResourceName+"s", testutil.BogusRepo, testutil.ChartName, versionsRouteString))
 	assert.NoErr(t, err)
@@ -194,7 +196,7 @@ func TestGetChartVersions404(t *testing.T) {
 func TestGetRepos200(t *testing.T) {
 	setupTestRepoCache()
 	defer teardownTestRepoCache()
-	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient))
+	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient, sessionStore))
 	defer ts.Close()
 	res, err := http.Get(urlPath(ts.URL, "v1", "repos"))
 	assert.NoErr(t, err)
@@ -212,7 +214,7 @@ func TestCreateRepo201(t *testing.T) {
 	defer teardownTestRepoCache()
 	conf.ReleasesEnabled = true
 	defer func() { conf.ReleasesEnabled = false }()
-	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient))
+	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient, sessionStore))
 	defer ts.Close()
 	repoName := "repoName"
 	testRepo := models.Repo{
@@ -237,7 +239,7 @@ func TestCreateRepo201(t *testing.T) {
 func TestCreateRepo403(t *testing.T) {
 	setupTestRepoCache()
 	defer teardownTestRepoCache()
-	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient))
+	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient, sessionStore))
 	defer ts.Close()
 	repoName := "repoName"
 	testRepo := models.Repo{
@@ -261,7 +263,7 @@ func TestCreateRepo403(t *testing.T) {
 func TestGetRepo200(t *testing.T) {
 	setupTestRepoCache()
 	defer teardownTestRepoCache()
-	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient))
+	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient, sessionStore))
 	defer ts.Close()
 	res, err := http.Get(urlPath(ts.URL, "v1", "repos", testutil.RepoName))
 	assert.NoErr(t, err)
@@ -278,7 +280,7 @@ func TestDeleteRepo200(t *testing.T) {
 	defer teardownTestRepoCache()
 	conf.ReleasesEnabled = true
 	defer func() { conf.ReleasesEnabled = false }()
-	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient))
+	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient, sessionStore))
 	defer ts.Close()
 	req, err := http.NewRequest("DELETE", urlPath(ts.URL, "v1", "repos", testutil.RepoName), nil)
 	assert.NoErr(t, err)
@@ -298,7 +300,7 @@ func TestDeleteRepo200(t *testing.T) {
 func TestDeleteRepo403(t *testing.T) {
 	setupTestRepoCache()
 	defer teardownTestRepoCache()
-	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient))
+	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient, sessionStore))
 	defer ts.Close()
 	req, err := http.NewRequest("DELETE", urlPath(ts.URL, "v1", "repos", testutil.RepoName), nil)
 	assert.NoErr(t, err)
@@ -321,7 +323,7 @@ func TestGetReleases200(t *testing.T) {
 	defer teardownTestRepoCache()
 	conf.ReleasesEnabled = true
 	defer func() { conf.ReleasesEnabled = false }()
-	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient))
+	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient, sessionStore))
 	defer ts.Close()
 	res, err := http.Get(urlPath(ts.URL, "v1", "releases"))
 	assert.NoErr(t, err)
@@ -333,7 +335,7 @@ func TestGetReleases200(t *testing.T) {
 func TestGetReleases403(t *testing.T) {
 	setupTestRepoCache()
 	defer teardownTestRepoCache()
-	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient))
+	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient, sessionStore))
 	defer ts.Close()
 	res, err := http.Get(urlPath(ts.URL, "v1", "releases"))
 	assert.NoErr(t, err)
@@ -351,7 +353,7 @@ func TestCreateRelease201(t *testing.T) {
 	defer teardownTestRepoCache()
 	conf.ReleasesEnabled = true
 	defer func() { conf.ReleasesEnabled = false }()
-	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient))
+	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient, sessionStore))
 	defer ts.Close()
 	chartID := fmt.Sprintf("%s/%s", testutil.RepoName, testutil.ChartName)
 	params := releasesapi.CreateReleaseBody{
@@ -370,7 +372,7 @@ func TestCreateRelease201(t *testing.T) {
 func TestCreateRelease403(t *testing.T) {
 	setupTestRepoCache()
 	defer teardownTestRepoCache()
-	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient))
+	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient, sessionStore))
 	defer ts.Close()
 	chartID := fmt.Sprintf("%s/%s", testutil.RepoName, testutil.ChartName)
 	params := releasesapi.CreateReleaseBody{
@@ -396,7 +398,7 @@ func TestGetRelease200(t *testing.T) {
 	conf.ReleasesEnabled = true
 	defer func() { conf.ReleasesEnabled = false }()
 	releaseName := "foo"
-	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient))
+	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient, sessionStore))
 	defer ts.Close()
 	res, err := http.Get(urlPath(ts.URL, "v1", "releases", releaseName))
 	assert.NoErr(t, err)
@@ -409,7 +411,7 @@ func TestGetRelease403(t *testing.T) {
 	setupTestRepoCache()
 	defer teardownTestRepoCache()
 	releaseName := "foo"
-	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient))
+	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient, sessionStore))
 	defer ts.Close()
 	res, err := http.Get(urlPath(ts.URL, "v1", "releases", releaseName))
 	assert.NoErr(t, err)
@@ -428,7 +430,7 @@ func TestDeleteRelease200(t *testing.T) {
 	conf.ReleasesEnabled = true
 	defer func() { conf.ReleasesEnabled = false }()
 	releaseName := "foo"
-	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient))
+	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient, sessionStore))
 	defer ts.Close()
 	req, err := http.NewRequest("DELETE", urlPath(ts.URL, "v1", "releases", releaseName), nil)
 	assert.NoErr(t, err)
@@ -444,7 +446,7 @@ func TestDeleteRelease403(t *testing.T) {
 	setupTestRepoCache()
 	defer teardownTestRepoCache()
 	releaseName := "foo"
-	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient))
+	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient, sessionStore))
 	defer ts.Close()
 	req, err := http.NewRequest("DELETE", urlPath(ts.URL, "v1", "releases", releaseName), nil)
 	assert.NoErr(t, err)

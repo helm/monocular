@@ -1,6 +1,7 @@
 package: github.com/kubernetes-helm/monocular
 import:
 - package: github.com/gorilla/mux
+- package: github.com/gorilla/sessions
 - package: github.com/kelseyhightower/envconfig
 - package: github.com/arschles/assert
 - package: github.com/go-openapi/runtime
@@ -60,7 +61,18 @@ import:
 - package: github.com/albrow/zoom
   version: ~0.18.0
 - package: github.com/dchest/uniuri
-- package: github.com/garyburd/redigo/redis
+- package: github.com/garyburd/redigo
+  subpackages:
+  - redis
 - package: github.com/tv42/base58
 - package: github.com/urfave/negroni
 - package: github.com/unrolled/render
+- package: github.com/dgrijalva/jwt-go
+- package: golang.org/x/oauth2
+- package: github.com/google/go-github
+  subpackages:
+  - github
+- package: github.com/gorilla/securecookie
+- package: github.com/google/go-querystring
+  subpackages:
+  - query

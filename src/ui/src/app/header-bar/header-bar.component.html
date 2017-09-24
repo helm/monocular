@@ -15,23 +15,29 @@
         </li>
         <li *ngIf="showSearch" class="separator"></li>
         <li routerLink="/charts" routerLinkActive="active">
-          <a class="reverse" >
+          <a class="reverse">
             Charts
           </a>
         </li>
-        <li class="separator"></li>
-        <li *ngIf="config.releasesEnabled" routerLink="/repos" routerLinkActive="active">
+        <li *ngIf="!loggedIn" class="separator"></li>
+        <li *ngIf="!loggedIn">
+          <a class="reverse" href="{{config.backendHostname}}/auth">
+            Login with GitHub
+          </a>
+        </li>
+        <li *ngIf="loggedIn && config.releasesEnabled" class="separator"></li>
+        <li *ngIf="loggedIn && config.releasesEnabled" routerLink="/repos" routerLinkActive="active">
           <a class="reverse">
             Repositories
           </a>
         </li>
-        <li *ngIf="config.releasesEnabled" class="separator"></li>
-        <li *ngIf="config.releasesEnabled" routerLink="/deployments" routerLinkActive="active">
+        <li *ngIf="loggedIn && config.releasesEnabled" class="separator"></li>
+        <li *ngIf="loggedIn && config.releasesEnabled" routerLink="/deployments" routerLinkActive="active">
           <a class="reverse">
             Deployments
           </a>
         </li>
-        <li *ngIf="config.releasesEnabled" class="separator"></li>
+        <li class="separator"></li>
         <li>
           <a class="reverse" href="https://github.com/kubernetes-helm/monocular/blob/master/docs/about.md" target="_blank">
             About

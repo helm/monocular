@@ -16,6 +16,11 @@ import (
 // and environment specific ones
 type configurationWithOverrides map[string]Configuration
 
+type oauthConfig struct {
+	ClientID     string `yaml:"clientID"`
+	ClientSecret string `yaml:"clientSecret"`
+}
+
 // Configuration is the the resulting environment based Configuration
 // For now it only includes Cors info
 type Configuration struct {
@@ -25,6 +30,8 @@ type Configuration struct {
 	TillerPortForward    bool  `yaml:"tillerPortForward"`
 	CacheRefreshInterval int64 `yaml:"cacheRefreshInterval"`
 	Redis                redisConfig
+	OAuthConfig          oauthConfig `yaml:"oauthConfig"`
+	SigningKey           string      `yaml:"signingKey"`
 	Initialized          bool
 }
 

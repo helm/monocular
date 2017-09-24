@@ -11,6 +11,7 @@ import {
   MetaStaticLoader,
   PageTitlePositioning
 } from '@ngx-meta/core';
+import { CookieModule } from 'ngx-cookie';
 import { routing, appRoutingProviders } from './app.routing';
 
 /* Material library */
@@ -115,7 +116,8 @@ export function metaFactory(): MetaLoader {
     MetaModule.forRoot({
       provide: MetaLoader,
       useFactory: metaFactory
-    })
+    }),
+    CookieModule.forRoot()
   ],
   providers: [
     appRoutingProviders,
