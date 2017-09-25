@@ -123,7 +123,7 @@ func (a *AuthHandlers) GithubCallback(w http.ResponseWriter, r *http.Request) {
 
 // Logout clears the JWT token cookie
 func (a *AuthHandlers) Logout(w http.ResponseWriter, r *http.Request) {
-	cookie := http.Cookie{Name: "ka_auth", Value: "", Path: "/", Expires: time.Unix(0, 0)}
+	cookie := http.Cookie{Name: "ka_auth", Value: "", Path: "/", Expires: time.Unix(1, 0)}
 	http.SetCookie(w, &cookie)
 }
 
