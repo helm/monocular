@@ -20,7 +20,7 @@ export class HeaderBarComponent implements OnInit {
   // Whether or not the Monocular server requires authentication
   public loggedIn: boolean = false;
   // public user
-  public user: object = {};
+  public user: any = {};
   // Show search form by default
   public showSearch: boolean = true;
   // Set the background as transparent
