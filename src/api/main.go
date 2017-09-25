@@ -10,7 +10,6 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/gorilla/mux"
-	"github.com/gorilla/sessions"
 	"github.com/kubernetes-helm/monocular/src/api/config"
 	"github.com/kubernetes-helm/monocular/src/api/config/repos"
 	"github.com/kubernetes-helm/monocular/src/api/data"
@@ -62,12 +61,12 @@ func setupCors(conf config.Configuration) *cors.Cors {
 	})
 }
 
-func setupRoutes(conf config.Configuration, chartsImplementation data.Charts, helmClient data.Client, sessionStore sessions.Store) http.Handler {
+func setupRoutes(conf config.Configuration, chartsImplementation data.Charts, helmClient data.Client) http.Handler {
 	r := mux.NewRouter()
 
 	// Middleware
 	InClusterGate := middleware.InClusterGate(conf.ReleasesEnabled)
-	AuthGate := middleware.AuthGate(conf)
+	AuthGate := middleware.AuthGate()
 
 	// Healthcheck
 	r.Methods("GET").Path("/healthz").HandlerFunc(handlers.Healthz)
@@ -90,6 +89,7 @@ func setupRoutes(conf config.Configuration, chartsImplementation data.Charts, he
 	apiv1.Methods("GET").Path("/repos").HandlerFunc(repoHandlers.GetRepos)
 	apiv1.Methods("POST").Path("/repos").Handler(negroni.New(
 		InClusterGate,
+		AuthGate,
 		negroni.WrapFunc(repoHandlers.CreateRepo),
 	))
 	apiv1.Methods("GET").Path("/repos/{repo}").Handler(handlers.WithParams(repoHandlers.GetRepo))
@@ -110,9 +110,15 @@ func setupRoutes(conf config.Configuration, chartsImplementation data.Charts, he
 	releasesv1.Methods("DELETE").Path("/releases/{releaseName}").Handler(handlers.WithParams(releaseHandlers.DeleteRelease))
 
 	// Auth routes
-	authHandlers := handlers.NewAuthHandlers(sessionStore, conf)
-	r.Methods("GET").Path("/auth").HandlerFunc(authHandlers.InitiateOAuth)
-	r.Methods("GET").Path("/auth/github/callback").HandlerFunc(authHandlers.GithubCallback)
+	authHandlers, err := handlers.NewAuthHandlers()
+	if err != nil {
+		log.WithError(err).Warn("authentication is disabled")
+	} else {
+		r.Methods("GET").Path("/auth").HandlerFunc(authHandlers.InitiateOAuth)
+		r.Methods("GET").Path("/auth/github/callback").HandlerFunc(authHandlers.GithubCallback)
+		r.Methods("GET").Path("/auth/verify").Handler(negroni.New(AuthGate))
+		r.Methods("DELETE").Path("/auth/logout").HandlerFunc(authHandlers.Logout)
+	}
 
 	// Serve chart assets
 	fs := http.FileServer(http.Dir(charthelper.DataDirBase()))
@@ -138,8 +144,7 @@ func main() {
 
 	chartsImplementation := setupChartsImplementation(conf)
 	helmClient := client.NewHelmClient()
-	sessionStore := sessions.NewCookieStore([]byte(conf.SigningKey))
-	router := setupRoutes(conf, chartsImplementation, helmClient, sessionStore)
+	router := setupRoutes(conf, chartsImplementation, helmClient)
 
 	port := os.Getenv("PORT")
 	if port == "" {

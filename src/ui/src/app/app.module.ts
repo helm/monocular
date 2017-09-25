@@ -28,6 +28,7 @@ import { ConfigService } from './shared/services/config.service';
 import { MenuService } from './shared/services/menu.service';
 import { DialogsService } from './shared/services/dialogs.service';
 import { SeoService } from './shared/services/seo.service';
+import { AuthService } from './shared/services/auth.service';
 
 /* Components */
 import { AppComponent } from './app.component';
@@ -127,7 +128,8 @@ export function metaFactory(): MetaLoader {
     ConfigService,
     MenuService,
     SeoService,
-    DialogsService
+    DialogsService,
+    AuthService,
   ],
   entryComponents: [
     ConfirmDialog,

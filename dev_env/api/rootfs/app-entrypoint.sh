@@ -13,13 +13,18 @@ dependencies_up_to_date() {
   [ ! $PACKAGE_FILE -nt $INIT_SEM ]
 }
 
-if [ "$1" == "go" -a "$2" == "run" ]; then
+if [ "$1" == "gin" -a "$3" == "run" ]; then
 	if ! dependencies_up_to_date; then
 		log "Packages updating..."
 		glide install
 		log "Packages updated"
 	fi
   touch $INIT_SEM
+
+  # Set env vars if .env file exists
+  if [ -f .env ]; then
+    export $(egrep -v '^#' .env | xargs)
+  fi
 fi
 
 exec "$@"

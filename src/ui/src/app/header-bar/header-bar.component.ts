@@ -6,6 +6,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { MdIconRegistry } from '@angular/material';
 import { MdSnackBar } from '@angular/material';
 import { CookieService } from 'ngx-cookie';
+import { AuthService } from '../shared/services/auth.service';
 
 @Component({
   selector: 'app-header-bar',
@@ -16,8 +17,10 @@ import { CookieService } from 'ngx-cookie';
   inputs: ['showSearch', 'transparent']
 })
 export class HeaderBarComponent implements OnInit {
-  // public loggedIn
-  public loggedIn: boolean;
+  // Whether or not the Monocular server requires authentication
+  public loggedIn: boolean = false;
+  // public user
+  public user: object = {};
   // Show search form by default
   public showSearch: boolean = true;
   // Set the background as transparent
@@ -34,6 +37,7 @@ export class HeaderBarComponent implements OnInit {
     private mdIconRegistry: MdIconRegistry,
     private sanitizer: DomSanitizer,
     private cookieService: CookieService,
+    private authService: AuthService,
   ) {}
 
   ngOnInit() {
@@ -52,10 +56,18 @@ export class HeaderBarComponent implements OnInit {
     );
     this.appName = this.config.appName;
 
-    let userClaims = this.cookieService.get("ka_claims")
+    this.authService.loggedIn().subscribe(loggedIn => { this.loggedIn = loggedIn; });
+
+    let userClaims = this.cookieService.get("ka_claims");
     if (userClaims) {
-      this.loggedIn = true;
+      this.user = JSON.parse(atob(userClaims));
     }
+  }
+
+  logout() {
+    this.loggedIn = false;
+    this.user = {};
+    this.authService.logout();
   }
 
   searchCharts(input: HTMLInputElement): void {

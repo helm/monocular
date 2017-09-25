@@ -25,9 +25,14 @@ type userClaims struct {
 }
 
 // AuthGate implements middleware to check if the user is logged in before continuing
-func AuthGate(c config.Configuration) negroni.HandlerFunc {
+func AuthGate() negroni.HandlerFunc {
+	enabled := true
+	signingKey, err := config.GetAuthSigningKey()
+	if err != nil {
+		enabled = false
+	}
 	return func(w http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
-		if c.OAuthConfig.ClientID == "" || c.OAuthConfig.ClientSecret == "" || c.SigningKey == "" {
+		if !enabled {
 			next(w, req)
 			return
 		}
@@ -39,9 +44,9 @@ func AuthGate(c config.Configuration) negroni.HandlerFunc {
 
 		token, err := jwt.ParseWithClaims(cookie.Value, &userClaims{}, func(token *jwt.Token) (interface{}, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-				return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+				return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 			}
-			return []byte(c.SigningKey), nil
+			return []byte(signingKey), nil
 		})
 		if err != nil {
 			unauthorizedResponse(w)

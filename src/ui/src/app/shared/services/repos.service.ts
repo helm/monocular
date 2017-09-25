@@ -38,7 +38,7 @@ export class ReposService {
    * @return {Observable} An observable repo
    */
   createRepo(params: RepoAttributes): Observable<Repo> {
-    return this.http.post(`${this.hostname}/v1/repos`, params)
+    return this.http.post(`${this.hostname}/v1/repos`, params, {withCredentials: true})
                   .map(this.extractData)
                   .catch(this.handleError);
   }

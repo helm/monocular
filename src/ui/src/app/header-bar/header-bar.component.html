@@ -43,6 +43,13 @@
             About
           </a>
         </li>
+        <li *ngIf="loggedIn && user.Email" class="separator"></li>
+        <li *ngIf="loggedIn && user.Email">
+          {{ user.Email }}
+          <a class="reverse" (click)="logout()" target="_blank">
+            (logout)
+          </a>
+        </li>
       </ul>
     </nav>
     <nav class="header-bar__open" [class.opened]="openedMenu">

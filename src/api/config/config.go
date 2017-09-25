@@ -1,10 +1,13 @@
 package config
 
 import (
+	"errors"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 
+	"golang.org/x/oauth2"
+	oauth2Github "golang.org/x/oauth2/github"
 	yaml "gopkg.in/yaml.v2"
 
 	log "github.com/Sirupsen/logrus"
@@ -74,6 +77,34 @@ func GetConfig() (Configuration, error) {
 
 	log.Info("Configuration bootstrap finished")
 	return currentConfig, nil
+}
+
+// GetOAuthConfig returns the OAuth configuration for the GitHub provider
+func GetOAuthConfig(host string) (*oauth2.Config, error) {
+	clientID, ok := os.LookupEnv("MONOCULAR_AUTH_GITHUB_CLIENT_ID")
+	if !ok {
+		return nil, errors.New("no client ID for GitHub provider, ensure MONOCULAR_AUTH_GITHUB_CLIENT_ID is set")
+	}
+	clientSecret, ok := os.LookupEnv("MONOCULAR_AUTH_GITHUB_CLIENT_SECRET")
+	if !ok {
+		return nil, errors.New("no client secret for GitHub provider, ensure MONOCULAR_AUTH_GITHUB_CLIENT_SECRET is set")
+	}
+	return &oauth2.Config{
+		ClientID:     clientID,
+		ClientSecret: clientSecret,
+		Endpoint:     oauth2Github.Endpoint,
+		RedirectURL:  "http://" + host + "/auth/github/callback",
+		Scopes:       []string{"repo"},
+	}, nil
+}
+
+// GetAuthSigningKey returns the secret key used for signing JWTs and secure sessions
+func GetAuthSigningKey() (string, error) {
+	signingKey, ok := os.LookupEnv("MONOCULAR_AUTH_SIGNING_KEY")
+	if !ok {
+		return "", errors.New("no signing key, ensure MONOCULAR_AUTH_SIGNING_KEY is set")
+	}
+	return signingKey, nil
 }
 
 // BaseDir returns the location of the directory

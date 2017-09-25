@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"time"
 
@@ -16,7 +17,6 @@ import (
 	"github.com/kubernetes-helm/monocular/src/api/handlers/renderer"
 	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
 	"golang.org/x/oauth2"
-	oauth2Github "golang.org/x/oauth2/github"
 )
 
 type userClaims struct {
@@ -27,29 +27,45 @@ type userClaims struct {
 
 // AuthHandlers defines handlers that provide authentication
 type AuthHandlers struct {
-	store sessions.Store
-	conf  config.Configuration
+	signingKey string
+	store      sessions.Store
 }
 
 // NewAuthHandlers takes a sessions.Store implementation and returns an AuthHandlers struct
-func NewAuthHandlers(s sessions.Store, c config.Configuration) *AuthHandlers {
-	return &AuthHandlers{s, c}
+func NewAuthHandlers() (*AuthHandlers, error) {
+	signingKey, err := config.GetAuthSigningKey()
+	if err != nil {
+		return nil, errors.New("no signing key, ensure MONOCULAR_AUTH_SIGNING_KEY is set")
+	}
+	s := sessions.NewCookieStore([]byte(signingKey))
+	return &AuthHandlers{signingKey, s}, nil
 }
 
 // InitiateOAuth initiatates an OAuth request
 func (a *AuthHandlers) InitiateOAuth(w http.ResponseWriter, r *http.Request) {
+	oauthConfig, err := config.GetOAuthConfig(r.Host)
+	if err != nil {
+		errorResponse(w, http.StatusForbidden, "auth service not enabled: "+err.Error())
+		return
+	}
 	state := randomStr()
-	session, _ := a.store.Get(r, "sess")
+	session, _ := a.store.Get(r, "ka_sess")
 	session.Values["state"] = state
 	session.Save(r, w)
 
-	url := oauthConfig(a.conf, r.Host).AuthCodeURL(state)
+	url := oauthConfig.AuthCodeURL(state)
 	http.Redirect(w, r, url, http.StatusFound)
 }
 
 // GithubCallback processes the OAuth callback from GitHub
 func (a *AuthHandlers) GithubCallback(w http.ResponseWriter, r *http.Request) {
-	session, err := a.store.Get(r, "sess")
+	oauthConfig, err := config.GetOAuthConfig(r.Host)
+	if err != nil {
+		errorResponse(w, http.StatusForbidden, "auth service not enabled: "+err.Error())
+		return
+	}
+
+	session, err := a.store.Get(r, "ka_sess")
 	if err != nil {
 		errorResponse(w, http.StatusBadRequest, "invalid session")
 		return
@@ -60,7 +76,7 @@ func (a *AuthHandlers) GithubCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tkn, err := oauthConfig(a.conf, r.Host).Exchange(oauth2.NoContext, r.URL.Query().Get("code"))
+	tkn, err := oauthConfig.Exchange(oauth2.NoContext, r.URL.Query().Get("code"))
 	if err != nil {
 		errorResponse(w, http.StatusBadRequest, "unable to get access token")
 		return
@@ -71,7 +87,7 @@ func (a *AuthHandlers) GithubCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	client := github.NewClient(oauthConfig(a.conf, r.Host).Client(oauth2.NoContext, tkn))
+	client := github.NewClient(oauthConfig.Client(oauth2.NoContext, tkn))
 
 	user, _, err := client.Users.Get(oauth2.NoContext, "")
 	if err != nil {
@@ -89,7 +105,7 @@ func (a *AuthHandlers) GithubCallback(w http.ResponseWriter, r *http.Request) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	signedToken, _ := token.SignedString([]byte(a.conf.SigningKey))
+	signedToken, _ := token.SignedString([]byte(a.signingKey))
 	jwtCookie := http.Cookie{Name: "ka_auth", Value: signedToken, Path: "/", Expires: tokenExpiration(), HttpOnly: true}
 
 	jsonClaims, err := json.Marshal(claims)
@@ -97,7 +113,7 @@ func (a *AuthHandlers) GithubCallback(w http.ResponseWriter, r *http.Request) {
 		errorResponse(w, http.StatusInternalServerError, "error marshalling claims")
 		return
 	}
-	claimsCookie := http.Cookie{Name: "ka_claims", Value: string(jsonClaims), Path: "/"}
+	claimsCookie := http.Cookie{Name: "ka_claims", Value: base64.StdEncoding.EncodeToString(jsonClaims), Path: "/"}
 
 	http.SetCookie(w, &jwtCookie)
 	http.SetCookie(w, &claimsCookie)
@@ -105,18 +121,14 @@ func (a *AuthHandlers) GithubCallback(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, r.Referer(), http.StatusFound)
 }
 
-func tokenExpiration() time.Time {
-	return time.Now().Add(time.Hour * 2)
+// Logout clears the JWT token cookie
+func (a *AuthHandlers) Logout(w http.ResponseWriter, r *http.Request) {
+	cookie := http.Cookie{Name: "ka_auth", Value: "", Path: "/", Expires: time.Unix(0, 0)}
+	http.SetCookie(w, &cookie)
 }
 
-func oauthConfig(c config.Configuration, host string) *oauth2.Config {
-	return &oauth2.Config{
-		ClientID:     c.OAuthConfig.ClientID,
-		ClientSecret: c.OAuthConfig.ClientSecret,
-		Endpoint:     oauth2Github.Endpoint,
-		RedirectURL:  "http://" + host + "/auth/github/callback",
-		Scopes:       []string{"repo"},
-	}
+func tokenExpiration() time.Time {
+	return time.Now().Add(time.Hour * 2)
 }
 
 func randomStr() string {
