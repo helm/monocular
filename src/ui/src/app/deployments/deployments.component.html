@@ -7,14 +7,14 @@
           <h1 class="deployments__header__title">
             Deployments
             <div class="deployments__header__filters" (click)="filtersOpen = !filtersOpen">
-              <md-icon *ngIf="filtersOpen" svgIcon="close"></md-icon>
-              <md-icon *ngIf="!filtersOpen" svgIcon="menu"></md-icon>
+              <mat-icon *ngIf="filtersOpen" svgIcon="close"></mat-icon>
+              <mat-icon *ngIf="!filtersOpen" svgIcon="menu"></mat-icon>
               Filters
             </div>
           </h1>
         </div>
         <div class="deployments__header__block deployments__header__new">
-          <a routerLink="/charts" href="/charts" md-button md-raised-button color="accent">
+          <a routerLink="/charts" href="/charts" mat-button mat-raised-button color="accent">
             New deployment
           </a>
         </div>
@@ -24,7 +24,7 @@
         <app-list-filters [filters]="filters" [class.open]="filtersOpen"></app-list-filters>
         <div class="deployments__gallery__content">
           <div class="deployments__gallery__content__topbar">
-            <md-icon svgIcon="search"></md-icon>
+            <mat-icon svgIcon="search"></mat-icon>
             <input type="text" placeholder="Search deployment..." (keyup)="searchChange($event)" />
           </div>
           <div class="deployments__gallery__content__list">

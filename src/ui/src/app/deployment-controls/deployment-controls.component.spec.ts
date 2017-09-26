@@ -5,12 +5,11 @@ import { DeploymentControlsComponent } from './deployment-controls.component';
 import { DeploymentsService } from '../shared/services/deployments.service';
 import { DialogsService } from '../shared/services/dialogs.service';
 import { ConfigService } from '../shared/services/config.service';
-import { MaterialModule } from '@angular/material';
 
 describe('Component: DeploymentControls', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [MaterialModule],
+      imports: [],
       declarations: [DeploymentControlsComponent],
       providers: [
         { provide: DeploymentsService },

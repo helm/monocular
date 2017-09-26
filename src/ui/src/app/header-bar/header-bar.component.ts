@@ -3,8 +3,8 @@ import { Router, NavigationExtras } from '@angular/router';
 import { ConfigService } from '../shared/services/config.service';
 import { MenuService } from '../shared/services/menu.service';
 import { DomSanitizer } from '@angular/platform-browser';
-import { MdIconRegistry } from '@angular/material';
-import { MdSnackBar } from '@angular/material';
+import { MatIconRegistry } from '@angular/material';
+import { MatSnackBar } from '@angular/material';
 import { CookieService } from 'ngx-cookie';
 import { AuthService } from '../shared/services/auth.service';
 
@@ -13,7 +13,7 @@ import { AuthService } from '../shared/services/auth.service';
   templateUrl: './header-bar.component.html',
   styleUrls: ['./header-bar.component.scss'],
   encapsulation: ViewEncapsulation.None,
-  viewProviders: [MdIconRegistry],
+  viewProviders: [MatIconRegistry],
   inputs: ['showSearch', 'transparent']
 })
 export class HeaderBarComponent implements OnInit {
@@ -34,7 +34,7 @@ export class HeaderBarComponent implements OnInit {
     private router: Router,
     public config: ConfigService,
     private menuService: MenuService,
-    private mdIconRegistry: MdIconRegistry,
+    private mdIconRegistry: MatIconRegistry,
     private sanitizer: DomSanitizer,
     private cookieService: CookieService,
     private authService: AuthService,

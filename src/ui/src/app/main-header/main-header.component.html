@@ -8,9 +8,9 @@
     </div>
     <div class="main-header-search">
       <form (ngSubmit)="searchCharts(searchBox)">
-        <md-input-container class="md-input--reverse md-input--full md-input--big">
-          <input mdInput placeholder="Search charts..." floatingPlaceholder="false" #searchBox />
-        </md-input-container>
+        <mat-form-field class="md-input--reverse md-input--full md-input--big">
+          <input matInput placeholder="Search charts..." floatingPlaceholder="false" #searchBox />
+        </mat-form-field>
       </form>
       <p class="main-header-search__summary" *ngIf="totalChartsNumber">
         <b>{{ totalChartsNumber }}</b> charts ready to deploy

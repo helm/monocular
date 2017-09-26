@@ -1,7 +1,6 @@
 /* tslint:disable:no-unused-variable */
 
 import { TestBed, async } from '@angular/core/testing';
-import { MaterialModule } from '@angular/material';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ChartsComponent } from './charts.component';
 import { ChartListComponent } from '../chart-list/chart-list.component';
@@ -19,7 +18,7 @@ import { ConfigService } from '../shared/services/config.service';
 describe('Component: Charts', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [MaterialModule],
+      imports: [],
       declarations: [
         ChartsComponent,
         ChartListComponent,

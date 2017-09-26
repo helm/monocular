@@ -24,13 +24,13 @@
   },
   "dependencies": {
     "@angular/animations": "^4.0.0",
-    "@angular/cdk": "^2.0.0-beta.8",
+    "@angular/cdk": "^2.0.0-beta.11",
     "@angular/common": "^4.0.0",
     "@angular/compiler": "^4.0.0",
     "@angular/core": "^4.0.0",
     "@angular/forms": "^4.0.0",
     "@angular/http": "^4.0.0",
-    "@angular/material": "^2.0.0-beta.8",
+    "@angular/material": "^2.0.0-beta.11",
     "@angular/platform-browser": "^4.0.0",
     "@angular/platform-browser-dynamic": "^4.0.0",
     "@angular/router": "^4.0.0",
@@ -47,7 +47,7 @@
     "zone.js": "^0.8.4"
   },
   "devDependencies": {
-    "@angular/cli": "1.2.1",
+    "@angular/cli": "1.4.3",
     "@angular/compiler-cli": "^4.0.0",
     "@angular/language-service": "^4.0.0",
     "@types/jasmine": "~2.5.53",

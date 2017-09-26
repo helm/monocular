@@ -1,7 +1,7 @@
 // Import your custom theme
 @import '../../../theme.scss';
 
-md-tab-body {
+mat-tab-body {
   margin-top: 1em;
 }
 .chart-details-usage {
@@ -29,10 +29,10 @@ md-tab-body {
     }
   }
 
-  .md-tab-label {
+  .mat-tab-label {
     min-width: auto !important;
   }
-  [md-button] {
+  [mat-button] {
     margin-left: 1em;
     min-width: auto;
     width: 4em;

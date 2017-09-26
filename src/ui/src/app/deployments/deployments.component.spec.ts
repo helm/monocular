@@ -7,7 +7,6 @@ import { LoaderComponent } from '../loader/loader.component';
 import { PanelComponent } from '../panel/panel.component';
 import { HeaderBarComponent } from '../header-bar/header-bar.component';
 import { Router } from '@angular/router';
-import { MaterialModule } from '@angular/material';
 import { ConfigService } from '../shared/services/config.service';
 import { MenuService } from '../shared/services/menu.service';
 import { DeploymentsService } from '../shared/services/deployments.service';
@@ -15,7 +14,7 @@ import { DeploymentsService } from '../shared/services/deployments.service';
 describe('Component: Deployments', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [MaterialModule],
+      imports: [],
       declarations: [
         DeploymentsComponent,
         HeaderBarComponent,

@@ -1,7 +1,6 @@
 /* tslint:disable:no-unused-variable */
 
 import { TestBed, async } from '@angular/core/testing';
-import { MaterialModule } from '@angular/material';
 import { Router, ActivatedRoute } from '@angular/router';
 import { DeploymentsService } from '../shared/services/deployments.service';
 import { ConfigService } from '../shared/services/config.service';
@@ -16,7 +15,7 @@ import { HeaderBarComponent } from '../header-bar/header-bar.component';
 describe('Component: Deployment View', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [MaterialModule],
+      imports: [],
       declarations: [
         DeploymentComponent,
         DeploymentControlsComponent,

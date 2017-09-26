@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { SeoService } from '../shared/services/seo.service';
 import { ConfigService } from '../shared/services/config.service';
 import { DomSanitizer } from '@angular/platform-browser';
-import { MdDialogRef, MdDialog, MdDialogConfig, MdIconRegistry, MdSnackBar } from '@angular/material';
+import { MatDialogRef, MatDialog, MatDialogConfig, MatIconRegistry, MatSnackBar } from '@angular/material';
 import { DialogsService } from '../shared/services/dialogs.service';
 import { RepositoryNewComponent } from '../repository-new/repository-new.component';
 
@@ -13,7 +13,7 @@ import { RepositoryNewComponent } from '../repository-new/repository-new.compone
   selector: 'app-repositories',
   templateUrl: './repositories.component.html',
   styleUrls: ['./repositories.component.scss'],
-  viewProviders: [MdIconRegistry]
+  viewProviders: [MatIconRegistry]
 })
 export class RepositoriesComponent implements OnInit {
   loading: boolean = true;
@@ -24,11 +24,11 @@ export class RepositoriesComponent implements OnInit {
     private router: Router,
     private seo: SeoService,
     private config: ConfigService,
-    private mdIconRegistry: MdIconRegistry,
+    private mdIconRegistry: MatIconRegistry,
     private sanitizer: DomSanitizer,
     private dialogsService: DialogsService,
-    private dialog: MdDialog,
-    public snackBar: MdSnackBar,
+    private dialog: MatDialog,
+    public snackBar: MatSnackBar,
   ) {}
 
   ngOnInit() {
@@ -89,7 +89,7 @@ export class RepositoriesComponent implements OnInit {
   }
 
   addRepo() {
-    let dialogRef: MdDialogRef<RepositoryNewComponent>;
+    let dialogRef: MatDialogRef<RepositoryNewComponent>;
     dialogRef = this.dialog.open(RepositoryNewComponent);
     dialogRef.afterClosed().subscribe(res => this.loadRepos());
   }

@@ -8,7 +8,7 @@ import {
 import { Chart } from '../../shared/models/chart';
 import { Deployment } from '../../shared/models/deployment';
 import { DomSanitizer } from '@angular/platform-browser';
-import { MdIconRegistry, MdSnackBar, MdDialog, MdDialogRef } from '@angular/material';
+import { MatIconRegistry, MatSnackBar, MatDialog, MatDialogRef } from '@angular/material';
 import { ConfigService } from '../../shared/services/config.service';
 import { DeploymentsService } from '../../shared/services/deployments.service';
 import { DeploymentNewComponent } from '../../deployment-new/deployment-new.component';
@@ -18,7 +18,7 @@ import { Router } from '@angular/router';
   selector: 'app-chart-details-usage',
   templateUrl: './chart-details-usage.component.html',
   styleUrls: ['./chart-details-usage.component.scss'],
-  viewProviders: [MdIconRegistry],
+  viewProviders: [MatIconRegistry],
   encapsulation: ViewEncapsulation.None
 })
 export class ChartDetailsUsageComponent implements OnInit {
@@ -27,13 +27,13 @@ export class ChartDetailsUsageComponent implements OnInit {
   installing: boolean;
 
   constructor(
-    private mdIconRegistry: MdIconRegistry,
+    private mdIconRegistry: MatIconRegistry,
     private sanitizer: DomSanitizer,
     public config: ConfigService,
     private deploymentsService: DeploymentsService,
     private router: Router,
-    private dialog: MdDialog,
-    public snackBar: MdSnackBar
+    private dialog: MatDialog,
+    public snackBar: MatSnackBar
   ) {}
 
   ngOnInit() {
@@ -66,7 +66,7 @@ export class ChartDetailsUsageComponent implements OnInit {
   }
 
   installDeployment(chartID: string, version: string): void {
-    let dialogRef: MdDialogRef<DeploymentNewComponent>;
+    let dialogRef: MatDialogRef<DeploymentNewComponent>;
     dialogRef = this.dialog.open(DeploymentNewComponent);
     dialogRef.afterClosed()
       .subscribe(namespace => {

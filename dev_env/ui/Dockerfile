@@ -6,7 +6,7 @@ RUN install_packages apt-transport-https && \
   echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list && \
   install_packages yarn
 
-RUN yarn global add @angular/cli@1.2.1 && ng set --global packageManager=yarn
+RUN yarn global add @angular/cli@1.4.3 && ng set --global packageManager=yarn
 
 COPY rootfs /
 
