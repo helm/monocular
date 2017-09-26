@@ -6,11 +6,13 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"strings"
 	"testing"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/arschles/assert"
+	"github.com/gorilla/sessions"
 	"github.com/kubernetes-helm/monocular/src/api/config"
 	"github.com/kubernetes-helm/monocular/src/api/config/repos"
 	"github.com/kubernetes-helm/monocular/src/api/data"
@@ -29,6 +31,7 @@ const versionsRouteString = "versions"
 var helmClient = mocks.NewMockedClient()
 var helmClientBroken = mocks.NewMockedBrokenClient()
 var chartsImplementation = getChartsImplementation()
+var sessionStore = sessions.NewCookieStore([]byte("test"))
 var conf, _ = config.GetConfig()
 
 // tests the GET /healthz endpoint
@@ -457,6 +460,39 @@ func TestDeleteRelease403(t *testing.T) {
 	assert.NoErr(t, testutil.ErrorModelFromJSON(res.Body, &httpBody))
 	assert.Equal(t, *httpBody.Code, int64(http.StatusForbidden), "response code in HTTP body data")
 	assert.Equal(t, *httpBody.Message, "feature not enabled", "error message")
+}
+
+func TestAuthGatedRoutes(t *testing.T) {
+	setupTestRepoCache()
+	defer teardownTestRepoCache()
+	os.Setenv("MONOCULAR_AUTH_SIGNING_KEY", "secret")
+	defer os.Unsetenv("MONOCULAR_AUTH_SIGNING_KEY")
+	conf.ReleasesEnabled = true
+	defer func() { conf.ReleasesEnabled = false }()
+	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient))
+	defer ts.Close()
+	tests := []struct {
+		method string
+		route  string
+	}{
+		// Repos
+		{"POST", "/repos"},
+		{"DELETE", "/repos/stable"},
+		// Releases
+		{"GET", "/releases"},
+		{"POST", "/releases"},
+		{"GET", "/releases/cold-hands"},
+		{"DELETE", "/releases/cold-hands"},
+	}
+	for _, tt := range tests {
+		req, err := http.NewRequest(tt.method, ts.URL+"/v1"+tt.route, nil)
+		assert.NoErr(t, err)
+		client := http.Client{}
+		res, err := client.Do(req)
+		assert.NoErr(t, err)
+		defer res.Body.Close()
+		assert.Equal(t, res.StatusCode, http.StatusUnauthorized, "response code")
+	}
 }
 
 func urlPath(ver string, remainder ...string) string {

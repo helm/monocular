@@ -38,7 +38,7 @@ export class ReposService {
    * @return {Observable} An observable repo
    */
   createRepo(params: RepoAttributes): Observable<Repo> {
-    return this.http.post(`${this.hostname}/v1/repos`, params)
+    return this.http.post(`${this.hostname}/v1/repos`, params, {withCredentials: true})
                   .map(this.extractData)
                   .catch(this.handleError);
   }
@@ -49,7 +49,7 @@ export class ReposService {
    * @return {Observable} An observable of the deleted repo
    */
   deleteRepo(repoName: string): Observable<Repo> {
-    return this.http.delete(`${this.hostname}/v1/repos/${repoName}`)
+    return this.http.delete(`${this.hostname}/v1/repos/${repoName}`, {withCredentials: true})
                     .map(this.extractData)
                     .catch(this.handleError);
   }

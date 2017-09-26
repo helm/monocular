@@ -22,14 +22,14 @@ export class DeploymentsService {
   }
 
   getDeployments(): Observable<Deployment[]> {
-      return this.http.get(`${this.hostname}/v1/releases`)
+      return this.http.get(`${this.hostname}/v1/releases`, {withCredentials: true})
                     .map((response) => {
                       return this.extractData(response, [])
                     }).catch(this.handleError);
   }
 
   getDeployment(deploymentName: string): Observable<Deployment> {
-      return this.http.get(`${this.hostname}/v1/releases/${deploymentName}`)
+      return this.http.get(`${this.hostname}/v1/releases/${deploymentName}`, {withCredentials: true})
                     .map((response) => {
                       return this.extractData(response, [])
                     }).catch(this.handleError);
@@ -37,13 +37,13 @@ export class DeploymentsService {
 
   installDeployment(chartID: string, version: string, namespace: string): Observable<Deployment> {
       var params = { "chartId": chartID, "chartVersion": version, "namespace": namespace }
-      return this.http.post(`${this.hostname}/v1/releases`, params)
+      return this.http.post(`${this.hostname}/v1/releases`, params, {withCredentials: true})
                     .map(this.extractData)
                     .catch(this.handleError);
   }
 
   deleteDeployment(deploymentName: string): Observable<Deployment> {
-    return this.http.delete(`${this.hostname}/v1/releases/${deploymentName}`)
+    return this.http.delete(`${this.hostname}/v1/releases/${deploymentName}`, {withCredentials: true})
                     .map(this.extractData)
                     .catch(this.handleError);
   }

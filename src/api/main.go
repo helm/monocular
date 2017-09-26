@@ -66,6 +66,7 @@ func setupRoutes(conf config.Configuration, chartsImplementation data.Charts, he
 
 	// Middleware
 	InClusterGate := middleware.InClusterGate(conf.ReleasesEnabled)
+	AuthGate := middleware.AuthGate()
 
 	// Healthcheck
 	r.Methods("GET").Path("/healthz").HandlerFunc(handlers.Healthz)
@@ -88,23 +89,36 @@ func setupRoutes(conf config.Configuration, chartsImplementation data.Charts, he
 	apiv1.Methods("GET").Path("/repos").HandlerFunc(repoHandlers.GetRepos)
 	apiv1.Methods("POST").Path("/repos").Handler(negroni.New(
 		InClusterGate,
+		AuthGate,
 		negroni.WrapFunc(repoHandlers.CreateRepo),
 	))
 	apiv1.Methods("GET").Path("/repos/{repo}").Handler(handlers.WithParams(repoHandlers.GetRepo))
 	apiv1.Methods("DELETE").Path("/repos/{repo}").Handler(negroni.New(
 		InClusterGate,
+		AuthGate,
 		negroni.Wrap(handlers.WithParams(repoHandlers.DeleteRepo)),
 	))
 
 	// Releases routes
 	releaseHandlers := releases.NewReleaseHandlers(chartsImplementation, helmClient)
 	releasesRouter := mux.NewRouter()
-	apiv1.PathPrefix("/releases").Handler(negroni.New(InClusterGate, negroni.Wrap(releasesRouter)))
+	apiv1.PathPrefix("/releases").Handler(negroni.New(InClusterGate, AuthGate, negroni.Wrap(releasesRouter)))
 	releasesv1 := releasesRouter.PathPrefix("/v1").Subrouter()
 	releasesv1.Methods("GET").Path("/releases").HandlerFunc(releaseHandlers.GetReleases)
 	releasesv1.Methods("POST").Path("/releases").HandlerFunc(releaseHandlers.CreateRelease)
 	releasesv1.Methods("GET").Path("/releases/{releaseName}").Handler(handlers.WithParams(releaseHandlers.GetRelease))
 	releasesv1.Methods("DELETE").Path("/releases/{releaseName}").Handler(handlers.WithParams(releaseHandlers.DeleteRelease))
+
+	// Auth routes
+	authHandlers, err := handlers.NewAuthHandlers()
+	if err != nil {
+		log.WithError(err).Warn("authentication is disabled")
+	} else {
+		r.Methods("GET").Path("/auth").HandlerFunc(authHandlers.InitiateOAuth)
+		r.Methods("GET").Path("/auth/github/callback").HandlerFunc(authHandlers.GithubCallback)
+		r.Methods("GET").Path("/auth/verify").Handler(negroni.New(AuthGate))
+		r.Methods("DELETE").Path("/auth/logout").HandlerFunc(authHandlers.Logout)
+	}
 
 	// Serve chart assets
 	fs := http.FileServer(http.Dir(charthelper.DataDirBase()))
