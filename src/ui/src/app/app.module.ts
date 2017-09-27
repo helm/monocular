@@ -15,7 +15,7 @@ import { CookieModule } from 'ngx-cookie';
 import { routing, appRoutingProviders } from './app.routing';
 
 /* Material library */
-import { MATERIAL_COMPATIBILITY_MODE, MatIconModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatDialogModule, MatDialog, MatSnackBarModule, MatTabsModule } from '@angular/material';
+import { MATERIAL_COMPATIBILITY_MODE, MatIconModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatDialogModule, MatDialog, MatSnackBarModule, MatTabsModule, MatProgressBarModule, MatProgressSpinnerModule } from '@angular/material';
 
 /* Pipes */
 import { TruncatePipe } from './shared/pipes/truncate.pipe';
@@ -113,6 +113,8 @@ export function metaFactory(): MetaLoader {
     MatDialogModule,
     MatSnackBarModule,
     MatTabsModule,
+    MatProgressBarModule,
+    MatProgressSpinnerModule,
     NoopAnimationsModule,
     BrowserModule,
     FormsModule,
