@@ -9,7 +9,7 @@
           </h1>
         </div>
         <div class="repositories__header__block repositories__header__new">
-          <button md-button md-raised-button color="accent" (click)="addRepo()">
+          <button mat-button mat-raised-button color="accent" (click)="addRepo()">
             Add repository
           </button>
         </div>
@@ -31,8 +31,8 @@
             <td data-label="URL">{{repo.attributes.URL}}</td>
             <td data-label="Source">{{repo.attributes.source}}</td>
             <td class="actions">
-              <button color="warn" md-icon-button (click)="deleteRepo(repo)">
-                <md-icon svgIcon="delete"></md-icon>
+              <button color="warn" mat-icon-button (click)="deleteRepo(repo)">
+                <mat-icon svgIcon="delete"></mat-icon>
               </button>
             </td>
           </tr>

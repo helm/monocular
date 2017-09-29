@@ -2,7 +2,6 @@
 
 import { TestBed, async } from '@angular/core/testing';
 import { Router } from '@angular/router';
-import { MaterialModule } from '@angular/material';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ChartDetailsUsageComponent } from './chart-details-usage.component';
 import { ConfigService } from '../../shared/services/config.service';
@@ -12,7 +11,7 @@ import { DialogsService } from '../../shared/services/dialogs.service';
 describe('Component: ChartDetailsUsage', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [MaterialModule],
+      imports: [],
       declarations: [ChartDetailsUsageComponent],
       providers: [
         DialogsService,

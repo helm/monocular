@@ -1,7 +1,6 @@
 /* tslint:disable:no-unused-variable */
 
 import { TestBed, async } from '@angular/core/testing';
-import { MaterialModule } from '@angular/material';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { Router } from '@angular/router';
 import { ChartIndexComponent } from './chart-index.component';
@@ -19,7 +18,7 @@ import { MenuService } from '../shared/services/menu.service';
 describe('Component: ChartIndex', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [MaterialModule],
+      imports: [],
       declarations: [
         ChartIndexComponent,
         ChartListComponent,

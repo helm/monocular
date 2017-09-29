@@ -5,13 +5,13 @@ import { Router } from '@angular/router';
 import { SeoService } from '../shared/services/seo.service';
 import { ConfigService } from '../shared/services/config.service';
 import { DomSanitizer } from '@angular/platform-browser';
-import { MdIconRegistry } from '@angular/material';
+import { MatIconRegistry } from '@angular/material';
 
 @Component({
   selector: 'app-deployments',
   templateUrl: './deployments.component.html',
   styleUrls: ['./deployments.component.scss'],
-  viewProviders: [MdIconRegistry]
+  viewProviders: [MatIconRegistry]
 })
 export class DeploymentsComponent implements OnInit {
   deployments: Deployment[] = [];
@@ -42,7 +42,7 @@ export class DeploymentsComponent implements OnInit {
     private router: Router,
     private seo: SeoService,
     private config: ConfigService,
-    private mdIconRegistry: MdIconRegistry,
+    private mdIconRegistry: MatIconRegistry,
     private sanitizer: DomSanitizer
   ) {}
 

@@ -1,5 +1,5 @@
-<p *ngIf="deleting"><md-progress-bar mode="indeterminate"></md-progress-bar></p>
-<button *ngIf="!deleting" md-button [color]="'warn'"
-  (click)="deleteDeployment(deployment.id)" md-raised-button>
+<p *ngIf="deleting"><mat-progress-bar mode="indeterminate"></mat-progress-bar></p>
+<button *ngIf="!deleting" mat-button [color]="'warn'"
+  (click)="deleteDeployment(deployment.id)" mat-raised-button>
     Delete deployment
 </button>

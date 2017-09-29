@@ -6,14 +6,14 @@ import { Repo, RepoAttributes } from '../shared/models/repo';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { SeoService } from '../shared/services/seo.service';
 import { ConfigService } from '../shared/services/config.service';
-import { MdIconRegistry } from '@angular/material';
+import { MatIconRegistry } from '@angular/material';
 import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-charts',
   templateUrl: './charts.component.html',
   styleUrls: ['./charts.component.scss'],
-  viewProviders: [MdIconRegistry]
+  viewProviders: [MatIconRegistry]
 })
 export class ChartsComponent implements OnInit {
   charts: Chart[] = [];
@@ -54,7 +54,7 @@ export class ChartsComponent implements OnInit {
     private router: Router,
     private config: ConfigService,
     private seo: SeoService,
-    private mdIconRegistry: MdIconRegistry,
+    private mdIconRegistry: MatIconRegistry,
     private sanitizer: DomSanitizer
   ) {}
 

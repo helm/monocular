@@ -93,8 +93,8 @@ $mappy-queries: (
 @import '~mappy-breakpoints/mappy-breakpoints';
 
 // Add more classes to Material2 components
-md-input-container {
-  &.md-input--full {
+mat-form-field {
+  &.mat-input--full {
     width: 100%;
   }
 
@@ -102,7 +102,7 @@ md-input-container {
     border-top: 0;
   }
 
-  &.md-input--reverse {
+  &.mat-input--reverse {
     .mat-input-underline {
       background-color: $layout-light;
     }
@@ -115,7 +115,7 @@ md-input-container {
      color: darken($layout_light, 25);
   }
 
-  &.md-input--big {
+  &.mat-input--big {
     font-size: 1.5em;
   }
 }

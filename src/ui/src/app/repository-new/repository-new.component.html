@@ -4,23 +4,23 @@
     <div class="repository-new__form__errors" *ngIf="formError">
       {{formError}}
     </div>
-    <md-input-container class="repository-new__form__field">
-      <input mdInput name="repository-name" placeholder="Name" required
+    <mat-form-field class="repository-new__form__field">
+      <input matInput name="repository-name" placeholder="Name" required
         [(ngModel)]="repoAttributes.name" (ngModelChange)="formError=null">
-    </md-input-container>
-    <md-input-container class="repository-new__form__field">
-      <input mdInput name="repository-url" placeholder="URL" required
+    </mat-form-field>
+    <mat-form-field class="repository-new__form__field">
+      <input matInput name="repository-url" placeholder="URL" required
         [(ngModel)]="repoAttributes.URL" (ngModelChange)="formError=null">
-    </md-input-container>
-    <md-input-container class="repository-new__form__field">
-      <input mdInput name="repository-source" placeholder="Source"
+    </mat-form-field>
+    <mat-form-field class="repository-new__form__field">
+      <input matInput name="repository-source" placeholder="Source"
         [(ngModel)]="repoAttributes.source" (ngModelChange)="formError=null">
-    </md-input-container>
+    </mat-form-field>
 
     <div class="repository-new__buttons">
-      <button type="button" md-button
+      <button type="button" mat-button
         (click)="dialogRef.close()">Cancel</button>
-      <button type="submit" md-raised-button color="accent"
+      <button type="submit" mat-raised-button color="accent"
         [disabled]="!repositoryForm.form.valid">Add</button>
     </div>
   </form>

@@ -6,13 +6,13 @@ import { Chart } from '../shared/models/chart';
 import { SeoService } from '../shared/services/seo.service';
 import { ConfigService } from '../shared/services/config.service';
 import { DomSanitizer } from '@angular/platform-browser';
-import { MdIconRegistry } from '@angular/material';
+import { MatIconRegistry } from '@angular/material';
 
 @Component({
   selector: 'app-deployment',
   templateUrl: './deployment.component.html',
   styleUrls: ['./deployment.component.scss'],
-  viewProviders: [MdIconRegistry]
+  viewProviders: [MatIconRegistry]
 })
 export class DeploymentComponent implements OnInit {
   deployment: Deployment;
@@ -26,7 +26,7 @@ export class DeploymentComponent implements OnInit {
     private route: ActivatedRoute,
     private seo: SeoService,
     private config: ConfigService,
-    private mdIconRegistry: MdIconRegistry,
+    private mdIconRegistry: MatIconRegistry,
     private sanitizer: DomSanitizer
   ) {}
 

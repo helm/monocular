@@ -1,4 +1,4 @@
-import { MdDialogRef } from '@angular/material';
+import { MatDialogRef } from '@angular/material';
 import { Component } from '@angular/core';
 
 @Component({
@@ -12,6 +12,6 @@ export class DeploymentNewComponent {
   public namespace: string = 'default';
 
   constructor(
-    public dialogRef: MdDialogRef<DeploymentNewComponent>,
+    public dialogRef: MatDialogRef<DeploymentNewComponent>,
   ) {}
 }

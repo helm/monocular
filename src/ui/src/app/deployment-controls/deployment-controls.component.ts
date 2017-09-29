@@ -1,6 +1,6 @@
 import { Component, Output, EventEmitter } from '@angular/core';
 import { DeploymentsService } from '../shared/services/deployments.service';
-import { MdSnackBar } from '@angular/material';
+import { MatSnackBar } from '@angular/material';
 import { DialogsService } from '../shared/services/dialogs.service';
 import { Deployment } from '../shared/models/deployment';
 
@@ -18,7 +18,7 @@ export class DeploymentControlsComponent {
   constructor(
     private deploymentsService: DeploymentsService,
     private dialogsService: DialogsService,
-    public snackBar: MdSnackBar
+    public snackBar: MatSnackBar
   ){ }
 
   deleteDeployment(deploymentName: string): void {

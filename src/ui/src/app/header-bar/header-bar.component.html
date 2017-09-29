@@ -9,7 +9,7 @@
       <ul>
         <li class="header-bar__search" *ngIf="showSearch" [class.focused]="searchFocused">
           <form (ngSubmit)="searchCharts(searchBox)">
-            <md-icon svgIcon="search"></md-icon>
+            <mat-icon svgIcon="search"></mat-icon>
             <input placeholder="Search charts..." #searchBox (focus)="searchFocused = true" (blur)="searchFocused = false">
           </form>
         </li>
@@ -54,8 +54,8 @@
     </nav>
     <nav class="header-bar__open" [class.opened]="openedMenu">
       <div (click)="openMenu()">
-        <md-icon *ngIf="!openedMenu" svgIcon="menu"></md-icon>
-        <md-icon *ngIf="openedMenu" svgIcon="close"></md-icon>
+        <mat-icon *ngIf="!openedMenu" svgIcon="menu"></mat-icon>
+        <mat-icon *ngIf="openedMenu" svgIcon="close"></mat-icon>
       </div>
     </nav>
   </div>

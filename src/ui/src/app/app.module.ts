@@ -15,7 +15,7 @@ import { CookieModule } from 'ngx-cookie';
 import { routing, appRoutingProviders } from './app.routing';
 
 /* Material library */
-import { MaterialModule } from '@angular/material';
+import { MATERIAL_COMPATIBILITY_MODE, MatIconModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatDialogModule, MatDialog, MatSnackBarModule, MatTabsModule, MatProgressBarModule, MatProgressSpinnerModule } from '@angular/material';
 
 /* Pipes */
 import { TruncatePipe } from './shared/pipes/truncate.pipe';
@@ -106,7 +106,15 @@ export function metaFactory(): MetaLoader {
     ListFiltersComponent,
   ],
   imports: [
-    MaterialModule,
+    MatIconModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatDialogModule,
+    MatSnackBarModule,
+    MatTabsModule,
+    MatProgressBarModule,
+    MatProgressSpinnerModule,
     NoopAnimationsModule,
     BrowserModule,
     FormsModule,
@@ -121,6 +129,8 @@ export function metaFactory(): MetaLoader {
     CookieModule.forRoot()
   ],
   providers: [
+    {provide: MATERIAL_COMPATIBILITY_MODE, useValue: true},
+    MatDialog,
     appRoutingProviders,
     ChartsService,
     DeploymentsService,

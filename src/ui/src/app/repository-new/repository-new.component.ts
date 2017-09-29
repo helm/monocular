@@ -1,4 +1,4 @@
-import { MdDialogRef } from '@angular/material';
+import { MatDialogRef } from '@angular/material';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { ReposService } from '../shared/services/repos.service';
@@ -14,7 +14,7 @@ export class RepositoryNewComponent {
   formError: string;
 
   constructor(
-    public dialogRef: MdDialogRef<RepositoryNewComponent>,
+    public dialogRef: MatDialogRef<RepositoryNewComponent>,
     private reposService: ReposService,
     private router: Router
   ) {}
