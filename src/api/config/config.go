@@ -13,6 +13,7 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/kubernetes-helm/monocular/src/api/config/cors"
 	"github.com/kubernetes-helm/monocular/src/api/config/repos"
+	"github.com/kubernetes-helm/monocular/src/api/datastore"
 )
 
 // ConfigurationWithOverrides includes default Configuration values
@@ -29,12 +30,12 @@ type oauthConfig struct {
 type Configuration struct {
 	Cors                 cors.Cors
 	Repos                repos.Repos
-	ReleasesEnabled      bool  `yaml:"releasesEnabled"`
-	TillerPortForward    bool  `yaml:"tillerPortForward"`
-	CacheRefreshInterval int64 `yaml:"cacheRefreshInterval"`
-	Redis                redisConfig
-	OAuthConfig          oauthConfig `yaml:"oauthConfig"`
-	SigningKey           string      `yaml:"signingKey"`
+	ReleasesEnabled      bool             `yaml:"releasesEnabled"`
+	TillerPortForward    bool             `yaml:"tillerPortForward"`
+	CacheRefreshInterval int64            `yaml:"cacheRefreshInterval"`
+	Mongo                datastore.Config `yaml:"mongodb"`
+	OAuthConfig          oauthConfig      `yaml:"oauthConfig"`
+	SigningKey           string           `yaml:"signingKey"`
 	Initialized          bool
 }
 

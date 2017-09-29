@@ -5,31 +5,19 @@ import (
 	"os"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/kubernetes-helm/monocular/src/api/data/pointerto"
-	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
+	"github.com/kubernetes-helm/monocular/src/api/models"
 
 	yaml "gopkg.in/yaml.v2"
 )
 
 // Repos is an array of models.Repo
-type Repos []models.Repo
+type Repos []*models.Repo
 
 type reposYAML struct {
 	Repos Repos
 }
 
-var official = Repos{
-	{
-		Name:   pointerto.String("stable"),
-		URL:    pointerto.String("https://kubernetes-charts.storage.googleapis.com"),
-		Source: "https://github.com/kubernetes/charts/tree/master/stable",
-	},
-	{
-		Name:   pointerto.String("incubator"),
-		URL:    pointerto.String("https://kubernetes-charts-incubator.storage.googleapis.com"),
-		Source: "https://github.com/kubernetes/charts/tree/master/incubator",
-	},
-}
+var official = models.OfficialRepos
 
 // Enabled returns the map of repositories
 func Enabled(configFile string) (Repos, error) {

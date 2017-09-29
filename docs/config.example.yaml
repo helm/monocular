@@ -33,3 +33,7 @@ cacheRefreshInterval: 3600
 # Configure Redis server
 redis:
   host: redis:6379
+
+mongodb:
+  host: mongodb:27017
+  database: monocular

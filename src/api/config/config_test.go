@@ -48,10 +48,10 @@ func TestGetConfigFromFile(t *testing.T) {
 	if len(config.Repos) == 0 {
 		t.Error("Repositories not present")
 	}
-	assert.Equal(t, *config.Repos[0].Name, "repoName", "First repo")
-	assert.Equal(t, *config.Repos[1].Name, "repoName2", "Second repo")
-	assert.Equal(t, *config.Repos[0].URL, "http://myrepobucket", "Repo URL")
-	assert.Equal(t, *config.Repos[1].URL, "http://myrepobucket2", "Repo URL")
+	assert.Equal(t, config.Repos[0].Name, "repoName", "First repo")
+	assert.Equal(t, config.Repos[1].Name, "repoName2", "Second repo")
+	assert.Equal(t, config.Repos[0].URL, "http://myrepobucket", "Repo URL")
+	assert.Equal(t, config.Repos[1].URL, "http://myrepobucket2", "Repo URL")
 	assert.Equal(t, config.Repos[0].Source, "http://github.com/my-repo", "Repo Source")
 	assert.Equal(t, config.Repos[1].Source, "", "Repo Source")
 

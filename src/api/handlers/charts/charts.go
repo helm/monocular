@@ -10,6 +10,7 @@ import (
 	"github.com/kubernetes-helm/monocular/src/api/data"
 	"github.com/kubernetes-helm/monocular/src/api/data/helpers"
 	"github.com/kubernetes-helm/monocular/src/api/data/pointerto"
+	"github.com/kubernetes-helm/monocular/src/api/datastore"
 	"github.com/kubernetes-helm/monocular/src/api/handlers"
 	"github.com/kubernetes-helm/monocular/src/api/handlers/renderer"
 	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
@@ -25,12 +26,13 @@ const (
 
 // ChartHandlers defines handlers that serve chart data
 type ChartHandlers struct {
+	dbSession            datastore.Session
 	chartsImplementation data.Charts
 }
 
-// NewChartHandlers takes a data.Charts implementation and returns a ChartHandlers struct
-func NewChartHandlers(ch data.Charts) *ChartHandlers {
-	return &ChartHandlers{ch}
+// NewChartHandlers takes a datastore.Session and data.Charts implementation and returns a ChartHandlers struct
+func NewChartHandlers(db datastore.Session, ch data.Charts) *ChartHandlers {
+	return &ChartHandlers{db, ch}
 }
 
 // GetChart is the handler for the /charts/{repo}/{name} endpoint
@@ -41,7 +43,9 @@ func (c *ChartHandlers) GetChart(w http.ResponseWriter, req *http.Request, param
 		notFound(w, ChartResourceName)
 		return
 	}
-	chartResource := helpers.MakeChartResource(chartPackage)
+	db, closer := c.dbSession.DB()
+	defer closer()
+	chartResource := helpers.MakeChartResource(db, chartPackage)
 
 	payload := handlers.DataResourceBody(chartResource)
 	renderer.Render.JSON(w, http.StatusOK, payload)
@@ -55,7 +59,9 @@ func (c *ChartHandlers) GetChartVersion(w http.ResponseWriter, req *http.Request
 		notFound(w, ChartVersionResourceName)
 		return
 	}
-	chartVersionResource := helpers.MakeChartVersionResource(chartPackage)
+	db, closer := c.dbSession.DB()
+	defer closer()
+	chartVersionResource := helpers.MakeChartVersionResource(db, chartPackage)
 	payload := handlers.DataResourceBody(chartVersionResource)
 	renderer.Render.JSON(w, http.StatusOK, payload)
 }
@@ -72,7 +78,9 @@ func (c *ChartHandlers) GetChartVersions(w http.ResponseWriter, req *http.Reques
 	// Sort by semver reverse order
 	sort.Sort(sort.Reverse(chartpackagesort.BySemver(chartPackages)))
 
-	chartVersionResources := helpers.MakeChartVersionResources(chartPackages)
+	db, closer := c.dbSession.DB()
+	defer closer()
+	chartVersionResources := helpers.MakeChartVersionResources(db, chartPackages)
 	payload := handlers.DataResourcesBody(chartVersionResources)
 	renderer.Render.JSON(w, http.StatusOK, payload)
 }
@@ -88,7 +96,9 @@ func (c *ChartHandlers) GetAllCharts(w http.ResponseWriter, req *http.Request) {
 
 	// For now we only sort by name
 	sort.Sort(chartpackagesort.ByName(charts))
-	resources := helpers.MakeChartResources(charts)
+	db, closer := c.dbSession.DB()
+	defer closer()
+	resources := helpers.MakeChartResources(db, charts)
 	payload := handlers.DataResourcesBody(resources)
 	renderer.Render.JSON(w, http.StatusOK, payload)
 }
@@ -103,7 +113,9 @@ func (c *ChartHandlers) GetChartsInRepo(w http.ResponseWriter, req *http.Request
 	}
 	// For now we only sort by name
 	sort.Sort(chartpackagesort.ByName(charts))
-	chartsResource := helpers.MakeChartResources(charts)
+	db, closer := c.dbSession.DB()
+	defer closer()
+	chartsResource := helpers.MakeChartResources(db, charts)
 	payload := handlers.DataResourcesBody(chartsResource)
 	renderer.Render.JSON(w, http.StatusOK, payload)
 }
@@ -119,7 +131,9 @@ func (c *ChartHandlers) SearchCharts(w http.ResponseWriter, req *http.Request) {
 		renderer.Render.JSON(w, http.StatusBadRequest, models.Error{Code: pointerto.Int64(http.StatusBadRequest), Message: &message})
 		return
 	}
-	resources := helpers.MakeChartResources(charts)
+	db, closer := c.dbSession.DB()
+	defer closer()
+	resources := helpers.MakeChartResources(db, charts)
 	payload := handlers.DataResourcesBody(resources)
 	renderer.Render.JSON(w, http.StatusOK, payload)
 }

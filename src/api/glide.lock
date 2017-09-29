@@ -1,5 +1,5 @@
-hash: fb3095a0b012b329bbc3ac5e1838ce35f2b70b719c614724c3fdf4903999dfea
-updated: 2017-09-22T10:34:09.936749196Z
+hash: fcf310baee7499a980b3cfab416de2cbdc76330ae85af3b7078b59dc61f50513
+updated: 2017-09-28T15:27:08.125047574+01:00
 imports:
 - name: cloud.google.com/go
   version: 3b1ae45394a234c385be014e9a488f2bb6eef821
@@ -145,6 +145,8 @@ imports:
   - syntax/lexer
   - util/runes
   - util/strings
+- name: github.com/gocraft/work
+  version: 2a383f87e013a086dac00a8d4a8138c909d2bd17
 - name: github.com/gogo/protobuf
   version: e18d7aa8f8c624c915db340349aad4c49b10d173
   subpackages:
@@ -233,6 +235,8 @@ imports:
   version: 8a290539e2e8629dbc4e6bad948158f790ec31f4
 - name: github.com/PuerkitoBio/urlesc
   version: 5bd2802263f21d8788851d5305584c82a5c75d7e
+- name: github.com/robfig/cron
+  version: 783cfcb01fb00c48f740c9de79122bd410294149
 - name: github.com/rs/cors
   version: a62a804a8a009876ca59105f7899938a1349f4b3
 - name: github.com/rs/xhandler
@@ -334,6 +338,13 @@ imports:
   version: 3887ee99ecf07df5b447e9b00d9c0b2adaa9f3e4
 - name: gopkg.in/jarcoal/httpmock.v1
   version: 6aa33143427f6eb0bebcc0af42e8db85e39a42c0
+- name: gopkg.in/mgo.v2
+  version: 3f83fa5005286a7fe593b055f0d7771a7dce4655
+  subpackages:
+  - bson
+  - internal/json
+  - internal/sasl
+  - internal/scram
 - name: gopkg.in/yaml.v2
   version: 4c78c975fe7c825c6d1466c42be594d1d6f3aba6
 - name: k8s.io/helm

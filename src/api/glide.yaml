@@ -1,4 +1,4 @@
-package: github.com/kubernetes-helm/monocular
+package: github.com/kubernetes-helm/monocular/src/api
 import:
 - package: github.com/gorilla/mux
 - package: github.com/gorilla/sessions
@@ -76,3 +76,5 @@ import:
 - package: github.com/google/go-querystring
   subpackages:
   - query
+- package: gopkg.in/mgo.v2
+- package: github.com/asaskevich/govalidator

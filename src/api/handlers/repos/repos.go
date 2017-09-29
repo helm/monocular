@@ -3,128 +3,122 @@ package repos
 import (
 	"encoding/json"
 	"net/http"
-	"net/url"
+
+	"github.com/asaskevich/govalidator"
 
 	log "github.com/Sirupsen/logrus"
 
-	"github.com/go-openapi/strfmt"
-	"github.com/kubernetes-helm/monocular/src/api/data"
 	"github.com/kubernetes-helm/monocular/src/api/data/helpers"
 	"github.com/kubernetes-helm/monocular/src/api/data/pointerto"
+	"github.com/kubernetes-helm/monocular/src/api/datastore"
 	"github.com/kubernetes-helm/monocular/src/api/handlers"
 	"github.com/kubernetes-helm/monocular/src/api/handlers/renderer"
-	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
+	"github.com/kubernetes-helm/monocular/src/api/models"
+	swaggermodels "github.com/kubernetes-helm/monocular/src/api/swagger/models"
 )
 
-// GetRepos returns all the enabled repositories
-func GetRepos(w http.ResponseWriter, req *http.Request) {
-	reposCollection, err := data.GetRepos()
+// RepoHandlers defines handlers that serve chart data
+type RepoHandlers struct {
+	dbSession datastore.Session
+}
+
+// NewRepoHandlers takes a datastore.Session implementation and returns a RepoHandlers struct
+func NewRepoHandlers(db datastore.Session) *RepoHandlers {
+	return &RepoHandlers{db}
+}
+
+// ListRepos returns all repositories
+func (r *RepoHandlers) ListRepos(w http.ResponseWriter, req *http.Request) {
+	db, closer := r.dbSession.DB()
+	defer closer()
+	repos, err := models.ListRepos(db)
 	if err != nil {
-		log.WithError(err).Error("unable to get Repos collection")
+		log.WithError(err).Error("unable to get fetch repos")
 		renderer.Render.JSON(w, http.StatusInternalServerError, internalServerErrorPayload())
 		return
 	}
-	var repos []*data.Repo
-	reposCollection.FindAll(&repos)
 	resources := helpers.MakeRepoResources(repos)
 
 	payload := handlers.DataResourcesBody(resources)
 	renderer.Render.JSON(w, http.StatusOK, payload)
 }
 
-// GetRepo returns an enabled repo
-func GetRepo(w http.ResponseWriter, req *http.Request, params handlers.Params) {
-	var repo data.Repo
-	reposCollection, err := data.GetRepos()
-	if err != nil {
-		log.WithError(err).Error("unable to get Repos collection")
-		renderer.Render.JSON(w, http.StatusInternalServerError, internalServerErrorPayload())
-		return
-	}
-	err = reposCollection.Find(params["repo"], &repo)
+// GetRepo returns a repo
+func (r *RepoHandlers) GetRepo(w http.ResponseWriter, req *http.Request, params handlers.Params) {
+	db, closer := r.dbSession.DB()
+	defer closer()
+	repo, err := models.GetRepo(db, params["repo"])
 	if err != nil {
 		log.WithError(err).Error("unable to find Repo")
 		renderer.Render.JSON(w, http.StatusNotFound, notFoundPayload())
 		return
 	}
 
-	resource := helpers.MakeRepoResource(models.Repo(repo))
+	resource := helpers.MakeRepoResource(repo)
 	payload := handlers.DataResourceBody(resource)
 	renderer.Render.JSON(w, http.StatusOK, payload)
 }
 
 // CreateRepo adds a repo to the list of enabled repositories to index
-func CreateRepo(w http.ResponseWriter, req *http.Request) {
-	reposCollection, err := data.GetRepos()
-	if err != nil {
-		log.WithError(err).Error("unable to get Repos collection")
-		renderer.Render.JSON(w, http.StatusInternalServerError, internalServerErrorPayload())
+func (r *RepoHandlers) CreateRepo(w http.ResponseWriter, req *http.Request) {
+	db, closer := r.dbSession.DB()
+	defer closer()
+
+	// Params validation
+	var repo *models.Repo
+	if err := json.NewDecoder(req.Body).Decode(&repo); err != nil {
+		errorResponse(w, http.StatusBadRequest, "unable to parse request body: "+err.Error())
 		return
 	}
 
-	// Params validation
-	format := strfmt.NewFormats()
-	var params models.Repo
-	decoder := json.NewDecoder(req.Body)
-	err = decoder.Decode(&params)
-	if err != nil {
-		errorResponse(w, http.StatusBadRequest, "unable to parse request body")
-		return
-	}
-	if err := params.Validate(format); err != nil {
+	if _, err := govalidator.ValidateStruct(repo); err != nil {
 		errorResponse(w, http.StatusBadRequest, err.Error())
 		return
 	}
-	if _, err := url.ParseRequestURI(*params.URL); err != nil {
-		errorResponse(w, http.StatusBadRequest, "URL is invalid")
+
+	if err := models.CreateRepo(db, repo); err != nil {
+		log.WithError(err).Error("unable to save Repo")
+		errorResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	repo := data.Repo(params)
-	if err := reposCollection.Save(&repo); err != nil {
-		log.WithError(err).Error("unable to save Repo")
-		errorResponse(w, http.StatusInternalServerError, err.Error())
-	}
-
-	resource := helpers.MakeRepoResource(models.Repo(repo))
+	resource := helpers.MakeRepoResource(repo)
 	payload := handlers.DataResourceBody(resource)
 	renderer.Render.JSON(w, http.StatusCreated, payload)
 }
 
 // DeleteRepo deletes a repo from the list of enabled repositories to index
-func DeleteRepo(w http.ResponseWriter, req *http.Request, params handlers.Params) {
-	reposCollection, err := data.GetRepos()
-	if err != nil {
-		log.WithError(err).Error("unable to get Repos collection")
-		renderer.Render.JSON(w, http.StatusInternalServerError, internalServerErrorPayload())
-		return
-	}
+func (r *RepoHandlers) DeleteRepo(w http.ResponseWriter, req *http.Request, params handlers.Params) {
+	db, closer := r.dbSession.DB()
+	defer closer()
 
-	repo := data.Repo{}
-	found, err := reposCollection.Delete(params["repo"])
+	repo, err := models.GetRepo(db, params["repo"])
 	if err != nil {
-		log.WithError(err).Error("unable to delete Repo")
-		errorResponse(w, http.StatusInternalServerError, err.Error())
-		return
-	}
-	if !found {
+		log.WithError(err).Error("unable to find Repo")
 		renderer.Render.JSON(w, http.StatusNotFound, notFoundPayload())
 		return
 	}
 
-	resource := helpers.MakeRepoResource(models.Repo(repo))
+	err = models.DeleteRepo(db, params["repo"])
+	if err != nil {
+		log.WithError(err).Error("unable to delete Repo")
+		renderer.Render.JSON(w, http.StatusInternalServerError, internalServerErrorPayload())
+		return
+	}
+
+	resource := helpers.MakeRepoResource(repo)
 	payload := handlers.DataResourceBody(resource)
 	renderer.Render.JSON(w, http.StatusOK, payload)
 }
 
-func notFoundPayload() *models.Error {
-	return &models.Error{Code: pointerto.Int64(http.StatusNotFound), Message: pointerto.String("404 repository not found")}
+func notFoundPayload() *swaggermodels.Error {
+	return &swaggermodels.Error{Code: pointerto.Int64(http.StatusNotFound), Message: pointerto.String("404 repository not found")}
 }
 
-func internalServerErrorPayload() *models.Error {
-	return &models.Error{Code: pointerto.Int64(http.StatusInternalServerError), Message: pointerto.String("Internal server error")}
+func internalServerErrorPayload() *swaggermodels.Error {
+	return &swaggermodels.Error{Code: pointerto.Int64(http.StatusInternalServerError), Message: pointerto.String("Internal server error")}
 }
 
 func errorResponse(w http.ResponseWriter, errorCode int64, message string) {
-	renderer.Render.JSON(w, int(errorCode), models.Error{Code: pointerto.Int64(errorCode), Message: &message})
+	renderer.Render.JSON(w, int(errorCode), swaggermodels.Error{Code: pointerto.Int64(errorCode), Message: &message})
 }
