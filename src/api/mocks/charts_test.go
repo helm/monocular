@@ -2,14 +2,13 @@ package mocks
 
 import (
 	"errors"
-	"log"
 	"testing"
 
 	"github.com/arschles/assert"
-	"github.com/kubernetes-helm/monocular/src/api/data"
 	"github.com/kubernetes-helm/monocular/src/api/data/helpers"
-	"github.com/kubernetes-helm/monocular/src/api/data/pointerto"
-	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
+	"github.com/kubernetes-helm/monocular/src/api/datastore"
+	"github.com/kubernetes-helm/monocular/src/api/models"
+	swaggermodels "github.com/kubernetes-helm/monocular/src/api/swagger/models"
 	"github.com/kubernetes-helm/monocular/src/api/swagger/restapi/operations/charts"
 	"github.com/kubernetes-helm/monocular/src/api/testutil"
 )
@@ -63,8 +62,8 @@ func TestMockChartsAll(t *testing.T) {
 
 func TestMockChartsAllWithMockedMethod(t *testing.T) {
 	chImplementation := NewMockCharts(MockedMethods{
-		All: func() ([]*models.ChartPackage, error) {
-			var ret []*models.ChartPackage
+		All: func() ([]*swaggermodels.ChartPackage, error) {
+			var ret []*swaggermodels.ChartPackage
 			return ret, errors.New("error getting all charts")
 		},
 	})
@@ -73,22 +72,21 @@ func TestMockChartsAllWithMockedMethod(t *testing.T) {
 }
 
 func TestMockChartsSearch(t *testing.T) {
-	setupTestRepoCache()
-	defer teardownTestRepoCache()
 	params := charts.SearchChartsParams{
 		Name: "drupal",
 	}
 	charts, err := chartsImplementation.Search(params)
 	assert.NoErr(t, err)
 	// flatten chart+version results into a chart resource array
-	resources := helpers.MakeChartResources(charts)
+	db, _ := datastore.NewMockSession(&models.OfficialRepos, false).DB()
+	resources := helpers.MakeChartResources(db, charts)
 	assert.Equal(t, len(resources), 1, "number of unique chart results")
 }
 
 func TestMockChartsSearchWithMockedMethod(t *testing.T) {
 	chImplementation := NewMockCharts(MockedMethods{
-		Search: func(params charts.SearchChartsParams) ([]*models.ChartPackage, error) {
-			var ret []*models.ChartPackage
+		Search: func(params charts.SearchChartsParams) ([]*swaggermodels.ChartPackage, error) {
+			var ret []*swaggermodels.ChartPackage
 			return ret, errors.New("error searching charts")
 		},
 	})
@@ -106,25 +104,4 @@ func TestMockChartsAllFromRepo(t *testing.T) {
 	noCharts, err := chartsImplementation.AllFromRepo(testutil.BogusRepo)
 	assert.ExistsErr(t, err, "sent bogus repo name to GetChartsInRepo")
 	assert.True(t, len(noCharts) == 0, "empty charts slice")
-}
-
-func setupTestRepoCache() {
-	repos := []models.Repo{
-		{
-			Name: pointerto.String(testutil.RepoName),
-			URL:  pointerto.String("http://myrepobucket"),
-		},
-	}
-	data.UpdateCache(repos)
-}
-
-func teardownTestRepoCache() {
-	reposCollection, err := data.GetRepos()
-	if err != nil {
-		log.Fatal("could not get Repos collection ", err)
-	}
-	_, err = reposCollection.DeleteAll()
-	if err != nil {
-		log.Fatal("could not clear cache ", err)
-	}
 }

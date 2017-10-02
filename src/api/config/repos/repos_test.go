@@ -5,8 +5,7 @@ import (
 	"testing"
 
 	"github.com/arschles/assert"
-	"github.com/kubernetes-helm/monocular/src/api/data/pointerto"
-	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
+	"github.com/kubernetes-helm/monocular/src/api/models"
 )
 
 var configFileOk = filepath.Join("..", "testdata", "config.yaml")
@@ -16,10 +15,10 @@ var configFileNoRepos = filepath.Join("..", "testdata", "norepos_config.yaml")
 func TestOfficial(t *testing.T) {
 	offRepo := []models.Repo{
 		{
-			Name: pointerto.String("stable"),
+			Name: "stable",
 		},
 		{
-			Name: pointerto.String("incubator"),
+			Name: "incubator",
 		},
 	}
 	for i, repo := range official {
@@ -30,13 +29,19 @@ func TestOfficial(t *testing.T) {
 func TestEnabledFileDoesnotExist(t *testing.T) {
 	repos, err := Enabled("no-file")
 	assert.NoErr(t, err)
-	assert.Equal(t, repos, official, "It returns the official repos")
+	assert.Equal(t, len(repos), len(official), "same length")
+	for i := 0; i < len(repos); i++ {
+		assert.Equal(t, repos[i], official[i], "correct repos")
+	}
 }
 
 func TestEnabledFileWithoutRepos(t *testing.T) {
 	repos, err := Enabled(configFileNoRepos)
 	assert.NoErr(t, err)
-	assert.Equal(t, repos, official, "It returns the official repos")
+	assert.Equal(t, len(repos), len(official), "same length")
+	for i := 0; i < len(repos); i++ {
+		assert.Equal(t, repos[i], official[i], "correct repos")
+	}
 }
 
 // Use the repositories in the file
@@ -45,13 +50,13 @@ func TestEnabledReposInFile(t *testing.T) {
 	assert.NoErr(t, err)
 	offRepo := []models.Repo{
 		{
-			Name:   pointerto.String("repoName"),
-			URL:    pointerto.String("http://myrepobucket"),
+			Name:   "repoName",
+			URL:    "http://myrepobucket",
 			Source: "http://github.com/my-repo",
 		},
 		{
-			Name: pointerto.String("repoName2"),
-			URL:  pointerto.String("http://myrepobucket2"),
+			Name: "repoName2",
+			URL:  "http://myrepobucket2",
 		},
 	}
 

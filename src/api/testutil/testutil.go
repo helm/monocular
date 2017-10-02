@@ -1,6 +1,7 @@
 package testutil
 
 import (
+	"bytes"
 	"encoding/json"
 	"io"
 	"strconv"
@@ -87,4 +88,11 @@ func ChartVersionResourceAttributesFromHTTPResponse(body *models.ResourceData) (
 	}
 	err = json.Unmarshal(b, attributes)
 	return attributes, err
+}
+
+// ToJSONBody returns a JSON representation of a struct
+func ToJSONBody(t *testing.T, body interface{}) *bytes.Buffer {
+	jsonParams, err := json.Marshal(body)
+	assert.NoErr(t, err)
+	return bytes.NewBuffer(jsonParams)
 }

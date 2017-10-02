@@ -6,8 +6,9 @@ import (
 	"github.com/Masterminds/semver"
 	log "github.com/Sirupsen/logrus"
 	"github.com/ghodss/yaml"
-	"github.com/kubernetes-helm/monocular/src/api/data"
-	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
+	"github.com/kubernetes-helm/monocular/src/api/datastore"
+	"github.com/kubernetes-helm/monocular/src/api/models"
+	swaggermodels "github.com/kubernetes-helm/monocular/src/api/swagger/models"
 
 	"github.com/kubernetes-helm/monocular/src/api/data/cache/charthelper"
 	"github.com/kubernetes-helm/monocular/src/api/data/pointerto"
@@ -25,8 +26,8 @@ func IsYAML(b []byte) bool {
 
 // ParseYAMLRepo converts a YAML representation of a repo
 // to a slice of charts
-func ParseYAMLRepo(rawYAML []byte, repoName string) ([]*models.ChartPackage, error) {
-	var ret []*models.ChartPackage
+func ParseYAMLRepo(rawYAML []byte, repoName string) ([]*swaggermodels.ChartPackage, error) {
+	var ret []*swaggermodels.ChartPackage
 	repoIndex := make(map[string]interface{})
 	if err := yaml.Unmarshal(rawYAML, &repoIndex); err != nil {
 		return nil, err
@@ -36,7 +37,7 @@ func ParseYAMLRepo(rawYAML []byte, repoName string) ([]*models.ChartPackage, err
 		return nil, fmt.Errorf("error parsing entries from YAMLified repo")
 	}
 	e, _ := yaml.Marshal(&entries)
-	chartEntries := make(map[string][]models.ChartPackage)
+	chartEntries := make(map[string][]swaggermodels.ChartPackage)
 	if err := yaml.Unmarshal(e, &chartEntries); err != nil {
 		return nil, err
 	}
@@ -56,12 +57,12 @@ func ParseYAMLRepo(rawYAML []byte, repoName string) ([]*models.ChartPackage, err
 }
 
 // MakeChartResource composes a Resource type that represents a repo+chart
-func MakeChartResource(chart *models.ChartPackage) *models.Resource {
-	var ret models.Resource
+func MakeChartResource(db datastore.Database, chart *swaggermodels.ChartPackage) *swaggermodels.Resource {
+	var ret swaggermodels.Resource
 	ret.Type = pointerto.String("chart")
 	ret.ID = pointerto.String(MakeChartID(chart.Repo, *chart.Name))
-	ret.Attributes = &models.Chart{
-		Repo:        getRepoObject(chart),
+	ret.Attributes = &swaggermodels.Chart{
+		Repo:        getRepoObject(db, chart),
 		Name:        chart.Name,
 		Description: chart.Description,
 		Home:        chart.Home,
@@ -74,19 +75,19 @@ func MakeChartResource(chart *models.ChartPackage) *models.Resource {
 }
 
 // MakeRepoResource composes a Resource type that represents a repository
-func MakeRepoResource(repo models.Repo) *models.Resource {
-	var ret models.Resource
+func MakeRepoResource(repo *models.Repo) *swaggermodels.Resource {
+	var ret swaggermodels.Resource
 	ret.Type = pointerto.String("repository")
-	ret.ID = repo.Name
-	ret.Attributes = &repo
+	ret.ID = &repo.Name
+	ret.Attributes = repo
 	return &ret
 }
 
 // MakeRepoResources returns an array of RepoResources
-func MakeRepoResources(repos []*data.Repo) []*models.Resource {
-	var reposResource []*models.Resource
+func MakeRepoResources(repos []*models.Repo) []*swaggermodels.Resource {
+	var reposResource []*swaggermodels.Resource
 	for _, repo := range repos {
-		resource := MakeRepoResource(models.Repo(*repo))
+		resource := MakeRepoResource(repo)
 		reposResource = append(reposResource, resource)
 	}
 	return reposResource
@@ -95,14 +96,14 @@ func MakeRepoResources(repos []*data.Repo) []*models.Resource {
 // MakeChartResources accepts a slice of repo+chart data, converts each to a Resource type
 // and then returns the slice of the converted Resource types (throwing away version information,
 // and collapsing all chart+version records into a single resource representation for each chart)
-func MakeChartResources(charts []*models.ChartPackage) []*models.Resource {
-	var chartsResource []*models.Resource
+func MakeChartResources(db datastore.Database, charts []*swaggermodels.ChartPackage) []*swaggermodels.Resource {
+	var chartsResource []*swaggermodels.Resource
 	found := make(map[string]bool)
 	for _, chart := range charts {
 		if !found[*chart.Name] {
 			found[*chart.Name] = true
 			latestVersion, _ := GetLatestChartVersion(charts, *chart.Name)
-			resource := MakeChartResource(latestVersion)
+			resource := MakeChartResource(db, latestVersion)
 			AddCanonicalLink(resource)
 			AddLatestChartVersionRelationship(resource, latestVersion)
 			chartsResource = append(chartsResource, resource)
@@ -112,11 +113,11 @@ func MakeChartResources(charts []*models.ChartPackage) []*models.Resource {
 }
 
 // MakeChartVersionResource composes a Resource type that represents a chartVersion
-func MakeChartVersionResource(chart *models.ChartPackage) *models.Resource {
-	var ret models.Resource
+func MakeChartVersionResource(db datastore.Database, chart *swaggermodels.ChartPackage) *swaggermodels.Resource {
+	var ret swaggermodels.Resource
 	ret.Type = pointerto.String("chartVersion")
 	ret.ID = pointerto.String(MakeChartVersionID(chart.Repo, *chart.Name, *chart.Version))
-	ret.Attributes = &models.ChartVersion{
+	ret.Attributes = &swaggermodels.ChartVersion{
 		Created:    chart.Created,
 		Digest:     chart.Digest,
 		Urls:       chart.Urls,
@@ -125,32 +126,32 @@ func MakeChartVersionResource(chart *models.ChartPackage) *models.Resource {
 		Icons:      makeAvailableIcons(chart),
 		Readme:     makeReadmeURL(chart),
 	}
-	AddChartRelationship(&ret, chart)
+	AddChartRelationship(db, &ret, chart)
 	return &ret
 }
 
 // MakeChartVersionResources accepts a slice of versioned repo+chart data, converts each to a Resource type
 // and then returns the slice of the converted Resource types (retaining version info)
-func MakeChartVersionResources(charts []*models.ChartPackage) []*models.Resource {
-	var chartsResource []*models.Resource
+func MakeChartVersionResources(db datastore.Database, charts []*swaggermodels.ChartPackage) []*swaggermodels.Resource {
+	var chartsResource []*swaggermodels.Resource
 	for _, chart := range charts {
-		resource := MakeChartVersionResource(chart)
+		resource := MakeChartVersionResource(db, chart)
 		chartsResource = append(chartsResource, resource)
 	}
 	return chartsResource
 }
 
 // AddChartRelationship adds a "relationships" reference to a chartVersion resource's chart
-func AddChartRelationship(resource *models.Resource, chartPackage *models.ChartPackage) {
-	resource.Relationships = &models.ChartRelationship{
-		Chart: &models.ChartAsRelationship{
-			Links: &models.ResourceLink{
+func AddChartRelationship(db datastore.Database, resource *swaggermodels.Resource, chartPackage *swaggermodels.ChartPackage) {
+	resource.Relationships = &swaggermodels.ChartRelationship{
+		Chart: &swaggermodels.ChartAsRelationship{
+			Links: &swaggermodels.ResourceLink{
 				Self: pointerto.String(MakeRepoChartRouteURL(APIVer1String, chartPackage.Repo, *chartPackage.Name)),
 			},
-			Data: &models.Chart{
+			Data: &swaggermodels.Chart{
 				Name:        chartPackage.Name,
 				Description: chartPackage.Description,
-				Repo:        getRepoObject(chartPackage),
+				Repo:        getRepoObject(db, chartPackage),
 				Home:        chartPackage.Home,
 				Sources:     chartPackage.Sources,
 				Maintainers: chartPackage.Maintainers,
@@ -160,13 +161,13 @@ func AddChartRelationship(resource *models.Resource, chartPackage *models.ChartP
 }
 
 // AddLatestChartVersionRelationship adds a "relationships" reference to a chart resource's latest chartVersion
-func AddLatestChartVersionRelationship(resource *models.Resource, chartPackage *models.ChartPackage) {
-	resource.Relationships = &models.LatestChartVersionRelationship{
-		LatestChartVersion: &models.ChartVersionAsRelationship{
-			Links: &models.ResourceLink{
+func AddLatestChartVersionRelationship(resource *swaggermodels.Resource, chartPackage *swaggermodels.ChartPackage) {
+	resource.Relationships = &swaggermodels.LatestChartVersionRelationship{
+		LatestChartVersion: &swaggermodels.ChartVersionAsRelationship{
+			Links: &swaggermodels.ResourceLink{
 				Self: pointerto.String(MakeRepoChartVersionRouteURL(APIVer1String, chartPackage.Repo, *chartPackage.Name, *chartPackage.Version)),
 			},
-			Data: &models.ChartVersion{
+			Data: &swaggermodels.ChartVersion{
 				Created:    chartPackage.Created,
 				Digest:     chartPackage.Digest,
 				Urls:       chartPackage.Urls,
@@ -180,16 +181,16 @@ func AddLatestChartVersionRelationship(resource *models.Resource, chartPackage *
 }
 
 // AddCanonicalLink adds a "self" link to a chart resource's canonical API endpoint
-func AddCanonicalLink(resource *models.Resource) {
-	resource.Links = &models.ResourceLink{
-		Self: pointerto.String(MakeRepoChartRouteURL(APIVer1String, *resource.Attributes.(*models.Chart).Repo.Name, *resource.Attributes.(*models.Chart).Name)),
+func AddCanonicalLink(resource *swaggermodels.Resource) {
+	resource.Links = &swaggermodels.ResourceLink{
+		Self: pointerto.String(MakeRepoChartRouteURL(APIVer1String, *resource.Attributes.(*swaggermodels.Chart).Repo.Name, *resource.Attributes.(*swaggermodels.Chart).Name)),
 	}
 }
 
 // GetLatestChartVersion returns the most recent version from a slice of versioned charts
-func GetLatestChartVersion(charts []*models.ChartPackage, name string) (*models.ChartPackage, error) {
+func GetLatestChartVersion(charts []*swaggermodels.ChartPackage, name string) (*swaggermodels.ChartPackage, error) {
 	latest := "0.0.0"
-	var ret *models.ChartPackage
+	var ret *swaggermodels.ChartPackage
 	for _, chart := range charts {
 		if *chart.Name == name {
 			newest, err := newestSemVer(latest, *chart.Version)
@@ -209,8 +210,8 @@ func GetLatestChartVersion(charts []*models.ChartPackage, name string) (*models.
 }
 
 // GetChartVersion returns a specific versions of a chart
-func GetChartVersion(charts []*models.ChartPackage, name, version string) (*models.ChartPackage, error) {
-	var ret *models.ChartPackage
+func GetChartVersion(charts []*swaggermodels.ChartPackage, name, version string) (*swaggermodels.ChartPackage, error) {
+	var ret *swaggermodels.ChartPackage
 	for _, chart := range charts {
 		if *chart.Name == name && *chart.Version == version {
 			ret = chart
@@ -223,8 +224,8 @@ func GetChartVersion(charts []*models.ChartPackage, name, version string) (*mode
 }
 
 // GetChartVersions returns all versions of a chart
-func GetChartVersions(charts []*models.ChartPackage, name string) ([]*models.ChartPackage, error) {
-	var ret []*models.ChartPackage
+func GetChartVersions(charts []*swaggermodels.ChartPackage, name string) ([]*swaggermodels.ChartPackage, error) {
+	var ret []*swaggermodels.ChartPackage
 	for _, chart := range charts {
 		if *chart.Name == name {
 			ret = append(ret, chart)
@@ -276,32 +277,34 @@ func newestSemVer(v1 string, v2 string) (string, error) {
 	return v1, nil
 }
 
-func makeAvailableIcons(chart *models.ChartPackage) []*models.Icon {
-	var res []*models.Icon
+func makeAvailableIcons(chart *swaggermodels.ChartPackage) []*swaggermodels.Icon {
+	var res []*swaggermodels.Icon
 	icons := charthelper.AvailableIcons(chart, "/assets")
 	for _, icon := range icons {
-		res = append(res, &models.Icon{Name: &icon.Name, Path: &icon.Path})
+		res = append(res, &swaggermodels.Icon{Name: &icon.Name, Path: &icon.Path})
 	}
 	return res
 }
 
-func makeReadmeURL(chart *models.ChartPackage) *string {
+func makeReadmeURL(chart *swaggermodels.ChartPackage) *string {
 	res := charthelper.ReadmeStaticUrl(chart, "/assets")
 	return &res
 }
 
-func getRepoObject(chart *models.ChartPackage) *models.Repo {
-	reposCollection, err := data.GetRepos()
+func getRepoObject(db datastore.Database, chart *swaggermodels.ChartPackage) *swaggermodels.Repo {
+	repos, err := models.ListRepos(db)
 	if err != nil {
 		log.Fatal("could not get Repo collection", err)
 	}
-	var repos []*data.Repo
-	reposCollection.FindAll(&repos)
 
-	var repoPayload models.Repo
+	var repoPayload swaggermodels.Repo
 	for _, repo := range repos {
-		if *repo.Name == chart.Repo {
-			repoPayload = models.Repo(*repo)
+		if repo.Name == chart.Repo {
+			repoPayload = swaggermodels.Repo{
+				Name:   &repo.Name,
+				URL:    &repo.URL,
+				Source: repo.Source,
+			}
 			return &repoPayload
 		}
 	}

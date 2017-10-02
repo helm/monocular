@@ -6,35 +6,38 @@ import (
 	"time"
 
 	"github.com/kubernetes-helm/monocular/src/api/data/cache/charthelper"
+	"github.com/kubernetes-helm/monocular/src/api/datastore"
+	"github.com/kubernetes-helm/monocular/src/api/models"
 	"github.com/rs/cors"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/gorilla/mux"
 	"github.com/kubernetes-helm/monocular/src/api/config"
-	"github.com/kubernetes-helm/monocular/src/api/config/repos"
 	"github.com/kubernetes-helm/monocular/src/api/data"
 	"github.com/kubernetes-helm/monocular/src/api/data/cache"
 	"github.com/kubernetes-helm/monocular/src/api/data/helm/client"
 	"github.com/kubernetes-helm/monocular/src/api/handlers"
 	"github.com/kubernetes-helm/monocular/src/api/handlers/charts"
 	"github.com/kubernetes-helm/monocular/src/api/handlers/releases"
-	repoHandlers "github.com/kubernetes-helm/monocular/src/api/handlers/repos"
+	"github.com/kubernetes-helm/monocular/src/api/handlers/repos"
 	"github.com/kubernetes-helm/monocular/src/api/jobs"
 	"github.com/kubernetes-helm/monocular/src/api/middleware"
 	"github.com/urfave/negroni"
 )
 
-func setupRepoCache(repos repos.Repos) {
+func setupRepoCache(repos []*models.Repo, dbSession datastore.Session) {
 	// setup initial chart repositories
-	if err := data.UpdateCache(repos); err != nil {
+	db, closer := dbSession.DB()
+	defer closer()
+	if err := models.CreateRepos(db, repos); err != nil {
 		log.WithError(err).Fatalf("Can not configure repository cache")
 	}
 }
 
-func setupChartsImplementation(conf config.Configuration) data.Charts {
-	setupRepoCache(conf.Repos)
+func setupChartsImplementation(conf config.Configuration, dbSession datastore.Session) data.Charts {
+	setupRepoCache(conf.Repos, dbSession)
 
-	chartsImplementation := cache.NewCachedCharts()
+	chartsImplementation := cache.NewCachedCharts(dbSession)
 	// Run foreground repository refresh
 	chartsImplementation.Refresh()
 	// Setup background index refreshes
@@ -61,7 +64,7 @@ func setupCors(conf config.Configuration) *cors.Cors {
 	})
 }
 
-func setupRoutes(conf config.Configuration, chartsImplementation data.Charts, helmClient data.Client) http.Handler {
+func setupRoutes(conf config.Configuration, chartsImplementation data.Charts, helmClient data.Client, dbSession datastore.Session) http.Handler {
 	r := mux.NewRouter()
 
 	// Middleware
@@ -75,7 +78,7 @@ func setupRoutes(conf config.Configuration, chartsImplementation data.Charts, he
 	apiv1 := r.PathPrefix("/v1").Subrouter()
 
 	// Chart routes
-	chartHandlers := charts.NewChartHandlers(chartsImplementation)
+	chartHandlers := charts.NewChartHandlers(dbSession, chartsImplementation)
 	apiv1.Methods("GET").Path("/charts").HandlerFunc(chartHandlers.GetAllCharts)
 	apiv1.Methods("GET").Path("/charts/search").HandlerFunc(chartHandlers.SearchCharts)
 	apiv1.Methods("GET").Path("/charts/{repo}").Handler(handlers.WithParams(chartHandlers.GetChartsInRepo))
@@ -86,7 +89,8 @@ func setupRoutes(conf config.Configuration, chartsImplementation data.Charts, he
 	apiv1.Methods("GET").Path("/charts/{repo}/{chartName}/versions/{version}").Handler(handlers.WithParams(chartHandlers.GetChartVersion))
 
 	// Repo routes
-	apiv1.Methods("GET").Path("/repos").HandlerFunc(repoHandlers.GetRepos)
+	repoHandlers := repos.NewRepoHandlers(dbSession)
+	apiv1.Methods("GET").Path("/repos").HandlerFunc(repoHandlers.ListRepos)
 	apiv1.Methods("POST").Path("/repos").Handler(negroni.New(
 		InClusterGate,
 		AuthGate,
@@ -142,9 +146,14 @@ func main() {
 		log.WithError(err).Fatal("unable to load configuration")
 	}
 
-	chartsImplementation := setupChartsImplementation(conf)
+	dbSession, err := datastore.NewSession(conf.Mongo)
+	if err != nil {
+		log.WithFields(log.Fields{"host": conf.Mongo.Host}).Fatal(err)
+	}
+
+	chartsImplementation := setupChartsImplementation(conf, dbSession)
 	helmClient := client.NewHelmClient()
-	router := setupRoutes(conf, chartsImplementation, helmClient)
+	router := setupRoutes(conf, chartsImplementation, helmClient, dbSession)
 
 	port := os.Getenv("PORT")
 	if port == "" {

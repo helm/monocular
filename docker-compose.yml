@@ -26,10 +26,7 @@ services:
     image: bitnami/redis:4.0
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
-    volumes:
-      - 'redis_data:/bitnami/redis'
     ports:
       - 6379:6379
-volumes:
-  redis_data:
-    driver: local
+  mongodb:
+    image: bitnami/mongodb:3

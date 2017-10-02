@@ -5,15 +5,12 @@ import (
 	"time"
 
 	"github.com/arschles/assert"
-	"github.com/kubernetes-helm/monocular/src/api/data/pointerto"
-	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
+	"github.com/kubernetes-helm/monocular/src/api/datastore"
+	"github.com/kubernetes-helm/monocular/src/api/models"
 )
 
 func TestNewRefreshData(t *testing.T) {
-	setupTestRepoCache(nil)
-	defer teardownTestRepoCache()
-
-	chartsImplementation := NewCachedCharts()
+	chartsImplementation := NewCachedCharts(dbSession)
 	// Setup background index refreshes
 	freshness := time.Duration(3600) * time.Second
 	job := NewRefreshChartsData(chartsImplementation, freshness, "test-run", false)
@@ -25,16 +22,15 @@ func TestNewRefreshData(t *testing.T) {
 }
 
 func TestNewRefreshDataError(t *testing.T) {
-	repos := []models.Repo{
+	repos := []*models.Repo{
 		{
-			Name: pointerto.String("waps"),
-			URL:  pointerto.String("./localhost"),
+			Name: "waps",
+			URL:  "./localhost",
 		},
 	}
-	setupTestRepoCache(&repos)
-	defer teardownTestRepoCache()
+	session := datastore.NewMockSession(&repos, false)
 
-	chartsImplementation := NewCachedCharts()
+	chartsImplementation := NewCachedCharts(session)
 	freshness := time.Duration(3600) * time.Second
 	job := NewRefreshChartsData(chartsImplementation, freshness, "test-run", true)
 	assert.Equal(t, job.FirstRun(), true, "First run")

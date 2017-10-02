@@ -4,13 +4,11 @@ import (
 	"fmt"
 	"testing"
 
-	log "github.com/Sirupsen/logrus"
 	"github.com/arschles/assert"
-	"github.com/kubernetes-helm/monocular/src/api/config"
-	"github.com/kubernetes-helm/monocular/src/api/data"
 	"github.com/kubernetes-helm/monocular/src/api/data/cache/charthelper"
-	"github.com/kubernetes-helm/monocular/src/api/data/pointerto"
-	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
+	"github.com/kubernetes-helm/monocular/src/api/datastore"
+	"github.com/kubernetes-helm/monocular/src/api/models"
+	swaggermodels "github.com/kubernetes-helm/monocular/src/api/swagger/models"
 )
 
 const (
@@ -68,127 +66,121 @@ func TestParseYAMLRepoWithDeprecatedChart(t *testing.T) {
 }
 
 func TestMakeChartResource(t *testing.T) {
-	setupTestRepoCache()
-	defer teardownTestRepoCache()
+	db := getTestDB()
 	charts, err := ParseYAMLRepo(getTestRepoYAML(), repoName)
-	repo := getRepoObject(charts[0])
 	assert.NoErr(t, err)
-	chartResource := MakeChartResource(charts[0])
+	repo := getRepoObject(db, charts[0])
+	assert.NoErr(t, err)
+	chartResource := MakeChartResource(db, charts[0])
 	assert.Equal(t, *chartResource.Type, "chart", "chart resource type field value")
 	assert.Equal(t, *chartResource.ID, MakeChartID(repoName, chartName), "chart resource ID field value")
-	assert.Equal(t, *chartResource.Attributes.(*models.Chart).Repo.Name, *repo.Name, "chart resource Attributes.Repo Name field value")
-	assert.Equal(t, *chartResource.Attributes.(*models.Chart).Repo.URL, *repo.URL, "chart resource Attributes.Repo URL field value")
-	assert.Equal(t, chartResource.Attributes.(*models.Chart).Repo.Source, repo.Source, "chart resource Attributes.URL field value")
-	assert.Equal(t, *chartResource.Attributes.(*models.Chart).Name, chartName, "chart resource Attributes.Name field value")
-	assert.Equal(t, *chartResource.Attributes.(*models.Chart).Description, chartDescription, "chart resource Attributes.Description field value")
-	assert.Equal(t, *chartResource.Attributes.(*models.Chart).Home, chartHome, "chart resource Attributes.Home field value")
+	assert.Equal(t, *chartResource.Attributes.(*swaggermodels.Chart).Repo.Name, *repo.Name, "chart resource Attributes.Repo Name field value")
+	assert.Equal(t, *chartResource.Attributes.(*swaggermodels.Chart).Repo.URL, *repo.URL, "chart resource Attributes.Repo URL field value")
+	assert.Equal(t, chartResource.Attributes.(*swaggermodels.Chart).Repo.Source, repo.Source, "chart resource Attributes.URL field value")
+	assert.Equal(t, *chartResource.Attributes.(*swaggermodels.Chart).Name, chartName, "chart resource Attributes.Name field value")
+	assert.Equal(t, *chartResource.Attributes.(*swaggermodels.Chart).Description, chartDescription, "chart resource Attributes.Description field value")
+	assert.Equal(t, *chartResource.Attributes.(*swaggermodels.Chart).Home, chartHome, "chart resource Attributes.Home field value")
 }
 
 func TestMakeChartResources(t *testing.T) {
-	setupTestRepoCache()
-	defer teardownTestRepoCache()
+	db := getTestDB()
 	charts, err := ParseYAMLRepo(getTestRepoYAML(), repoName)
 	assert.NoErr(t, err)
-	chartsResource := MakeChartResources(charts)
-	repo := getRepoObject(charts[0])
+	chartsResource := MakeChartResources(db, charts)
+	repo := getRepoObject(db, charts[0])
 	assert.Equal(t, *chartsResource[0].Type, "chart", "chart resource type field value")
 	assert.Equal(t, *chartsResource[0].ID, MakeChartID(repoName, chartName), "chart resource ID field value")
-	assert.Equal(t, *chartsResource[0].Attributes.(*models.Chart).Repo.Name, *repo.Name, "chart resource Attributes.Repo Namefield value")
-	assert.Equal(t, *chartsResource[0].Attributes.(*models.Chart).Repo.URL, *repo.URL, "chart resource Attributes.Repo URL value")
-	assert.Equal(t, chartsResource[0].Attributes.(*models.Chart).Repo.Source, repo.Source, "chart resource Attributes.Source value")
-	assert.Equal(t, *chartsResource[0].Attributes.(*models.Chart).Name, chartName, "chart resource Attributes.Name field value")
-	assert.Equal(t, *chartsResource[0].Attributes.(*models.Chart).Description, chartDescription, "chart resource Attributes.Description field value")
-	assert.Equal(t, *chartsResource[0].Attributes.(*models.Chart).Home, chartHome, "chart resource Attributes.Home field value")
+	assert.Equal(t, *chartsResource[0].Attributes.(*swaggermodels.Chart).Repo.Name, *repo.Name, "chart resource Attributes.Repo Namefield value")
+	assert.Equal(t, *chartsResource[0].Attributes.(*swaggermodels.Chart).Repo.URL, *repo.URL, "chart resource Attributes.Repo URL value")
+	assert.Equal(t, chartsResource[0].Attributes.(*swaggermodels.Chart).Repo.Source, repo.Source, "chart resource Attributes.Source value")
+	assert.Equal(t, *chartsResource[0].Attributes.(*swaggermodels.Chart).Name, chartName, "chart resource Attributes.Name field value")
+	assert.Equal(t, *chartsResource[0].Attributes.(*swaggermodels.Chart).Description, chartDescription, "chart resource Attributes.Description field value")
+	assert.Equal(t, *chartsResource[0].Attributes.(*swaggermodels.Chart).Home, chartHome, "chart resource Attributes.Home field value")
 }
 
 func TestMakeRepoResource(t *testing.T) {
-	config, err := config.GetConfig()
-	assert.NoErr(t, err)
-	repo := config.Repos[0]
+	repo := models.OfficialRepos[0]
 	repoResource := MakeRepoResource(repo)
 	assert.Equal(t, *repoResource.Type, "repository", "repo resource type field value")
-	assert.Equal(t, *repoResource.ID, *repo.Name, "repo resource ID field value")
-	assert.Equal(t, *repoResource.Attributes.(*models.Repo).Name, *repo.Name, "repo name")
-	assert.Equal(t, *repoResource.Attributes.(*models.Repo).URL, *repo.URL, "repo URL")
+	assert.Equal(t, *repoResource.ID, repo.Name, "repo resource ID field value")
+	assert.Equal(t, repoResource.Attributes.(*models.Repo).Name, repo.Name, "repo name")
+	assert.Equal(t, repoResource.Attributes.(*models.Repo).URL, repo.URL, "repo URL")
 	assert.Equal(t, repoResource.Attributes.(*models.Repo).Source, repo.Source, "chart resource Attributes.URL field value")
 }
 
 func TestMakeRepoResources(t *testing.T) {
-	config, err := config.GetConfig()
-	assert.NoErr(t, err)
-	var repos []*data.Repo
-	for _, r := range config.Repos {
-		repo := data.Repo(r)
-		repos = append(repos, &repo)
-	}
+	repos := models.OfficialRepos
 	repoResource := MakeRepoResources(repos)[0]
 	assert.Equal(t, *repoResource.Type, "repository", "repo resource type field value")
-	assert.Equal(t, *repoResource.ID, *repos[0].Name, "repo resource ID field value")
-	assert.Equal(t, *repoResource.Attributes.(*models.Repo).Name, *repos[0].Name, "repo name")
-	assert.Equal(t, *repoResource.Attributes.(*models.Repo).URL, *repos[0].URL, "repo URL")
+	assert.Equal(t, *repoResource.ID, repos[0].Name, "repo resource ID field value")
+	assert.Equal(t, repoResource.Attributes.(*models.Repo).Name, repos[0].Name, "repo name")
+	assert.Equal(t, repoResource.Attributes.(*models.Repo).URL, repos[0].URL, "repo URL")
 	assert.Equal(t, repoResource.Attributes.(*models.Repo).Source, repos[0].Source, "chart resource Attributes.URL field value")
 }
 
 func TestMakeChartVersionResource(t *testing.T) {
+	db := getTestDB()
 	charts, err := ParseYAMLRepo(getTestRepoYAML(), repoName)
 	assert.NoErr(t, err)
-	chartVersionResource := MakeChartVersionResource(charts[0])
+	chartVersionResource := MakeChartVersionResource(db, charts[0])
 	assert.Equal(t, *chartVersionResource.Type, "chartVersion", "chart resource type field value")
 	assert.Equal(t, *chartVersionResource.ID, MakeChartVersionID(repoName, chartName, chartVersion), "chart resource ID field value")
-	assert.Equal(t, *chartVersionResource.Attributes.(*models.ChartVersion).Created, chartCreated, "chartVersion resource Attributes.Created field value")
-	assert.Equal(t, *chartVersionResource.Attributes.(*models.ChartVersion).Digest, chartDigest, "chartVersion resource Attributes.Digest field value")
-	assert.Equal(t, chartVersionResource.Attributes.(*models.ChartVersion).Urls[0], chartURL, "chartVersion resource Attributes.Urls field value")
-	assert.Equal(t, *chartVersionResource.Attributes.(*models.ChartVersion).Version, chartVersion, "chartVersion resource Attributes.Version field value")
+	assert.Equal(t, *chartVersionResource.Attributes.(*swaggermodels.ChartVersion).Created, chartCreated, "chartVersion resource Attributes.Created field value")
+	assert.Equal(t, *chartVersionResource.Attributes.(*swaggermodels.ChartVersion).Digest, chartDigest, "chartVersion resource Attributes.Digest field value")
+	assert.Equal(t, chartVersionResource.Attributes.(*swaggermodels.ChartVersion).Urls[0], chartURL, "chartVersion resource Attributes.Urls field value")
+	assert.Equal(t, *chartVersionResource.Attributes.(*swaggermodels.ChartVersion).Version, chartVersion, "chartVersion resource Attributes.Version field value")
 }
 
 func TestMakeChartVersionResources(t *testing.T) {
+	db := getTestDB()
 	charts, err := ParseYAMLRepo(getTestRepoYAML(), repoName)
 	assert.NoErr(t, err)
-	chartVersionsResource := MakeChartVersionResources(charts)
+	chartVersionsResource := MakeChartVersionResources(db, charts)
 	assert.Equal(t, *chartVersionsResource[0].Type, "chartVersion", "chart resource type field value")
 	assert.Equal(t, *chartVersionsResource[0].ID, MakeChartVersionID(repoName, chartName, chartVersion), "chart resource ID field value")
-	assert.Equal(t, *chartVersionsResource[0].Attributes.(*models.ChartVersion).Created, chartCreated, "chartVersion resource Attributes.Created field value")
-	assert.Equal(t, *chartVersionsResource[0].Attributes.(*models.ChartVersion).Digest, chartDigest, "chartVersion resource Attributes.Digest field value")
-	assert.Equal(t, chartVersionsResource[0].Attributes.(*models.ChartVersion).Urls[0], chartURL, "chartVersion resource Attributes.Urls field value")
-	assert.Equal(t, *chartVersionsResource[0].Attributes.(*models.ChartVersion).Version, chartVersion, "chartVersion resource Attributes.Version field value")
+	assert.Equal(t, *chartVersionsResource[0].Attributes.(*swaggermodels.ChartVersion).Created, chartCreated, "chartVersion resource Attributes.Created field value")
+	assert.Equal(t, *chartVersionsResource[0].Attributes.(*swaggermodels.ChartVersion).Digest, chartDigest, "chartVersion resource Attributes.Digest field value")
+	assert.Equal(t, chartVersionsResource[0].Attributes.(*swaggermodels.ChartVersion).Urls[0], chartURL, "chartVersion resource Attributes.Urls field value")
+	assert.Equal(t, *chartVersionsResource[0].Attributes.(*swaggermodels.ChartVersion).Version, chartVersion, "chartVersion resource Attributes.Version field value")
 }
 
 func TestAddChartRelationship(t *testing.T) {
+	db := getTestDB()
 	charts, err := ParseYAMLRepo(getTestRepoYAML(), repoName)
 	assert.NoErr(t, err)
 	chart := charts[0]
-	chartVersionResource := MakeChartVersionResource(chart)
-	AddChartRelationship(chartVersionResource, chart)
-	assert.Equal(t, *chartVersionResource.Relationships.(*models.ChartRelationship).Chart.Data.Name, *chart.Name, "relationships.chart.data.name field value")
-	assert.Equal(t, *chartVersionResource.Relationships.(*models.ChartRelationship).Chart.Data.Description, *chart.Description, "relationships.chart.data.description field value")
-	assert.Equal(t, *chartVersionResource.Relationships.(*models.ChartRelationship).Chart.Data.Home, *chart.Home, "relationships.chart.data.home field value")
-	assert.Equal(t, chartVersionResource.Relationships.(*models.ChartRelationship).Chart.Data.Maintainers, chart.Maintainers, "relationships.chart.data.maintainers array value")
-	assert.Equal(t, chartVersionResource.Relationships.(*models.ChartRelationship).Chart.Data.Sources, chart.Sources, "relationships.chart.data.sources array value")
-	assert.Equal(t, chartVersionResource.Relationships.(*models.ChartRelationship).Chart.Data.Repo, getRepoObject(chart), "relationships.chart.data.repo field value")
-	assert.Equal(t, *chartVersionResource.Relationships.(*models.ChartRelationship).Chart.Links.Self, MakeRepoChartRouteURL(APIVer1String, chart.Repo, *chart.Name), "relationships.chart.links.self field value")
+	chartVersionResource := MakeChartVersionResource(db, chart)
+	AddChartRelationship(db, chartVersionResource, chart)
+	assert.Equal(t, *chartVersionResource.Relationships.(*swaggermodels.ChartRelationship).Chart.Data.Name, *chart.Name, "relationships.chart.data.name field value")
+	assert.Equal(t, *chartVersionResource.Relationships.(*swaggermodels.ChartRelationship).Chart.Data.Description, *chart.Description, "relationships.chart.data.description field value")
+	assert.Equal(t, *chartVersionResource.Relationships.(*swaggermodels.ChartRelationship).Chart.Data.Home, *chart.Home, "relationships.chart.data.home field value")
+	assert.Equal(t, chartVersionResource.Relationships.(*swaggermodels.ChartRelationship).Chart.Data.Maintainers, chart.Maintainers, "relationships.chart.data.maintainers array value")
+	assert.Equal(t, chartVersionResource.Relationships.(*swaggermodels.ChartRelationship).Chart.Data.Sources, chart.Sources, "relationships.chart.data.sources array value")
+	assert.Equal(t, chartVersionResource.Relationships.(*swaggermodels.ChartRelationship).Chart.Data.Repo, getRepoObject(db, chart), "relationships.chart.data.repo field value")
+	assert.Equal(t, *chartVersionResource.Relationships.(*swaggermodels.ChartRelationship).Chart.Links.Self, MakeRepoChartRouteURL(APIVer1String, chart.Repo, *chart.Name), "relationships.chart.links.self field value")
 }
 
 func TestAddLatestChartVersionRelationship(t *testing.T) {
+	db := getTestDB()
 	charts, err := ParseYAMLRepo(getTestRepoYAML(), repoName)
 	assert.NoErr(t, err)
 	chart := charts[0]
-	chartResource := MakeChartResource(chart)
+	chartResource := MakeChartResource(db, chart)
 	AddLatestChartVersionRelationship(chartResource, chart)
-	assert.Equal(t, *chartResource.Relationships.(*models.LatestChartVersionRelationship).LatestChartVersion.Data.Created, *chart.Created, "relationships.latestChartVersion.data.created field value")
-	assert.Equal(t, *chartResource.Relationships.(*models.LatestChartVersionRelationship).LatestChartVersion.Data.Digest, *chart.Digest, "relationships.latestChartVersion.data.digest field value")
-	assert.Equal(t, chartResource.Relationships.(*models.LatestChartVersionRelationship).LatestChartVersion.Data.Urls, chart.Urls, "relationships.latestChartVersion.data.Urls field value")
-	assert.Equal(t, *chartResource.Relationships.(*models.LatestChartVersionRelationship).LatestChartVersion.Data.Version, *chart.Version, "relationships.latestChartVersion.data.digest field value")
-	assert.Equal(t, *chartResource.Relationships.(*models.LatestChartVersionRelationship).LatestChartVersion.Links.Self, MakeRepoChartVersionRouteURL(APIVer1String, chart.Repo, *chart.Name, *chart.Version), "relationships.chartVersion.links.self field value")
+	assert.Equal(t, *chartResource.Relationships.(*swaggermodels.LatestChartVersionRelationship).LatestChartVersion.Data.Created, *chart.Created, "relationships.latestChartVersion.data.created field value")
+	assert.Equal(t, *chartResource.Relationships.(*swaggermodels.LatestChartVersionRelationship).LatestChartVersion.Data.Digest, *chart.Digest, "relationships.latestChartVersion.data.digest field value")
+	assert.Equal(t, chartResource.Relationships.(*swaggermodels.LatestChartVersionRelationship).LatestChartVersion.Data.Urls, chart.Urls, "relationships.latestChartVersion.data.Urls field value")
+	assert.Equal(t, *chartResource.Relationships.(*swaggermodels.LatestChartVersionRelationship).LatestChartVersion.Data.Version, *chart.Version, "relationships.latestChartVersion.data.digest field value")
+	assert.Equal(t, *chartResource.Relationships.(*swaggermodels.LatestChartVersionRelationship).LatestChartVersion.Links.Self, MakeRepoChartVersionRouteURL(APIVer1String, chart.Repo, *chart.Name, *chart.Version), "relationships.chartVersion.links.self field value")
 }
 
 func TestAddCanonicalLink(t *testing.T) {
-	setupTestRepoCache()
-	defer teardownTestRepoCache()
+	db := getTestDB()
 	charts, err := ParseYAMLRepo(getTestRepoYAML(), repoName)
 	assert.NoErr(t, err)
-	chartResource := MakeChartResource(charts[0])
+	chartResource := MakeChartResource(db, charts[0])
 	AddCanonicalLink(chartResource)
-	assert.Equal(t, *chartResource.Links.(*models.ResourceLink).Self, MakeRepoChartRouteURL(APIVer1String, repoName, chartName), "chart resource Links.Self field value")
+	assert.Equal(t, *chartResource.Links.(*swaggermodels.ResourceLink).Self, MakeRepoChartRouteURL(APIVer1String, repoName, chartName), "chart resource Links.Self field value")
 }
 
 func TestGetLatestChartVersion(t *testing.T) {
@@ -271,6 +263,13 @@ func TestNewestSemVer(t *testing.T) {
 	assert.Equal(t, newest, "", "newestSemVer response should be an empty string in an error case")
 }
 
+func getTestDB() datastore.Database {
+	repo := models.OfficialRepos[0]
+	repo.Name = repoName
+	db, _ := datastore.NewMockSession(&[]*models.Repo{repo}, false).DB()
+	return db
+}
+
 func getTestRepoYAML() []byte {
 	return []byte(fmt.Sprintf(`
 apiVersion: %s
@@ -343,7 +342,7 @@ func TestMakeAvailableIcons(t *testing.T) {
 	chart := charts[0]
 	AvailableIconsOrig := charthelper.AvailableIcons
 	defer func() { charthelper.AvailableIcons = AvailableIconsOrig }()
-	charthelper.AvailableIcons = func(chart *models.ChartPackage, prefix string) []*charthelper.IconOutput {
+	charthelper.AvailableIcons = func(chart *swaggermodels.ChartPackage, prefix string) []*charthelper.IconOutput {
 		return []*charthelper.IconOutput{
 			{"format1", "/myPath1"},
 			{"format2", "mypath2"},
@@ -358,39 +357,17 @@ func TestMakeAvailableIcons(t *testing.T) {
 }
 
 func TestGetRepoObject(t *testing.T) {
-	setupTestRepoCache()
-	defer teardownTestRepoCache()
+	db := getTestDB()
 	charts, err := ParseYAMLRepo(getTestRepoYAML(), repoName)
 	assert.NoErr(t, err)
 	chart := charts[0]
-	repo := getRepoObject(chart)
+	repo := getRepoObject(db, chart)
 	assert.Equal(t, repo.Name, &chart.Repo, "Same repo Name")
 
 	// Returns empty Repo if does not exist
 	chart.Repo = "does-not-exist"
-	repo = getRepoObject(chart)
+	repo = getRepoObject(db, chart)
 	if repo.Name != nil || repo.URL != nil {
 		t.Errorf("Repo Name and URL should be nil")
-	}
-}
-
-func setupTestRepoCache() {
-	repos := []models.Repo{
-		{
-			Name: pointerto.String("testRepo"),
-			URL:  pointerto.String("http://myrepobucket"),
-		},
-	}
-	data.UpdateCache(repos)
-}
-
-func teardownTestRepoCache() {
-	reposCollection, err := data.GetRepos()
-	if err != nil {
-		log.Fatal("could not get Repos collection ", err)
-	}
-	_, err = reposCollection.DeleteAll()
-	if err != nil {
-		log.Fatal("could not clear cache ", err)
 	}
 }

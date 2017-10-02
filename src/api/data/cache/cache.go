@@ -14,26 +14,30 @@ import (
 	"github.com/kubernetes-helm/monocular/src/api/data"
 	"github.com/kubernetes-helm/monocular/src/api/data/cache/charthelper"
 	"github.com/kubernetes-helm/monocular/src/api/data/helpers"
-	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
+	"github.com/kubernetes-helm/monocular/src/api/datastore"
+	"github.com/kubernetes-helm/monocular/src/api/models"
+	swaggermodels "github.com/kubernetes-helm/monocular/src/api/swagger/models"
 	"github.com/kubernetes-helm/monocular/src/api/swagger/restapi/operations/charts"
 )
 
 type cachedCharts struct {
-	allCharts map[string][]*models.ChartPackage
+	allCharts map[string][]*swaggermodels.ChartPackage
 	rwm       *sync.RWMutex
+	dbSession datastore.Session
 }
 
 // NewCachedCharts returns a new data.Charts implementation
-func NewCachedCharts() data.Charts {
+func NewCachedCharts(dbSession datastore.Session) data.Charts {
 	return &cachedCharts{
 		rwm:       new(sync.RWMutex),
-		allCharts: make(map[string][]*models.ChartPackage),
+		allCharts: make(map[string][]*swaggermodels.ChartPackage),
+		dbSession: dbSession,
 	}
 }
 
 // ChartFromRepo is the interface implementation for data.Charts
 // It returns the reference to a single versioned chart (the most recently published version)
-func (c *cachedCharts) ChartFromRepo(repo, name string) (*models.ChartPackage, error) {
+func (c *cachedCharts) ChartFromRepo(repo, name string) (*swaggermodels.ChartPackage, error) {
 	c.rwm.RLock()
 	defer c.rwm.RUnlock()
 	if c.allCharts[repo] != nil {
@@ -48,7 +52,7 @@ func (c *cachedCharts) ChartFromRepo(repo, name string) (*models.ChartPackage, e
 
 // ChartVersionFromRepo is the interface implementation for data.Charts
 // It returns the reference to a single versioned chart
-func (c *cachedCharts) ChartVersionFromRepo(repo, name, version string) (*models.ChartPackage, error) {
+func (c *cachedCharts) ChartVersionFromRepo(repo, name, version string) (*swaggermodels.ChartPackage, error) {
 	c.rwm.RLock()
 	defer c.rwm.RUnlock()
 	if c.allCharts[repo] != nil {
@@ -63,7 +67,7 @@ func (c *cachedCharts) ChartVersionFromRepo(repo, name, version string) (*models
 
 // ChartVersionsFromRepo is the interface implementation for data.Charts
 // It returns the reference to a slice of all versions of a particular chart in a repo
-func (c *cachedCharts) ChartVersionsFromRepo(repo, name string) ([]*models.ChartPackage, error) {
+func (c *cachedCharts) ChartVersionsFromRepo(repo, name string) ([]*swaggermodels.ChartPackage, error) {
 	c.rwm.RLock()
 	defer c.rwm.RUnlock()
 	if c.allCharts[repo] != nil {
@@ -78,7 +82,7 @@ func (c *cachedCharts) ChartVersionsFromRepo(repo, name string) ([]*models.Chart
 
 // AllFromRepo is the interface implementation for data.Charts
 // It returns the reference to a slice of all versions of all charts in a repo
-func (c *cachedCharts) AllFromRepo(repo string) ([]*models.ChartPackage, error) {
+func (c *cachedCharts) AllFromRepo(repo string) ([]*swaggermodels.ChartPackage, error) {
 	c.rwm.RLock()
 	defer c.rwm.RUnlock()
 	if c.allCharts[repo] != nil {
@@ -89,20 +93,22 @@ func (c *cachedCharts) AllFromRepo(repo string) ([]*models.ChartPackage, error) 
 
 // All is the interface implementation for data.Charts
 // It returns the reference to a slice of all versions of all charts in all repos
-func (c *cachedCharts) All() ([]*models.ChartPackage, error) {
+func (c *cachedCharts) All() ([]*swaggermodels.ChartPackage, error) {
 	c.rwm.RLock()
 	defer c.rwm.RUnlock()
-	var allCharts []*models.ChartPackage
-	reposCollection, err := data.GetRepos()
+	var allCharts []*swaggermodels.ChartPackage
+
+	db, closer := c.dbSession.DB()
+	defer closer()
+
+	repos, err := models.ListRepos(db)
 	if err != nil {
 		return nil, err
 	}
-	var repos []*data.Repo
-	reposCollection.FindAll(&repos)
 	// TODO: parallellize this, it won't scale well with lots of repos
 	for _, repo := range repos {
-		var charts []*models.ChartPackage
-		for _, chart := range c.allCharts[*repo.Name] {
+		var charts []*swaggermodels.ChartPackage
+		for _, chart := range c.allCharts[repo.Name] {
 			charts = append(charts, chart)
 		}
 		allCharts = append(allCharts, charts...)
@@ -110,10 +116,10 @@ func (c *cachedCharts) All() ([]*models.ChartPackage, error) {
 	return allCharts, nil
 }
 
-func (c *cachedCharts) Search(params charts.SearchChartsParams) ([]*models.ChartPackage, error) {
+func (c *cachedCharts) Search(params charts.SearchChartsParams) ([]*swaggermodels.ChartPackage, error) {
 	c.rwm.RLock()
 	defer c.rwm.RUnlock()
-	var ret []*models.ChartPackage
+	var ret []*swaggermodels.ChartPackage
 	charts, err := c.All()
 	if err != nil {
 		return nil, err
@@ -130,20 +136,21 @@ func (c *cachedCharts) Search(params charts.SearchChartsParams) ([]*models.Chart
 // It refreshes cached data for all authoritative repository+chart data
 func (c *cachedCharts) Refresh() error {
 	// New list of charts that will replace cached charts
-	var updatedCharts = make(map[string][]*models.ChartPackage)
+	var updatedCharts = make(map[string][]*swaggermodels.ChartPackage)
 
 	log.WithFields(log.Fields{
 		"path": charthelper.DataDirBase(),
 	}).Info("Using cache directory")
 
-	reposCollection, err := data.GetRepos()
+	db, closer := c.dbSession.DB()
+	defer closer()
+
+	repos, err := models.ListRepos(db)
 	if err != nil {
 		return err
 	}
-	var repos []*data.Repo
-	reposCollection.FindAll(&repos)
 	for _, repo := range repos {
-		u, _ := url.Parse(*repo.URL)
+		u, _ := url.Parse(repo.URL)
 		u.Path = path.Join(u.Path, "index.yaml")
 
 		// 1 - Download repo index
@@ -158,13 +165,13 @@ func (c *cachedCharts) Refresh() error {
 		}
 
 		// 2 - Parse repo index
-		charts, err := helpers.ParseYAMLRepo(body, *repo.Name)
+		charts, err := helpers.ParseYAMLRepo(body, repo.Name)
 		if err != nil {
 			return err
 		}
 
 		// 3 - Process elements in index
-		var chartsWithData []*models.ChartPackage
+		var chartsWithData []*swaggermodels.ChartPackage
 		// Buffered channel
 		ch := make(chan chanItem, len(charts))
 		defer close(ch)
@@ -181,7 +188,7 @@ func (c *cachedCharts) Refresh() error {
 				chartsWithData = append(chartsWithData, it.chart)
 			}
 		}
-		updatedCharts[*repo.Name] = chartsWithData
+		updatedCharts[repo.Name] = chartsWithData
 	}
 
 	// 4 - Update the stored cache with the new elements if everything went well
@@ -193,14 +200,14 @@ func (c *cachedCharts) Refresh() error {
 
 // Represents every element processed in paralell
 type chanItem struct {
-	chart *models.ChartPackage
+	chart *swaggermodels.ChartPackage
 	err   error
 }
 
 // Counting semaphore, 25 downloads max in paralell
 var tokens = make(chan struct{}, 15)
 
-func processChartMetadata(chart *models.ChartPackage, out chan<- chanItem) {
+func processChartMetadata(chart *swaggermodels.ChartPackage, out chan<- chanItem) {
 	tokens <- struct{}{}
 	// Semaphore control channel
 	defer func() {
