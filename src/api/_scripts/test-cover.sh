@@ -4,7 +4,7 @@ set -euo pipefail
 IFS=$'\n\t'
 
 # shellcheck disable=SC2046
-pkgs=$(go list $(glide novendor))
+pkgs=$(go list ./...)
 COVERAGE_EXCLUDES=("github.com/kubernetes-helm/monocular/src/api/swagger/models" \
 "github.com/kubernetes-helm/monocular/src/api/swagger/restapi" \
 "github.com/kubernetes-helm/monocular/src/api/swagger/restapi/operations" \
