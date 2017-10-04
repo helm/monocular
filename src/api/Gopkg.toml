@@ -1,0 +1,83 @@
+
+# Gopkg.toml example
+#
+# Refer to https://github.com/golang/dep/blob/master/docs/Gopkg.toml.md
+# for detailed Gopkg.toml documentation.
+#
+# required = ["github.com/user/thing/cmd/thing"]
+# ignored = ["github.com/user/project/pkgX", "bitbucket.org/user/project/pkgA/pkgY"]
+#
+# [[constraint]]
+#   name = "github.com/user/project"
+#   version = "1.0.0"
+#
+# [[constraint]]
+#   name = "github.com/user/project2"
+#   branch = "dev"
+#   source = "github.com/myfork/project2"
+#
+# [[override]]
+#  name = "github.com/x/y"
+#  version = "2.4.0"
+
+
+[[constraint]]
+  name = "github.com/Masterminds/semver"
+  version = "~1.2.2"
+
+[[constraint]]
+  name = "github.com/Sirupsen/logrus"
+  version = "0.11.4"
+
+[[constraint]]
+  name = "github.com/arschles/assert"
+
+[[constraint]]
+  name = "github.com/asaskevich/govalidator"
+
+[[constraint]]
+  name = "github.com/dgrijalva/jwt-go"
+
+[[constraint]]
+  name = "github.com/disintegration/imaging"
+
+[[constraint]]
+  name = "github.com/ghodss/yaml"
+
+[[constraint]]
+  name = "github.com/go-openapi/runtime"
+
+[[constraint]]
+  name = "github.com/google/go-github"
+
+[[constraint]]
+  name = "github.com/gorilla/mux"
+
+[[constraint]]
+  name = "github.com/gorilla/sessions"
+
+[[constraint]]
+  name = "github.com/rs/cors"
+  version = "~1.0.0"
+
+[[constraint]]
+  name = "github.com/unrolled/render"
+
+[[constraint]]
+  name = "github.com/urfave/negroni"
+
+[[constraint]]
+  name = "golang.org/x/oauth2"
+
+[[constraint]]
+  name = "gopkg.in/jarcoal/httpmock.v1"
+
+[[constraint]]
+  name = "gopkg.in/mgo.v2"
+
+[[constraint]]
+  name = "gopkg.in/yaml.v2"
+
+[[constraint]]
+  name = "k8s.io/kubernetes"
+  version = "~1.5.0"
