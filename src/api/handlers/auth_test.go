@@ -10,12 +10,12 @@ import (
 
 	"github.com/arschles/assert"
 	"github.com/gorilla/sessions"
-	"github.com/kubernetes-helm/monocular/src/api/datastore"
-	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
+	"github.com/kubernetes-helm/monocular/src/api/models"
+	swaggermodels "github.com/kubernetes-helm/monocular/src/api/swagger/models"
 	"github.com/kubernetes-helm/monocular/src/api/testutil"
 )
 
-var dbSession = datastore.NewMockSession(nil, false)
+var dbSession = models.NewMockSession(models.MockDBConfig{})
 
 func TestNewAuthHandlers(t *testing.T) {
 	tests := []struct {
@@ -75,7 +75,7 @@ func TestAuthHandlers_InitiateOAuthForbidden(t *testing.T) {
 	res := httptest.NewRecorder()
 	ah.InitiateOAuth(res, req)
 	assert.Equal(t, res.Code, http.StatusForbidden, "response code")
-	var httpBody models.Error
+	var httpBody swaggermodels.Error
 	assert.NoErr(t, testutil.ErrorModelFromJSON(res.Body, &httpBody))
 	assert.NotNil(t, httpBody.Message, "error response")
 	assert.Equal(t, *httpBody.Code, int64(http.StatusForbidden), "response code in HTTP body data")
@@ -101,7 +101,7 @@ func TestAuthHandlers_GithubCallbackStateMismatch(t *testing.T) {
 	ah.GithubCallback(res, req)
 
 	assert.Equal(t, res.Code, http.StatusBadRequest, "response code")
-	var httpBody models.Error
+	var httpBody swaggermodels.Error
 	assert.NoErr(t, testutil.ErrorModelFromJSON(res.Body, &httpBody))
 	assert.NotNil(t, httpBody.Message, "error response")
 	assert.Equal(t, *httpBody.Code, int64(http.StatusBadRequest), "response code in HTTP body data")
@@ -118,7 +118,7 @@ func TestAuthHandlers_GithubCallbackForbidden(t *testing.T) {
 	ah.GithubCallback(res, req)
 
 	assert.Equal(t, res.Code, http.StatusForbidden, "response code")
-	var httpBody models.Error
+	var httpBody swaggermodels.Error
 	assert.NoErr(t, testutil.ErrorModelFromJSON(res.Body, &httpBody))
 	assert.NotNil(t, httpBody.Message, "error response")
 	assert.Equal(t, *httpBody.Code, int64(http.StatusForbidden), "response code in HTTP body data")
@@ -155,7 +155,7 @@ func Test_errorResponse(t *testing.T) {
 	res := httptest.NewRecorder()
 	errorResponse(res, http.StatusBadRequest, message)
 	assert.Equal(t, res.Code, http.StatusBadRequest, "response code")
-	var httpBody models.Error
+	var httpBody swaggermodels.Error
 	assert.NoErr(t, testutil.ErrorModelFromJSON(res.Body, &httpBody))
 	assert.Equal(t, *httpBody.Code, int64(http.StatusBadRequest), "response code in body")
 	assert.Equal(t, *httpBody.Message, message, "error message in body")

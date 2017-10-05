@@ -9,7 +9,6 @@ import (
 	"github.com/arschles/assert"
 	"github.com/go-openapi/runtime"
 	"github.com/kubernetes-helm/monocular/src/api/data/helpers"
-	"github.com/kubernetes-helm/monocular/src/api/datastore"
 	"github.com/kubernetes-helm/monocular/src/api/handlers"
 	"github.com/kubernetes-helm/monocular/src/api/mocks"
 	"github.com/kubernetes-helm/monocular/src/api/models"
@@ -19,7 +18,7 @@ import (
 )
 
 var chartsImplementation = mocks.NewMockCharts(mocks.MockedMethods{})
-var dbSession = datastore.NewMockSession(&models.OfficialRepos, false)
+var dbSession = models.NewMockSession(models.MockDBConfig{})
 var db, _ = dbSession.DB()
 var chartHandlers = NewChartHandlers(dbSession, chartsImplementation)
 

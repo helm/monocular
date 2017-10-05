@@ -15,7 +15,7 @@ import (
 	"github.com/kubernetes-helm/monocular/src/api/testutil"
 )
 
-var dbSession = datastore.NewMockSession(&models.OfficialRepos, false)
+var dbSession = models.NewMockSession(models.MockDBConfig{})
 var chartsImplementation = getChartsImplementation(dbSession)
 
 func TestCachedChartsChartFromRepo(t *testing.T) {
@@ -93,27 +93,23 @@ func TestCachedChartsRefresh(t *testing.T) {
 }
 
 func TestCachedChartsRefreshErrorPropagation(t *testing.T) {
-	// Invalid repo URL
-	rep := []*models.Repo{
-		{
-			Name: "stable",
-			URL:  "./localhost",
-		},
+	tests := []struct {
+		name  string
+		repos []*models.Repo
+	}{
+		{"invalid repo url", []*models.Repo{{Name: "stable", URL: "./localhost"}}},
+		{"inexistant repo", []*models.Repo{{Name: "stable", URL: "http://localhost"}}},
 	}
-	chImplementation := NewCachedCharts(datastore.NewMockSession(&rep, false))
-	err := chImplementation.Refresh()
-	assert.ExistsErr(t, err, "Invalid Repo URL")
 
-	// Repo does not exist
-	rep = []*models.Repo{
-		{
-			Name: "stable",
-			URL:  "http://localhost",
-		},
+	defer func() { models.MockRepos = models.OfficialRepos }()
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			chImplementation := NewCachedCharts(models.NewMockSession(models.MockDBConfig{}))
+			models.MockRepos = tt.repos
+			err := chImplementation.Refresh()
+			assert.ExistsErr(t, err, tt.name)
+		})
 	}
-	chImplementation = NewCachedCharts(datastore.NewMockSession(&rep, false))
-	err = chImplementation.Refresh()
-	assert.ExistsErr(t, err, "Repo does not exist")
 }
 
 func TestCachedChartsRefreshErrorDownloadingPackage(t *testing.T) {
