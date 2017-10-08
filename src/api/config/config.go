@@ -36,6 +36,7 @@ type Configuration struct {
 	Mongo                datastore.Config `yaml:"mongodb"`
 	OAuthConfig          oauthConfig      `yaml:"oauthConfig"`
 	SigningKey           string           `yaml:"signingKey"`
+	TillerNamespace      string           `yaml:"tillerNamespace"`
 	Initialized          bool
 }
 
@@ -72,6 +73,10 @@ func GetConfig() (Configuration, error) {
 	currentConfig.Repos, err = repos.Enabled(configFilePath)
 	if err != nil {
 		return currentConfig, err
+	}
+
+	if currentConfig.TillerNamespace == "" {
+		currentConfig.TillerNamespace = "kube-system"
 	}
 
 	currentConfig.Initialized = true

@@ -27,6 +27,9 @@ releasesEnabled: true
 # Useful if you are running the app outside of the k8s cluster during development
 tillerPortForward: true
 
+# Specify a different namespace where to locate tiller-deploy
+tillerNamespace: kube-system
+
 # Configure cache refresh interval in sec
 cacheRefreshInterval: 3600
 
