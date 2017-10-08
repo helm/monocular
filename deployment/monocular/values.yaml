@@ -21,6 +21,11 @@ api:
       memory: 128Mi
   livenessProbe:
     initialDelaySeconds: 180
+  auth:
+    signingKey:
+    github:
+      clientID:
+      clientSecret:
   config:
     repos:
       # Official repositories
@@ -88,8 +93,6 @@ prerender:
     requests:
       cpu: 100m
       memory: 128Mi
-redis:
-  usePassword: false
 
 ingress:
   enabled: true

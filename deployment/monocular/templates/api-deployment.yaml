@@ -20,6 +20,18 @@ spec:
         env:
         - name: MONOCULAR_HOME
           value: /monocular
+        {{- if .Values.api.auth.signingKey }}
+        - name: MONOCULAR_AUTH_SIGNING_KEY
+          value: {{ .Values.api.auth.signingKey }}
+        {{- end }}
+        {{- if .Values.api.auth.github.clientID }}
+        - name: MONOCULAR_AUTH_GITHUB_CLIENT_ID
+          value: {{ .Values.api.auth.github.clientID }}
+        {{- end }}
+        {{- if .Values.api.auth.github.clientSecret }}
+        - name: MONOCULAR_AUTH_GITHUB_CLIENT_SECRET
+          value: {{ .Values.api.auth.github.clientSecret }}
+        {{- end }}
         ports:
         - containerPort: {{ .Values.api.service.internalPort }}
         livenessProbe:
