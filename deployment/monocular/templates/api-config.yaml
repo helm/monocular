@@ -10,6 +10,6 @@ metadata:
 data:
   monocular.yaml: |-
 {{ toYaml .Values.api.config | indent 4 -}}
-    redis:
-      host: {{ template "redis.fullname" . }}:6379
-
+    mongodb:
+      host: {{ template "mongodb.fullname" . }}:27017
+      database: monocular
