@@ -53,6 +53,15 @@ The command removes all the Kubernetes components associated with the chart and 
 
 See the [values](values.yaml) for the full list of configurable values.
 
+
+### Pointing to a different namespace
+
+If tiller is not running in default namespace `kube-system`, you can provide the correct namespace with the following:
+
+```console
+$ helm install monocular/monocular --set api.config.tillerNamespace=YOUR_NAMESPACE
+```
+
 ### Disabling Helm releases (deployment) management
 
 If you want to run Monocular without giving the option to install and manage charts in your cluster, similar to [KubeApps](https://kubeapps.com) you can configure `api.config.releasesEnabled`:
