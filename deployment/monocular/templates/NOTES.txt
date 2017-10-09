@@ -25,3 +25,5 @@ Visit https://github.com/kubernetes-helm/monocular for more information.
 **IMPORTANT**: Releases are enabled, which will allow anybody with access to the running instance to create, list and delete any Helm release existing in your cluster.
 This feature is aimed for internal, behind the firewall deployments of Monocular, please plan accordingly. To disable this, re-install Monocular setting api.config.releasesEnabled=false.
 {{ end }}
+
+Monocular expects tiller-deploy to be found in namespace {{ .Values.api.config.tillerNamespace }}

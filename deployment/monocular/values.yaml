@@ -49,6 +49,7 @@ api:
         - "x-xsrf-token"
     # Enable Helm deployment integration
     releasesEnabled: true
+    tillerNamespace: kube-system
     # Cache refresh interval in sec.
     cacheRefreshInterval: 3600
 ui:
