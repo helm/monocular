@@ -1,5 +1,12 @@
 #!/bin/bash -e
-. /opt/bitnami/base/functions
+
+# Color Palette
+RESET='\033[0m'
+MAGENTA='\033[38;5;5m'
+
+log() {
+  echo -e "${MAGENTA}$(date "+%T.%2N ")${RESET}${@}" >&2
+}
 
 INIT_SEM=/tmp/initialized.sem
 PACKAGE_FILE=/app/package.json
@@ -16,7 +23,7 @@ dependencies_up_to_date() {
 
 if [ "$1" == ng -a "$2" == "serve" ]; then
   if ! dependencies_up_to_date; then
-    log "Installing/Updating Angular dependencies (npm)"
+    log "Installing/Updating Angular dependencies (yarn)"
     yarn
     log "Dependencies updated"
   fi
@@ -37,4 +44,4 @@ if [ "$1" == ng -a "$2" == "serve" ]; then
   touch $INIT_SEM
 fi
 
-exec tini -- "$@"
+exec "$@"
