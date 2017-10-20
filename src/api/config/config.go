@@ -99,7 +99,7 @@ func GetOAuthConfig(host string) (*oauth2.Config, error) {
 		ClientID:     clientID,
 		ClientSecret: clientSecret,
 		Endpoint:     oauth2Github.Endpoint,
-		RedirectURL:  "http://" + host + "/auth/github/callback",
+		RedirectURL:  "http://" + host + "/api/auth/github/callback",
 		Scopes:       []string{"repo"},
 	}, nil
 }

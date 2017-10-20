@@ -4,6 +4,6 @@ window.monocular = {
     appName: 'Monocular',
     releasesEnabled: true,
     tillerPortForward: true,
-    backendHostname: 'http://localhost:8080'
+    backendHostname: '/api'
   }
 };
