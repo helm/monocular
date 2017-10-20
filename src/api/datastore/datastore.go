@@ -28,8 +28,8 @@ type Collection interface {
 	// Count() (n int, err error)
 	// Insert(docs ...interface{}) error
 	Remove(selector interface{}) error
-	// Update(selector interface{}, update interface{}) error
-	Upsert(selector interface{}, update interface{}) (*mgo.ChangeInfo, error)
+	UpdateId(selector, update interface{}) error
+	Upsert(selector, update interface{}) (*mgo.ChangeInfo, error)
 }
 
 // Query is an interface for querying a MongoDB collection

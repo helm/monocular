@@ -114,7 +114,7 @@ func setupRoutes(conf config.Configuration, chartsImplementation data.Charts, he
 	releasesv1.Methods("DELETE").Path("/releases/{releaseName}").Handler(handlers.WithParams(releaseHandlers.DeleteRelease))
 
 	// Auth routes
-	authHandlers, err := handlers.NewAuthHandlers()
+	authHandlers, err := handlers.NewAuthHandlers(dbSession)
 	if err != nil {
 		log.WithError(err).Warn("authentication is disabled")
 	} else {
