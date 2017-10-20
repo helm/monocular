@@ -10,9 +10,12 @@ import (
 
 	"github.com/arschles/assert"
 	"github.com/gorilla/sessions"
+	"github.com/kubernetes-helm/monocular/src/api/datastore"
 	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
 	"github.com/kubernetes-helm/monocular/src/api/testutil"
 )
+
+var dbSession = datastore.NewMockSession(nil, false)
 
 func TestNewAuthHandlers(t *testing.T) {
 	tests := []struct {
@@ -29,7 +32,7 @@ func TestNewAuthHandlers(t *testing.T) {
 				os.Setenv("MONOCULAR_AUTH_SIGNING_KEY", "secret")
 				defer os.Unsetenv("MONOCULAR_AUTH_SIGNING_KEY")
 			}
-			got, err := NewAuthHandlers()
+			got, err := NewAuthHandlers(dbSession)
 			if tt.wantErr {
 				assert.ExistsErr(t, err, "NewAuthHandlers error")
 				assert.Nil(t, got, "returned AuthHandlers")
@@ -42,7 +45,7 @@ func TestNewAuthHandlers(t *testing.T) {
 
 func TestAuthHandlers_InitiateOAuth(t *testing.T) {
 	s := sessions.NewCookieStore([]byte("secret"))
-	ah := &AuthHandlers{"secret", s}
+	ah := &AuthHandlers{"secret", s, dbSession}
 	os.Setenv("MONOCULAR_AUTH_GITHUB_CLIENT_ID", "clientid")
 	defer os.Unsetenv("MONOCULAR_AUTH_GITHUB_CLIENT_ID")
 	os.Setenv("MONOCULAR_AUTH_GITHUB_CLIENT_SECRET", "clientsecret")
@@ -66,7 +69,7 @@ func TestAuthHandlers_InitiateOAuth(t *testing.T) {
 
 func TestAuthHandlers_InitiateOAuthForbidden(t *testing.T) {
 	s := sessions.NewCookieStore([]byte("secret"))
-	ah := &AuthHandlers{"secret", s}
+	ah := &AuthHandlers{"secret", s, dbSession}
 	req, err := http.NewRequest("GET", "/auth", nil)
 	assert.NoErr(t, err)
 	res := httptest.NewRecorder()
@@ -81,7 +84,7 @@ func TestAuthHandlers_InitiateOAuthForbidden(t *testing.T) {
 
 func TestAuthHandlers_GithubCallbackStateMismatch(t *testing.T) {
 	s := sessions.NewCookieStore([]byte("secret"))
-	ah := &AuthHandlers{"secret", s}
+	ah := &AuthHandlers{"secret", s, dbSession}
 	os.Setenv("MONOCULAR_AUTH_GITHUB_CLIENT_ID", "clientid")
 	defer os.Unsetenv("MONOCULAR_AUTH_GITHUB_CLIENT_ID")
 	os.Setenv("MONOCULAR_AUTH_GITHUB_CLIENT_SECRET", "clientsecret")
@@ -107,7 +110,7 @@ func TestAuthHandlers_GithubCallbackStateMismatch(t *testing.T) {
 
 func TestAuthHandlers_GithubCallbackForbidden(t *testing.T) {
 	s := sessions.NewCookieStore([]byte("secret"))
-	ah := &AuthHandlers{"secret", s}
+	ah := &AuthHandlers{"secret", s, dbSession}
 
 	req, err := http.NewRequest("GET", "/auth/github/callback", nil)
 	assert.NoErr(t, err)
@@ -124,7 +127,7 @@ func TestAuthHandlers_GithubCallbackForbidden(t *testing.T) {
 
 func TestAuthHandlers_Logout(t *testing.T) {
 	s := sessions.NewCookieStore([]byte("secret"))
-	ah := &AuthHandlers{"secret", s}
+	ah := &AuthHandlers{"secret", s, dbSession}
 
 	req, err := http.NewRequest("DELETE", "/auth/logout", nil)
 	assert.NoErr(t, err)

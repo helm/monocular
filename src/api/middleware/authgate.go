@@ -11,18 +11,9 @@ import (
 	"github.com/urfave/negroni"
 
 	"github.com/kubernetes-helm/monocular/src/api/handlers/renderer"
-	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
+	"github.com/kubernetes-helm/monocular/src/api/models"
+	swaggermodels "github.com/kubernetes-helm/monocular/src/api/swagger/models"
 )
-
-type contextKey int
-
-const userKey contextKey = 0
-
-type userClaims struct {
-	Name  string
-	Email string
-	jwt.StandardClaims
-}
 
 // AuthGate implements middleware to check if the user is logged in before continuing
 func AuthGate() negroni.HandlerFunc {
@@ -42,7 +33,7 @@ func AuthGate() negroni.HandlerFunc {
 			return
 		}
 
-		token, err := jwt.ParseWithClaims(cookie.Value, &userClaims{}, func(token *jwt.Token) (interface{}, error) {
+		token, err := jwt.ParseWithClaims(cookie.Value, &models.UserClaims{}, func(token *jwt.Token) (interface{}, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 			}
@@ -53,8 +44,8 @@ func AuthGate() negroni.HandlerFunc {
 			return
 		}
 
-		if claims, ok := token.Claims.(*userClaims); ok && token.Valid {
-			ctx := context.WithValue(req.Context(), userKey, *claims)
+		if claims, ok := token.Claims.(*models.UserClaims); ok && token.Valid {
+			ctx := context.WithValue(req.Context(), models.UserKey, *claims)
 			next(w, req.WithContext(ctx))
 		} else {
 			unauthorizedResponse(w)
@@ -63,7 +54,7 @@ func AuthGate() negroni.HandlerFunc {
 }
 
 func unauthorizedResponse(w http.ResponseWriter) {
-	renderer.Render.JSON(w, http.StatusUnauthorized, models.Error{
+	renderer.Render.JSON(w, http.StatusUnauthorized, swaggermodels.Error{
 		Code:    pointerto.Int64(int64(http.StatusUnauthorized)),
 		Message: pointerto.String("not logged in"),
 	})

@@ -45,6 +45,14 @@ func (c mockCollection) Upsert(selector interface{}, update interface{}) (*mgo.C
 	return nil, err
 }
 
+func (c mockCollection) UpdateId(selector, update interface{}) error {
+	var err error
+	if c.wantErr {
+		err = errors.New("query error")
+	}
+	return err
+}
+
 func (c mockCollection) Remove(selector interface{}) error {
 	if c.wantErr {
 		return mgo.ErrNotFound
@@ -76,7 +84,7 @@ func (q mockQuery) One(result interface{}) error {
 
 func copyTo(src interface{}, dst interface{}) {
 	// If src is nil, don't try to set
-	if reflect.ValueOf(src) == reflect.Zero(reflect.TypeOf(src)) {
+	if src == nil {
 		return
 	}
 	srcV := reflect.ValueOf(src).Elem()
