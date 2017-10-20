@@ -15,7 +15,7 @@ export class ConfigService {
       overrides = window["monocular"]["overrides"] || {};
     }
 
-    this.backendHostname = overrides.backendHostname || "http://localhost:8080";
+    this.backendHostname = overrides.backendHostname || "/api";
     this.appName = overrides.appName || "Monocular";
     this.releasesEnabled = overrides.releasesEnabled;
   }

@@ -8,12 +8,10 @@ services:
       - 4200:4200
     volumes:
       - ./src/ui:/app
-    command: "ng serve --host 0.0.0.0"
+    command: "ng serve --host 0.0.0.0 --proxy-config proxy.conf.json"
   api:
     tty: true
     build: ./dev_env/api
-    ports:
-    - 8080:3000
     volumes:
       - ./src/api:/go/src/github.com/kubernetes-helm/monocular/src/api
       # Config example file
@@ -22,11 +20,5 @@ services:
       - $HOME/.kube/:/root/.kube
     environment:
       - ENVIRONMENT=development
-  redis:
-    image: bitnami/redis:4.0
-    environment:
-      - ALLOW_EMPTY_PASSWORD=yes
-    ports:
-      - 6379:6379
   mongodb:
     image: bitnami/mongodb:3
