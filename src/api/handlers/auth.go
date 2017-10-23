@@ -92,16 +92,29 @@ func (a *AuthHandlers) GithubCallback(w http.ResponseWriter, r *http.Request) {
 		errorResponse(w, http.StatusInternalServerError, "unable to retrieve user")
 		return
 	}
+	emails, _, err := client.Users.ListEmails(oauth2.NoContext, nil)
+	if err != nil {
+		errorResponse(w, http.StatusInternalServerError, "unable to retrieve user email")
+		return
+	}
+
+	var userEmail string
+	for _, email := range emails {
+		if email.GetPrimary() {
+			userEmail = email.GetEmail()
+			break
+		}
+	}
 
 	db, closer := a.dbSession.DB()
 	defer closer()
-	if err := models.CreateUser(db, &models.User{Name: *user.Name, Email: *user.Email}); err != nil {
+	if err := models.CreateUser(db, &models.User{Name: user.GetName(), Email: userEmail}); err != nil {
 		errorResponse(w, http.StatusInternalServerError, "unable to save user")
 		return
 	}
 
 	// Fetch from DB to get ID
-	u, err := models.GetUserByEmail(db, *user.Email)
+	u, err := models.GetUserByEmail(db, userEmail)
 
 	claims := models.UserClaims{
 		User: u,
@@ -125,7 +138,7 @@ func (a *AuthHandlers) GithubCallback(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, &jwtCookie)
 	http.SetCookie(w, &claimsCookie)
 
-	http.Redirect(w, r, r.Referer(), http.StatusFound)
+	http.Redirect(w, r, "/", http.StatusFound)
 }
 
 // Logout clears the JWT token cookie
