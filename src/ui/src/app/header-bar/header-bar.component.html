@@ -43,9 +43,9 @@
             About
           </a>
         </li>
-        <li *ngIf="loggedIn && user.Email" class="separator"></li>
-        <li *ngIf="loggedIn && user.Email">
-          {{ user.Email }}
+        <li *ngIf="loggedIn && user.email" class="separator"></li>
+        <li *ngIf="loggedIn && user.email">
+          {{ user.email }}
           <a class="reverse" (click)="logout()" target="_blank">
             (logout)
           </a>

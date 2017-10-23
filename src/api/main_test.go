@@ -17,7 +17,6 @@ import (
 	"github.com/kubernetes-helm/monocular/src/api/data/cache"
 	"github.com/kubernetes-helm/monocular/src/api/data/helpers"
 	"github.com/kubernetes-helm/monocular/src/api/data/pointerto"
-	"github.com/kubernetes-helm/monocular/src/api/datastore"
 	handlerscharts "github.com/kubernetes-helm/monocular/src/api/handlers/charts"
 	"github.com/kubernetes-helm/monocular/src/api/mocks"
 	"github.com/kubernetes-helm/monocular/src/api/models"
@@ -28,9 +27,7 @@ import (
 
 const versionsRouteString = "versions"
 
-var mockRepos = []*models.Repo{models.OfficialRepos[0]}
-var dbSession = datastore.NewMockSession(&mockRepos, false)
-var singleDBSession = datastore.NewMockSession(mockRepos[0], false)
+var dbSession = models.NewMockSession(models.MockDBConfig{})
 var db, _ = dbSession.DB()
 var helmClient = mocks.NewMockedClient()
 var helmClientBroken = mocks.NewMockedBrokenClient()
@@ -190,7 +187,7 @@ func TestGetRepos200(t *testing.T) {
 	assert.Equal(t, res.StatusCode, http.StatusOK, "response code")
 	var httpBody swaggermodels.ResourceArrayData
 	assert.NoErr(t, testutil.ResourceArrayDataFromJSON(res.Body, &httpBody))
-	assert.Equal(t, len(httpBody.Data), 1, "number of repos returned")
+	assert.Equal(t, len(httpBody.Data), 2, "number of repos returned")
 	assert.Equal(t, *httpBody.Data[0].ID, testutil.RepoName, "repo name is correct")
 }
 
@@ -198,7 +195,7 @@ func TestGetRepos200(t *testing.T) {
 func TestCreateRepo201(t *testing.T) {
 	conf.ReleasesEnabled = true
 	defer func() { conf.ReleasesEnabled = false }()
-	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient, singleDBSession))
+	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient, dbSession))
 	defer ts.Close()
 	repoName := "repoName"
 	testRepo := swaggermodels.Repo{
@@ -219,7 +216,7 @@ func TestCreateRepo201(t *testing.T) {
 
 // tests the POST /{:apiVersion}/repos endpoint 403 response
 func TestCreateRepo403(t *testing.T) {
-	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient, singleDBSession))
+	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient, dbSession))
 	defer ts.Close()
 	repoName := "repoName"
 	testRepo := swaggermodels.Repo{
@@ -241,7 +238,7 @@ func TestCreateRepo403(t *testing.T) {
 
 // tests the GET /{:apiVersion}/repos/{:repo} endpoint 200 response
 func TestGetRepo200(t *testing.T) {
-	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient, singleDBSession))
+	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient, dbSession))
 	defer ts.Close()
 	res, err := http.Get(urlPath(ts.URL, "v1", "repos", testutil.RepoName))
 	assert.NoErr(t, err)
@@ -256,7 +253,7 @@ func TestGetRepo200(t *testing.T) {
 func TestDeleteRepo200(t *testing.T) {
 	conf.ReleasesEnabled = true
 	defer func() { conf.ReleasesEnabled = false }()
-	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient, singleDBSession))
+	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient, dbSession))
 	defer ts.Close()
 	req, err := http.NewRequest("DELETE", urlPath(ts.URL, "v1", "repos", testutil.RepoName), nil)
 	assert.NoErr(t, err)

@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/arschles/assert"
-	"github.com/kubernetes-helm/monocular/src/api/datastore"
 	"github.com/kubernetes-helm/monocular/src/api/models"
 )
 
@@ -22,13 +21,14 @@ func TestNewRefreshData(t *testing.T) {
 }
 
 func TestNewRefreshDataError(t *testing.T) {
-	repos := []*models.Repo{
+	models.MockRepos = []*models.Repo{
 		{
 			Name: "waps",
 			URL:  "./localhost",
 		},
 	}
-	session := datastore.NewMockSession(&repos, false)
+	defer func() { models.MockRepos = models.OfficialRepos }()
+	session := models.NewMockSession(models.MockDBConfig{})
 
 	chartsImplementation := NewCachedCharts(session)
 	freshness := time.Duration(3600) * time.Second

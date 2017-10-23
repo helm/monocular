@@ -11,34 +11,32 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/google/go-github/github"
 	"github.com/kubernetes-helm/monocular/src/api/data/pointerto"
+	"github.com/kubernetes-helm/monocular/src/api/datastore"
 
 	"github.com/gorilla/sessions"
 	"github.com/kubernetes-helm/monocular/src/api/config"
 	"github.com/kubernetes-helm/monocular/src/api/handlers/renderer"
-	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
+	"github.com/kubernetes-helm/monocular/src/api/models"
+	swaggermodels "github.com/kubernetes-helm/monocular/src/api/swagger/models"
 	"golang.org/x/oauth2"
 )
-
-type userClaims struct {
-	Name  string
-	Email string
-	jwt.StandardClaims
-}
 
 // AuthHandlers defines handlers that provide authentication
 type AuthHandlers struct {
 	signingKey string
 	store      sessions.Store
+	dbSession  datastore.Session
 }
 
-// NewAuthHandlers takes a sessions.Store implementation and returns an AuthHandlers struct
-func NewAuthHandlers() (*AuthHandlers, error) {
+// NewAuthHandlers takes a datastore.Session implementation and returns an AuthHandlers struct
+// If a signing key is not configured, it will return an error
+func NewAuthHandlers(dbSession datastore.Session) (*AuthHandlers, error) {
 	signingKey, err := config.GetAuthSigningKey()
 	if err != nil {
 		return nil, errors.New("no signing key, ensure MONOCULAR_AUTH_SIGNING_KEY is set")
 	}
 	s := sessions.NewCookieStore([]byte(signingKey))
-	return &AuthHandlers{signingKey, s}, nil
+	return &AuthHandlers{signingKey, s, dbSession}, nil
 }
 
 // InitiateOAuth initiatates an OAuth request
@@ -95,10 +93,19 @@ func (a *AuthHandlers) GithubCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	claims := userClaims{
-		*user.Name,
-		*user.Email,
-		jwt.StandardClaims{
+	db, closer := a.dbSession.DB()
+	defer closer()
+	if err := models.CreateUser(db, &models.User{Name: *user.Name, Email: *user.Email}); err != nil {
+		errorResponse(w, http.StatusInternalServerError, "unable to save user")
+		return
+	}
+
+	// Fetch from DB to get ID
+	u, err := models.GetUserByEmail(db, *user.Email)
+
+	claims := models.UserClaims{
+		User: u,
+		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: tokenExpiration().Unix(),
 			Issuer:    r.Host,
 		},
@@ -139,5 +146,5 @@ func randomStr() string {
 }
 
 func errorResponse(w http.ResponseWriter, code int, message string) {
-	renderer.Render.JSON(w, code, models.Error{Code: pointerto.Int64(int64(code)), Message: &message})
+	renderer.Render.JSON(w, code, swaggermodels.Error{Code: pointerto.Int64(int64(code)), Message: &message})
 }

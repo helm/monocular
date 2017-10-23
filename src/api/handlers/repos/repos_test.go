@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/arschles/assert"
-	"github.com/kubernetes-helm/monocular/src/api/datastore"
 	"github.com/kubernetes-helm/monocular/src/api/handlers"
 	"github.com/kubernetes-helm/monocular/src/api/models"
 	swaggermodels "github.com/kubernetes-helm/monocular/src/api/swagger/models"
@@ -26,7 +25,7 @@ func TestRepoHandlers_ListRepos(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			s := datastore.NewMockSession(&repos, tt.expectErr)
+			s := models.NewMockSession(models.MockDBConfig{WantErr: tt.expectErr})
 			r := NewRepoHandlers(s)
 			req, err := http.NewRequest("GET", "/1/repos", nil)
 			assert.NoErr(t, err)
@@ -49,7 +48,6 @@ func TestRepoHandlers_ListRepos(t *testing.T) {
 }
 
 func TestRepoHandlers_GetRepo(t *testing.T) {
-	repo := models.OfficialRepos[0]
 	tests := []struct {
 		name      string
 		expectErr bool
@@ -60,7 +58,7 @@ func TestRepoHandlers_GetRepo(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			s := datastore.NewMockSession(repo, tt.expectErr)
+			s := models.NewMockSession(models.MockDBConfig{WantErr: tt.expectErr})
 			r := NewRepoHandlers(s)
 			req, err := http.NewRequest("GET", "/1/repos/{repo}", nil)
 			assert.NoErr(t, err)
@@ -96,7 +94,7 @@ func TestRepoHandlers_CreateRepo(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			s := datastore.NewMockSession(nil, false)
+			s := models.NewMockSession(models.MockDBConfig{})
 			r := NewRepoHandlers(s)
 			req, err := http.NewRequest("POST", "/v1/repos", tt.body)
 			assert.NoErr(t, err)
@@ -118,7 +116,6 @@ func TestRepoHandlers_CreateRepo(t *testing.T) {
 }
 
 func TestRepoHandlers_DeleteRepo(t *testing.T) {
-	repo := models.OfficialRepos[0]
 	tests := []struct {
 		name      string
 		expectErr bool
@@ -129,7 +126,7 @@ func TestRepoHandlers_DeleteRepo(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			s := datastore.NewMockSession(repo, tt.expectErr)
+			s := models.NewMockSession(models.MockDBConfig{WantErr: tt.expectErr})
 			r := NewRepoHandlers(s)
 			req, err := http.NewRequest("DELETE", "/1/repos/{repo}", nil)
 			assert.NoErr(t, err)

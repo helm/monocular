@@ -67,15 +67,16 @@ func TestParseYAMLRepoWithDeprecatedChart(t *testing.T) {
 
 func TestMakeChartResource(t *testing.T) {
 	db := getTestDB()
+	repo := models.OfficialRepos[0]
+	repo.Name = repoName
 	charts, err := ParseYAMLRepo(getTestRepoYAML(), repoName)
 	assert.NoErr(t, err)
-	repo := getRepoObject(db, charts[0])
 	assert.NoErr(t, err)
 	chartResource := MakeChartResource(db, charts[0])
 	assert.Equal(t, *chartResource.Type, "chart", "chart resource type field value")
 	assert.Equal(t, *chartResource.ID, MakeChartID(repoName, chartName), "chart resource ID field value")
-	assert.Equal(t, *chartResource.Attributes.(*swaggermodels.Chart).Repo.Name, *repo.Name, "chart resource Attributes.Repo Name field value")
-	assert.Equal(t, *chartResource.Attributes.(*swaggermodels.Chart).Repo.URL, *repo.URL, "chart resource Attributes.Repo URL field value")
+	assert.Equal(t, *chartResource.Attributes.(*swaggermodels.Chart).Repo.Name, repo.Name, "chart resource Attributes.Repo Name field value")
+	assert.Equal(t, *chartResource.Attributes.(*swaggermodels.Chart).Repo.URL, repo.URL, "chart resource Attributes.Repo URL field value")
 	assert.Equal(t, chartResource.Attributes.(*swaggermodels.Chart).Repo.Source, repo.Source, "chart resource Attributes.URL field value")
 	assert.Equal(t, *chartResource.Attributes.(*swaggermodels.Chart).Name, chartName, "chart resource Attributes.Name field value")
 	assert.Equal(t, *chartResource.Attributes.(*swaggermodels.Chart).Description, chartDescription, "chart resource Attributes.Description field value")
@@ -263,13 +264,6 @@ func TestNewestSemVer(t *testing.T) {
 	assert.Equal(t, newest, "", "newestSemVer response should be an empty string in an error case")
 }
 
-func getTestDB() datastore.Database {
-	repo := models.OfficialRepos[0]
-	repo.Name = repoName
-	db, _ := datastore.NewMockSession(&[]*models.Repo{repo}, false).DB()
-	return db
-}
-
 func getTestRepoYAML() []byte {
 	return []byte(fmt.Sprintf(`
 apiVersion: %s
@@ -370,4 +364,11 @@ func TestGetRepoObject(t *testing.T) {
 	if repo.Name != nil || repo.URL != nil {
 		t.Errorf("Repo Name and URL should be nil")
 	}
+}
+
+func getTestDB() datastore.Database {
+	repo := models.OfficialRepos[0]
+	repo.Name = repoName
+	db, _ := models.NewMockSession(models.MockDBConfig{}).DB()
+	return db
 }

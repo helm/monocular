@@ -6,7 +6,6 @@ import (
 
 	"github.com/arschles/assert"
 	"github.com/kubernetes-helm/monocular/src/api/data/helpers"
-	"github.com/kubernetes-helm/monocular/src/api/datastore"
 	"github.com/kubernetes-helm/monocular/src/api/models"
 	swaggermodels "github.com/kubernetes-helm/monocular/src/api/swagger/models"
 	"github.com/kubernetes-helm/monocular/src/api/swagger/restapi/operations/charts"
@@ -78,7 +77,7 @@ func TestMockChartsSearch(t *testing.T) {
 	charts, err := chartsImplementation.Search(params)
 	assert.NoErr(t, err)
 	// flatten chart+version results into a chart resource array
-	db, _ := datastore.NewMockSession(&models.OfficialRepos, false).DB()
+	db, _ := models.NewMockSession(models.MockDBConfig{}).DB()
 	resources := helpers.MakeChartResources(db, charts)
 	assert.Equal(t, len(resources), 1, "number of unique chart results")
 }

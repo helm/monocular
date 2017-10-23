@@ -9,7 +9,8 @@ import (
 
 	"github.com/arschles/assert"
 	jwt "github.com/dgrijalva/jwt-go"
-	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
+	"github.com/kubernetes-helm/monocular/src/api/models"
+	swaggermodels "github.com/kubernetes-helm/monocular/src/api/swagger/models"
 	"github.com/kubernetes-helm/monocular/src/api/testutil"
 )
 
@@ -50,10 +51,9 @@ func TestAuthGateDisabled(t *testing.T) {
 }
 
 func generateClaims(expiresAt time.Time) jwt.Claims {
-	return userClaims{
-		"Jon Snow",
-		"jonsnow@winteriscoming.io",
-		jwt.StandardClaims{
+	return models.UserClaims{
+		User: &models.User{Name: "Jon Snow", Email: "jonsnow@winteriscoming.io"},
+		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expiresAt.Unix(),
 			Issuer:    "lyanna.stark",
 		},
@@ -70,7 +70,7 @@ func Test_unauthorizedResponse(t *testing.T) {
 	res := httptest.NewRecorder()
 	unauthorizedResponse(res)
 	assert.Equal(t, res.Code, http.StatusUnauthorized, "response code")
-	var httpBody models.Error
+	var httpBody swaggermodels.Error
 	assert.NoErr(t, testutil.ErrorModelFromJSON(res.Body, &httpBody))
 	assert.Equal(t, *httpBody.Code, int64(http.StatusUnauthorized), "response code in body")
 	assert.Equal(t, *httpBody.Message, "not logged in", "error message in body")
