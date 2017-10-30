@@ -58,7 +58,9 @@ var tarballExists = func(chart *models.ChartPackage) bool {
 var downloadTarball = func(chart *models.ChartPackage, repoURL *url.URL) error {
 	source := chart.Urls[0]
 	if _, err := url.ParseRequestURI(source); err != nil {
-		// If the chart URL is not absolute, join with repo URL
+		// If the chart URL is not absolute, join with repo URL. It's fine if the
+		// URL we build here is invalid as we can catch this error when actually
+		// making the request
 		repoURL.Path = path.Join(repoURL.Path, source)
 		source = repoURL.String()
 	}
