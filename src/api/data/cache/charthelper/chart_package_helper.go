@@ -24,7 +24,7 @@ const defaultTimeout time.Duration = 10 * time.Second
 
 // DownloadAndExtractChartTarball the chart tar file linked by metadata.Urls and store
 // the wanted files (i.e README.md) under chartDataDir
-var DownloadAndExtractChartTarball = func(chart *models.ChartPackage, repoURL *url.URL) (err error) {
+var DownloadAndExtractChartTarball = func(chart *models.ChartPackage, repoURL string) (err error) {
 	if err := ensureChartDataDir(chart); err != nil {
 		return err
 	}
@@ -55,14 +55,15 @@ var tarballExists = func(chart *models.ChartPackage) bool {
 
 // Downloads the tar.gz file associated with the chart version exposed by the index
 // in order to extract specific files for caching
-var downloadTarball = func(chart *models.ChartPackage, repoURL *url.URL) error {
+var downloadTarball = func(chart *models.ChartPackage, repoURL string) error {
 	source := chart.Urls[0]
 	if _, err := url.ParseRequestURI(source); err != nil {
 		// If the chart URL is not absolute, join with repo URL. It's fine if the
 		// URL we build here is invalid as we can catch this error when actually
 		// making the request
-		repoURL.Path = path.Join(repoURL.Path, source)
-		source = repoURL.String()
+		u, _ := url.Parse(repoURL)
+		u.Path = path.Join(u.Path, source)
+		source = u.String()
 	}
 
 	destination := TarballPath(chart)

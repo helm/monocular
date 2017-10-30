@@ -3,7 +3,6 @@ package charthelper
 import (
 	"errors"
 	"io/ioutil"
-	"net/url"
 	"os"
 	"path/filepath"
 	"testing"
@@ -15,7 +14,7 @@ import (
 	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
 )
 
-var repoURL, _ = url.Parse("http://storage.googleapis.com/kubernetes-charts/")
+var repoURL = "http://storage.googleapis.com/kubernetes-charts/"
 
 func TestDownloadAndExtractChartTarballOk(t *testing.T) {
 	chart, err := getTestChart()
@@ -44,7 +43,7 @@ func TestDownloadAndExtractChartTarballErrorDownload(t *testing.T) {
 	// Stubs
 	downloadTarballOrig := downloadTarball
 	defer func() { downloadTarball = downloadTarballOrig }()
-	downloadTarball = func(chart *models.ChartPackage, url *url.URL) error { return errors.New("Can't download") }
+	downloadTarball = func(chart *models.ChartPackage, url string) error { return errors.New("Can't download") }
 	tarballExistsOrig := tarballExists
 	defer func() { tarballExists = tarballExistsOrig }()
 	tarballExists = func(chart *models.ChartPackage) bool { return false }
