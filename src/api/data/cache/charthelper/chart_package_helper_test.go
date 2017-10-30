@@ -3,6 +3,7 @@ package charthelper
 import (
 	"errors"
 	"io/ioutil"
+	"net/url"
 	"os"
 	"path/filepath"
 	"testing"
@@ -14,10 +15,18 @@ import (
 	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
 )
 
+var repoURL, _ = url.Parse("http://storage.googleapis.com/kubernetes-charts/")
+
 func TestDownloadAndExtractChartTarballOk(t *testing.T) {
 	chart, err := getTestChart()
 	assert.NoErr(t, err)
-	assert.NoErr(t, DownloadAndExtractChartTarball(chart))
+	assert.NoErr(t, DownloadAndExtractChartTarball(chart, repoURL))
+
+	// Relative URLs
+	chart, err = getTestChart()
+	assert.NoErr(t, err)
+	chart.Urls[0] = "drupal-0.3.0.tgz"
+	assert.NoErr(t, DownloadAndExtractChartTarball(chart, repoURL))
 }
 
 func TestDownloadAndExtractChartTarballErrorCantWrite(t *testing.T) {
@@ -27,7 +36,7 @@ func TestDownloadAndExtractChartTarballErrorCantWrite(t *testing.T) {
 
 	chart, err := getTestChart()
 	assert.NoErr(t, err)
-	err = DownloadAndExtractChartTarball(chart)
+	err = DownloadAndExtractChartTarball(chart, repoURL)
 	assert.ExistsErr(t, err, "trying to create a non valid directory")
 }
 
@@ -35,14 +44,14 @@ func TestDownloadAndExtractChartTarballErrorDownload(t *testing.T) {
 	// Stubs
 	downloadTarballOrig := downloadTarball
 	defer func() { downloadTarball = downloadTarballOrig }()
-	downloadTarball = func(chart *models.ChartPackage) error { return errors.New("Can't download") }
+	downloadTarball = func(chart *models.ChartPackage, url *url.URL) error { return errors.New("Can't download") }
 	tarballExistsOrig := tarballExists
 	defer func() { tarballExists = tarballExistsOrig }()
 	tarballExists = func(chart *models.ChartPackage) bool { return false }
 	// EO stubs
 	chart, err := getTestChart()
 	assert.NoErr(t, err)
-	err = DownloadAndExtractChartTarball(chart)
+	err = DownloadAndExtractChartTarball(chart, repoURL)
 	assert.ExistsErr(t, err, "Error downloading the tar file")
 	_, err = os.Stat(chartDataDir(chart))
 	assert.ExistsErr(t, err, "chart data dir has been removed")
@@ -54,7 +63,7 @@ func TestDownloadAndExtractChartTarballErrorExtract(t *testing.T) {
 	extractFilesFromTarball = func(chart *models.ChartPackage) error { return errors.New("Can't download") }
 	chart, err := getTestChart()
 	assert.NoErr(t, err)
-	err = DownloadAndExtractChartTarball(chart)
+	err = DownloadAndExtractChartTarball(chart, repoURL)
 	assert.ExistsErr(t, err, "Error extracting tar file content")
 	_, err = os.Stat(chartDataDir(chart))
 	assert.ExistsErr(t, err, "chart data dir has been removed")
@@ -79,7 +88,7 @@ func TestDownloadTarballCreatesFileInDestination(t *testing.T) {
 		return pathExists
 	}
 
-	err = downloadTarball(chart)
+	err = downloadTarball(chart, repoURL)
 	assert.NoErr(t, err)
 	_, err = os.Stat(filepath.Join(chartDataDir(chart), "chart.tgz"))
 	assert.NoErr(t, err)
@@ -94,14 +103,9 @@ func TestDownloadTarballErrorDownloading(t *testing.T) {
 	TarballPath = func(chart *models.ChartPackage) string {
 		return filepath.Join(randomPath, "myFile.tar.gz")
 	}
-	// Invald protocol
-	chart.Urls[0] = "./invalid-protocol/bogusUrl"
-	err = downloadTarball(chart)
-	assert.ExistsErr(t, err, "Invalid protocol")
-
 	// 404
 	chart.Urls[0] = "http://localhost/bogusUrl"
-	err = downloadTarball(chart)
+	err = downloadTarball(chart, repoURL)
 	assert.ExistsErr(t, err, "Cant copy")
 }
 

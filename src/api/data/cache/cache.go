@@ -177,8 +177,9 @@ func (c *cachedCharts) Refresh() error {
 		defer close(ch)
 
 		// 3.1 - parallellize processing
+		repoURL, _ := url.Parse(repo.URL)
 		for _, chart := range charts {
-			go processChartMetadata(chart, ch)
+			go processChartMetadata(chart, repoURL, ch)
 		}
 		// 3.2 Channel drain
 		for range charts {
@@ -207,7 +208,7 @@ type chanItem struct {
 // Counting semaphore, 25 downloads max in paralell
 var tokens = make(chan struct{}, 15)
 
-func processChartMetadata(chart *swaggermodels.ChartPackage, out chan<- chanItem) {
+func processChartMetadata(chart *swaggermodels.ChartPackage, repoURL *url.URL, out chan<- chanItem) {
 	tokens <- struct{}{}
 	// Semaphore control channel
 	defer func() {
@@ -231,7 +232,7 @@ func processChartMetadata(chart *swaggermodels.ChartPackage, out chan<- chanItem
 			"version": *chart.Version,
 		}).Info("Local cache missing")
 
-		err := charthelper.DownloadAndExtractChartTarball(chart)
+		err := charthelper.DownloadAndExtractChartTarball(chart, repoURL)
 		if err != nil {
 			log.WithFields(log.Fields{
 				"error": err,

@@ -2,6 +2,7 @@ package cache
 
 import (
 	"errors"
+	"net/url"
 	"testing"
 
 	"github.com/arschles/assert"
@@ -80,7 +81,7 @@ func TestCachedChartsRefresh(t *testing.T) {
 	// Stubs Download and processing
 	DownloadAndExtractChartTarballOrig := charthelper.DownloadAndExtractChartTarball
 	defer func() { charthelper.DownloadAndExtractChartTarball = DownloadAndExtractChartTarballOrig }()
-	charthelper.DownloadAndExtractChartTarball = func(chart *swaggermodels.ChartPackage) error { return nil }
+	charthelper.DownloadAndExtractChartTarball = func(chart *swaggermodels.ChartPackage, repoURL *url.URL) error { return nil }
 
 	DownloadAndProcessChartIconOrig := charthelper.DownloadAndProcessChartIcon
 	defer func() { charthelper.DownloadAndProcessChartIcon = DownloadAndProcessChartIconOrig }()
@@ -120,7 +121,7 @@ func TestCachedChartsRefreshErrorDownloadingPackage(t *testing.T) {
 	DownloadAndExtractChartTarballOrig := charthelper.DownloadAndExtractChartTarball
 	defer func() { charthelper.DownloadAndExtractChartTarball = DownloadAndExtractChartTarballOrig }()
 	knownError := errors.New("error on DownloadAndExtractChartTarball")
-	charthelper.DownloadAndExtractChartTarball = func(chart *swaggermodels.ChartPackage) error {
+	charthelper.DownloadAndExtractChartTarball = func(chart *swaggermodels.ChartPackage, repoURL *url.URL) error {
 		return knownError
 	}
 
