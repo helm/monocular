@@ -21,13 +21,31 @@ You can use the chart in this repository to install Monocular in your cluster.
 ### Prerequisites
 - [Helm and Tiller installed](https://github.com/kubernetes/helm/blob/master/docs/quickstart.md)
 - [Nginx Ingress controller](https://kubeapps.com/charts/stable/nginx-ingress)
-  - Install with Helm: `helm install stable/nginx-ingress`
+  - Install with Helm: `helm install stable/nginx-ingress --name monocular`
   - **Minikube/Kubeadm**: `helm install stable/nginx-ingress --set controller.hostNetwork=true`
 
+### Installation
+- The monocular pods need dynamic storage provisioning based on Storage Class enabled. Run the following to list the StorageClasses in your cluster.
+`$kubectl get storageclass`
+The output will be similar to this
+```console
+NAME                 TYPE
+etcd-backup-gce-pd   kubernetes.io/gce-pd
+general              ceph.com/rbd
+nfs-general          example.com/nfs
+```
 
+- To mark the one you want to use for dynamic provisioning, change its value to 'true'.
+`kubectl patch storageclass <your-class-name> -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'`
+This marks the StorageClass as default.
+
+Note: If you are trying to mount NFS, you might run into a mount error with your pods. You need to have the 'nfs-common' binary installed which gives the '/sbin/mount.nfs' helper program required for mounting NFS.
+`sudo apt-get install nfs-common`
+
+- Add the monocular repo to helm repo list and install the monocular using the helm charts. Use the set command to specify the StorageClass claim name for the PVC. 
 ```console
 $ helm repo add monocular https://kubernetes-helm.github.io/monocular
-$ helm install monocular/monocular
+$ helm install monocular/monocular --name monocular --namespace <namespace> --set volumes.name.persistentVolumeClaim.claimName=<your-class-name> 
 ```
 
 ### Access Monocular
@@ -39,8 +57,8 @@ Use the Ingress endpoint to access your Monocular instance:
 $ kubectl get pods --watch
 
 $ kubectl get ingress
-NAME                        HOSTS     ADDRESS         PORTS     AGE
-tailored-alpaca-monocular   *         192.168.64.30   80        11h
+NAME                    HOSTS            ADDRESS         PORTS      AGE
+monocular-monocular       *           192.168.64.30        80        11h
 ```
 
 Visit the address specified in the Ingress object in your browser, e.g. http://192.168.64.30.
