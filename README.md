@@ -38,6 +38,7 @@ nfs-general          example.com/nfs
 - To mark the one you want to use for dynamic provisioning, change its value to 'true'.
 
 `kubectl patch storageclass <your-class-name> -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'`
+
 This marks the StorageClass as default.
 
 Note: If you are trying to mount NFS, you might run into a mount error with your pods. You need to have the 'nfs-common' binary installed which gives the '/sbin/mount.nfs' helper program required for mounting NFS.
@@ -63,7 +64,7 @@ NAME                    HOSTS            ADDRESS         PORTS      AGE
 monocular-monocular       *           192.168.64.30        80        11h
 ```
 
-Visit the address specified in the Ingress object in your browser, e.g. http://192.168.64.30.
+Visit the address specified in the Ingress object in your browser, e.g. http://192.168.64.30. New repos and charts can be added from the Web UI as required for deployment.
 
 Read more on how to deploy Monocular [here](deployment/monocular/README.md).
 
