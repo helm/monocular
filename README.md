@@ -36,6 +36,7 @@ nfs-general          example.com/nfs
 ```
 
 - To mark the one you want to use for dynamic provisioning, change its value to 'true'.
+
 `kubectl patch storageclass <your-class-name> -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'`
 This marks the StorageClass as default.
 
