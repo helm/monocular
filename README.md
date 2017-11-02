@@ -48,7 +48,7 @@ Note: If you are trying to mount NFS, you might run into a mount error with your
 - Add the monocular repo to helm repo list and install the monocular using the helm charts. Use the set command to specify the StorageClass claim name for the PVC. 
 ```console
 $ helm repo add monocular https://kubernetes-helm.github.io/monocular
-$ helm install monocular/monocular --name monocular --namespace <namespace> --set volumes.name.persistentVolumeClaim.claimName=<your-class-name> 
+$ helm install monocular/monocular --name monocular --namespace <namespace>
 ```
 
 ### Access Monocular
