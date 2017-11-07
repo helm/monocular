@@ -31,18 +31,18 @@ const UserKey contextKey = 0
 const UsersCollection = "users"
 
 // CreateUser takes a User object and saves it to the database
-// Users with the same email are updated
+// Users with the same login id are updated
 func CreateUser(db datastore.Database, user *User) error {
 	c := db.C(UsersCollection)
-	_, err := c.Upsert(bson.M{"email": user.Email}, user)
+	_, err := c.Upsert(bson.M{"login": user.Login}, user)
 	return err
 }
 
-// GetUserByEmail finds a user given an email
-func GetUserByEmail(db datastore.Database, email string) (*User, error) {
+// GetUserByLogin finds a user given the login id
+func GetUserByLogin(db datastore.Database, login string) (*User, error) {
 	c := db.C(UsersCollection)
 	var user User
-	err := c.Find(bson.M{"email": email}).One(&user)
+	err := c.Find(bson.M{"login": login}).One(&user)
 	if err != nil {
 		return nil, err
 	}

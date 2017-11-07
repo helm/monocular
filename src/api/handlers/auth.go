@@ -114,7 +114,7 @@ func (a *AuthHandlers) GithubCallback(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Fetch from DB to get ID
-	u, err := models.GetUserByEmail(db, userEmail)
+	u, err := models.GetUserByLogin(db, user.GetLogin())
 
 	claims := models.UserClaims{
 		User: u,

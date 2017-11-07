@@ -24,7 +24,7 @@ func TestCreateUser(t *testing.T) {
 	}
 }
 
-func TestGetUserByEmail(t *testing.T) {
+func TestGetUserByLogin(t *testing.T) {
 	tests := []struct {
 		name      string
 		expected  *User
@@ -35,7 +35,7 @@ func TestGetUserByEmail(t *testing.T) {
 	}
 	for _, tt := range tests {
 		db, _ := NewMockSession(MockDBConfig{WantErr: tt.expectErr}).DB()
-		actual, err := GetUserByEmail(db, "rick@sanchez.com")
+		actual, err := GetUserByLogin(db, "rick.sanchez")
 		assert.Equal(t, err != nil, tt.expectErr, "error")
 		assert.Equal(t, actual, tt.expected, "repo")
 	}
