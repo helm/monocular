@@ -52,7 +52,7 @@ func TestAuthGateDisabled(t *testing.T) {
 
 func generateClaims(expiresAt time.Time) jwt.Claims {
 	return models.UserClaims{
-		User: &models.User{Name: "Jon Snow", Email: "jonsnow@winteriscoming.io"},
+		User: &models.User{Login: "jon.snow", Name: "Jon Snow", Email: "jonsnow@winteriscoming.io"},
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expiresAt.Unix(),
 			Issuer:    "lyanna.stark",

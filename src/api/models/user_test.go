@@ -7,7 +7,7 @@ import (
 )
 
 func TestCreateUser(t *testing.T) {
-	user := &User{Name: "Rick Sanchez", Email: "rick@sanchez.com"}
+	user := &User{Login: "rick.sanchez", Name: "Rick Sanchez", Email: "rick@sanchez.com"}
 	tests := []struct {
 		name      string
 		expectErr bool

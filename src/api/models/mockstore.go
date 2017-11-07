@@ -76,7 +76,7 @@ type mockQuery struct {
 var MockRepos = OfficialRepos
 
 // MockUser contains the mock user returned by the database
-var MockUser = &User{Name: "Rick Sanchez", Email: "rick@sanchez.com"}
+var MockUser = &User{Login: "rick.sanchez", Name: "Rick Sanchez", Email: "rick@sanchez.com"}
 
 func (q mockQuery) All(result interface{}) error {
 	if q.c.Empty {
