@@ -46,6 +46,7 @@ Note:1) If you are trying to mount NFS, you might run into a mount error with yo
 `sudo apt-get install nfs-common`
 
 2) Also make sure that the RBAC policies are applied correctly for the PersistentVolume being deployed (eg. nfs). Apply the RBAC policy file (bootkube-ci/deploy-rbac/dev.yaml)
+`kubectl apply -f ~/ubuntu/bootkube-ci/deploy-rbac/dev.yaml`
 
 - Add the monocular repo to helm repo list and install the monocular using the helm charts. Use the set command to specify the StorageClass claim name for the PVC. 
 ```console
