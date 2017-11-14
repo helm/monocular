@@ -29,12 +29,15 @@ api:
   config:
     repos:
       # Official repositories
-      - name: stable
-        url: https://kubernetes-charts.storage.googleapis.com
-        source: https://github.com/kubernetes/charts/tree/master/stable
-      - name: incubator
-        url: https://kubernetes-charts-incubator.storage.googleapis.com
-        source: https://github.com/kubernetes/charts/tree/master/incubator
+      - name: newton
+        url: https://v1k0d3n.github.io/demo/charts/newton/
+        source: https://github.com/v1k0d3n/demo/charts/newton
+      - name: ocata
+        url: https://v1k0d3n.github.io/demo/charts/ocata/
+        source: https://github.com/v1k0d3n/demo/charts/ocata
+      - name: monitoring
+        url: https://v1k0d3n.github.io/demo/charts/monitoring/
+        source: https://github.com/v1k0d3n/demo/charts/monitoring
       # Add your own repository
       #- name: my-repo-name
       #  url: my-repository-url
