@@ -107,7 +107,7 @@ func GetOAuthConfig(host string) (*oauth2.Config, error) {
 // GetAuthSigningKey returns the secret key used for signing JWTs and secure sessions
 func GetAuthSigningKey() (string, error) {
 	signingKey, ok := os.LookupEnv("MONOCULAR_AUTH_SIGNING_KEY")
-	if !ok {
+	if !ok || signingKey == "" {
 		return "", errors.New("no signing key, ensure MONOCULAR_AUTH_SIGNING_KEY is set")
 	}
 	return signingKey, nil
