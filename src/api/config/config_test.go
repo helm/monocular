@@ -136,6 +136,7 @@ func TestGetAuthSigningKey(t *testing.T) {
 		wantErr bool
 	}{
 		{"no signing key", false, "", true},
+		{"empty string", true, "", true},
 		{"signing key", true, "secret", false},
 	}
 	for _, tt := range tests {
