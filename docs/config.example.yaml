@@ -30,6 +30,9 @@ tillerPortForward: true
 # Specify a different namespace where to locate tiller-deploy
 tillerNamespace: kube-system
 
+# Specify a custom host for Tiller
+# tillerHost: localhost:44134
+
 # Configure cache refresh interval in sec
 cacheRefreshInterval: 3600
 

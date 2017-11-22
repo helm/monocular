@@ -37,6 +37,7 @@ type Configuration struct {
 	OAuthConfig          oauthConfig      `yaml:"oauthConfig"`
 	SigningKey           string           `yaml:"signingKey"`
 	TillerNamespace      string           `yaml:"tillerNamespace"`
+	TillerHost           string           `yaml:"tillerHost"`
 	Initialized          bool
 }
 
