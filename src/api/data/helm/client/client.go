@@ -42,8 +42,12 @@ func (c *helmClient) initialize() (*helm.Client, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	tillerHost := conf.TillerHost
 	tillerNamespace := conf.TillerNamespace
-	var tillerHost = fmt.Sprintf("%s.%s:%d", tillerServiceName, tillerNamespace, tillerPort)
+	if tillerHost == "" {
+		tillerHost = fmt.Sprintf("%s.%s:%d", tillerServiceName, tillerNamespace, tillerPort)
+	}
 
 	if c.portForward {
 		config, kubeClient, err := getKubeClient("")
