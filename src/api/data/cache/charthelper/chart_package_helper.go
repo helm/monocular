@@ -18,6 +18,7 @@ import (
 
 	"github.com/kubernetes-helm/monocular/src/api/config"
 	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
+	"github.com/kubernetes-helm/monocular/src/api/version"
 )
 
 const defaultTimeout time.Duration = 10 * time.Second
@@ -83,7 +84,12 @@ var downloadTarball = func(chart *models.ChartPackage, repoURL string) error {
 	c := &http.Client{
 		Timeout: defaultTimeout,
 	}
-	resp, err := c.Get(source)
+	req, err := http.NewRequest("GET", source, nil)
+	req.Header.Set("User-Agent", version.GetUserAgent())
+	if err != nil {
+		return err
+	}
+	resp, err := c.Do(req)
 	if err != nil {
 		return err
 	}

@@ -18,6 +18,7 @@ import (
 	"github.com/kubernetes-helm/monocular/src/api/models"
 	swaggermodels "github.com/kubernetes-helm/monocular/src/api/swagger/models"
 	"github.com/kubernetes-helm/monocular/src/api/swagger/restapi/operations/charts"
+	"github.com/kubernetes-helm/monocular/src/api/version"
 )
 
 type cachedCharts struct {
@@ -154,7 +155,13 @@ func (c *cachedCharts) Refresh() error {
 		u.Path = path.Join(u.Path, "index.yaml")
 
 		// 1 - Download repo index
-		resp, err := http.Get(u.String())
+		var client http.Client
+		req, err := http.NewRequest("GET", u.String(), nil)
+		if err != nil {
+			return err
+		}
+		req.Header.Set("User-Agent", version.GetUserAgent())
+		resp, err := client.Do(req)
 		if err != nil {
 			return err
 		}
