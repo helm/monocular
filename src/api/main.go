@@ -148,7 +148,7 @@ func main() {
 
 	dbSession, err := datastore.NewSession(conf.Mongo)
 	if err != nil {
-		log.WithFields(log.Fields{"host": conf.Mongo.Host}).Fatal(err)
+		log.WithFields(log.Fields{"host": conf.Mongo.URL}).Fatal(err)
 	}
 
 	chartsImplementation := setupChartsImplementation(conf, dbSession)

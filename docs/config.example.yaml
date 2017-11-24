@@ -41,5 +41,5 @@ redis:
   host: redis:6379
 
 mongodb:
-  host: mongodb:27017
+  url: mongodb:27017
   database: monocular
