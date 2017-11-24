@@ -11,5 +11,5 @@ data:
   monocular.yaml: |-
 {{ toYaml .Values.api.config | indent 4 -}}
     mongodb:
-      host: {{ template "mongodb.fullname" . }}:27017
+      url: {{ template "mongodb.fullname" . }}:27017
       database: monocular

@@ -8,7 +8,7 @@ import (
 
 // Config configures the database connection
 type Config struct {
-	Host     string
+	URL      string
 	Database string
 }
 
@@ -70,7 +70,7 @@ func (c *mgoCollection) Find(query interface{}) Query {
 
 // NewSession initializes a MongoDB connection to the given host
 func NewSession(conf Config) (Session, error) {
-	session, err := mgo.Dial(conf.Host)
+	session, err := mgo.Dial(conf.URL)
 	if err != nil {
 		return nil, errors.New("unable to connect to MongoDB")
 	}
