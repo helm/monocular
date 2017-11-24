@@ -67,7 +67,7 @@ $ helm install monocular/monocular --set api.config.tillerNamespace=YOUR_NAMESPA
 If you want to run Monocular without giving the option to install and manage charts in your cluster, similar to [KubeApps](https://kubeapps.com) you can configure `api.config.releasesEnabled`:
 
 ```console
-$ helm install monocular/monocular --set api.config.releasedEnabled=false
+$ helm install monocular/monocular --set api.config.releasesEnabled=false
 ```
 
 ### Configuring chart repositories
