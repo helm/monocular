@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"net/http"
 	"os"
 	"time"
@@ -144,6 +145,14 @@ func main() {
 	conf, err := config.GetConfig()
 	if err != nil {
 		log.WithError(err).Fatal("unable to load configuration")
+	}
+
+	dbURL := flag.String("mongo-url", "", "MongoDB URL (see https://godoc.org/labix.org/v2/mgo#Dial for format)")
+	flag.Parse()
+
+	// Override database URL if given as CLI option
+	if *dbURL != "" {
+		conf.Mongo.URL = *dbURL
 	}
 
 	dbSession, err := datastore.NewSession(conf.Mongo)
