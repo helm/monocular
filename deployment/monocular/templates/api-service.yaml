@@ -4,6 +4,10 @@ metadata:
   name: {{ template "fullname" . }}-api
   labels:
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+{{- if .Values.api.service.annotations }}
+  annotations:
+{{ toYaml .Values.api.service.annotations | indent 4 }}
+{{- end }}
 spec:
   type: {{ .Values.api.service.type }}
   ports:
