@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"errors"
 	"flag"
 	"fmt"
@@ -11,6 +12,7 @@ import (
 	"time"
 
 	log "github.com/Sirupsen/logrus"
+	"github.com/disintegration/imaging"
 	"github.com/ghodss/yaml"
 	"github.com/jinzhu/copier"
 	"github.com/kubeapps/common/datastore"
@@ -81,6 +83,13 @@ func sync(repoName, repoURL string) error {
 	err = importCharts(charts)
 	if err != nil {
 		return err
+	}
+
+	for _, c := range charts {
+		err := fetchAndImportIcon(c)
+		if err != nil {
+			log.WithFields(log.Fields{"name": c.Name}).WithError(err).Error("failed to import icon")
+		}
 	}
 
 	return nil
@@ -172,4 +181,42 @@ func importCharts(charts []chart) error {
 
 	_, err := bulk.Run()
 	return err
+}
+
+func fetchAndImportIcon(c chart) error {
+	if c.Icon == "" {
+		log.WithFields(log.Fields{"name": c.Name}).Info("icon not found")
+		return nil
+	}
+
+	req, err := http.NewRequest("GET", c.Icon, nil)
+	req.Header.Set("User-Agent", userAgent)
+	if err != nil {
+		return err
+	}
+
+	res, err := netClient.Do(req)
+	if err != nil {
+		return err
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		return fmt.Errorf("%d %s", res.StatusCode, c.Icon)
+	}
+
+	orig, err := imaging.Decode(res.Body)
+	if err != nil {
+		return err
+	}
+
+	// TODO: make this configurable?
+	icon := imaging.Fit(orig, 160, 160, imaging.Lanczos)
+
+	var b bytes.Buffer
+	imaging.Encode(&b, icon, imaging.PNG)
+
+	db, closer := dbSession.DB()
+	defer closer()
+	return db.C(chartCollection).UpdateId(c.ID, bson.M{"raw_icon": b.Bytes()})
 }

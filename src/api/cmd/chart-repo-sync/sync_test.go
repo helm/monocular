@@ -1,6 +1,10 @@
 package main
 
 import (
+	"bytes"
+	"fmt"
+	"image"
+	"image/color"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -8,6 +12,7 @@ import (
 	"testing"
 
 	"github.com/arschles/assert"
+	"github.com/disintegration/imaging"
 	"github.com/kubeapps/common/datastore/mockstore"
 	"github.com/stretchr/testify/mock"
 	"gopkg.in/mgo.v2/bson"
@@ -111,6 +116,29 @@ func (h *goodHTTPClient) Do(req *http.Request) (*http.Response, error) {
 	return w.Result(), nil
 }
 
+type badIconClient struct{}
+
+func (h *badIconClient) Do(req *http.Request) (*http.Response, error) {
+	w := httptest.NewRecorder()
+	w.Write([]byte("not-an-image"))
+	return w.Result(), nil
+}
+
+type goodIconClient struct{}
+
+func iconBytes() []byte {
+	var b bytes.Buffer
+	img := imaging.New(1, 1, color.White)
+	imaging.Encode(&b, img, imaging.PNG)
+	return b.Bytes()
+}
+
+func (h *goodIconClient) Do(req *http.Request) (*http.Response, error) {
+	w := httptest.NewRecorder()
+	w.Write(iconBytes())
+	return w.Result(), nil
+}
+
 func Test_syncURLInvalidity(t *testing.T) {
 	tests := []struct {
 		name    string
@@ -170,7 +198,7 @@ func Test_parseRepoIndex(t *testing.T) {
 	t.Run("valid", func(t *testing.T) {
 		index, err := parseRepoIndex([]byte(validRepoIndexYAML))
 		assert.NoErr(t, err)
-		assert.Equal(t, len(index.Entries), 1, "1 entry")
+		assert.Equal(t, len(index.Entries), 2, "number of charts")
 		assert.Equal(t, index.Entries["acs-engine-autoscaler"][0].GetName(), "acs-engine-autoscaler", "chart version populated")
 	})
 }
@@ -221,4 +249,36 @@ func Test_importCharts(t *testing.T) {
 		c := args[i+1].(chart)
 		assert.Equal(t, args[i], bson.M{"_id": "test/" + c.Name}, "selector")
 	}
+}
+
+func Test_fetchAndImportIcon(t *testing.T) {
+	t.Run("no icon", func(t *testing.T) {
+		c := chart{ID: "test/acs-engine-autoscaler"}
+		assert.NoErr(t, fetchAndImportIcon(c))
+	})
+
+	index, _ := parseRepoIndex([]byte(validRepoIndexYAML))
+	charts := chartsFromIndex(index, repo{Name: "test", URL: "http://testrepo.com"})
+
+	t.Run("failed download", func(t *testing.T) {
+		netClient = &badHTTPClient{}
+		c := charts[0]
+		assert.Err(t, fmt.Errorf("500 %s", c.Icon), fetchAndImportIcon(c))
+	})
+
+	t.Run("bad icon", func(t *testing.T) {
+		netClient = &badIconClient{}
+		c := charts[0]
+		assert.Err(t, image.ErrFormat, fetchAndImportIcon(c))
+	})
+
+	t.Run("valid icon", func(t *testing.T) {
+		m := mock.Mock{}
+		dbSession = mockstore.NewMockSession(&m)
+		netClient = &goodIconClient{}
+		c := charts[0]
+		m.On("UpdateId", mock.Anything, mock.Anything).Return(nil)
+		assert.NoErr(t, fetchAndImportIcon(c))
+		m.AssertCalled(t, "UpdateId", c.ID, bson.M{"raw_icon": iconBytes()})
+	})
 }

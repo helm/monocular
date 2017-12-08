@@ -32,6 +32,12 @@
   version = "v1.1.0"
 
 [[projects]]
+  name = "github.com/disintegration/imaging"
+  packages = ["."]
+  revision = "dd50a3ee9985ccd313a2f03c398fcaedc96dc707"
+  version = "v1.2.4"
+
+[[projects]]
   name = "github.com/ghodss/yaml"
   packages = ["."]
   revision = "0ca9ea5df5451ffdf184b4428c902747c2c11cd7"
@@ -59,7 +65,7 @@
   branch = "master"
   name = "github.com/kubeapps/common"
   packages = ["datastore","datastore/mockstore"]
-  revision = "2a48657fabf43c4de5a55cb5a6cd766134baa996"
+  revision = "9d043239232b3e180f282fc5a2e668a1879f26f1"
 
 [[projects]]
   name = "github.com/pmezard/go-difflib"
@@ -90,6 +96,12 @@
   name = "golang.org/x/crypto"
   packages = ["cast5","openpgp","openpgp/armor","openpgp/clearsign","openpgp/elgamal","openpgp/errors","openpgp/packet","openpgp/s2k","ssh/terminal"]
   revision = "94eea52f7b742c7cbe0b03b22f0c4c8631ece122"
+
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/image"
+  packages = ["bmp","tiff","tiff/lzw"]
+  revision = "f7e31b4ea2e3413ab91b4e7d2dc83e5f8d19a44c"
 
 [[projects]]
   branch = "master"
@@ -130,6 +142,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "992bcebfeece2fd20c21f625a442f37402d4b8f85d32353b248ecd2e138ef49c"
+  inputs-digest = "7dc7dff3a98c542f15514f127a09cbbcfce1ece502a9fb9ef7c8ee0f247b007e"
   solver-name = "gps-cdcl"
   solver-version = 1

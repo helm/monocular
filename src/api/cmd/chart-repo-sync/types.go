@@ -23,6 +23,7 @@ type chart struct {
 	Keywords      []string
 	Maintainers   []maintainer
 	Sources       []string
+	Icon          string
 	ChartVersions []chartVersion
 }
 
