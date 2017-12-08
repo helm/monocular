@@ -218,5 +218,5 @@ func fetchAndImportIcon(c chart) error {
 
 	db, closer := dbSession.DB()
 	defer closer()
-	return db.C(chartCollection).UpdateId(c.ID, bson.M{"raw_icon": b.Bytes()})
+	return db.C(chartCollection).UpdateId(c.ID, bson.M{"$set": bson.M{"raw_icon": b.Bytes()}})
 }

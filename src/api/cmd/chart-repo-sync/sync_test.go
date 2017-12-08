@@ -277,8 +277,7 @@ func Test_fetchAndImportIcon(t *testing.T) {
 		dbSession = mockstore.NewMockSession(&m)
 		netClient = &goodIconClient{}
 		c := charts[0]
-		m.On("UpdateId", mock.Anything, mock.Anything).Return(nil)
+		m.On("UpdateId", c.ID, bson.M{"$set": bson.M{"raw_icon": iconBytes()}}).Return(nil)
 		assert.NoErr(t, fetchAndImportIcon(c))
-		m.AssertCalled(t, "UpdateId", c.ID, bson.M{"raw_icon": iconBytes()})
 	})
 }
