@@ -1,16 +1,22 @@
 package main
 
 import (
+	"archive/tar"
 	"bytes"
+	"compress/gzip"
+	"crypto/rand"
+	"errors"
 	"fmt"
 	"image"
 	"image/color"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"strings"
 	"testing"
 
+	log "github.com/Sirupsen/logrus"
 	"github.com/arschles/assert"
 	"github.com/disintegration/imaging"
 	"github.com/kubeapps/common/datastore/mockstore"
@@ -139,6 +145,25 @@ func (h *goodIconClient) Do(req *http.Request) (*http.Response, error) {
 	return w.Result(), nil
 }
 
+type goodTarballClient struct {
+	c          chart
+	skipReadme bool
+}
+
+var testChartReadme = "# readme for chart\n\nBest chart in town"
+
+func (h *goodTarballClient) Do(req *http.Request) (*http.Response, error) {
+	w := httptest.NewRecorder()
+	gzw := gzip.NewWriter(w)
+	files := []tarballFile{{h.c.Name + "/Chart.yaml", "should be a Chart.yaml here..."}}
+	if !h.skipReadme {
+		files = append(files, tarballFile{h.c.Name + "/README.md", testChartReadme})
+	}
+	createTestTarball(gzw, files)
+	gzw.Flush()
+	return w.Result(), nil
+}
+
 func Test_syncURLInvalidity(t *testing.T) {
 	tests := []struct {
 		name    string
@@ -240,6 +265,7 @@ func Test_importCharts(t *testing.T) {
 	charts := chartsFromIndex(index, repo{Name: "test", URL: "http://testrepo.com"})
 	importCharts(charts)
 
+	m.AssertExpectations(t)
 	// The Bulk Upsert method takes an array that consists of a selector followed by an interface to upsert.
 	// So for x charts to upsert, there should be x*2 elements (each chart has it's own selector)
 	// e.g. [selector1, chart1, selector2, chart2, ...]
@@ -279,5 +305,143 @@ func Test_fetchAndImportIcon(t *testing.T) {
 		c := charts[0]
 		m.On("UpdateId", c.ID, bson.M{"$set": bson.M{"raw_icon": iconBytes()}}).Return(nil)
 		assert.NoErr(t, fetchAndImportIcon(c))
+		m.AssertExpectations(t)
 	})
+}
+
+func Test_fetchAndImportReadme(t *testing.T) {
+	index, _ := parseRepoIndex([]byte(validRepoIndexYAML))
+	charts := chartsFromIndex(index, repo{Name: "test", URL: "http://testrepo.com"})
+	cv := charts[0].ChartVersions[0]
+
+	t.Run("http error", func(t *testing.T) {
+		m := mock.Mock{}
+		m.On("One", mock.Anything).Return(errors.New("return an error when checking if readme already exists to force fetching"))
+		dbSession = mockstore.NewMockSession(&m)
+		netClient = &badHTTPClient{}
+		assert.Err(t, io.EOF, fetchAndImportReadme(charts[0], cv))
+	})
+
+	t.Run("readme not found", func(t *testing.T) {
+		netClient = &goodTarballClient{c: charts[0], skipReadme: true}
+		m := mock.Mock{}
+		m.On("One", mock.Anything).Return(errors.New("return an error when checking if readme already exists to force fetching"))
+		m.On("Insert", chartReadme{fmt.Sprintf("%s/%s-%s", charts[0].Repo.Name, charts[0].Name, cv.Version), ""})
+		dbSession = mockstore.NewMockSession(&m)
+		err := fetchAndImportReadme(charts[0], cv)
+		assert.NoErr(t, err)
+		m.AssertExpectations(t)
+	})
+
+	t.Run("valid tarball", func(t *testing.T) {
+		netClient = &goodTarballClient{c: charts[0]}
+		m := mock.Mock{}
+		m.On("One", mock.Anything).Return(errors.New("return an error when checking if readme already exists to force fetching"))
+		m.On("Insert", chartReadme{fmt.Sprintf("%s/%s-%s", charts[0].Repo.Name, charts[0].Name, cv.Version), testChartReadme})
+		dbSession = mockstore.NewMockSession(&m)
+		err := fetchAndImportReadme(charts[0], cv)
+		assert.NoErr(t, err)
+		m.AssertExpectations(t)
+	})
+
+	t.Run("readme exists", func(t *testing.T) {
+		m := mock.Mock{}
+		// don't return an error when checking if readme already exists
+		m.On("One", mock.Anything).Return(nil)
+		dbSession = mockstore.NewMockSession(&m)
+		err := fetchAndImportReadme(charts[0], cv)
+		assert.NoErr(t, err)
+		m.AssertNotCalled(t, "Insert", mock.Anything)
+	})
+}
+
+func Test_chartTarballURL(t *testing.T) {
+	r := repo{Name: "test", URL: "http://testrepo.com"}
+	tests := []struct {
+		name   string
+		cv     chartVersion
+		wanted string
+	}{
+		{"absolute url", chartVersion{URLs: []string{"http://testrepo.com/wordpress-0.1.0.tgz"}}, "http://testrepo.com/wordpress-0.1.0.tgz"},
+		{"relative url", chartVersion{URLs: []string{"wordpress-0.1.0.tgz"}}, "http://testrepo.com/wordpress-0.1.0.tgz"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, chartTarballURL(r, tt.cv), tt.wanted, "url")
+		})
+	}
+}
+
+func Test_extractFileFromTarball(t *testing.T) {
+	tests := []struct {
+		name     string
+		files    []tarballFile
+		filename string
+		want     string
+	}{
+		{"file", []tarballFile{{"file.txt", "best file ever"}}, "file.txt", "best file ever"},
+		{"multiple files", []tarballFile{{"file.txt", "best file ever"}, {"file2.txt", "worst file ever"}}, "file2.txt", "worst file ever"},
+		{"file in dir", []tarballFile{{"file.txt", "best file ever"}, {"test/file2.txt", "worst file ever"}}, "test/file2.txt", "worst file ever"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var b bytes.Buffer
+			createTestTarball(&b, tt.files)
+			r := bytes.NewReader(b.Bytes())
+			tarf := tar.NewReader(r)
+			readme, err := extractFileFromTarball(tt.filename, tarf)
+			assert.NoErr(t, err)
+			assert.Equal(t, readme, tt.want, "file body")
+		})
+	}
+
+	t.Run("file not found", func(t *testing.T) {
+		var b bytes.Buffer
+		createTestTarball(&b, []tarballFile{{"file.txt", "best file ever"}})
+		r := bytes.NewReader(b.Bytes())
+		tarf := tar.NewReader(r)
+		readme, err := extractFileFromTarball("file2.txt", tarf)
+		assert.Err(t, errors.New("file2.txt file not found"), err)
+		assert.Equal(t, readme, "", "file body")
+	})
+
+	t.Run("not a tarball", func(t *testing.T) {
+		b := make([]byte, 4)
+		rand.Read(b)
+		r := bytes.NewReader(b)
+		tarf := tar.NewReader(r)
+		readme, err := extractFileFromTarball("file2.txt", tarf)
+		assert.Err(t, io.ErrUnexpectedEOF, err)
+		assert.Equal(t, readme, "", "file body")
+	})
+}
+
+type tarballFile struct {
+	Name, Body string
+}
+
+func createTestTarball(w io.Writer, files []tarballFile) {
+	// Create a new tar archive.
+	tarw := tar.NewWriter(w)
+
+	// Add files to the archive.
+	for _, file := range files {
+		hdr := &tar.Header{
+			Name: file.Name,
+			Mode: 0600,
+			Size: int64(len(file.Body)),
+		}
+		if err := tarw.WriteHeader(hdr); err != nil {
+			log.Fatalln(err)
+		}
+		if _, err := tarw.Write([]byte(file.Body)); err != nil {
+			log.Fatalln(err)
+		}
+	}
+	// Make sure to check the error on Close.
+	if err := tarw.Close(); err != nil {
+		log.Fatal(err)
+	}
 }

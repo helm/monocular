@@ -1,14 +1,19 @@
 package main
 
 import (
+	"archive/tar"
 	"bytes"
+	"compress/gzip"
 	"errors"
 	"flag"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
+	"path"
+	"strings"
 	"time"
 
 	log "github.com/Sirupsen/logrus"
@@ -21,7 +26,8 @@ import (
 )
 
 const (
-	chartCollection = "charts"
+	chartCollection       = "charts"
+	chartReadmeCollection = "readmes"
 )
 
 type httpClient interface {
@@ -43,7 +49,12 @@ func main() {
 	dbName := flag.String("mongo-database", "charts", "MongoDB database")
 	dbUsername := flag.String("mongo-user", "", "MongoDB user")
 	dbPassword := os.Getenv("MONGO_PASSWORD")
+	debug := flag.Bool("debug", false, "verbose logging")
 	flag.Parse()
+
+	if *debug {
+		log.SetLevel(log.DebugLevel)
+	}
 
 	if flag.NArg() != 2 {
 		flag.Usage()
@@ -67,6 +78,10 @@ func main() {
 // 1. Update database to match chart metadata from index
 // 3. Process icons for charts
 // 4. Process READMEs for each chart version
+//
+// These steps are processed in this way to ensure relevant chart data is
+// imported into the database as fast as possible. E.g. we want all icons for
+// charts before fetching readmes for each chart and version pair.
 func sync(repoName, repoURL string) error {
 	url, err := url.ParseRequestURI(repoURL)
 	if err != nil {
@@ -86,10 +101,13 @@ func sync(repoName, repoURL string) error {
 	}
 
 	for _, c := range charts {
-		err := fetchAndImportIcon(c)
-		if err != nil {
+		if err := fetchAndImportIcon(c); err != nil {
 			log.WithFields(log.Fields{"name": c.Name}).WithError(err).Error("failed to import icon")
 		}
+	}
+
+	for _, c := range charts {
+		fetchAndImportReadmes(c)
 	}
 
 	return nil
@@ -145,7 +163,8 @@ func chartsFromIndex(index *helmrepo.IndexFile, r repo) []chart {
 	return charts
 }
 
-// Takes an entry from the index and constructs a database representation of the object
+// Takes an entry from the index and constructs a database representation of the
+// object.
 func newChart(entry helmrepo.ChartVersions, r repo) chart {
 	var c chart
 	copier.Copy(&c, entry[0])
@@ -219,4 +238,98 @@ func fetchAndImportIcon(c chart) error {
 	db, closer := dbSession.DB()
 	defer closer()
 	return db.C(chartCollection).UpdateId(c.ID, bson.M{"$set": bson.M{"raw_icon": b.Bytes()}})
+}
+
+func fetchAndImportReadmes(c chart) {
+	// TODO: This should be using a worker pool for concurrent processing later
+	// TODO: we should prioritise the latest chartVersion for each chart
+	for _, cv := range c.ChartVersions {
+		if err := fetchAndImportReadme(c, cv); err != nil {
+			log.WithFields(log.Fields{"name": c.Name, "version": cv.Version}).WithError(err).Error("failed to import readme")
+		}
+	}
+}
+
+func fetchAndImportReadme(c chart, cv chartVersion) error {
+	chartReadmeID := fmt.Sprintf("%s/%s-%s", c.Repo.Name, c.Name, cv.Version)
+	db, closer := dbSession.DB()
+	defer closer()
+	if err := db.C(chartReadmeCollection).FindId(chartReadmeID).One(&chartReadme{}); err == nil {
+		log.WithFields(log.Fields{"name": c.Name, "version": cv.Version}).Debug("skipping existing readme")
+		return nil
+	}
+	log.WithFields(log.Fields{"name": c.Name, "version": cv.Version}).Debug("fetching readme")
+
+	url := chartTarballURL(c.Repo, cv)
+	req, err := http.NewRequest("GET", url, nil)
+
+	req.Header.Set("User-Agent", userAgent)
+	if err != nil {
+		return err
+	}
+
+	res, err := netClient.Do(req)
+	if err != nil {
+		return err
+	}
+	defer res.Body.Close()
+
+	// We read the whole chart into memory, this should be okay since the chart
+	// tarball needs to be small enough to fit into a GRPC call (Tiller
+	// requirement)
+	gzf, err := gzip.NewReader(res.Body)
+	if err != nil {
+		return err
+	}
+	defer gzf.Close()
+
+	tarf := tar.NewReader(gzf)
+
+	readmeFileName := c.Name + "/README.md"
+	readme, err := extractFileFromTarball(readmeFileName, tarf)
+	if err != nil && !strings.Contains(err.Error(), "file not found") {
+		return err
+	}
+
+	// Even if the readme doesn't exist, we create an empty entry to avoid
+	// refetching for this chart version in the future
+	if readme == "" {
+		log.WithFields(log.Fields{"name": c.Name, "version": cv.Version}).Info("readme not found")
+	}
+
+	db.C(chartReadmeCollection).Insert(chartReadme{chartReadmeID, readme})
+
+	return nil
+}
+
+func chartTarballURL(r repo, cv chartVersion) string {
+	source := cv.URLs[0]
+	if _, err := url.ParseRequestURI(source); err != nil {
+		// If the chart URL is not absolute, join with repo URL. It's fine if the
+		// URL we build here is invalid as we can catch this error when actually
+		// making the request
+		u, _ := url.Parse(r.URL)
+		u.Path = path.Join(u.Path, source)
+		return u.String()
+	}
+	return source
+}
+
+func extractFileFromTarball(filename string, tarf *tar.Reader) (string, error) {
+	for {
+		header, err := tarf.Next()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return "", err
+		}
+
+		if header.Name == filename {
+			var b bytes.Buffer
+			io.Copy(&b, tarf)
+			return string(b.Bytes()), nil
+		}
+	}
+	return "", fmt.Errorf("%s file not found", filename)
 }

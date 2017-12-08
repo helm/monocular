@@ -34,3 +34,8 @@ type chartVersion struct {
 	Digest     string
 	URLs       []string
 }
+
+type chartReadme struct {
+	ID     string `bson:"_id"`
+	Readme string
+}
