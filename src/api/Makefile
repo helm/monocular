@@ -24,6 +24,7 @@ all:
 
 bootstrap:
 	${DEV_ENV_CMD} dep ensure
+	${DEV_ENV_CMD} sh -c 'cd cmd/chart-repo-sync/ && dep ensure'
 
 update:
 	${DEV_ENV_CMD} dep ensure -update
