@@ -64,7 +64,6 @@ func InstallRelease(client *helm.Client, chartPath string, params releasesapi.Cr
 	if ns == "" {
 		ns = "default"
 	}
-	//var overrides = []byte("key1=value1,key2=value2")
 	var overrides = []byte(KeysString(params.Data.Values))
 
 	return client.InstallRelease(

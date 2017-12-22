@@ -85,7 +85,7 @@ type CreateReleaseBody struct {
 	 */
 	ReleaseName string `json:"releaseName,omitempty"`
 
-	/* Name of the new release
+	/* Values of the new release
 	 */
 	Values map[string]string `json:"values,omitempty"`
 }
