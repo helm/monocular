@@ -24,10 +24,10 @@ all:
 
 bootstrap:
 	${DEV_ENV_CMD} dep ensure
-	${DEV_ENV_CMD} sh -c 'cd cmd/chart-repo-sync/ && dep ensure'
+	${DEV_ENV_CMD} sh -c 'cd cmd/chart-repo-sync/ && dep ensure -v'
 
 update:
-	${DEV_ENV_CMD} dep ensure -update
+	${DEV_ENV_CMD} dep ensure -update -v
 
 # This illustrates a two-stage Docker build. docker-compile runs inside of
 # the Docker environment. Other alternatives are cross-compiling, doing
