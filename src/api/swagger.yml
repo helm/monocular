@@ -329,9 +329,7 @@ parameters:
           type: string
           description: Namespace to deploy the chart into
         values:
-          type: object
-          additionalProperties:
-            type: string
+          type: string
       required:
         - chartId
         - chartVersion

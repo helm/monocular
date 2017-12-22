@@ -1,7 +1,6 @@
 package releases
 
 import (
-	"strings"
 
 	log "github.com/Sirupsen/logrus"
 	releasesapi "github.com/kubernetes-helm/monocular/src/api/swagger/restapi/operations/releases"
@@ -49,22 +48,13 @@ func GetRelease(client *helm.Client, releaseName string) (*rls.GetReleaseContent
 	return release, err
 }
 
-// Map --> String
-func KeysString(m map[string]string) string {
-	keys := make([]string, 0, len(m))
-	for k, v := range m {
-		keys = append(keys, k+"="+v)
-	}
-	return strings.Join(keys, ",")
-}
-
 // InstallRelease wraps helms client installReleae method
 func InstallRelease(client *helm.Client, chartPath string, params releasesapi.CreateReleaseParams) (*rls.InstallReleaseResponse, error) {
 	ns := params.Data.Namespace
 	if ns == "" {
 		ns = "default"
 	}
-	var overrides = []byte(KeysString(params.Data.Values))
+	var overrides = []byte(params.Data.Values)
 
 	return client.InstallRelease(
 		chartPath,
