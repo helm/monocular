@@ -28,7 +28,7 @@ bootstrap:
 
 update:
 	${DEV_ENV_CMD} dep ensure -update 
-
+#
 # This illustrates a two-stage Docker build. docker-compile runs inside of
 # the Docker environment. Other alternatives are cross-compiling, doing
 # the build as a `docker build`.
