@@ -83,8 +83,8 @@ func main() {
 
 // Syncing is performed in the following steps:
 // 1. Update database to match chart metadata from index
-// 3. Concurrently process icons for charts (concurrently)
-// 5. Concurrently process the README for the latest chart version of each chart
+// 2. Concurrently process icons for charts (concurrently)
+// 3. Concurrently process the README for the latest chart version of each chart
 // 4. Concurrently process READMEs for historic chart versions
 //
 // These steps are processed in this way to ensure relevant chart data is
