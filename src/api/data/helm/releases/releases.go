@@ -53,11 +53,11 @@ func InstallRelease(client *helm.Client, chartPath string, params releasesapi.Cr
 	if ns == "" {
 		ns = "default"
 	}
-
+	var overrides = []byte(params.Data.Values)
 	return client.InstallRelease(
 		chartPath,
 		ns,
-		helm.ValueOverrides([]byte{}),
+		helm.ValueOverrides(overrides),
 		helm.ReleaseName(params.Data.ReleaseName),
 		helm.InstallDryRun(params.Data.DryRun))
 }
