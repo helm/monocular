@@ -328,6 +328,8 @@ parameters:
         namespace:
           type: string
           description: Namespace to deploy the chart into
+        values:
+          type: string
       required:
         - chartId
         - chartVersion
