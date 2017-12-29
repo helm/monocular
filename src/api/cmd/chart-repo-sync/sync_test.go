@@ -46,6 +46,11 @@ func (h *goodHTTPClient) Do(req *http.Request) (*http.Response, error) {
 	if strings.HasPrefix(req.URL.Path, "//") {
 		w.WriteHeader(500)
 	}
+	// If subpath repo URL test, check that index.yaml is correctly added to the
+	// subpath
+	if req.URL.Host == "subpath.test" && req.URL.Path != "/subpath/index.yaml" {
+		w.WriteHeader(500)
+	}
 	// Ensure we're sending the right User-Agent
 	if !strings.Contains(req.Header.Get("User-Agent"), "chart-repo-sync") {
 		w.WriteHeader(500)
@@ -120,6 +125,7 @@ func Test_fetchRepoIndex(t *testing.T) {
 		{"valid HTTP URL", "http://my.examplerepo.com"},
 		{"valid HTTPS URL", "https://my.examplerepo.com"},
 		{"valid trailing URL", "https://my.examplerepo.com/"},
+		{"valid subpath URL", "https://subpath.test/subpath/"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

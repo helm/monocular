@@ -154,22 +154,23 @@ func syncRepo(repoName, repoURL string) error {
 }
 
 func fetchRepoIndex(repoURL *url.URL) (*helmrepo.IndexFile, error) {
+	// use a copy of the URL struct so we don't modify the original
 	indexURL := *repoURL
-	indexURL.Path = "/index.yaml"
+	indexURL.Path = path.Join(indexURL.Path, "index.yaml")
 	req, err := http.NewRequest("GET", indexURL.String(), nil)
 	req.Header.Set("User-Agent", userAgent)
 	if err != nil {
-		log.WithFields(log.Fields{"url": repoURL}).WithError(err).Error("could not build repo index request")
+		log.WithFields(log.Fields{"url": req.URL.String()}).WithError(err).Error("could not build repo index request")
 		return nil, err
 	}
 	res, err := netClient.Do(req)
 	if err != nil {
-		log.WithFields(log.Fields{"url": repoURL}).WithError(err).Error("error requesting repo index")
+		log.WithFields(log.Fields{"url": req.URL.String()}).WithError(err).Error("error requesting repo index")
 		return nil, err
 	}
 
 	if res.StatusCode != http.StatusOK {
-		log.WithFields(log.Fields{"url": repoURL}).WithError(err).Error("error requesting repo index, are you sure this is a chart repository?")
+		log.WithFields(log.Fields{"url": req.URL.String(), "status": res.StatusCode}).Error("error requesting repo index, are you sure this is a chart repository?")
 		return nil, errors.New("repo index request failed")
 	}
 
