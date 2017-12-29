@@ -14,6 +14,7 @@ import (
 	"os"
 	"path"
 	"strings"
+	"sync"
 	"time"
 
 	log "github.com/Sirupsen/logrus"
@@ -29,6 +30,12 @@ const (
 	chartCollection       = "charts"
 	chartReadmeCollection = "readmes"
 )
+
+type importChartFilesJob struct {
+	Name         string
+	Repo         repo
+	ChartVersion chartVersion
+}
 
 type httpClient interface {
 	Do(req *http.Request) (*http.Response, error)
@@ -68,21 +75,22 @@ func main() {
 		log.WithFields(log.Fields{"host": *dbURL}).Fatal(err)
 	}
 
-	if err := sync(flag.Arg(0), flag.Arg(1)); err != nil {
+	if err := syncRepo(flag.Arg(0), flag.Arg(1)); err != nil {
 		log.WithError(err).Error("sync failed")
 		os.Exit(1)
 	}
 }
 
-// Syncing is performed in the following sequential steps:
+// Syncing is performed in the following steps:
 // 1. Update database to match chart metadata from index
-// 3. Process icons for charts
-// 4. Process READMEs for each chart version
+// 2. Concurrently process icons for charts (concurrently)
+// 3. Concurrently process the README for the latest chart version of each chart
+// 4. Concurrently process READMEs for historic chart versions
 //
 // These steps are processed in this way to ensure relevant chart data is
 // imported into the database as fast as possible. E.g. we want all icons for
 // charts before fetching readmes for each chart and version pair.
-func sync(repoName, repoURL string) error {
+func syncRepo(repoName, repoURL string) error {
 	url, err := url.ParseRequestURI(repoURL)
 	if err != nil {
 		log.WithFields(log.Fields{"url": repoURL}).WithError(err).Error("failed to parse URL")
@@ -100,15 +108,47 @@ func sync(repoName, repoURL string) error {
 		return err
 	}
 
+	// Process 10 charts at a time
+	numWorkers := 10
+	iconJobs := make(chan chart, numWorkers)
+	chartFilesJobs := make(chan importChartFilesJob, numWorkers)
+	var wg sync.WaitGroup
+
+	log.Debugf("starting %d workers", numWorkers)
+	for i := 0; i < numWorkers; i++ {
+		wg.Add(1)
+		go importWorker(&wg, iconJobs, chartFilesJobs)
+	}
+
+	// Enqueue jobs to process chart icons
 	for _, c := range charts {
-		if err := fetchAndImportIcon(c); err != nil {
-			log.WithFields(log.Fields{"name": c.Name}).WithError(err).Error("failed to import icon")
+		iconJobs <- c
+	}
+	// Close the iconJobs channel to signal the worker pools to move on to the
+	// chart files jobs
+	close(iconJobs)
+
+	// Iterate through the list of charts and enqueue the latest chart version to
+	// be processed. Append the rest of the chart versions to a list to be
+	// enqueued later
+	var toEnqueue []importChartFilesJob
+	for _, c := range charts {
+		chartFilesJobs <- importChartFilesJob{c.Name, c.Repo, c.ChartVersions[0]}
+		for _, cv := range c.ChartVersions[1:] {
+			toEnqueue = append(toEnqueue, importChartFilesJob{c.Name, c.Repo, cv})
 		}
 	}
 
-	for _, c := range charts {
-		fetchAndImportReadmes(c)
+	// Enqueue all the remaining chart versions
+	for _, cfj := range toEnqueue {
+		chartFilesJobs <- cfj
 	}
+	// Close the chartFilesJobs channel to signal the worker pools that there are
+	// no more jobs to process
+	close(chartFilesJobs)
+
+	// Wait for the worker pools to finish processing
+	wg.Wait()
 
 	return nil
 }
@@ -202,6 +242,22 @@ func importCharts(charts []chart) error {
 	return err
 }
 
+func importWorker(wg *sync.WaitGroup, icons <-chan chart, chartFiles <-chan importChartFilesJob) {
+	defer wg.Done()
+	for c := range icons {
+		log.WithFields(log.Fields{"name": c.Name}).Debug("importing icon")
+		if err := fetchAndImportIcon(c); err != nil {
+			log.WithFields(log.Fields{"name": c.Name}).WithError(err).Error("failed to import icon")
+		}
+	}
+	for j := range chartFiles {
+		log.WithFields(log.Fields{"name": j.Name, "version": j.ChartVersion.Version}).Debug("importing readme")
+		if err := fetchAndImportReadme(j.Name, j.Repo, j.ChartVersion); err != nil {
+			log.WithFields(log.Fields{"name": j.Name, "version": j.ChartVersion.Version}).WithError(err).Error("failed to import readme")
+		}
+	}
+}
+
 func fetchAndImportIcon(c chart) error {
 	if c.Icon == "" {
 		log.WithFields(log.Fields{"name": c.Name}).Info("icon not found")
@@ -240,27 +296,17 @@ func fetchAndImportIcon(c chart) error {
 	return db.C(chartCollection).UpdateId(c.ID, bson.M{"$set": bson.M{"raw_icon": b.Bytes()}})
 }
 
-func fetchAndImportReadmes(c chart) {
-	// TODO: This should be using a worker pool for concurrent processing later
-	// TODO: we should prioritise the latest chartVersion for each chart
-	for _, cv := range c.ChartVersions {
-		if err := fetchAndImportReadme(c, cv); err != nil {
-			log.WithFields(log.Fields{"name": c.Name, "version": cv.Version}).WithError(err).Error("failed to import readme")
-		}
-	}
-}
-
-func fetchAndImportReadme(c chart, cv chartVersion) error {
-	chartReadmeID := fmt.Sprintf("%s/%s-%s", c.Repo.Name, c.Name, cv.Version)
+func fetchAndImportReadme(name string, r repo, cv chartVersion) error {
+	chartReadmeID := fmt.Sprintf("%s/%s-%s", r.Name, name, cv.Version)
 	db, closer := dbSession.DB()
 	defer closer()
 	if err := db.C(chartReadmeCollection).FindId(chartReadmeID).One(&chartReadme{}); err == nil {
-		log.WithFields(log.Fields{"name": c.Name, "version": cv.Version}).Debug("skipping existing readme")
+		log.WithFields(log.Fields{"name": name, "version": cv.Version}).Debug("skipping existing readme")
 		return nil
 	}
-	log.WithFields(log.Fields{"name": c.Name, "version": cv.Version}).Debug("fetching readme")
+	log.WithFields(log.Fields{"name": name, "version": cv.Version}).Debug("fetching readme")
 
-	url := chartTarballURL(c.Repo, cv)
+	url := chartTarballURL(r, cv)
 	req, err := http.NewRequest("GET", url, nil)
 
 	req.Header.Set("User-Agent", userAgent)
@@ -285,7 +331,7 @@ func fetchAndImportReadme(c chart, cv chartVersion) error {
 
 	tarf := tar.NewReader(gzf)
 
-	readmeFileName := c.Name + "/README.md"
+	readmeFileName := name + "/README.md"
 	readme, err := extractFileFromTarball(readmeFileName, tarf)
 	if err != nil && !strings.Contains(err.Error(), "file not found") {
 		return err
@@ -294,7 +340,7 @@ func fetchAndImportReadme(c chart, cv chartVersion) error {
 	// Even if the readme doesn't exist, we create an empty entry to avoid
 	// refetching for this chart version in the future
 	if readme == "" {
-		log.WithFields(log.Fields{"name": c.Name, "version": cv.Version}).Info("readme not found")
+		log.WithFields(log.Fields{"name": name, "version": cv.Version}).Info("readme not found")
 	}
 
 	db.C(chartReadmeCollection).Insert(chartReadme{chartReadmeID, readme})

@@ -106,7 +106,7 @@ func Test_syncURLInvalidity(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := sync("test", tt.repoURL)
+			err := syncRepo("test", tt.repoURL)
 			assert.ExistsErr(t, err, tt.name)
 		})
 	}
@@ -251,7 +251,7 @@ func Test_fetchAndImportReadme(t *testing.T) {
 		m.On("One", mock.Anything).Return(errors.New("return an error when checking if readme already exists to force fetching"))
 		dbSession = mockstore.NewMockSession(&m)
 		netClient = &badHTTPClient{}
-		assert.Err(t, io.EOF, fetchAndImportReadme(charts[0], cv))
+		assert.Err(t, io.EOF, fetchAndImportReadme(charts[0].Name, charts[0].Repo, cv))
 	})
 
 	t.Run("readme not found", func(t *testing.T) {
@@ -260,7 +260,7 @@ func Test_fetchAndImportReadme(t *testing.T) {
 		m.On("One", mock.Anything).Return(errors.New("return an error when checking if readme already exists to force fetching"))
 		m.On("Insert", chartReadme{fmt.Sprintf("%s/%s-%s", charts[0].Repo.Name, charts[0].Name, cv.Version), ""})
 		dbSession = mockstore.NewMockSession(&m)
-		err := fetchAndImportReadme(charts[0], cv)
+		err := fetchAndImportReadme(charts[0].Name, charts[0].Repo, cv)
 		assert.NoErr(t, err)
 		m.AssertExpectations(t)
 	})
@@ -271,7 +271,7 @@ func Test_fetchAndImportReadme(t *testing.T) {
 		m.On("One", mock.Anything).Return(errors.New("return an error when checking if readme already exists to force fetching"))
 		m.On("Insert", chartReadme{fmt.Sprintf("%s/%s-%s", charts[0].Repo.Name, charts[0].Name, cv.Version), testChartReadme})
 		dbSession = mockstore.NewMockSession(&m)
-		err := fetchAndImportReadme(charts[0], cv)
+		err := fetchAndImportReadme(charts[0].Name, charts[0].Repo, cv)
 		assert.NoErr(t, err)
 		m.AssertExpectations(t)
 	})
@@ -281,7 +281,7 @@ func Test_fetchAndImportReadme(t *testing.T) {
 		// don't return an error when checking if readme already exists
 		m.On("One", mock.Anything).Return(nil)
 		dbSession = mockstore.NewMockSession(&m)
-		err := fetchAndImportReadme(charts[0], cv)
+		err := fetchAndImportReadme(charts[0].Name, charts[0].Repo, cv)
 		assert.NoErr(t, err)
 		m.AssertNotCalled(t, "Insert", mock.Anything)
 	})
