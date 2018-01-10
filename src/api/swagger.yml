@@ -325,6 +325,9 @@ parameters:
         dryRun:
           type: boolean
           description: Simulate an install
+        upgrade:
+          type: boolean
+          description: Simulate an install
         namespace:
           type: string
           description: Namespace to deploy the chart into

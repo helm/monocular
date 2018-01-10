@@ -13,6 +13,7 @@ import (
 	"k8s.io/helm/pkg/kube"
 	rls "k8s.io/helm/pkg/proto/hapi/services"
 	"k8s.io/kubernetes/pkg/client/clientset_generated/internalclientset"
+	"k8s.io/kubernetes/pkg/client/unversioned/clientcmd"
 
 	helmreleases "github.com/kubernetes-helm/monocular/src/api/data/helm/releases"
 	"k8s.io/kubernetes/pkg/client/restclient"
@@ -50,7 +51,12 @@ func (c *helmClient) initialize() (*helm.Client, error) {
 	}
 
 	if c.portForward {
-		config, kubeClient, err := getKubeClient("")
+
+		kubeConfig := conf.KubeConfig
+		if kubeConfig == "" {
+			kubeConfig = "~/.kube/config"
+		}
+		config, kubeClient, err := getKubeClient(conf.KubeContext, kubeConfig)
 		if err != nil {
 			return nil, err
 		}
@@ -89,6 +95,14 @@ func (c *helmClient) InstallRelease(chartPath string, params releasesapi.CreateR
 	return helmreleases.InstallRelease(client, chartPath, params)
 }
 
+func (c *helmClient) UpdateRelease(rlsName string, chartPath string, params releasesapi.CreateReleaseParams) (*rls.UpdateReleaseResponse, error) {
+	client, err := c.initialize()
+	if err != nil {
+		return nil, err
+	}
+	return helmreleases.UpdateRelease(client, rlsName, chartPath, params)
+}
+
 func (c *helmClient) DeleteRelease(releaseName string) (*rls.UninstallReleaseResponse, error) {
 	client, err := c.initialize()
 	if err != nil {
@@ -105,10 +119,27 @@ func (c *helmClient) GetRelease(releaseName string) (*rls.GetReleaseContentRespo
 	return helmreleases.GetRelease(client, releaseName)
 }
 
+func GetConfig(context string, kubeconfig string) clientcmd.ClientConfig {
+	rules := clientcmd.NewDefaultClientConfigLoadingRules()
+	rules.DefaultClientConfig = &clientcmd.DefaultClientConfig
+
+	overrides := &clientcmd.ConfigOverrides{ClusterDefaults: clientcmd.ClusterDefaults}
+
+	if context != "" {
+		overrides.CurrentContext = context
+	}
+
+	if kubeconfig != "" {
+		rules.ExplicitPath = kubeconfig
+	}
+
+	return clientcmd.NewNonInteractiveDeferredLoadingClientConfig(rules, overrides)
+}
+
 // getKubeClient is a convenience method for creating kubernetes config and client
 // for a given kubeconfig context
 // TODO, this is not needed once we are in the same cluster.
-func getKubeClient(context string) (*restclient.Config, *internalclientset.Clientset, error) {
+func getKubeClient(context string, kubeConfig string) (*restclient.Config, *internalclientset.Clientset, error) {
 	config, err := kube.GetConfig(context).ClientConfig()
 	if err != nil {
 		return nil, nil, fmt.Errorf("could not get kubernetes config for context '%s': %s", context, err)

@@ -2,6 +2,7 @@ package releases
 
 import (
 	"encoding/json"
+
 	"net/http"
 	"strings"
 
@@ -66,6 +67,7 @@ func (r *ReleaseHandlers) CreateRelease(w http.ResponseWriter, req *http.Request
 		errorResponse(w, http.StatusBadRequest, "unable to parse request body")
 		return
 	}
+
 	err = params.Validate(format)
 	if err != nil {
 		errorResponse(w, http.StatusBadRequest, err.Error())
@@ -86,16 +88,26 @@ func (r *ReleaseHandlers) CreateRelease(w http.ResponseWriter, req *http.Request
 		return
 	}
 	chartPath := charthelper.TarballPath(chartPackage)
-
-	release, err := r.helmClient.InstallRelease(chartPath, releasesapi.CreateReleaseParams{Data: params})
-	if err != nil {
-		errorResponse(w, http.StatusInternalServerError, "Can't create the release: "+err.Error())
-		return
+	if params.Update == true {
+		release, err := r.helmClient.UpdateRelease(params.ReleaseName, chartPath, releasesapi.CreateReleaseParams{Data: params})
+		if err != nil {
+			errorResponse(w, http.StatusInternalServerError, "Can't update the release : "+err.Error())
+			return
+		}
+		resource := makeReleaseResource(release.Release)
+		payload := handlers.DataResourceBody(resource)
+		renderer.Render.JSON(w, http.StatusCreated, payload)
+	} else {
+		release, err := r.helmClient.InstallRelease(chartPath, releasesapi.CreateReleaseParams{Data: params})
+		if err != nil {
+			errorResponse(w, http.StatusInternalServerError, "Can't create the release : "+err.Error())
+			return
+		}
+		resource := makeReleaseResource(release.Release)
+		payload := handlers.DataResourceBody(resource)
+		renderer.Render.JSON(w, http.StatusCreated, payload)
 	}
 
-	resource := makeReleaseResource(release.Release)
-	payload := handlers.DataResourceBody(resource)
-	renderer.Render.JSON(w, http.StatusCreated, payload)
 }
 
 // DeleteRelease deletes an existing release

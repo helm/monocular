@@ -122,8 +122,7 @@ func (c *ChartHandlers) GetChartsInRepo(w http.ResponseWriter, req *http.Request
 
 // SearchCharts is the handler for the /charts/search endpoint
 func (c *ChartHandlers) SearchCharts(w http.ResponseWriter, req *http.Request) {
-	fmt.Println("query", req.URL)
-	fmt.Println(req.URL.Query().Get("name"))
+
 	charts, err := c.chartsImplementation.Search(chartsapi.SearchChartsParams{Name: req.URL.Query().Get("name")})
 	if err != nil {
 		message := fmt.Sprintf("data.Charts Search() error (%s)", err)
