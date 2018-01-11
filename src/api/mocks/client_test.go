@@ -23,9 +23,9 @@ func TestMockedClient(t *testing.T) {
 	_, err = clientBroken.InstallRelease("foo", releasesapi.CreateReleaseParams{})
 	assert.ExistsErr(t, err, "Cant list")
 
-	_, err = client.DeleteRelease("foo")
+	_, err = client.DeleteRelease("foo", false)
 	assert.NoErr(t, err)
-	_, err = clientBroken.DeleteRelease("foo")
+	_, err = clientBroken.DeleteRelease("foo", false)
 	assert.ExistsErr(t, err, "Cant list")
 
 	_, err = client.GetRelease("foo")
