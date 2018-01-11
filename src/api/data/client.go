@@ -8,6 +8,6 @@ type Client interface {
 	ListReleases(params releasesapi.GetAllReleasesParams) (*rls.ListReleasesResponse, error)
 	InstallRelease(chartPath string, params releasesapi.CreateReleaseParams) (*rls.InstallReleaseResponse, error)
 	UpdateRelease(rlsName string, chartPath string, params releasesapi.CreateReleaseParams) (*rls.UpdateReleaseResponse, error)
-	DeleteRelease(releaseName string) (*rls.UninstallReleaseResponse, error)
+	DeleteRelease(releaseName string, purge bool) (*rls.UninstallReleaseResponse, error)
 	GetRelease(releaseName string) (*rls.GetReleaseContentResponse, error)
 }

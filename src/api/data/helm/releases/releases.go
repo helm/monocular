@@ -96,10 +96,10 @@ func UpdateRelease(client *helm.Client, rlsName string, chartPath string, params
 }
 
 // DeleteRelease deletes an existing helm chart
-func DeleteRelease(client *helm.Client, releaseName string) (*rls.UninstallReleaseResponse, error) {
+func DeleteRelease(client *helm.Client, releaseName string, purge bool) (*rls.UninstallReleaseResponse, error) {
 	opts := []helm.DeleteOption{
 		helm.DeleteDryRun(false),
-		helm.DeletePurge(false),
+		helm.DeletePurge(purge),
 		helm.DeleteTimeout(300),
 	}
 	return client.DeleteRelease(releaseName, opts...)

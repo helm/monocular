@@ -112,7 +112,7 @@ func (r *ReleaseHandlers) CreateRelease(w http.ResponseWriter, req *http.Request
 
 // DeleteRelease deletes an existing release
 func (r *ReleaseHandlers) DeleteRelease(w http.ResponseWriter, req *http.Request, params handlers.Params) {
-	release, err := r.helmClient.DeleteRelease(params["releaseName"])
+	release, err := r.helmClient.DeleteRelease(params["releaseName"], req.URL.Query().Get("purge") == "true")
 	if err != nil {
 		errorResponse(w, http.StatusBadRequest, "Can't delete the release: "+err.Error())
 		return
