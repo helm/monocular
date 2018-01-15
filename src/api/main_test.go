@@ -329,6 +329,26 @@ func TestCreateRelease201(t *testing.T) {
 	assert.Equal(t, res.StatusCode, http.StatusCreated, "response code")
 }
 
+// tests the POST /{:apiVersion}/releases endpoint 201 response and updare mode
+func TestCreateReleaseUpdate201(t *testing.T) {
+	conf.ReleasesEnabled = true
+	defer func() { conf.ReleasesEnabled = false }()
+	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient, dbSession))
+	defer ts.Close()
+	chartID := fmt.Sprintf("%s/%s", testutil.RepoName, testutil.ChartName)
+	params := releasesapi.CreateReleaseBody{
+		ChartID:      pointerto.String(chartID),
+		ChartVersion: pointerto.String(testutil.ChartVersionString),
+		Update:       true,
+	}
+	jsonParams, err := json.Marshal(params)
+	assert.NoErr(t, err)
+	res, err := http.Post(urlPath(ts.URL, "v1", "releases"), "application/json", bytes.NewBuffer(jsonParams))
+	assert.NoErr(t, err)
+	defer res.Body.Close()
+	assert.Equal(t, res.StatusCode, http.StatusCreated, "response code")
+}
+
 // tests the POST /{:apiVersion}/releases endpoint 403 response
 func TestCreateRelease403(t *testing.T) {
 	ts := httptest.NewServer(setupRoutes(conf, chartsImplementation, helmClient, dbSession))
