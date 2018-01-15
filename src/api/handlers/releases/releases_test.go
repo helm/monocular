@@ -30,6 +30,17 @@ func validParams() releasesapi.CreateReleaseBody {
 	return releasesapi.CreateReleaseBody{
 		ChartID:      pointerto.String(chartID),
 		ChartVersion: firstChart.Version,
+		Update:       true,
+	}
+}
+
+func validUpdateParams() releasesapi.CreateReleaseBody {
+	charts, _ := chartsImplementation.All()
+	firstChart := charts[0]
+	chartID := fmt.Sprintf("%s/%s", firstChart.Repo, *firstChart.Name)
+	return releasesapi.CreateReleaseBody{
+		ChartID:      pointerto.String(chartID),
+		ChartVersion: firstChart.Version,
 	}
 }
 
@@ -51,6 +62,16 @@ func TestGetReleases500(t *testing.T) {
 
 func TestCreateRelease201(t *testing.T) {
 	jsonParams, err := json.Marshal(validParams())
+	assert.NoErr(t, err)
+	req, err := http.NewRequest("POST", "/v1/releases", bytes.NewBuffer(jsonParams))
+	assert.NoErr(t, err)
+	res := httptest.NewRecorder()
+	releaseHandlers.CreateRelease(res, req)
+	assert.Equal(t, res.Code, http.StatusCreated, "expect a 201 response code")
+}
+
+func TestCreateReleaseUpdate201(t *testing.T) {
+	jsonParams, err := json.Marshal(validUpdateParams())
 	assert.NoErr(t, err)
 	req, err := http.NewRequest("POST", "/v1/releases", bytes.NewBuffer(jsonParams))
 	assert.NoErr(t, err)
