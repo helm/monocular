@@ -39,3 +39,8 @@ type chartReadme struct {
 	ID     string `bson:"_id"`
 	Readme string
 }
+
+type chartValues struct {
+	ID     string `bson:"_id"`
+	Values string
+}

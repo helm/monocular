@@ -29,6 +29,7 @@ import (
 const (
 	chartCollection       = "charts"
 	chartReadmeCollection = "readmes"
+	chartValuesCollection = "values"
 )
 
 type importChartFilesJob struct {
@@ -84,8 +85,8 @@ func main() {
 // Syncing is performed in the following steps:
 // 1. Update database to match chart metadata from index
 // 2. Concurrently process icons for charts (concurrently)
-// 3. Concurrently process the README for the latest chart version of each chart
-// 4. Concurrently process READMEs for historic chart versions
+// 3. Concurrently process the README and values.yaml for the latest chart version of each chart
+// 4. Concurrently process READMEs and values.yaml for historic chart versions
 //
 // These steps are processed in this way to ensure relevant chart data is
 // imported into the database as fast as possible. E.g. we want all icons for
@@ -252,9 +253,12 @@ func importWorker(wg *sync.WaitGroup, icons <-chan chart, chartFiles <-chan impo
 		}
 	}
 	for j := range chartFiles {
-		log.WithFields(log.Fields{"name": j.Name, "version": j.ChartVersion.Version}).Debug("importing readme")
+		log.WithFields(log.Fields{"name": j.Name, "version": j.ChartVersion.Version}).Debug("importing readme and values")
 		if err := fetchAndImportReadme(j.Name, j.Repo, j.ChartVersion); err != nil {
 			log.WithFields(log.Fields{"name": j.Name, "version": j.ChartVersion.Version}).WithError(err).Error("failed to import readme")
+		}
+		if err := fetchAndImportValues(j.Name, j.Repo, j.ChartVersion); err != nil {
+			log.WithFields(log.Fields{"name": j.Name, "version": j.ChartVersion.Version}).WithError(err).Error("failed to import values")
 		}
 	}
 }
@@ -345,6 +349,58 @@ func fetchAndImportReadme(name string, r repo, cv chartVersion) error {
 	}
 
 	db.C(chartReadmeCollection).Insert(chartReadme{chartReadmeID, readme})
+
+	return nil
+}
+
+func fetchAndImportValues(name string, r repo, cv chartVersion) error {
+	chartValuesID := fmt.Sprintf("%s/%s-%s", r.Name, name, cv.Version)
+	db, closer := dbSession.DB()
+	defer closer()
+	if err := db.C(chartValuesCollection).FindId(chartValuesID).One(&chartValues{}); err == nil {
+		log.WithFields(log.Fields{"name": name, "version": cv.Version}).Debug("skipping existing values")
+		return nil
+	}
+	log.WithFields(log.Fields{"name": name, "version": cv.Version}).Debug("fetching values")
+	url := chartTarballURL(r, cv)
+	req, err := http.NewRequest("GET", url, nil)
+
+	req.Header.Set("User-Agent", userAgent)
+	if err != nil {
+		return err
+	}
+
+	res, err := netClient.Do(req)
+	if err != nil {
+		return err
+	}
+	defer res.Body.Close()
+
+	// We read the whole chart into memory, this should be okay since the chart
+	// tarball needs to be small enough to fit into a GRPC call (Tiller
+	// requirement)
+	gzf, err := gzip.NewReader(res.Body)
+	if err != nil {
+		return err
+	}
+	defer gzf.Close()
+
+	tarf := tar.NewReader(gzf)
+
+	valuesFileName := name + "/values.yaml"
+
+	values, err := extractFileFromTarball(valuesFileName, tarf)
+	if err != nil && !strings.Contains(err.Error(), "file not found") {
+		return err
+	}
+
+	// Even if the values doesn't exist, we create an empty entry to avoid
+	// refetching for this chart version in the future
+	if values == "" {
+		log.WithFields(log.Fields{"name": name, "version": cv.Version}).Info("values not found")
+	}
+
+	db.C(chartValuesCollection).Insert(chartValues{chartValuesID, values})
 
 	return nil
 }
