@@ -27,8 +27,8 @@ import (
 )
 
 const (
-	chartCollection       = "charts"
-	chartReadmeCollection = "readmes"
+	chartCollection      = "charts"
+	chartFilesCollection = "files"
 )
 
 type importChartFilesJob struct {
@@ -84,8 +84,8 @@ func main() {
 // Syncing is performed in the following steps:
 // 1. Update database to match chart metadata from index
 // 2. Concurrently process icons for charts (concurrently)
-// 3. Concurrently process the README for the latest chart version of each chart
-// 4. Concurrently process READMEs for historic chart versions
+// 3. Concurrently process the README and values.yaml for the latest chart version of each chart
+// 4. Concurrently process READMEs and values.yaml for historic chart versions
 //
 // These steps are processed in this way to ensure relevant chart data is
 // imported into the database as fast as possible. E.g. we want all icons for
@@ -231,7 +231,7 @@ func importCharts(charts []chart) error {
 	// Upsert pairs of selectors, charts
 	bulk.Upsert(pairs...)
 
-	// Remove	charts no longer existing in index
+	// Remove charts no longer existing in index
 	bulk.RemoveAll(bson.M{
 		"_id": bson.M{
 			"$nin": chartIDs,
@@ -252,9 +252,9 @@ func importWorker(wg *sync.WaitGroup, icons <-chan chart, chartFiles <-chan impo
 		}
 	}
 	for j := range chartFiles {
-		log.WithFields(log.Fields{"name": j.Name, "version": j.ChartVersion.Version}).Debug("importing readme")
-		if err := fetchAndImportReadme(j.Name, j.Repo, j.ChartVersion); err != nil {
-			log.WithFields(log.Fields{"name": j.Name, "version": j.ChartVersion.Version}).WithError(err).Error("failed to import readme")
+		log.WithFields(log.Fields{"name": j.Name, "version": j.ChartVersion.Version}).Debug("importing readme and values")
+		if err := fetchAndImportFiles(j.Name, j.Repo, j.ChartVersion); err != nil {
+			log.WithFields(log.Fields{"name": j.Name, "version": j.ChartVersion.Version}).WithError(err).Error("failed to import files")
 		}
 	}
 }
@@ -297,15 +297,15 @@ func fetchAndImportIcon(c chart) error {
 	return db.C(chartCollection).UpdateId(c.ID, bson.M{"$set": bson.M{"raw_icon": b.Bytes()}})
 }
 
-func fetchAndImportReadme(name string, r repo, cv chartVersion) error {
-	chartReadmeID := fmt.Sprintf("%s/%s-%s", r.Name, name, cv.Version)
+func fetchAndImportFiles(name string, r repo, cv chartVersion) error {
+	chartFilesID := fmt.Sprintf("%s/%s-%s", r.Name, name, cv.Version)
 	db, closer := dbSession.DB()
 	defer closer()
-	if err := db.C(chartReadmeCollection).FindId(chartReadmeID).One(&chartReadme{}); err == nil {
-		log.WithFields(log.Fields{"name": name, "version": cv.Version}).Debug("skipping existing readme")
+	if err := db.C(chartFilesCollection).FindId(chartFilesID).One(&chartFiles{}); err == nil {
+		log.WithFields(log.Fields{"name": name, "version": cv.Version}).Debug("skipping existing files")
 		return nil
 	}
-	log.WithFields(log.Fields{"name": name, "version": cv.Version}).Debug("fetching readme")
+	log.WithFields(log.Fields{"name": name, "version": cv.Version}).Debug("fetching files")
 
 	url := chartTarballURL(r, cv)
 	req, err := http.NewRequest("GET", url, nil)
@@ -333,20 +333,35 @@ func fetchAndImportReadme(name string, r repo, cv chartVersion) error {
 	tarf := tar.NewReader(gzf)
 
 	readmeFileName := name + "/README.md"
-	readme, err := extractFileFromTarball(readmeFileName, tarf)
-	if err != nil && !strings.Contains(err.Error(), "file not found") {
-		return err
-	}
+	valuesFileName := name + "/values.yaml"
+	fileNames := []string{valuesFileName, readmeFileName}
 
-	// Even if the readme doesn't exist, we create an empty entry to avoid
-	// refetching for this chart version in the future
-	if readme == "" {
-		log.WithFields(log.Fields{"name": name, "version": cv.Version}).Info("readme not found")
-	}
+	files, err := getFiles(cv, name, fileNames, tarf)
+	values := files[0]
+	readme := files[1]
 
-	db.C(chartReadmeCollection).Insert(chartReadme{chartReadmeID, readme})
+	db.C(chartFilesCollection).Insert(chartFiles{chartFilesID, readme, values})
 
 	return nil
+}
+
+func getFiles(cv chartVersion, name string, filenames []string, tarf *tar.Reader) ([]string, error) {
+	var files []string
+
+	for _, filename := range filenames {
+		file, err := extractFileFromTarball(filename, tarf)
+		if err != nil && !strings.Contains(err.Error(), "file not found") {
+			return nil, err
+		}
+
+		if file == "" {
+			log.WithFields(log.Fields{"name": name, "version": cv.Version}).Info(filename + " not found")
+		}
+
+		files = append(files, file)
+	}
+
+	return files, nil
 }
 
 func chartTarballURL(r repo, cv chartVersion) string {
