@@ -35,7 +35,8 @@ type chartVersion struct {
 	URLs       []string
 }
 
-type chartReadme struct {
+type chartFiles struct {
 	ID     string `bson:"_id"`
 	Readme string
+	Values string
 }

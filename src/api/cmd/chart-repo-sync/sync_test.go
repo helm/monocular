@@ -85,14 +85,19 @@ func (h *goodIconClient) Do(req *http.Request) (*http.Response, error) {
 type goodTarballClient struct {
 	c          chart
 	skipReadme bool
+	skipValues bool
 }
 
 var testChartReadme = "# readme for chart\n\nBest chart in town"
+var testChartValues = "image: test"
 
 func (h *goodTarballClient) Do(req *http.Request) (*http.Response, error) {
 	w := httptest.NewRecorder()
 	gzw := gzip.NewWriter(w)
 	files := []tarballFile{{h.c.Name + "/Chart.yaml", "should be a Chart.yaml here..."}}
+	if !h.skipValues {
+		files = append(files, tarballFile{h.c.Name + "/values.yaml", testChartValues})
+	}
 	if !h.skipReadme {
 		files = append(files, tarballFile{h.c.Name + "/README.md", testChartReadme})
 	}
@@ -247,7 +252,7 @@ func Test_fetchAndImportIcon(t *testing.T) {
 	})
 }
 
-func Test_fetchAndImportReadme(t *testing.T) {
+func Test_fetchAndImportFiles(t *testing.T) {
 	index, _ := parseRepoIndex([]byte(validRepoIndexYAML))
 	charts := chartsFromIndex(index, repo{Name: "test", URL: "http://testrepo.com"})
 	cv := charts[0].ChartVersions[0]
@@ -257,16 +262,16 @@ func Test_fetchAndImportReadme(t *testing.T) {
 		m.On("One", mock.Anything).Return(errors.New("return an error when checking if readme already exists to force fetching"))
 		dbSession = mockstore.NewMockSession(&m)
 		netClient = &badHTTPClient{}
-		assert.Err(t, io.EOF, fetchAndImportReadme(charts[0].Name, charts[0].Repo, cv))
+		assert.Err(t, io.EOF, fetchAndImportFiles(charts[0].Name, charts[0].Repo, cv))
 	})
 
-	t.Run("readme not found", func(t *testing.T) {
-		netClient = &goodTarballClient{c: charts[0], skipReadme: true}
+	t.Run("file not found", func(t *testing.T) {
+		netClient = &goodTarballClient{c: charts[0], skipValues: true, skipReadme: true}
 		m := mock.Mock{}
-		m.On("One", mock.Anything).Return(errors.New("return an error when checking if readme already exists to force fetching"))
-		m.On("Insert", chartReadme{fmt.Sprintf("%s/%s-%s", charts[0].Repo.Name, charts[0].Name, cv.Version), ""})
+		m.On("One", mock.Anything).Return(errors.New("return an error when checking if files already exists to force fetching"))
+		m.On("Insert", chartFiles{fmt.Sprintf("%s/%s-%s", charts[0].Repo.Name, charts[0].Name, cv.Version), "", ""})
 		dbSession = mockstore.NewMockSession(&m)
-		err := fetchAndImportReadme(charts[0].Name, charts[0].Repo, cv)
+		err := fetchAndImportFiles(charts[0].Name, charts[0].Repo, cv)
 		assert.NoErr(t, err)
 		m.AssertExpectations(t)
 	})
@@ -274,20 +279,20 @@ func Test_fetchAndImportReadme(t *testing.T) {
 	t.Run("valid tarball", func(t *testing.T) {
 		netClient = &goodTarballClient{c: charts[0]}
 		m := mock.Mock{}
-		m.On("One", mock.Anything).Return(errors.New("return an error when checking if readme already exists to force fetching"))
-		m.On("Insert", chartReadme{fmt.Sprintf("%s/%s-%s", charts[0].Repo.Name, charts[0].Name, cv.Version), testChartReadme})
+		m.On("One", mock.Anything).Return(errors.New("return an error when checking if files already exists to force fetching"))
+		m.On("Insert", chartFiles{fmt.Sprintf("%s/%s-%s", charts[0].Repo.Name, charts[0].Name, cv.Version), testChartReadme, testChartValues})
 		dbSession = mockstore.NewMockSession(&m)
-		err := fetchAndImportReadme(charts[0].Name, charts[0].Repo, cv)
+		err := fetchAndImportFiles(charts[0].Name, charts[0].Repo, cv)
 		assert.NoErr(t, err)
 		m.AssertExpectations(t)
 	})
 
-	t.Run("readme exists", func(t *testing.T) {
+	t.Run("file exists", func(t *testing.T) {
 		m := mock.Mock{}
-		// don't return an error when checking if readme already exists
+		// don't return an error when checking if files already exists
 		m.On("One", mock.Anything).Return(nil)
 		dbSession = mockstore.NewMockSession(&m)
-		err := fetchAndImportReadme(charts[0].Name, charts[0].Repo, cv)
+		err := fetchAndImportFiles(charts[0].Name, charts[0].Repo, cv)
 		assert.NoErr(t, err)
 		m.AssertNotCalled(t, "Insert", mock.Anything)
 	})
