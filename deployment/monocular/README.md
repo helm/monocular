@@ -5,7 +5,7 @@
 ## TL;DR;
 
 ```console
-$ helm repo add monocular https://helm.github.io/monocular
+$ helm repo add monocular https://kubernetes-helm.github.io/monocular
 $ helm install monocular/monocular
 ```
 
