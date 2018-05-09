@@ -92,6 +92,22 @@ func TestCachedChartsRefresh(t *testing.T) {
 	assert.NoErr(t, err)
 }
 
+func TestCachedChartsRefreshChart(t *testing.T) {
+	// Stubs Download and processing
+	DownloadAndExtractChartTarballOrig := charthelper.DownloadAndExtractChartTarball
+	defer func() { charthelper.DownloadAndExtractChartTarball = DownloadAndExtractChartTarballOrig }()
+	charthelper.DownloadAndExtractChartTarball = func(chart *swaggermodels.ChartPackage, repoURL string) error { return nil }
+
+	DownloadAndProcessChartIconOrig := charthelper.DownloadAndProcessChartIcon
+	defer func() { charthelper.DownloadAndProcessChartIcon = DownloadAndProcessChartIconOrig }()
+	charthelper.DownloadAndProcessChartIcon = func(chart *swaggermodels.ChartPackage) error { return nil }
+
+	// EO stubs
+
+	err := chartsImplementation.RefreshChart("stable", "datadog")
+	assert.NoErr(t, err)
+}
+
 func TestCachedChartsRefreshErrorPropagation(t *testing.T) {
 	tests := []struct {
 		name  string

@@ -145,6 +145,9 @@ func (c *mockCharts) Search(params chartsapi.SearchChartsParams) ([]*models.Char
 func (c *mockCharts) Refresh() error {
 	return nil
 }
+func (c *mockCharts) RefreshChart(repoName string, chartName string) error {
+	return nil
+}
 
 // getMockRepo is a convenience that loads a yaml repo from the filesystem
 func getMockRepo(repo string) ([]byte, error) {
