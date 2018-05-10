@@ -102,10 +102,22 @@ func TestCachedChartsRefreshChart(t *testing.T) {
 	defer func() { charthelper.DownloadAndProcessChartIcon = DownloadAndProcessChartIconOrig }()
 	charthelper.DownloadAndProcessChartIcon = func(chart *swaggermodels.ChartPackage) error { return nil }
 
-	// EO stubs
-
 	err := chartsImplementation.RefreshChart("stable", "datadog")
 	assert.NoErr(t, err)
+}
+
+func TestCachedChartsRefreshChartRepoNotFound(t *testing.T) {
+	// Stubs Download and processing
+	DownloadAndExtractChartTarballOrig := charthelper.DownloadAndExtractChartTarball
+	defer func() { charthelper.DownloadAndExtractChartTarball = DownloadAndExtractChartTarballOrig }()
+	charthelper.DownloadAndExtractChartTarball = func(chart *swaggermodels.ChartPackage, repoURL string) error { return nil }
+
+	DownloadAndProcessChartIconOrig := charthelper.DownloadAndProcessChartIcon
+	defer func() { charthelper.DownloadAndProcessChartIcon = DownloadAndProcessChartIconOrig }()
+	charthelper.DownloadAndProcessChartIcon = func(chart *swaggermodels.ChartPackage) error { return nil }
+
+	err := chartsImplementation.RefreshChart("stable", "inexistant chart")
+	assert.Err(t, err, errors.New("no chart \"inexistant chart\" found for repo stable\n"))
 }
 
 func TestCachedChartsRefreshErrorPropagation(t *testing.T) {

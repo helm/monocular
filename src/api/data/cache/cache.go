@@ -2,10 +2,6 @@ package cache
 
 import (
 	"fmt"
-	"io/ioutil"
-	"net/http"
-	"net/url"
-	"path"
 	"strings"
 	"sync"
 
@@ -13,12 +9,12 @@ import (
 
 	"github.com/kubernetes-helm/monocular/src/api/data"
 	"github.com/kubernetes-helm/monocular/src/api/data/cache/charthelper"
+	"github.com/kubernetes-helm/monocular/src/api/data/cache/repohelper"
 	"github.com/kubernetes-helm/monocular/src/api/data/helpers"
 	"github.com/kubernetes-helm/monocular/src/api/datastore"
 	"github.com/kubernetes-helm/monocular/src/api/models"
 	swaggermodels "github.com/kubernetes-helm/monocular/src/api/swagger/models"
 	"github.com/kubernetes-helm/monocular/src/api/swagger/restapi/operations/charts"
-	"github.com/kubernetes-helm/monocular/src/api/version"
 )
 
 type cachedCharts struct {
@@ -148,29 +144,7 @@ func (c *cachedCharts) RefreshChart(repoName string, chartName string) error {
 	if err != nil {
 		return err
 	}
-
-	u, _ := url.Parse(repo.URL)
-	u.Path = path.Join(u.Path, "index.yaml")
-
-	// 1 - Download repo index
-	var client http.Client
-	req, err := http.NewRequest("GET", u.String(), nil)
-	if err != nil {
-		return err
-	}
-	req.Header.Set("User-Agent", version.GetUserAgent())
-	resp, err := client.Do(req)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return err
-	}
-
-	// 2 - Parse repo index
-	charts, err := helpers.ParseYAMLRepo(body, repo.Name)
+	charts, err := repohelper.GetChartsFromRepoIndexFile(repo)
 	if err != nil {
 		return err
 	}
@@ -178,14 +152,12 @@ func (c *cachedCharts) RefreshChart(repoName string, chartName string) error {
 	didUpdate := false
 	for _, chart := range charts {
 		if *chart.Name == chartName {
-
 			didUpdate = true
 			ch := make(chan chanItem, len(charts))
 			defer close(ch)
 			go processChartMetadata(chart, repo.URL, ch)
 
 			it := <-ch
-			// Only append the ones that have not failed
 			if it.err == nil {
 				c.rwm.Lock()
 				// find the key
@@ -203,7 +175,7 @@ func (c *cachedCharts) RefreshChart(repoName string, chartName string) error {
 	}
 
 	if didUpdate == false {
-		return fmt.Errorf("no chart \"%s\" found for repo %s\n", chartName, repo)
+		return fmt.Errorf("no chart \"%s\" found for repo %s\n", chartName, repo.Name)
 	} else {
 		return nil
 	}
@@ -227,28 +199,7 @@ func (c *cachedCharts) Refresh() error {
 		return err
 	}
 	for _, repo := range repos {
-		u, _ := url.Parse(repo.URL)
-		u.Path = path.Join(u.Path, "index.yaml")
-
-		// 1 - Download repo index
-		var client http.Client
-		req, err := http.NewRequest("GET", u.String(), nil)
-		if err != nil {
-			return err
-		}
-		req.Header.Set("User-Agent", version.GetUserAgent())
-		resp, err := client.Do(req)
-		if err != nil {
-			return err
-		}
-		defer resp.Body.Close()
-		body, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			return err
-		}
-
-		// 2 - Parse repo index
-		charts, err := helpers.ParseYAMLRepo(body, repo.Name)
+		charts, err := repohelper.GetChartsFromRepoIndexFile(repo)
 		if err != nil {
 			return err
 		}

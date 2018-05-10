@@ -65,9 +65,11 @@ func (c *ChartHandlers) RefreshChart(w http.ResponseWriter, req *http.Request, p
 	err = c.chartsImplementation.RefreshChart(params["repo"], params["chartName"])
 
 	if err != nil {
-		log.Printf("data.chartsapi.RefreshChart(%s, %s) error (%s)", params["repo"], params["chartName"], err)
-		notFound(w, ChartVersionResourceName)
+		message := fmt.Sprintf("data.chartsapi.RefreshChart(%s, %s) error (%s)", params["repo"], params["chartName"], err)
+		log.Printf(message)
+		renderer.Render.JSON(w, http.StatusBadRequest, models.Error{Code: pointerto.Int64(http.StatusBadRequest), Message: &message})
 		return
+
 	}
 	payload := handlers.DataResourceBody(chartResource)
 	renderer.Render.JSON(w, http.StatusOK, payload)
