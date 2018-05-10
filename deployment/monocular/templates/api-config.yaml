@@ -9,7 +9,7 @@ metadata:
     heritage: "{{ .Release.Service }}"
 data:
   monocular.yaml: |-
-{{ toYaml .Values.api.config | indent 4 -}}
     mongodb:
       url: {{ template "mongodb.fullname" . }}:27017
       database: monocular
+{{ toYaml .Values.api.config | indent 4 -}}
