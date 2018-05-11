@@ -7,6 +7,7 @@ import (
 	"github.com/arschles/assert"
 	"github.com/kubernetes-helm/monocular/src/api/data"
 	"github.com/kubernetes-helm/monocular/src/api/data/cache/charthelper"
+	"github.com/kubernetes-helm/monocular/src/api/data/cache/repohelper"
 	"github.com/kubernetes-helm/monocular/src/api/data/helpers"
 	"github.com/kubernetes-helm/monocular/src/api/datastore"
 	"github.com/kubernetes-helm/monocular/src/api/models"
@@ -118,6 +119,27 @@ func TestCachedChartsRefreshChartRepoNotFound(t *testing.T) {
 
 	err := chartsImplementation.RefreshChart("stable", "inexistant chart")
 	assert.Err(t, err, errors.New("no chart \"inexistant chart\" found for repo stable\n"))
+}
+
+func TestCachedChartsRefreshChartIndexFileDownloadError(t *testing.T) {
+	// Stubs Download and processing
+	DownloadAndExtractChartTarballOrig := charthelper.DownloadAndExtractChartTarball
+	defer func() { charthelper.DownloadAndExtractChartTarball = DownloadAndExtractChartTarballOrig }()
+	charthelper.DownloadAndExtractChartTarball = func(chart *swaggermodels.ChartPackage, repoURL string) error { return nil }
+
+	DownloadAndProcessChartIconOrig := charthelper.DownloadAndProcessChartIcon
+	defer func() { charthelper.DownloadAndProcessChartIcon = DownloadAndProcessChartIconOrig }()
+	charthelper.DownloadAndProcessChartIcon = func(chart *swaggermodels.ChartPackage) error { return nil }
+
+	GetChartsFromRepoIndexFileOrig := repohelper.GetChartsFromRepoIndexFile
+	defer func() { repohelper.GetChartsFromRepoIndexFile = GetChartsFromRepoIndexFileOrig }()
+	repohelper.GetChartsFromRepoIndexFile = func(repo *models.Repo) ([]*swaggermodels.ChartPackage, error) {
+		return nil, errors.New("Error downloading repo index file")
+	}
+
+	err := chartsImplementation.RefreshChart("stable", "zookeper")
+	assert.Err(t, err, errors.New("Error downloading repo index file"))
+	//repohelper.GetChartsFromRepoIndexFile = backupFunc
 }
 
 func TestCachedChartsRefreshErrorPropagation(t *testing.T) {
