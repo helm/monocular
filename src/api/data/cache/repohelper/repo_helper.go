@@ -14,7 +14,6 @@ import (
 
 // GetRepoIndexFile Get the charts from the index file
 var GetChartsFromRepoIndexFile = func(repo *models.Repo) ([]*swaggermodels.ChartPackage, error) {
-
 	u, _ := url.Parse(repo.URL)
 	u.Path = path.Join(u.Path, "index.yaml")
 
