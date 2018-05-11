@@ -13,8 +13,9 @@ import (
 
 // MockedMethods contains pointers to mocked implementations of methods
 type MockedMethods struct {
-	All    func() ([]*models.ChartPackage, error)
-	Search func(params chartsapi.SearchChartsParams) ([]*models.ChartPackage, error)
+	All          func() ([]*models.ChartPackage, error)
+	Search       func(params chartsapi.SearchChartsParams) ([]*models.ChartPackage, error)
+	RefreshChart func(repoName string, chartName string) error
 }
 
 // mockCharts fulfills the data.Charts interface
@@ -146,6 +147,9 @@ func (c *mockCharts) Refresh() error {
 	return nil
 }
 func (c *mockCharts) RefreshChart(repoName string, chartName string) error {
+	if c.mockedMethods.RefreshChart != nil {
+		return c.mockedMethods.RefreshChart(repoName, chartName)
+	}
 	return nil
 }
 
