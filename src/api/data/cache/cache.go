@@ -2,10 +2,6 @@ package cache
 
 import (
 	"fmt"
-	"io/ioutil"
-	"net/http"
-	"net/url"
-	"path"
 	"strings"
 	"sync"
 
@@ -13,12 +9,12 @@ import (
 
 	"github.com/kubernetes-helm/monocular/src/api/data"
 	"github.com/kubernetes-helm/monocular/src/api/data/cache/charthelper"
+	"github.com/kubernetes-helm/monocular/src/api/data/cache/repohelper"
 	"github.com/kubernetes-helm/monocular/src/api/data/helpers"
 	"github.com/kubernetes-helm/monocular/src/api/datastore"
 	"github.com/kubernetes-helm/monocular/src/api/models"
 	swaggermodels "github.com/kubernetes-helm/monocular/src/api/swagger/models"
 	"github.com/kubernetes-helm/monocular/src/api/swagger/restapi/operations/charts"
-	"github.com/kubernetes-helm/monocular/src/api/version"
 )
 
 type cachedCharts struct {
@@ -134,6 +130,58 @@ func (c *cachedCharts) Search(params charts.SearchChartsParams) ([]*swaggermodel
 }
 
 // Refresh is the interface implementation for data.Charts
+// It refreshes cached data for a specific repo and chart
+func (c *cachedCharts) RefreshChart(repoName string, chartName string) error {
+
+	log.WithFields(log.Fields{
+		"path": charthelper.DataDirBase(),
+	}).Info("Using cache directory")
+
+	db, closer := c.dbSession.DB()
+	defer closer()
+
+	repo, err := models.GetRepo(db, repoName)
+	if err != nil {
+		return err
+	}
+	charts, err := repohelper.GetChartsFromRepoIndexFile(repo)
+	if err != nil {
+		return err
+	}
+
+	didUpdate := false
+	for _, chart := range charts {
+		if *chart.Name == chartName {
+			didUpdate = true
+			ch := make(chan chanItem, len(charts))
+			defer close(ch)
+			go processChartMetadata(chart, repo.URL, ch)
+
+			it := <-ch
+			if it.err == nil {
+				c.rwm.Lock()
+				// find the key
+				for k, chart := range c.allCharts[repo.Name] {
+					if chart.Name == it.chart.Name && chart.Version == it.chart.Version {
+						c.allCharts[repo.Name][k] = it.chart
+					}
+				}
+				c.rwm.Unlock()
+			} else {
+				return it.err
+			}
+
+		}
+	}
+
+	if didUpdate == false {
+		return fmt.Errorf("no chart \"%s\" found for repo %s\n", chartName, repo.Name)
+	} else {
+		return nil
+	}
+}
+
+// Refresh is the interface implementation for data.Charts
 // It refreshes cached data for all authoritative repository+chart data
 func (c *cachedCharts) Refresh() error {
 	// New list of charts that will replace cached charts
@@ -151,28 +199,7 @@ func (c *cachedCharts) Refresh() error {
 		return err
 	}
 	for _, repo := range repos {
-		u, _ := url.Parse(repo.URL)
-		u.Path = path.Join(u.Path, "index.yaml")
-
-		// 1 - Download repo index
-		var client http.Client
-		req, err := http.NewRequest("GET", u.String(), nil)
-		if err != nil {
-			return err
-		}
-		req.Header.Set("User-Agent", version.GetUserAgent())
-		resp, err := client.Do(req)
-		if err != nil {
-			return err
-		}
-		defer resp.Body.Close()
-		body, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			return err
-		}
-
-		// 2 - Parse repo index
-		charts, err := helpers.ParseYAMLRepo(body, repo.Name)
+		charts, err := repohelper.GetChartsFromRepoIndexFile(repo)
 		if err != nil {
 			return err
 		}

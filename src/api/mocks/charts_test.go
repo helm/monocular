@@ -104,3 +104,13 @@ func TestMockChartsAllFromRepo(t *testing.T) {
 	assert.ExistsErr(t, err, "sent bogus repo name to GetChartsInRepo")
 	assert.True(t, len(noCharts) == 0, "empty charts slice")
 }
+
+func TestMockChartsRefresh(t *testing.T) {
+	err := chartsImplementation.Refresh()
+	assert.NoErr(t, err)
+}
+
+func TestMockChartsRefreshChart(t *testing.T) {
+	err := chartsImplementation.RefreshChart(testutil.RepoName, testutil.ChartName)
+	assert.NoErr(t, err)
+}
