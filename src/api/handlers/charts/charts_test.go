@@ -208,6 +208,37 @@ func TestGetChartsInRepo404(t *testing.T) {
 	testutil.AssertErrBodyData(t, http.StatusNotFound, ChartResourceName+"s", httpBody)
 }
 
+func TestRefreshChart200(t *testing.T) {
+	req, err := http.NewRequest("POST", "/v1/charts/"+testutil.RepoName+"/"+testutil.ChartName+"/refresh", nil)
+	assert.NoErr(t, err)
+	res := httptest.NewRecorder()
+	chartHandlers.RefreshChart(res, req, handlers.Params{"repo": testutil.RepoName, "chartName": testutil.ChartName})
+	assert.Equal(t, res.Code, http.StatusOK, "expect a 200 response code")
+}
+
+func TestRefreshChart404(t *testing.T) {
+	req, err := http.NewRequest("POST", "/v1/charts/"+testutil.RepoName+"/"+testutil.ChartName+"/refresh", nil)
+	assert.NoErr(t, err)
+	res := httptest.NewRecorder()
+	chartHandlers.RefreshChart(res, req, handlers.Params{"repo": testutil.RepoName, "chartName": "inexistant chart"})
+	assert.Equal(t, res.Code, http.StatusNotFound, "expect a 404 response code")
+}
+
+func TestRefreshChart400(t *testing.T) {
+	req, err := http.NewRequest("POST", "/v1/charts/"+testutil.RepoName+"/"+testutil.ChartName+"/refresh", nil)
+	assert.NoErr(t, err)
+	res := httptest.NewRecorder()
+
+	chImplementation := mocks.NewMockCharts(mocks.MockedMethods{
+		RefreshChart: func(repoName string, chartName string) error {
+			return errors.New("error refreshing chart")
+		},
+	})
+
+	NewChartHandlers(dbSession, chImplementation).RefreshChart(res, req, handlers.Params{"repo": testutil.RepoName, "chartName": testutil.ChartName})
+	assert.Equal(t, res.Code, http.StatusBadRequest, "expect a 400 response code")
+}
+
 func TestChartHTTPBody(t *testing.T) {
 	w := httptest.NewRecorder()
 	chart, err := chartsImplementation.ChartFromRepo(testutil.RepoName, testutil.ChartName)
