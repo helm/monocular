@@ -150,21 +150,28 @@ func (c *cachedCharts) RefreshChart(repoName string, chartName string) error {
 	}
 
 	didUpdate := false
-	for _, chart := range charts {
-		if *chart.Name == chartName {
+	var alreadyExists bool
+	for _, chartFromIndex := range charts {
+		if *chartFromIndex.Name == chartName {
 			didUpdate = true
 			ch := make(chan chanItem, len(charts))
 			defer close(ch)
-			go processChartMetadata(chart, repo.URL, ch)
+			go processChartMetadata(chartFromIndex, repo.URL, ch)
 
 			it := <-ch
 			if it.err == nil {
 				c.rwm.Lock()
 				// find the key
+				alreadyExists = false
 				for k, chart := range c.allCharts[repo.Name] {
-					if chart.Name == it.chart.Name && chart.Version == it.chart.Version {
+					if *chart.Name == *it.chart.Name && *chart.Version == *it.chart.Version {
 						c.allCharts[repo.Name][k] = it.chart
+						alreadyExists = true
+						break
 					}
+				}
+				if alreadyExists == false {
+					c.allCharts[repo.Name] = append(c.allCharts[repo.Name], it.chart)
 				}
 				c.rwm.Unlock()
 			} else {
