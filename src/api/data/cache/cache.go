@@ -129,6 +129,38 @@ func (c *cachedCharts) Search(params charts.SearchChartsParams) ([]*swaggermodel
 	return ret, nil
 }
 
+// deleteChart is the interface implementation for data.Charts
+// It deletes Chart from memory
+// NOTE: This method does not delete from filesystem for now. It is used to test single chart refresh
+func (c *cachedCharts) DeleteChart(repoName string, chartName string, chartVersion string) error {
+
+	db, closer := c.dbSession.DB()
+	defer closer()
+
+	repo, err := models.GetRepo(db, repoName)
+	if err != nil {
+		return err
+	}
+
+	c.rwm.Lock()
+
+	for k, chart := range c.allCharts[repoName] {
+
+		if *chart.Name == chartName && *chart.Version == chartVersion {
+			log.WithFields(log.Fields{
+				"path": charthelper.DataDirBase(),
+			}).Info(chartName + " - " + chartVersion + " deleted")
+
+			c.allCharts[repo.Name] = append(c.allCharts[repo.Name][:k], c.allCharts[repo.Name][k+1:]...)
+			break
+		}
+	}
+
+	c.rwm.Unlock()
+
+	return nil
+}
+
 // Refresh is the interface implementation for data.Charts
 // It refreshes cached data for a specific repo and chart
 func (c *cachedCharts) RefreshChart(repoName string, chartName string) error {
