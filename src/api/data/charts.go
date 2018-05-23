@@ -21,5 +21,6 @@ type Charts interface {
 	Search(params charts.SearchChartsParams) ([]*models.ChartPackage, error)
 	// Refresh freshens charts data
 	Refresh() error
-	RefreshChart(Repo string, ChartName string) error
+	RefreshChart(Repo string, chartName string) error
+	DeleteChart(Repo string, chartName string, version string) error
 }
