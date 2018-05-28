@@ -129,6 +129,38 @@ func (c *cachedCharts) Search(params charts.SearchChartsParams) ([]*swaggermodel
 	return ret, nil
 }
 
+// deleteChart is the interface implementation for data.Charts
+// It deletes Chart from memory
+// NOTE: This method does not delete from filesystem for now. It is used to test single chart refresh
+func (c *cachedCharts) DeleteChart(repoName string, chartName string, chartVersion string) error {
+
+	db, closer := c.dbSession.DB()
+	defer closer()
+
+	repo, err := models.GetRepo(db, repoName)
+	if err != nil {
+		return err
+	}
+
+	c.rwm.Lock()
+
+	for k, chart := range c.allCharts[repoName] {
+
+		if *chart.Name == chartName && *chart.Version == chartVersion {
+			log.WithFields(log.Fields{
+				"path": charthelper.DataDirBase(),
+			}).Info(chartName + " - " + chartVersion + " deleted")
+
+			c.allCharts[repo.Name] = append(c.allCharts[repo.Name][:k], c.allCharts[repo.Name][k+1:]...)
+			break
+		}
+	}
+
+	c.rwm.Unlock()
+
+	return nil
+}
+
 // Refresh is the interface implementation for data.Charts
 // It refreshes cached data for a specific repo and chart
 func (c *cachedCharts) RefreshChart(repoName string, chartName string) error {
@@ -150,21 +182,28 @@ func (c *cachedCharts) RefreshChart(repoName string, chartName string) error {
 	}
 
 	didUpdate := false
-	for _, chart := range charts {
-		if *chart.Name == chartName {
+	var alreadyExists bool
+	for _, chartFromIndex := range charts {
+		if *chartFromIndex.Name == chartName {
 			didUpdate = true
 			ch := make(chan chanItem, len(charts))
 			defer close(ch)
-			go processChartMetadata(chart, repo.URL, ch)
+			go processChartMetadata(chartFromIndex, repo.URL, ch)
 
 			it := <-ch
 			if it.err == nil {
 				c.rwm.Lock()
 				// find the key
+				alreadyExists = false
 				for k, chart := range c.allCharts[repo.Name] {
-					if chart.Name == it.chart.Name && chart.Version == it.chart.Version {
+					if *chart.Name == *it.chart.Name && *chart.Version == *it.chart.Version {
 						c.allCharts[repo.Name][k] = it.chart
+						alreadyExists = true
+						break
 					}
+				}
+				if alreadyExists == false {
+					c.allCharts[repo.Name] = append(c.allCharts[repo.Name], it.chart)
 				}
 				c.rwm.Unlock()
 			} else {

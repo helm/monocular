@@ -114,3 +114,8 @@ func TestMockChartsRefreshChart(t *testing.T) {
 	err := chartsImplementation.RefreshChart(testutil.RepoName, testutil.ChartName)
 	assert.NoErr(t, err)
 }
+
+func TestMockChartsDeleteChart(t *testing.T) {
+	err := chartsImplementation.DeleteChart(testutil.RepoName, testutil.ChartName, testutil.ChartVersionString)
+	assert.NoErr(t, err)
+}

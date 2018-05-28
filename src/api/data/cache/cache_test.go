@@ -107,6 +107,29 @@ func TestCachedChartsRefreshChart(t *testing.T) {
 	assert.NoErr(t, err)
 }
 
+func TestCachedChartsRefreshChartAddsNewVersion(t *testing.T) {
+	// Stubs Download and processing
+	DownloadAndExtractChartTarballOrig := charthelper.DownloadAndExtractChartTarball
+	defer func() { charthelper.DownloadAndExtractChartTarball = DownloadAndExtractChartTarballOrig }()
+	charthelper.DownloadAndExtractChartTarball = func(chart *swaggermodels.ChartPackage, repoURL string) error { return nil }
+
+	DownloadAndProcessChartIconOrig := charthelper.DownloadAndProcessChartIcon
+	defer func() { charthelper.DownloadAndProcessChartIcon = DownloadAndProcessChartIconOrig }()
+	charthelper.DownloadAndProcessChartIcon = func(chart *swaggermodels.ChartPackage) error { return nil }
+
+	chart, err := chartsImplementation.ChartVersionFromRepo("stable", "datadog", "0.1.0")
+	assert.NoErr(t, err)
+
+	err = chartsImplementation.DeleteChart("stable", *chart.Name, *chart.Version)
+	assert.NoErr(t, err)
+
+	_, err = chartsImplementation.ChartVersionFromRepo("stable", *chart.Name, *chart.Version)
+	assert.Err(t, err, errors.New("didn't find version "+*chart.Version+" of chart "+*chart.Name+"\n"))
+
+	err = chartsImplementation.RefreshChart("stable", *chart.Name)
+	assert.NoErr(t, err)
+}
+
 func TestCachedChartsRefreshChartRepoNotFound(t *testing.T) {
 	// Stubs Download and processing
 	DownloadAndExtractChartTarballOrig := charthelper.DownloadAndExtractChartTarball

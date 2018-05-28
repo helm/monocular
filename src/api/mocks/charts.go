@@ -16,6 +16,7 @@ type MockedMethods struct {
 	All          func() ([]*models.ChartPackage, error)
 	Search       func(params chartsapi.SearchChartsParams) ([]*models.ChartPackage, error)
 	RefreshChart func(repoName string, chartName string) error
+	DeleteChart  func(repoName string, chartName string, version string) error
 }
 
 // mockCharts fulfills the data.Charts interface
@@ -146,9 +147,17 @@ func (c *mockCharts) Search(params chartsapi.SearchChartsParams) ([]*models.Char
 func (c *mockCharts) Refresh() error {
 	return nil
 }
+
 func (c *mockCharts) RefreshChart(repoName string, chartName string) error {
 	if c.mockedMethods.RefreshChart != nil {
 		return c.mockedMethods.RefreshChart(repoName, chartName)
+	}
+	return nil
+}
+
+func (c *mockCharts) DeleteChart(repoName string, chartName string, version string) error {
+	if c.mockedMethods.DeleteChart != nil {
+		return c.mockedMethods.DeleteChart(repoName, chartName, version)
 	}
 	return nil
 }
