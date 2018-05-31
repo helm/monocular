@@ -5,7 +5,7 @@ api:
   replicaCount: 2
   image:
     repository: bitnami/monocular-api
-    tag: v0.7.0
+    tag: v0.7.1
     pullPolicy: Always
   service:
     name: monocular-api
@@ -58,7 +58,7 @@ ui:
   replicaCount: 2
   image:
     repository: bitnami/monocular-ui
-    tag: v0.7.0
+    tag: v0.7.1
     pullPolicy: Always
   service:
     name: monocular-ui
