@@ -45,3 +45,15 @@ spec:
       - name: config
         configMap:
           name: {{ template "fullname" . }}-ui-config
+    {{- with .Values.ui.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.ui.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.ui.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
