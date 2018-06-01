@@ -216,14 +216,6 @@ func TestRefreshChart200(t *testing.T) {
 	assert.Equal(t, res.Code, http.StatusOK, "expect a 200 response code")
 }
 
-func TestRefreshChart404(t *testing.T) {
-	req, err := http.NewRequest("POST", "/v1/charts/"+testutil.RepoName+"/"+testutil.ChartName+"/refresh", nil)
-	assert.NoErr(t, err)
-	res := httptest.NewRecorder()
-	chartHandlers.RefreshChart(res, req, handlers.Params{"repo": testutil.RepoName, "chartName": "inexistant chart"})
-	assert.Equal(t, res.Code, http.StatusNotFound, "expect a 404 response code")
-}
-
 func TestRefreshChart400(t *testing.T) {
 	req, err := http.NewRequest("POST", "/v1/charts/"+testutil.RepoName+"/"+testutil.ChartName+"/refresh", nil)
 	assert.NoErr(t, err)
