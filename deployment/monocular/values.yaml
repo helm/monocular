@@ -54,6 +54,9 @@ api:
     tillerNamespace: kube-system
     # Cache refresh interval in sec.
     cacheRefreshInterval: 3600
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
 ui:
   replicaCount: 2
   image:
@@ -81,6 +84,9 @@ ui:
   backendHostname: /api
   # e.g. API served on a different domain
   # backendHostname: http://monocular-api.local
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
 
 prerender:
   replicaCount: 1
@@ -98,6 +104,9 @@ prerender:
     requests:
       cpu: 100m
       memory: 128Mi
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
 
 ingress:
   enabled: true
