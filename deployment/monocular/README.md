@@ -80,10 +80,10 @@ api:
   config:
     repos:
       - name: stable
-        url: http://storage.googleapis.com/kubernetes-charts
+        url: https://kubernetes-charts.storage.googleapis.com
         source: https://github.com/kubernetes/charts/tree/master/stable
       - name: incubator
-        url: http://storage.googleapis.com/kubernetes-charts-incubator
+        url: https://kubernetes-charts-incubator.storage.googleapis.com
         source: https://github.com/kubernetes/charts/tree/master/incubator
       - name: monocular
         url: https://kubernetes-helm.github.io/monocular
