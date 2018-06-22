@@ -180,7 +180,10 @@ func TestCachedChartsRefreshErrorPropagation(t *testing.T) {
 			chImplementation := NewCachedCharts(models.NewMockSession(models.MockDBConfig{}))
 			models.MockRepos = tt.repos
 			err := chImplementation.Refresh()
-			assert.ExistsErr(t, err, tt.name)
+			assert.NoErr(t, err)
+			allCharts, err := chImplementation.All()
+			assert.NoErr(t, err)
+			assert.True(t, len(allCharts) == 0, "empty charts slice")
 		})
 	}
 }
