@@ -35,5 +35,5 @@ func TestNewRefreshDataError(t *testing.T) {
 	job := NewRefreshChartsData(chartsImplementation, freshness, "test-run", true)
 	assert.Equal(t, job.FirstRun(), true, "First run")
 	err := job.Do()
-	assert.ExistsErr(t, err, "Error executing refresh")
+	assert.NoErr(t, err)
 }
