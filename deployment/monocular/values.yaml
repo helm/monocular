@@ -16,11 +16,11 @@ api:
       # foo.io/bar: "true"
   resources:
     limits:
-      cpu: 100m
-      memory: 128Mi
+      cpu: 200m
+      memory: 512Mi
     requests:
       cpu: 100m
-      memory: 128Mi
+      memory: 256Mi
   livenessProbe:
     initialDelaySeconds: 180
   auth:
