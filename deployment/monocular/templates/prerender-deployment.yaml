@@ -22,3 +22,15 @@ spec:
             value: {{ .Values.prerender.cacheEnabled | quote }}
         resources:
 {{ toYaml .Values.prerender.resources | indent 12 }}
+    {{- with .Values.prerender.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.prerender.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.prerender.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}

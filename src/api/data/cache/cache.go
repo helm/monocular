@@ -240,7 +240,11 @@ func (c *cachedCharts) Refresh() error {
 	for _, repo := range repos {
 		charts, err := repohelper.GetChartsFromRepoIndexFile(repo)
 		if err != nil {
-			return err
+			log.WithFields(log.Fields{
+				"repo": repo,
+				"error": err,
+			}).Error("error on refresh charts from repo")
+			continue
 		}
 
 		// 3 - Process elements in index

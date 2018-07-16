@@ -5,7 +5,7 @@ api:
   replicaCount: 2
   image:
     repository: bitnami/monocular-api
-    tag: v0.7.1
+    tag: v0.7.3
     pullPolicy: Always
   service:
     name: monocular-api
@@ -16,11 +16,11 @@ api:
       # foo.io/bar: "true"
   resources:
     limits:
-      cpu: 100m
-      memory: 128Mi
+      cpu: 200m
+      memory: 512Mi
     requests:
       cpu: 100m
-      memory: 128Mi
+      memory: 256Mi
   livenessProbe:
     initialDelaySeconds: 180
   auth:
@@ -54,11 +54,14 @@ api:
     tillerNamespace: kube-system
     # Cache refresh interval in sec.
     cacheRefreshInterval: 3600
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
 ui:
   replicaCount: 2
   image:
     repository: bitnami/monocular-ui
-    tag: v0.7.1
+    tag: v0.7.3
     pullPolicy: Always
   service:
     name: monocular-ui
@@ -81,6 +84,9 @@ ui:
   backendHostname: /api
   # e.g. API served on a different domain
   # backendHostname: http://monocular-api.local
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
 
 prerender:
   replicaCount: 1
@@ -98,6 +104,9 @@ prerender:
     requests:
       cpu: 100m
       memory: 128Mi
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
 
 ingress:
   enabled: true

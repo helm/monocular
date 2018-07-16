@@ -53,16 +53,7 @@ func (c *ChartHandlers) GetChart(w http.ResponseWriter, req *http.Request, param
 
 // RefreshChart is the handler for the /charts/{repo}/{name} endpoint
 func (c *ChartHandlers) RefreshChart(w http.ResponseWriter, req *http.Request, params handlers.Params) {
-	chartPackage, err := c.chartsImplementation.ChartFromRepo(params["repo"], params["chartName"])
-	if err != nil {
-		log.Printf("data.chartsapi.ChartFromRepo(%s, %s) error (%s)", params["repo"], params["chartName"], err)
-		notFound(w, ChartResourceName)
-		return
-	}
-	db, closer := c.dbSession.DB()
-	defer closer()
-	chartResource := helpers.MakeChartResource(db, chartPackage)
-	err = c.chartsImplementation.RefreshChart(params["repo"], params["chartName"])
+	err := c.chartsImplementation.RefreshChart(params["repo"], params["chartName"])
 
 	if err != nil {
 		message := fmt.Sprintf("data.chartsapi.RefreshChart(%s, %s) error (%s)", params["repo"], params["chartName"], err)
@@ -71,8 +62,7 @@ func (c *ChartHandlers) RefreshChart(w http.ResponseWriter, req *http.Request, p
 		return
 
 	}
-	payload := handlers.DataResourceBody(chartResource)
-	renderer.Render.JSON(w, http.StatusOK, payload)
+	renderer.Render.JSON(w, http.StatusOK, "OK")
 }
 
 // GetChartVersion is the handler for the /charts/{repo}/{name}/versions/{version} endpoint

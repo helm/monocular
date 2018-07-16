@@ -80,10 +80,10 @@ api:
   config:
     repos:
       - name: stable
-        url: http://storage.googleapis.com/kubernetes-charts
+        url: https://kubernetes-charts.storage.googleapis.com
         source: https://github.com/kubernetes/charts/tree/master/stable
       - name: incubator
-        url: http://storage.googleapis.com/kubernetes-charts-incubator
+        url: https://kubernetes-charts-incubator.storage.googleapis.com
         source: https://github.com/kubernetes/charts/tree/master/incubator
       - name: monocular
         url: https://kubernetes-helm.github.io/monocular
@@ -138,8 +138,14 @@ Ensure that you replace `$FRONTEND_HOSTNAME` and `$API_HOSTNAME` with the hostna
 | `api.livenessProbe.initialDelaySeconds` | Increase this if the API pods are crashing due to the chart repository sync taking too long | `180`                                                                           |
 | `api.config.releasesEnabled`            | Enable installing and managing charts in the cluster                                        | `true`                                                                          |
 | `api.config.cacheRefreshInterval`       | How often to sync with chart repositories                                                   | `3600`                                                                          |
+| `api.nodeSelector`                      | Node labels for pod assignment                                                              | `{}`                                                                            |
+| `api.tolerations`                       | Tolerations for pod assignment                                                              | `[]`                                                                            |
+| `api.affinity`                          | Node/Pod affinities                                                                         | `{}`                                                                            |
 | `ui.googleAnalyticsId`                  | Google Analytics ID                                                                         | `UA-XXXXXX-X` (unset)                                                           |
 | `ui.appName`                            | Name to use in title bar and header                                                         | `Monocular`                                                                     |
+| `ui.nodeSelector`                       | Node labels for pod assignment                                                              | `{}`                                                                            |
+| `ui.tolerations`                        | Tolerations for pod assignment                                                              | `[]`                                                                            |
+| `ui.affinity`                           | Node/Pod affinities                                                                         | `{}`                                                                            |
 | `ingress.enabled`                       | If enabled, create an Ingress object                                                        | `true`                                                                          |
 | `ingress.annotations`                   | Ingress annotations                                                                         | `{ingress.kubernetes.io/rewrite-target: /, kubernetes.io/ingress.class: nginx}` |
 | `ingress.tls`                           | TLS configuration for the Ingress object                                                    | `nil`                                                                           |
