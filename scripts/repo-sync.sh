@@ -15,7 +15,7 @@
 # Based on https://github.com/migmartri/helm-hack-night-charts/blob/master/repo-sync.sh
 # USAGE: repo-sync.sh
 
-GIT_URL=github.com/kubernetes-helm/monocular.git
+GIT_URL=github.com/helm/monocular.git
 REPO_URL=https://kubernetes-helm.github.io/monocular
 REPO_DIR=$TRAVIS_BUILD_DIR
 CHART_PATH="$REPO_DIR/deployment/monocular"
