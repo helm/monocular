@@ -2,7 +2,7 @@ package releases
 
 import (
 	log "github.com/Sirupsen/logrus"
-	releasesapi "github.com/kubernetes-helm/monocular/src/api/swagger/restapi/operations/releases"
+	releasesapi "github.com/helm/monocular/src/api/swagger/restapi/operations/releases"
 	"k8s.io/helm/pkg/helm"
 	"k8s.io/helm/pkg/proto/hapi/release"
 	"k8s.io/helm/pkg/proto/hapi/services"

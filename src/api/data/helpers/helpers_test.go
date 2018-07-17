@@ -5,10 +5,10 @@ import (
 	"testing"
 
 	"github.com/arschles/assert"
-	"github.com/kubernetes-helm/monocular/src/api/data/cache/charthelper"
-	"github.com/kubernetes-helm/monocular/src/api/datastore"
-	"github.com/kubernetes-helm/monocular/src/api/models"
-	swaggermodels "github.com/kubernetes-helm/monocular/src/api/swagger/models"
+	"github.com/helm/monocular/src/api/data/cache/charthelper"
+	"github.com/helm/monocular/src/api/datastore"
+	"github.com/helm/monocular/src/api/models"
+	swaggermodels "github.com/helm/monocular/src/api/swagger/models"
 )
 
 const (

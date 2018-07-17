@@ -7,7 +7,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/kubernetes-helm/monocular/src/api/data/helpers"
+	"github.com/helm/monocular/src/api/data/helpers"
 )
 
 // getYAML gets a yaml file from the local filesystem

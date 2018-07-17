@@ -9,9 +9,9 @@ import (
 
 	"github.com/arschles/assert"
 	jwt "github.com/dgrijalva/jwt-go"
-	"github.com/kubernetes-helm/monocular/src/api/models"
-	swaggermodels "github.com/kubernetes-helm/monocular/src/api/swagger/models"
-	"github.com/kubernetes-helm/monocular/src/api/testutil"
+	"github.com/helm/monocular/src/api/models"
+	swaggermodels "github.com/helm/monocular/src/api/swagger/models"
+	"github.com/helm/monocular/src/api/testutil"
 )
 
 var handler = func(w http.ResponseWriter, req *http.Request) {

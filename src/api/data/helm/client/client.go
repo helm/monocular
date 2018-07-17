@@ -5,16 +5,16 @@ import (
 	"fmt"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/kubernetes-helm/monocular/src/api/config"
-	"github.com/kubernetes-helm/monocular/src/api/data"
-	releasesapi "github.com/kubernetes-helm/monocular/src/api/swagger/restapi/operations/releases"
+	"github.com/helm/monocular/src/api/config"
+	"github.com/helm/monocular/src/api/data"
+	releasesapi "github.com/helm/monocular/src/api/swagger/restapi/operations/releases"
 	"k8s.io/helm/pkg/helm"
 	"k8s.io/helm/pkg/helm/portforwarder"
 	"k8s.io/helm/pkg/kube"
 	rls "k8s.io/helm/pkg/proto/hapi/services"
 	"k8s.io/kubernetes/pkg/client/clientset_generated/internalclientset"
 
-	helmreleases "github.com/kubernetes-helm/monocular/src/api/data/helm/releases"
+	helmreleases "github.com/helm/monocular/src/api/data/helm/releases"
 	"k8s.io/kubernetes/pkg/client/restclient"
 )
 

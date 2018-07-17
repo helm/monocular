@@ -5,7 +5,7 @@ import (
 	"os"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/kubernetes-helm/monocular/src/api/models"
+	"github.com/helm/monocular/src/api/models"
 
 	yaml "gopkg.in/yaml.v2"
 )
