@@ -7,9 +7,9 @@
     "url": "https://github.com/helm/monocular.git"
   },
   "bugs": {
-    "url": "https://github.com/kubernetes-helm/monocular/issues"
+    "url": "https://github.com/helm/monocular/issues"
   },
-  "homepage": "https://github.com/kubernetes-helm/monocular",
+  "homepage": "https://github.com/helm/monocular",
   "private": true,
   "scripts": {
     "ng": "ng",

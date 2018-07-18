@@ -29,7 +29,7 @@ Charts. Monocular includes a scanning back-end for indexing charts and their met
 
 Other resources:
 
-- [Project README](https://github.com/kubernetes-helm/monocular/blob/master/README.md)
+- [Project README](https://github.com/helm/monocular/blob/master/README.md)
 - [Project Background](https://deis.com/blog/2017/building-a-helm-ui/)
 - [Technical Overview](https://engineering.bitnami.com/2017/02/22/what-the-helm-is-monocular.html)
 
