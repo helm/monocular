@@ -1,7 +1,7 @@
 # Monocular UI
 
 The UI is a web client for the [Monocular
-API](https://github.com/kubernetes-helm/monocular/tree/master/src/api), which exposes an easy way to
+API](https://github.com/helm/monocular/tree/master/src/api), which exposes an easy way to
 navigate and search [Helm Charts](https://github.com/kubernetes/charts).
 
 Features of the UI includes:
