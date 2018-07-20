@@ -10,14 +10,14 @@ import (
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/google/go-github/github"
-	"github.com/kubernetes-helm/monocular/src/api/data/pointerto"
-	"github.com/kubernetes-helm/monocular/src/api/datastore"
+	"github.com/helm/monocular/src/api/data/pointerto"
+	"github.com/helm/monocular/src/api/datastore"
 
 	"github.com/gorilla/sessions"
-	"github.com/kubernetes-helm/monocular/src/api/config"
-	"github.com/kubernetes-helm/monocular/src/api/handlers/renderer"
-	"github.com/kubernetes-helm/monocular/src/api/models"
-	swaggermodels "github.com/kubernetes-helm/monocular/src/api/swagger/models"
+	"github.com/helm/monocular/src/api/config"
+	"github.com/helm/monocular/src/api/handlers/renderer"
+	"github.com/helm/monocular/src/api/models"
+	swaggermodels "github.com/helm/monocular/src/api/swagger/models"
 	"golang.org/x/oauth2"
 )
 

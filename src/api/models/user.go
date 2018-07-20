@@ -2,7 +2,7 @@ package models
 
 import (
 	jwt "github.com/dgrijalva/jwt-go"
-	"github.com/kubernetes-helm/monocular/src/api/datastore"
+	"github.com/helm/monocular/src/api/datastore"
 	"gopkg.in/mgo.v2/bson"
 )
 

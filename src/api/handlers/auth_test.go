@@ -10,9 +10,9 @@ import (
 
 	"github.com/arschles/assert"
 	"github.com/gorilla/sessions"
-	"github.com/kubernetes-helm/monocular/src/api/models"
-	swaggermodels "github.com/kubernetes-helm/monocular/src/api/swagger/models"
-	"github.com/kubernetes-helm/monocular/src/api/testutil"
+	"github.com/helm/monocular/src/api/models"
+	swaggermodels "github.com/helm/monocular/src/api/swagger/models"
+	"github.com/helm/monocular/src/api/testutil"
 )
 
 var dbSession = models.NewMockSession(models.MockDBConfig{})

@@ -3,11 +3,11 @@ package middleware
 import (
 	"net/http"
 
-	"github.com/kubernetes-helm/monocular/src/api/data/pointerto"
+	"github.com/helm/monocular/src/api/data/pointerto"
 	"github.com/urfave/negroni"
 
-	"github.com/kubernetes-helm/monocular/src/api/handlers/renderer"
-	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
+	"github.com/helm/monocular/src/api/handlers/renderer"
+	"github.com/helm/monocular/src/api/swagger/models"
 )
 
 // InClusterGate implements middleware to check if in cluster features are enabled before continuing

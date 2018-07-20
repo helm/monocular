@@ -4,8 +4,8 @@ import (
 	"errors"
 
 	"github.com/golang/protobuf/ptypes/timestamp"
-	"github.com/kubernetes-helm/monocular/src/api/data"
-	releasesapi "github.com/kubernetes-helm/monocular/src/api/swagger/restapi/operations/releases"
+	"github.com/helm/monocular/src/api/data"
+	releasesapi "github.com/helm/monocular/src/api/swagger/restapi/operations/releases"
 	"k8s.io/helm/pkg/proto/hapi/chart"
 	helm_releases "k8s.io/helm/pkg/proto/hapi/release"
 	rls "k8s.io/helm/pkg/proto/hapi/services"

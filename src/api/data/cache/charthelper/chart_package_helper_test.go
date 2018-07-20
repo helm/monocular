@@ -10,8 +10,8 @@ import (
 	httpmock "gopkg.in/jarcoal/httpmock.v1"
 
 	"github.com/arschles/assert"
-	"github.com/kubernetes-helm/monocular/src/api/config"
-	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
+	"github.com/helm/monocular/src/api/config"
+	"github.com/helm/monocular/src/api/swagger/models"
 )
 
 var repoURL = "http://storage.googleapis.com/kubernetes-charts/"

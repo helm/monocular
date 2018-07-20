@@ -7,14 +7,14 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 
-	"github.com/kubernetes-helm/monocular/src/api/data"
-	"github.com/kubernetes-helm/monocular/src/api/data/cache/charthelper"
-	"github.com/kubernetes-helm/monocular/src/api/data/cache/repohelper"
-	"github.com/kubernetes-helm/monocular/src/api/data/helpers"
-	"github.com/kubernetes-helm/monocular/src/api/datastore"
-	"github.com/kubernetes-helm/monocular/src/api/models"
-	swaggermodels "github.com/kubernetes-helm/monocular/src/api/swagger/models"
-	"github.com/kubernetes-helm/monocular/src/api/swagger/restapi/operations/charts"
+	"github.com/helm/monocular/src/api/data"
+	"github.com/helm/monocular/src/api/data/cache/charthelper"
+	"github.com/helm/monocular/src/api/data/cache/repohelper"
+	"github.com/helm/monocular/src/api/data/helpers"
+	"github.com/helm/monocular/src/api/datastore"
+	"github.com/helm/monocular/src/api/models"
+	swaggermodels "github.com/helm/monocular/src/api/swagger/models"
+	"github.com/helm/monocular/src/api/swagger/restapi/operations/charts"
 )
 
 type cachedCharts struct {

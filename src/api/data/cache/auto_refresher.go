@@ -3,8 +3,8 @@ package cache
 import (
 	"time"
 
-	"github.com/kubernetes-helm/monocular/src/api/data"
-	"github.com/kubernetes-helm/monocular/src/api/jobs"
+	"github.com/helm/monocular/src/api/data"
+	"github.com/helm/monocular/src/api/jobs"
 )
 
 type refreshChartsData struct {

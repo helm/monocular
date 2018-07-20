@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/arschles/assert"
-	releasesapi "github.com/kubernetes-helm/monocular/src/api/swagger/restapi/operations/releases"
+	releasesapi "github.com/helm/monocular/src/api/swagger/restapi/operations/releases"
 )
 
 func TestMockedClient(t *testing.T) {
