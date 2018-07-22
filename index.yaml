@@ -14,7 +14,7 @@ entries:
     sources:
     - https://github.com/kubernetes-helm/monocular
     urls:
-    - https://kubernetes-helm.github.io/monocular/monocular-0.6.3.tgz
+    - https://helm.github.io/monocular/monocular-0.6.3.tgz
     version: 0.6.3
   - apiVersion: v1
     appVersion: v0.7.3
@@ -29,7 +29,7 @@ entries:
     sources:
     - https://github.com/kubernetes-helm/monocular
     urls:
-    - https://kubernetes-helm.github.io/monocular/monocular-0.6.2.tgz
+    - https://helm.github.io/monocular/monocular-0.6.2.tgz
     version: 0.6.2
   - apiVersion: v1
     appVersion: v0.7.2
@@ -44,7 +44,7 @@ entries:
     sources:
     - https://github.com/kubernetes-helm/monocular
     urls:
-    - https://kubernetes-helm.github.io/monocular/monocular-0.6.1.tgz
+    - https://helm.github.io/monocular/monocular-0.6.1.tgz
     version: 0.6.1
   - apiVersion: v1
     appVersion: v0.7.1
@@ -59,7 +59,7 @@ entries:
     sources:
     - https://github.com/kubernetes-helm/monocular
     urls:
-    - https://kubernetes-helm.github.io/monocular/monocular-0.6.0.tgz
+    - https://helm.github.io/monocular/monocular-0.6.0.tgz
     version: 0.6.0
   - apiVersion: v1
     appVersion: v0.7.1
@@ -74,7 +74,7 @@ entries:
     sources:
     - https://github.com/kubernetes-helm/monocular
     urls:
-    - https://kubernetes-helm.github.io/monocular/monocular-0.5.4.tgz
+    - https://helm.github.io/monocular/monocular-0.5.4.tgz
     version: 0.5.4
   - apiVersion: v1
     appVersion: v0.7.0
@@ -89,7 +89,7 @@ entries:
     sources:
     - https://github.com/kubernetes-helm/monocular
     urls:
-    - https://kubernetes-helm.github.io/monocular/monocular-0.5.3.tgz
+    - https://helm.github.io/monocular/monocular-0.5.3.tgz
     version: 0.5.3
   - apiVersion: v1
     appVersion: v0.6.2
@@ -104,7 +104,7 @@ entries:
     sources:
     - https://github.com/kubernetes-helm/monocular
     urls:
-    - https://kubernetes-helm.github.io/monocular/monocular-0.5.2.tgz
+    - https://helm.github.io/monocular/monocular-0.5.2.tgz
     version: 0.5.2
   - apiVersion: v1
     appVersion: v0.6.2
@@ -119,7 +119,7 @@ entries:
     sources:
     - https://github.com/kubernetes-helm/monocular
     urls:
-    - https://kubernetes-helm.github.io/monocular/monocular-0.5.1.tgz
+    - https://helm.github.io/monocular/monocular-0.5.1.tgz
     version: 0.5.1
   - apiVersion: v1
     appVersion: v0.6.1
@@ -134,7 +134,7 @@ entries:
     sources:
     - https://github.com/kubernetes-helm/monocular
     urls:
-    - https://kubernetes-helm.github.io/monocular/monocular-0.5.0.tgz
+    - https://helm.github.io/monocular/monocular-0.5.0.tgz
     version: 0.5.0
   - apiVersion: v1
     appVersion: v0.6.1
@@ -149,7 +149,7 @@ entries:
     sources:
     - https://github.com/kubernetes-helm/monocular
     urls:
-    - https://kubernetes-helm.github.io/monocular/monocular-0.4.16.tgz
+    - https://helm.github.io/monocular/monocular-0.4.16.tgz
     version: 0.4.16
   - apiVersion: v1
     appVersion: v0.6.0
@@ -164,7 +164,7 @@ entries:
     sources:
     - https://github.com/kubernetes-helm/monocular
     urls:
-    - https://kubernetes-helm.github.io/monocular/monocular-0.4.15.tgz
+    - https://helm.github.io/monocular/monocular-0.4.15.tgz
     version: 0.4.15
   - apiVersion: v1
     appVersion: v0.5.4
@@ -179,7 +179,7 @@ entries:
     sources:
     - https://github.com/kubernetes-helm/monocular
     urls:
-    - https://kubernetes-helm.github.io/monocular/monocular-0.4.14.tgz
+    - https://helm.github.io/monocular/monocular-0.4.14.tgz
     version: 0.4.14
   - apiVersion: v1
     appVersion: v0.5.3
@@ -194,7 +194,7 @@ entries:
     sources:
     - https://github.com/kubernetes-helm/monocular
     urls:
-    - https://kubernetes-helm.github.io/monocular/monocular-0.4.13.tgz
+    - https://helm.github.io/monocular/monocular-0.4.13.tgz
     version: 0.4.13
   - apiVersion: v1
     appVersion: v0.5.2
@@ -209,7 +209,7 @@ entries:
     sources:
     - https://github.com/kubernetes-helm/monocular
     urls:
-    - https://kubernetes-helm.github.io/monocular/monocular-0.4.12.tgz
+    - https://helm.github.io/monocular/monocular-0.4.12.tgz
     version: 0.4.12
   - apiVersion: v1
     appVersion: v0.5.1
@@ -224,7 +224,7 @@ entries:
     sources:
     - https://github.com/kubernetes-helm/monocular
     urls:
-    - https://kubernetes-helm.github.io/monocular/monocular-0.4.11.tgz
+    - https://helm.github.io/monocular/monocular-0.4.11.tgz
     version: 0.4.11
   - apiVersion: v1
     appVersion: v0.5.0
@@ -239,7 +239,7 @@ entries:
     sources:
     - https://github.com/kubernetes-helm/monocular
     urls:
-    - https://kubernetes-helm.github.io/monocular/monocular-0.4.10.tgz
+    - https://helm.github.io/monocular/monocular-0.4.10.tgz
     version: 0.4.10
   - apiVersion: v1
     appVersion: v0.4.0
@@ -254,7 +254,7 @@ entries:
     sources:
     - https://github.com/kubernetes-helm/monocular
     urls:
-    - https://kubernetes-helm.github.io/monocular/monocular-0.4.9.tgz
+    - https://helm.github.io/monocular/monocular-0.4.9.tgz
     version: 0.4.9
   - apiVersion: v1
     appVersion: v0.4.0
@@ -269,7 +269,7 @@ entries:
     sources:
     - https://github.com/kubernetes-helm/monocular
     urls:
-    - https://kubernetes-helm.github.io/monocular/monocular-0.4.8.tgz
+    - https://helm.github.io/monocular/monocular-0.4.8.tgz
     version: 0.4.8
   - apiVersion: v1
     appVersion: v0.3.2
@@ -284,7 +284,7 @@ entries:
     sources:
     - https://github.com/kubernetes-helm/monocular
     urls:
-    - https://kubernetes-helm.github.io/monocular/monocular-0.4.7.tgz
+    - https://helm.github.io/monocular/monocular-0.4.7.tgz
     version: 0.4.7
   - apiVersion: v1
     appVersion: v0.3.1
@@ -299,7 +299,7 @@ entries:
     sources:
     - https://github.com/kubernetes-helm/monocular
     urls:
-    - https://kubernetes-helm.github.io/monocular/monocular-0.4.6.tgz
+    - https://helm.github.io/monocular/monocular-0.4.6.tgz
     version: 0.4.6
   - apiVersion: v1
     appVersion: v0.3.0
@@ -314,7 +314,7 @@ entries:
     sources:
     - https://github.com/kubernetes-helm/monocular
     urls:
-    - https://kubernetes-helm.github.io/monocular/monocular-0.4.5.tgz
+    - https://helm.github.io/monocular/monocular-0.4.5.tgz
     version: 0.4.5
   - apiVersion: v1
     appVersion: v0.2.1
@@ -329,7 +329,7 @@ entries:
     sources:
     - https://github.com/helm/monocular
     urls:
-    - https://kubernetes-helm.github.io/monocular/monocular-0.4.4.tgz
+    - https://helm.github.io/monocular/monocular-0.4.4.tgz
     version: 0.4.4
   - apiVersion: v1
     appVersion: v0.2.1
@@ -344,7 +344,7 @@ entries:
     sources:
     - https://github.com/helm/monocular
     urls:
-    - https://kubernetes-helm.github.io/monocular/monocular-0.4.3.tgz
+    - https://helm.github.io/monocular/monocular-0.4.3.tgz
     version: 0.4.3
   - apiVersion: v1
     appVersion: v0.2.1
@@ -359,6 +359,6 @@ entries:
     sources:
     - https://github.com/helm/monocular
     urls:
-    - https://kubernetes-helm.github.io/monocular/monocular-0.4.2.tgz
+    - https://helm.github.io/monocular/monocular-0.4.2.tgz
     version: 0.4.2
 generated: 2018-07-13T18:36:49.207276776Z
