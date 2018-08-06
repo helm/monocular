@@ -2,7 +2,7 @@ package chartpackagesort
 
 import (
 	"github.com/Masterminds/semver"
-	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
+	"github.com/helm/monocular/src/api/swagger/models"
 )
 
 /*

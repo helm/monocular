@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/arschles/assert"
-	"github.com/kubernetes-helm/monocular/src/api/models"
+	"github.com/helm/monocular/src/api/models"
 )
 
 var configFileOk = filepath.Join("..", "testdata", "config.yaml")

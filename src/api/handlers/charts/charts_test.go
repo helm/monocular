@@ -8,13 +8,13 @@ import (
 
 	"github.com/arschles/assert"
 	"github.com/go-openapi/runtime"
-	"github.com/kubernetes-helm/monocular/src/api/data/helpers"
-	"github.com/kubernetes-helm/monocular/src/api/handlers"
-	"github.com/kubernetes-helm/monocular/src/api/mocks"
-	"github.com/kubernetes-helm/monocular/src/api/models"
-	swaggermodels "github.com/kubernetes-helm/monocular/src/api/swagger/models"
-	chartsapi "github.com/kubernetes-helm/monocular/src/api/swagger/restapi/operations/charts"
-	"github.com/kubernetes-helm/monocular/src/api/testutil"
+	"github.com/helm/monocular/src/api/data/helpers"
+	"github.com/helm/monocular/src/api/handlers"
+	"github.com/helm/monocular/src/api/mocks"
+	"github.com/helm/monocular/src/api/models"
+	swaggermodels "github.com/helm/monocular/src/api/swagger/models"
+	chartsapi "github.com/helm/monocular/src/api/swagger/restapi/operations/charts"
+	"github.com/helm/monocular/src/api/testutil"
 )
 
 var chartsImplementation = mocks.NewMockCharts(mocks.MockedMethods{})

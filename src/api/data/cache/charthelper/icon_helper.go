@@ -10,7 +10,7 @@ import (
 	log "github.com/Sirupsen/logrus"
 
 	"github.com/disintegration/imaging"
-	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
+	"github.com/helm/monocular/src/api/swagger/models"
 )
 
 const originalFormat = "original"

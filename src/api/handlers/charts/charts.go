@@ -6,15 +6,15 @@ import (
 	"net/http"
 	"sort"
 
-	"github.com/kubernetes-helm/monocular/src/api/chartpackagesort"
-	"github.com/kubernetes-helm/monocular/src/api/data"
-	"github.com/kubernetes-helm/monocular/src/api/data/helpers"
-	"github.com/kubernetes-helm/monocular/src/api/data/pointerto"
-	"github.com/kubernetes-helm/monocular/src/api/datastore"
-	"github.com/kubernetes-helm/monocular/src/api/handlers"
-	"github.com/kubernetes-helm/monocular/src/api/handlers/renderer"
-	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
-	chartsapi "github.com/kubernetes-helm/monocular/src/api/swagger/restapi/operations/charts"
+	"github.com/helm/monocular/src/api/chartpackagesort"
+	"github.com/helm/monocular/src/api/data"
+	"github.com/helm/monocular/src/api/data/helpers"
+	"github.com/helm/monocular/src/api/data/pointerto"
+	"github.com/helm/monocular/src/api/datastore"
+	"github.com/helm/monocular/src/api/handlers"
+	"github.com/helm/monocular/src/api/handlers/renderer"
+	"github.com/helm/monocular/src/api/swagger/models"
+	chartsapi "github.com/helm/monocular/src/api/swagger/restapi/operations/charts"
 )
 
 const (

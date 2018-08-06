@@ -6,13 +6,13 @@ import (
 	"net/http"
 
 	jwt "github.com/dgrijalva/jwt-go"
-	"github.com/kubernetes-helm/monocular/src/api/config"
-	"github.com/kubernetes-helm/monocular/src/api/data/pointerto"
+	"github.com/helm/monocular/src/api/config"
+	"github.com/helm/monocular/src/api/data/pointerto"
 	"github.com/urfave/negroni"
 
-	"github.com/kubernetes-helm/monocular/src/api/handlers/renderer"
-	"github.com/kubernetes-helm/monocular/src/api/models"
-	swaggermodels "github.com/kubernetes-helm/monocular/src/api/swagger/models"
+	"github.com/helm/monocular/src/api/handlers/renderer"
+	"github.com/helm/monocular/src/api/models"
+	swaggermodels "github.com/helm/monocular/src/api/swagger/models"
 )
 
 // AuthGate implements middleware to check if the user is logged in before continuing

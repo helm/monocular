@@ -15,9 +15,9 @@ import (
 	strfmt "github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
-	"github.com/kubernetes-helm/monocular/src/api/swagger/restapi/operations/charts"
-	"github.com/kubernetes-helm/monocular/src/api/swagger/restapi/operations/releases"
-	"github.com/kubernetes-helm/monocular/src/api/swagger/restapi/operations/repositories"
+	"github.com/helm/monocular/src/api/swagger/restapi/operations/charts"
+	"github.com/helm/monocular/src/api/swagger/restapi/operations/releases"
+	"github.com/helm/monocular/src/api/swagger/restapi/operations/repositories"
 )
 
 // NewMonocularAPI creates a new Monocular instance

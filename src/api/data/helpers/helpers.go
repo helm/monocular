@@ -6,12 +6,12 @@ import (
 	"github.com/Masterminds/semver"
 	log "github.com/Sirupsen/logrus"
 	"github.com/ghodss/yaml"
-	"github.com/kubernetes-helm/monocular/src/api/datastore"
-	"github.com/kubernetes-helm/monocular/src/api/models"
-	swaggermodels "github.com/kubernetes-helm/monocular/src/api/swagger/models"
+	"github.com/helm/monocular/src/api/datastore"
+	"github.com/helm/monocular/src/api/models"
+	swaggermodels "github.com/helm/monocular/src/api/swagger/models"
 
-	"github.com/kubernetes-helm/monocular/src/api/data/cache/charthelper"
-	"github.com/kubernetes-helm/monocular/src/api/data/pointerto"
+	"github.com/helm/monocular/src/api/data/cache/charthelper"
+	"github.com/helm/monocular/src/api/data/pointerto"
 )
 
 // APIVer1String is the API version 1 string we include in route URLs

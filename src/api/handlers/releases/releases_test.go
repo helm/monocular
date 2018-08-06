@@ -9,12 +9,12 @@ import (
 	"testing"
 
 	"github.com/arschles/assert"
-	"github.com/kubernetes-helm/monocular/src/api/data/pointerto"
-	"github.com/kubernetes-helm/monocular/src/api/handlers"
-	"github.com/kubernetes-helm/monocular/src/api/mocks"
-	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
-	releasesapi "github.com/kubernetes-helm/monocular/src/api/swagger/restapi/operations/releases"
-	"github.com/kubernetes-helm/monocular/src/api/testutil"
+	"github.com/helm/monocular/src/api/data/pointerto"
+	"github.com/helm/monocular/src/api/handlers"
+	"github.com/helm/monocular/src/api/mocks"
+	"github.com/helm/monocular/src/api/swagger/models"
+	releasesapi "github.com/helm/monocular/src/api/swagger/restapi/operations/releases"
+	"github.com/helm/monocular/src/api/testutil"
 )
 
 var helmClient = mocks.NewMockedClient()

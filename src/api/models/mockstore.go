@@ -3,7 +3,7 @@ package models
 import (
 	"errors"
 
-	"github.com/kubernetes-helm/monocular/src/api/datastore"
+	"github.com/helm/monocular/src/api/datastore"
 	mgo "gopkg.in/mgo.v2"
 )
 

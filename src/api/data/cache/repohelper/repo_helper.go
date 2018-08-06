@@ -6,10 +6,10 @@ import (
 	"net/url"
 	"path"
 
-	"github.com/kubernetes-helm/monocular/src/api/data/helpers"
-	"github.com/kubernetes-helm/monocular/src/api/models"
-	swaggermodels "github.com/kubernetes-helm/monocular/src/api/swagger/models"
-	"github.com/kubernetes-helm/monocular/src/api/version"
+	"github.com/helm/monocular/src/api/data/helpers"
+	"github.com/helm/monocular/src/api/models"
+	swaggermodels "github.com/helm/monocular/src/api/swagger/models"
+	"github.com/helm/monocular/src/api/version"
 )
 
 // GetRepoIndexFile Get the charts from the index file

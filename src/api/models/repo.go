@@ -1,7 +1,7 @@
 package models
 
 import (
-	"github.com/kubernetes-helm/monocular/src/api/datastore"
+	"github.com/helm/monocular/src/api/datastore"
 	"gopkg.in/mgo.v2/bson"
 )
 

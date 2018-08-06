@@ -1,7 +1,7 @@
-[![Build Status](https://travis-ci.org/kubernetes-helm/monocular.svg?branch=master)](https://travis-ci.org/kubernetes-helm/monocular)
-[![codecov](https://codecov.io/gh/kubernetes-helm/monocular/branch/master/graph/badge.svg)](https://codecov.io/gh/kubernetes-helm/monocular)
-[![Go Report Card](https://goreportcard.com/badge/github.com/kubernetes-helm/monocular)](https://goreportcard.com/report/github.com/kubernetes-helm/monocular)
-[![codebeat badge](https://codebeat.co/badges/2443005b-8e19-428a-8c67-14a2af60e7fd)](https://codebeat.co/projects/github-com-kubernetes-helm-monocular-master)
+[![Build Status](https://travis-ci.org/helm/monocular.svg?branch=master)](https://travis-ci.org/helm/monocular)
+[![codecov](https://codecov.io/gh/helm/monocular/branch/master/graph/badge.svg)](https://codecov.io/gh/helm/monocular)
+[![Go Report Card](https://goreportcard.com/badge/github.com/helm/monocular)](https://goreportcard.com/report/github.com/helm/monocular)
+[![codebeat badge](https://codebeat.co/badges/2443005b-8e19-428a-8c67-14a2af60e7fd)](https://codebeat.co/projects/github-com-helm-monocular-master)
 
 # Monocular API
 
@@ -13,7 +13,7 @@ The API is a golang HTTP RESTFul server. It abstracts away Helm Chart Repository
 
 All commands and relative directories below assume a current working directory at the API source code root, i.e.:
 
-- `$GOPATH/src/github.com/kubernetes-helm/monocular/src/api/`
+- `$GOPATH/src/github.com/helm/monocular/src/api/`
 
 # Building Monocular
 

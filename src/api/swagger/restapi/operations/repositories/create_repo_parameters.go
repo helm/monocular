@@ -10,7 +10,7 @@ import (
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 
-	"github.com/kubernetes-helm/monocular/src/api/swagger/models"
+	"github.com/helm/monocular/src/api/swagger/models"
 )
 
 // NewCreateRepoParams creates a new CreateRepoParams object

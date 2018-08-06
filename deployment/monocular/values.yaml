@@ -131,3 +131,6 @@ ingress:
   ##
   # tls:
   #   secretName: monocular.local-tls
+
+mongodb:
+  mongodbDatabase: monocular
