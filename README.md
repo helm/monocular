@@ -30,7 +30,7 @@ $ helm repo add monocular https://helm.github.io/monocular
 $ helm install monocular/monocular
 ```
 
-### Access Monocular
+### Access Monocular 
 
 Use the Ingress endpoint to access your Monocular instance:
 

@@ -2,7 +2,10 @@ package releases
 
 import (
 	log "github.com/Sirupsen/logrus"
-	releasesapi "github.com/helm/monocular/src/api/swagger/restapi/operations/releases"
+
+	releasesapi "github.com/kubernetes-helm/monocular/src/api/swagger/restapi/operations/releases"
+	yaml "gopkg.in/yaml.v2"
+	"k8s.io/helm/cmd/helm/strvals"
 	"k8s.io/helm/pkg/helm"
 	"k8s.io/helm/pkg/proto/hapi/release"
 	"k8s.io/helm/pkg/proto/hapi/services"
@@ -54,19 +57,50 @@ func InstallRelease(client *helm.Client, chartPath string, params releasesapi.Cr
 		ns = "default"
 	}
 
-	return client.InstallRelease(
+	var overrides, err = MakeOverrides(params.Data.Values)
+	if err != nil {
+		return nil, err
+	}
+
+	var result, errRel = client.InstallRelease(
 		chartPath,
 		ns,
-		helm.ValueOverrides([]byte{}),
+		helm.ValueOverrides(overrides),
 		helm.ReleaseName(params.Data.ReleaseName),
 		helm.InstallDryRun(params.Data.DryRun))
+
+	return result, errRel
+}
+
+// make overrides
+func MakeOverrides(values string) ([]byte, error) {
+	if values == "" {
+		return []byte{}, nil
+	}
+	var overridesMap, errMap = strvals.Parse(values)
+	if errMap != nil {
+		return nil, errMap
+	}
+	return yaml.Marshal(overridesMap)
+}
+
+// InstallRelease wraps helms client installReleae method
+func UpdateRelease(client *helm.Client, rlsName string, chartPath string, params releasesapi.CreateReleaseParams) (*rls.UpdateReleaseResponse, error) {
+	var overrides, err = MakeOverrides(params.Data.Values)
+	if err != nil {
+		return nil, err
+	}
+	return client.UpdateRelease(rlsName,
+		chartPath,
+		helm.UpdateValueOverrides(overrides),
+		helm.UpgradeDryRun(params.Data.DryRun))
 }
 
 // DeleteRelease deletes an existing helm chart
-func DeleteRelease(client *helm.Client, releaseName string) (*rls.UninstallReleaseResponse, error) {
+func DeleteRelease(client *helm.Client, releaseName string, purge bool) (*rls.UninstallReleaseResponse, error) {
 	opts := []helm.DeleteOption{
 		helm.DeleteDryRun(false),
-		helm.DeletePurge(false),
+		helm.DeletePurge(purge),
 		helm.DeleteTimeout(300),
 	}
 	return client.DeleteRelease(releaseName, opts...)

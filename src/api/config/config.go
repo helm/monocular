@@ -32,6 +32,7 @@ type Configuration struct {
 	Repos                repos.Repos
 	ReleasesEnabled      bool             `yaml:"releasesEnabled"`
 	TillerPortForward    bool             `yaml:"tillerPortForward"`
+	KubeContext          string           `yaml:"kubeContext"`
 	CacheRefreshInterval int64            `yaml:"cacheRefreshInterval"`
 	Mongo                datastore.Config `yaml:"mongodb"`
 	OAuthConfig          oauthConfig      `yaml:"oauthConfig"`

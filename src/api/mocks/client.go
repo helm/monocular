@@ -22,7 +22,7 @@ var Resource = helm_releases.Release{
 		Metadata: &chart.Metadata{
 			Name:    "my-chart",
 			Version: "1.2.3",
-			Icon: "chart-icon",
+			Icon:    "chart-icon",
 		},
 	},
 	Info: &helm_releases.Info{
@@ -55,6 +55,10 @@ func (c *mockedClient) InstallRelease(chartPath string, params releasesapi.Creat
 	return &rls.InstallReleaseResponse{Release: &Resource}, nil
 }
 
+func (c *mockedClient) UpdateRelease(releaseName string, chartPath string, params releasesapi.CreateReleaseParams) (*rls.UpdateReleaseResponse, error) {
+	return &rls.UpdateReleaseResponse{Release: &Resource}, nil
+}
+
 func (c *mockedBrokenClient) ListReleases(params releasesapi.GetAllReleasesParams) (*rls.ListReleasesResponse, error) {
 	return nil, errors.New("Can't initialize")
 }
@@ -63,7 +67,11 @@ func (c *mockedBrokenClient) InstallRelease(chartPath string, params releasesapi
 	return nil, errors.New("Can't initialize")
 }
 
-func (c *mockedClient) DeleteRelease(releaseName string) (*rls.UninstallReleaseResponse, error) {
+func (c *mockedBrokenClient) UpdateRelease(releaseName string, chartPath string, params releasesapi.CreateReleaseParams) (*rls.UpdateReleaseResponse, error) {
+	return nil, errors.New("Can't initialize")
+}
+
+func (c *mockedClient) DeleteRelease(releaseName string, purge bool) (*rls.UninstallReleaseResponse, error) {
 	return &rls.UninstallReleaseResponse{Release: &Resource}, nil
 }
 
@@ -71,7 +79,7 @@ func (c *mockedClient) GetRelease(releaseName string) (*rls.GetReleaseContentRes
 	return &rls.GetReleaseContentResponse{}, nil
 }
 
-func (c *mockedBrokenClient) DeleteRelease(releaseName string) (*rls.UninstallReleaseResponse, error) {
+func (c *mockedBrokenClient) DeleteRelease(releaseName string, purge bool) (*rls.UninstallReleaseResponse, error) {
 	return nil, errors.New("Can't initialize")
 }
 

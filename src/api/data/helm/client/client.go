@@ -50,7 +50,8 @@ func (c *helmClient) initialize() (*helm.Client, error) {
 	}
 
 	if c.portForward {
-		config, kubeClient, err := getKubeClient("")
+
+		config, kubeClient, err := getKubeClient(conf.KubeContext)
 		if err != nil {
 			return nil, err
 		}
@@ -89,12 +90,20 @@ func (c *helmClient) InstallRelease(chartPath string, params releasesapi.CreateR
 	return helmreleases.InstallRelease(client, chartPath, params)
 }
 
-func (c *helmClient) DeleteRelease(releaseName string) (*rls.UninstallReleaseResponse, error) {
+func (c *helmClient) UpdateRelease(rlsName string, chartPath string, params releasesapi.CreateReleaseParams) (*rls.UpdateReleaseResponse, error) {
 	client, err := c.initialize()
 	if err != nil {
 		return nil, err
 	}
-	return helmreleases.DeleteRelease(client, releaseName)
+	return helmreleases.UpdateRelease(client, rlsName, chartPath, params)
+}
+
+func (c *helmClient) DeleteRelease(releaseName string, purge bool) (*rls.UninstallReleaseResponse, error) {
+	client, err := c.initialize()
+	if err != nil {
+		return nil, err
+	}
+	return helmreleases.DeleteRelease(client, releaseName, purge)
 }
 
 func (c *helmClient) GetRelease(releaseName string) (*rls.GetReleaseContentResponse, error) {

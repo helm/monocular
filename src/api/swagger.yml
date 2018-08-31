@@ -283,6 +283,9 @@ paths:
           in: path
           type: string
           required: true
+        - name: purge
+          in: query
+          type: string
       responses:
         200:
           description: release deleted
@@ -325,9 +328,15 @@ parameters:
         dryRun:
           type: boolean
           description: Simulate an install
+        upgrade:
+          type: boolean
+          description: Simulate an install
         namespace:
           type: string
           description: Namespace to deploy the chart into
+        values:
+          type: string
+          description: keys/values for chart
       required:
         - chartId
         - chartVersion
