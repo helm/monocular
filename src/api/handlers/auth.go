@@ -108,7 +108,13 @@ func (a *AuthHandlers) GithubCallback(w http.ResponseWriter, r *http.Request) {
 
 	db, closer := a.dbSession.DB()
 	defer closer()
-	if err := models.CreateUser(db, &models.User{Name: user.GetName(), Email: userEmail}); err != nil {
+
+	var name string
+	if name = user.GetName(); name == "" {
+		// Fallback to the GH username
+		name = user.GetLogin()
+	}
+	if err := models.CreateUser(db, &models.User{Name: name, Email: userEmail}); err != nil {
 		errorResponse(w, http.StatusInternalServerError, "unable to save user")
 		return
 	}
