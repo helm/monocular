@@ -1,4 +1,4 @@
 dependencies:
 - name: mongodb
-  version: 4.0.4
+  version: 4.2.1
   repository: https://kubernetes-charts.storage.googleapis.com
