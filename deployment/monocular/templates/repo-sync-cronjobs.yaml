@@ -1,0 +1,25 @@
+{{- range .Values.sync.repos }}
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: {{ template "fullname" $ }}-sync-scheduled-{{ .name }}
+  labels:
+    monocular.helm.sh/repo-name: {{ .name }}
+    app: {{ template "fullname" $ }}
+    chart: "{{ $.Chart.Name }}-{{ $.Chart.Version }}"
+    release: "{{ $.Release.Name }}"
+    heritage: "{{ $.Release.Service }}"
+spec:
+  jobTemplate:
+    metadata:
+      labels:
+        monocular.helm.sh/repo-name: {{ .name }}
+        app: {{ template "fullname" $ }}
+        release: "{{ $.Release.Name }}"
+    spec:
+      template:
+{{ include "monocular.sync.podTemplate" (list . $) | indent 8 }}
+  schedule: "0 * * * *"
+  successfulJobsHistoryLimit: 3
+---
+{{- end -}}

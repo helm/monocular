@@ -1,0 +1,16 @@
+{{- range .Values.sync.repos }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ template "fullname" $ }}-sync-initial-{{ .name }}-{{ randAlphaNum 5 | lower }}
+  labels:
+    monocular.helm.sh/repo-name: {{ .name }}
+    app: {{ template "fullname" $ }}
+    chart: "{{ $.Chart.Name }}-{{ $.Chart.Version }}"
+    release: "{{ $.Release.Name }}"
+    heritage: "{{ $.Release.Service }}"
+spec:
+  template:
+{{ include "monocular.sync.podTemplate" (list . $) | indent 4 }}
+---
+{{- end -}}
