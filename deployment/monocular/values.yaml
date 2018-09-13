@@ -1,6 +1,31 @@
-# Default values for monocular.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
+sync:
+  # Image used to perform chart repository syncs
+  image:
+    registry: docker.io
+    repository: kubeapps/chart-repo
+    tag: v1.0.0-beta.0
+  repos:
+    # Official repositories
+    - name: stable
+      url: https://kubernetes-charts.storage.googleapis.com
+    - name: incubator
+      url: https://kubernetes-charts-incubator.storage.googleapis.com
+    # Add your own repository
+    #- name: my-repo-name
+    #  url: my-repository-url
+    #  source: my-repository-source
+  resources: {}
+    # limits:
+    #  cpu: 100m
+    #  memory: 128Mi
+    # requests:
+    #  cpu: 100m
+    #  memory: 128Mi
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+# OLD API CONFIG
 api:
   replicaCount: 2
   image:
@@ -133,4 +158,5 @@ ingress:
   #   secretName: monocular.local-tls
 
 mongodb:
-  mongodbDatabase: monocular
+  persistence:
+    enabled: false
