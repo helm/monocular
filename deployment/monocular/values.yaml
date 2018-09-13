@@ -3,7 +3,7 @@ sync:
   image:
     registry: docker.io
     repository: kubeapps/chart-repo
-    tag: latest
+    tag: v1.0.0-beta.0
   repos:
     # Official repositories
     - name: stable

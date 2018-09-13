@@ -2,7 +2,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ template "fullname" $ }}-sync-initial-{{ .name }}
+  name: {{ template "fullname" $ }}-sync-initial-{{ .name }}-{{ randAlphaNum 5 | lower }}
   labels:
     monocular.helm.sh/repo-name: {{ .name }}
     app: {{ template "fullname" $ }}
