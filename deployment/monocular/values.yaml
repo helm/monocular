@@ -33,6 +33,7 @@ chartsvc:
     tag: v1.0.0-beta.0
   service:
     port: 8080
+  # TODO: review suggested resource limits/requests
   resources: {}
     # limits:
     #  cpu: 100m
