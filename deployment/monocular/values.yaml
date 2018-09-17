@@ -14,6 +14,28 @@ sync:
     #- name: my-repo-name
     #  url: my-repository-url
     #  source: my-repository-source
+  # TODO: review suggested resource limits/requests
+  resources: {}
+    # limits:
+    #  cpu: 100m
+    #  memory: 128Mi
+    # requests:
+    #  cpu: 100m
+   #  memory: 128Mi
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+# Chartsvc is used to serve chart metadata over a REST API.
+chartsvc:
+  image:
+    registry: docker.io
+    repository: kubeapps/chartsvc
+    tag: v1.0.0-beta.0
+  service:
+    port: 8080
+  replicas: 3
+  # TODO: review suggested resource limits/requests
   resources: {}
     # limits:
     #  cpu: 100m
@@ -21,6 +43,18 @@ sync:
     # requests:
     #  cpu: 100m
     #  memory: 128Mi
+  livenessProbe:
+    httpGet:
+      path: /live
+      port: 8080
+    initialDelaySeconds: 60
+    timeoutSeconds: 5
+  readinessProbe:
+    httpGet:
+      path: /ready
+      port: 8080
+    initialDelaySeconds: 0
+    timeoutSeconds: 5
   nodeSelector: {}
   tolerations: []
   affinity: {}
