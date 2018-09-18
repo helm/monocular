@@ -10,7 +10,7 @@
       <p *ngIf="installing"><mat-progress-bar mode="indeterminate"></mat-progress-bar></p>
     </mat-tab>
     <mat-tab label="Helm CLI">
-      <div *ngIf=!showRepoInstructions class="chart-details-usage__repository">
+      <div *ngIf="showRepoInstructions" class="chart-details-usage__repository">
         <h2 class="chart-details-usage__label">Add {{ chart.attributes.repo.name }} repository</h2>
         <mat-form-field>
           <input matInput floatingPlaceholder=false [value]=repoAddInstructions>
