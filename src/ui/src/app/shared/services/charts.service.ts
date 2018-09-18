@@ -130,7 +130,7 @@ export class ChartsService {
   /**
    * Get the URL for retrieving the chart's icon
    * 
-   * @param {string} chart Chart object
+   * @param {Chart} chart Chart object
    */
   getChartIconURL(chart: Chart): string {
     if (chart.attributes.icon) {
