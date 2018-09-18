@@ -136,7 +136,7 @@ export class ChartsService {
     if (chart.attributes.icon) {
       return `${this.hostname}${chart.attributes.icon}`
     } else {
-      return null;
+      return '/assets/images/placeholder.png';
     }
   }
 

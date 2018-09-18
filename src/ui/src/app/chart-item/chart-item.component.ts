@@ -20,7 +20,7 @@ export class ChartItemComponent implements OnInit {
   constructor(private chartsService: ChartsService) {}
 
   ngOnInit() {
-    this.iconUrl = this.getIconUrl();
+    this.iconUrl = this.chartsService.getChartIconURL(this.chart);
   }
 
   goToDetailUrl(): string {
@@ -30,13 +30,5 @@ export class ChartItemComponent implements OnInit {
 
   goToRepoUrl(): string {
     return `/charts/${this.chart.attributes.repo.name}`;
-  }
-
-  getIconUrl(): string {
-    if (this.chart.attributes.icon) {
-      return this.chartsService.getChartIconURL(this.chart);
-    } else {
-      return '/assets/images/placeholder.png';
-    }
   }
 }
