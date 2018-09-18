@@ -50,10 +50,17 @@ export class ChartDetailsInfoComponent implements OnInit {
   }
 
   maintainerUrl(maintainer: Maintainer): string {
-    if (this.chart.attributes.repo.source.match(/github.com/)) {
+    if (this.isKubernetesCharts(this.chart.attributes.repo.URL)) {
       return `https://github.com/${maintainer.name}`;
     } else {
       return `mailto:${maintainer.email}`;
     }
+  }
+
+  private isKubernetesCharts(repoURL: string): boolean {
+    return (
+      repoURL === "https://kubernetes-charts.storage.googleapis.com" ||
+      repoURL === "https://kubernetes-charts-incubator.storage.googleapis.com"
+    );
   }
 }

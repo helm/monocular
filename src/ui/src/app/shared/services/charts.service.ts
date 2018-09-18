@@ -20,7 +20,7 @@ export class ChartsService {
     private http: Http,
     private config: ConfigService
   ) {
-    this.hostname = config.backendHostname;
+    this.hostname = `${config.backendHostname}/chartsvc`;
     this.cacheCharts = {};
   }
 
@@ -125,6 +125,19 @@ export class ChartsService {
     return this.http.get(`${this.hostname}/v1/charts/${repo}/${chartName}/versions/${version}`)
       .map(this.extractData)
       .catch(this.handleError);
+  }
+
+  /**
+   * Get the URL for retrieving the chart's icon
+   * 
+   * @param {string} chart Chart object
+   */
+  getChartIconURL(chart: Chart): string {
+    if (chart.attributes.icon) {
+      return `${this.hostname}${chart.attributes.icon}`
+    } else {
+      return null;
+    }
   }
 
   /**
