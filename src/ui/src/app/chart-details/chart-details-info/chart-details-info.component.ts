@@ -24,21 +24,8 @@ export class ChartDetailsInfoComponent implements OnInit {
     return this.chart.attributes.sources || [];
   }
 
-  get sourceUrl(): string {
-    var chartSource = this.chart.attributes.repo.source;
-    if (!chartSource) return;
-
-    return urljoin(chartSource, this.chart.attributes.name);
-  }
-
   get maintainers(): Maintainer[] {
     return this.chart.attributes.maintainers || [];
-  }
-
-  get sourceName(): string {
-    var parser = document.createElement('a');
-    parser.href = this.chart.attributes.repo.source;
-    return parser.hostname;
   }
 
   loadVersions(chart: Chart): void {
