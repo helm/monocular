@@ -22,7 +22,7 @@ script:
   - make -C src/ui docker-build # Tests disabled for now
 after_success:
   - |
-    if [[ "$TRAVIS_PULL_REQUEST" == false ]]; then
+    if [[ "$TRAVIS_PULL_REQUEST" = "false" ]] && [[ "$TRAVIS_BRANCH" = "master" || -n "$TRAVIS_TAG" ]]; then
       if [[ -n "$TRAVIS_TAG" ]]; then
         docker tag bitnami/monocular-ui:latest bitnami/monocular-ui:$TRAVIS_TAG
       fi
@@ -35,5 +35,6 @@ after_success:
 branches:
   only:
     - master
+    - dev-v1
     # release tags
     - /^v\d+\.\d+\.\d+.*/
