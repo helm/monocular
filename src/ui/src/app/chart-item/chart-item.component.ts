@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Chart } from '../shared/models/chart';
-import { ConfigService } from '../shared/services/config.service';
+import { ChartsService } from '../shared/services/charts.service';
 
 @Component({
   selector: 'app-chart-item',
@@ -17,10 +17,10 @@ export class ChartItemComponent implements OnInit {
   // Truncate the description
   public showDescription: boolean = true;
 
-  constructor(private config: ConfigService) {}
+  constructor(private chartsService: ChartsService) {}
 
   ngOnInit() {
-    this.iconUrl = this.getIconUrl();
+    this.iconUrl = this.chartsService.getChartIconURL(this.chart);
   }
 
   goToDetailUrl(): string {
@@ -30,17 +30,5 @@ export class ChartItemComponent implements OnInit {
 
   goToRepoUrl(): string {
     return `/charts/${this.chart.attributes.repo.name}`;
-  }
-
-  getIconUrl(): string {
-    let icons = this.chart.relationships.latestChartVersion.data.icons;
-    if (icons !== undefined && icons.length > 0) {
-      const icon =
-        this.config.backendHostname +
-        icons.find(icon => icon.name === '160x160-fit').path;
-      return icon;
-    } else {
-      return '/assets/images/placeholder.png';
-    }
   }
 }

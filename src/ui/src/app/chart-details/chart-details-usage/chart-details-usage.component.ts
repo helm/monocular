@@ -58,7 +58,7 @@ export class ChartDetailsUsageComponent implements OnInit {
 
   get repoAddInstructions(): string {
     return `helm repo add ${this.chart.attributes.repo.name} ${this.chart
-      .attributes.repo.URL}`;
+      .attributes.repo.url}`;
   }
 
   get installInstructions(): string {
