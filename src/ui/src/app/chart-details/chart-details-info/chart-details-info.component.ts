@@ -24,21 +24,8 @@ export class ChartDetailsInfoComponent implements OnInit {
     return this.chart.attributes.sources || [];
   }
 
-  get sourceUrl(): string {
-    var chartSource = this.chart.attributes.repo.source;
-    if (!chartSource) return;
-
-    return urljoin(chartSource, this.chart.attributes.name);
-  }
-
   get maintainers(): Maintainer[] {
     return this.chart.attributes.maintainers || [];
-  }
-
-  get sourceName(): string {
-    var parser = document.createElement('a');
-    parser.href = this.chart.attributes.repo.source;
-    return parser.hostname;
   }
 
   loadVersions(chart: Chart): void {
@@ -50,10 +37,19 @@ export class ChartDetailsInfoComponent implements OnInit {
   }
 
   maintainerUrl(maintainer: Maintainer): string {
-    if (this.chart.attributes.repo.source.match(/github.com/)) {
+    // Use GitHub URL with maintainer name if this is an upstream Helm repo from
+    // github.com/helm/charts (i.e. stable or incubator)
+    if (this.isUpstreamHelmRepo(this.chart.attributes.repo.url)) {
       return `https://github.com/${maintainer.name}`;
     } else {
       return `mailto:${maintainer.email}`;
     }
+  }
+
+  private isUpstreamHelmRepo(repoURL: string): boolean {
+    return (
+      repoURL === "https://kubernetes-charts.storage.googleapis.com" ||
+      repoURL === "https://kubernetes-charts-incubator.storage.googleapis.com"
+    );
   }
 }

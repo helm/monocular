@@ -12,12 +12,6 @@
         <a href="{{ chart.attributes.home }}" target="_blank">{{chart.attributes.home}}</a>
       </div>
     </div>
-    <div class="chartInfo__source" *ngIf="sourceUrl">
-      <h1>Source repository</h1>
-      <div>
-        <a href="{{ sourceUrl }}" target="_blank">{{ sourceName }}</a>
-      </div>
-    </div>
     <div class="chartInfo__maintainers">
       <h1>Maintainers</h1>
       <div *ngFor="let maintainer of maintainers">
