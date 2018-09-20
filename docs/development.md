@@ -34,9 +34,9 @@ Since your kubeconfig is mounted into the API container, we embed the certificat
 
 ## Architecture
 
-The UI is an Angular 2 application located in `src/ui/`. This path is mounted into the UI container. The server watches for file changes and automatically rebuilds the application.
+The UI is an Angular 2 application located in `frontend/`. This path is mounted into the UI container. The server watches for file changes and automatically rebuilds the application.
 
-* [UI documentation](../src/ui/README.md)
+* [UI documentation](../frontend/README.md)
 
 The API is a Go HTTP server located in `src/api/`.
 
