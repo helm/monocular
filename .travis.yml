@@ -1,6 +1,3 @@
-# Use older version of Trusty VM due to issues in the updated one
-group: deprecated-2017Q2
-filter_secrets: false
 language: node_js
 node_js:
   - '8.1.4'
@@ -18,11 +15,13 @@ before_install:
 install:
   - make -C src/ui install
   - make -C src/ui VERSION=$TRAVIS_TAG set-version
+  # required due to apparent yarn issue with node-sass: https://github.com/sass/node-sass/issues/1971
+  - npm --prefix src/ui rebuild node-sass
 script:
   - make -C src/ui docker-build # Tests disabled for now
 after_success:
   - |
-    if [[ "$TRAVIS_PULL_REQUEST" == false ]]; then
+    if [[ "$TRAVIS_PULL_REQUEST" = false ]] && [[ "$TRAVIS_BRANCH" = "master" || -n "$TRAVIS_TAG" ]]; then
       if [[ -n "$TRAVIS_TAG" ]]; then
         docker tag bitnami/monocular-ui:latest bitnami/monocular-ui:$TRAVIS_TAG
       fi
@@ -35,5 +34,7 @@ after_success:
 branches:
   only:
     - master
+    # TODO: remove this when dev-v1 branch is merged into master
+    - dev-v1
     # release tags
     - /^v\d+\.\d+\.\d+.*/
