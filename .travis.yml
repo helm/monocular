@@ -15,6 +15,8 @@ before_install:
 install:
   - make -C src/ui install
   - make -C src/ui VERSION=$TRAVIS_TAG set-version
+  # required due to apparent yarn issue with node-sass: https://github.com/sass/node-sass/issues/1971
+  - npm --prefix src/ui rebuild node-sass
 script:
   - make -C src/ui docker-build # Tests disabled for now
 after_success:
