@@ -16,6 +16,5 @@ data:
         {{- if .Values.ui.backendHostname }}
         backendHostname: '{{ .Values.ui.backendHostname }}',
         {{- end }}
-        releasesEnabled: {{.Values.api.config.releasesEnabled}}
       }
     };

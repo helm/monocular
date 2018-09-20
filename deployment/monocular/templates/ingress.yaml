@@ -22,10 +22,6 @@ spec:
           servicePort: {{ $.Values.ui.service.externalPort }}
         path: /
       - backend:
-          serviceName: {{ template "fullname" $ }}-api
-          servicePort: {{ $.Values.api.service.externalPort }}
-        path: /api/
-      - backend:
           serviceName: {{ template "fullname" $ }}-chartsvc
           servicePort: {{ $.Values.chartsvc.service.port }}
         path: /api/chartsvc
