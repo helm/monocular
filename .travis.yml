@@ -4,7 +4,7 @@ node_js:
 cache:
   yarn: true
   directories:
-    - src/ui/node_modules
+    - frontend/node_modules
 services:
   - docker
 # UI dependencies
@@ -13,12 +13,12 @@ before_install:
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
 install:
-  - make -C src/ui install
-  - make -C src/ui VERSION=$TRAVIS_TAG set-version
+  - make -C frontend install
+  - make -C frontend VERSION=$TRAVIS_TAG set-version
   # required due to apparent yarn issue with node-sass: https://github.com/sass/node-sass/issues/1971
-  - npm --prefix src/ui rebuild node-sass
+  - npm --prefix frontend rebuild node-sass
 script:
-  - make -C src/ui docker-build # Tests disabled for now
+  - make -C frontend docker-build # Tests disabled for now
 after_success:
   - |
     if [[ "$TRAVIS_PULL_REQUEST" = false ]] && [[ "$TRAVIS_BRANCH" = "master" || -n "$TRAVIS_TAG" ]]; then
