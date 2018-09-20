@@ -40,7 +40,7 @@ func setupChartsImplementation(conf config.Configuration, dbSession datastore.Se
 
 	chartsImplementation := cache.NewCachedCharts(dbSession)
 	// Run foreground repository refresh
-	chartsImplementation.Refresh()
+	go chartsImplementation.Refresh()
 	// Setup background index refreshes
 	cacheRefreshInterval := conf.CacheRefreshInterval
 	if cacheRefreshInterval <= 0 {
