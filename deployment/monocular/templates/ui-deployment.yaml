@@ -11,7 +11,7 @@ spec:
       labels:
         app: {{ template "fullname" . }}-ui
       annotations:
-        checksum/config: {{ print .Values.api.config | sha256sum }}
+        checksum/config: {{ include (print $.Template.BasePath "/ui-config.yaml") . | sha256sum }}
     spec:
       containers:
       - name: {{ .Chart.Name }}
