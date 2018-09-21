@@ -30,16 +30,4 @@ export default {
     description:
       'Deploy the { name } { version } in Kubernetes. { description }'
   },
-  deployments: {
-    title: 'Manage Deployments in Kubernetes | { appName }',
-    description: 'Browse, edit or create deployments in Kubernetes.'
-  },
-  deploymentDetails: {
-    title: '{ name } in Kubernetes | { appName }',
-    description: 'Deployment { name } in Kubernetes. { description }'
-  },
-  repositories: {
-    title: 'Repositories of Kubernetes-ready applications | { appName }',
-    description: 'Manage repositories of helm charts'
-  },
 };

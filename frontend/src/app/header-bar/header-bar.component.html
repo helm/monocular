@@ -19,35 +19,10 @@
             Charts
           </a>
         </li>
-        <li *ngIf="!loggedIn" class="separator"></li>
-        <li *ngIf="!loggedIn">
-          <a class="reverse" href="{{config.backendHostname}}/auth">
-            Login with GitHub
-          </a>
-        </li>
-        <li *ngIf="loggedIn && config.releasesEnabled" class="separator"></li>
-        <li *ngIf="loggedIn && config.releasesEnabled" routerLink="/repos" routerLinkActive="active">
-          <a class="reverse">
-            Repositories
-          </a>
-        </li>
-        <li *ngIf="loggedIn && config.releasesEnabled" class="separator"></li>
-        <li *ngIf="loggedIn && config.releasesEnabled" routerLink="/deployments" routerLinkActive="active">
-          <a class="reverse">
-            Deployments
-          </a>
-        </li>
         <li class="separator"></li>
         <li>
           <a class="reverse" href="https://github.com/helm/monocular/blob/master/docs/about.md" target="_blank">
             About
-          </a>
-        </li>
-        <li *ngIf="loggedIn && user.email" class="separator"></li>
-        <li *ngIf="loggedIn && user.email">
-          {{ user.email }}
-          <a class="reverse" (click)="logout()" target="_blank">
-            (logout)
           </a>
         </li>
       </ul>

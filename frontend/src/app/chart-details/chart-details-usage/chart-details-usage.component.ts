@@ -3,16 +3,10 @@ import {
   OnInit,
   Input,
   ViewEncapsulation,
-  ChangeDetectionStrategy
 } from '@angular/core';
 import { Chart } from '../../shared/models/chart';
-import { Deployment } from '../../shared/models/deployment';
 import { DomSanitizer } from '@angular/platform-browser';
-import { MatIconRegistry, MatSnackBar, MatDialog, MatDialogRef } from '@angular/material';
-import { ConfigService } from '../../shared/services/config.service';
-import { DeploymentsService } from '../../shared/services/deployments.service';
-import { DeploymentNewComponent } from '../../deployment-new/deployment-new.component';
-import { Router } from '@angular/router';
+import { MatIconRegistry, MatSnackBar } from '@angular/material';
 
 @Component({
   selector: 'app-chart-details-usage',
@@ -29,10 +23,6 @@ export class ChartDetailsUsageComponent implements OnInit {
   constructor(
     private mdIconRegistry: MatIconRegistry,
     private sanitizer: DomSanitizer,
-    public config: ConfigService,
-    private deploymentsService: DeploymentsService,
-    private router: Router,
-    private dialog: MatDialog,
     public snackBar: MatSnackBar
   ) {}
 
@@ -63,42 +53,5 @@ export class ChartDetailsUsageComponent implements OnInit {
 
   get installInstructions(): string {
     return `helm install ${this.chart.id} --version ${this.currentVersion}`;
-  }
-
-  installDeployment(chartID: string, version: string): void {
-    let dialogRef: MatDialogRef<DeploymentNewComponent>;
-    dialogRef = this.dialog.open(DeploymentNewComponent);
-    dialogRef.afterClosed()
-      .subscribe(namespace => {
-        if (namespace) this.performInstallation(chartID, version, namespace);
-      });
-    dialogRef.componentInstance.chartID = chartID;
-    dialogRef.componentInstance.version = version;
-  }
-
-  performInstallation(chartID: string, version: string, namespace: string): void {
-    this.installing = true;
-
-    this.deploymentsService
-      .installDeployment(chartID, version, namespace)
-      .finally(() => {
-        this.installing = false;
-      })
-      .subscribe(
-        deployment => {
-          this.installOK(deployment);
-        },
-        error => {
-          this.snackBar.open(
-            `Error installing the application, please try later`,
-            'close',
-            { duration: 5000 }
-          );
-        }
-      );
-  }
-
-  installOK(deployment: Deployment): void {
-    this.router.navigate(['/deployments', deployment.id]);
   }
 }

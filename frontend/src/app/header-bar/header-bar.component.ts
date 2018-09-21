@@ -6,7 +6,6 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { MatIconRegistry } from '@angular/material';
 import { MatSnackBar } from '@angular/material';
 import { CookieService } from 'ngx-cookie';
-import { AuthService } from '../shared/services/auth.service';
 
 @Component({
   selector: 'app-header-bar',
@@ -37,7 +36,6 @@ export class HeaderBarComponent implements OnInit {
     private mdIconRegistry: MatIconRegistry,
     private sanitizer: DomSanitizer,
     private cookieService: CookieService,
-    private authService: AuthService,
   ) {}
 
   ngOnInit() {
@@ -55,19 +53,6 @@ export class HeaderBarComponent implements OnInit {
       this.sanitizer.bypassSecurityTrustResourceUrl('/assets/icons/search.svg')
     );
     this.appName = this.config.appName;
-
-    this.authService.loggedIn().subscribe(loggedIn => { this.loggedIn = loggedIn; });
-
-    let userClaims = this.cookieService.get("ka_claims");
-    if (userClaims) {
-      this.user = JSON.parse(atob(userClaims));
-    }
-  }
-
-  logout() {
-    this.loggedIn = false;
-    this.user = {};
-    this.authService.logout();
   }
 
   searchCharts(input: HTMLInputElement): void {
