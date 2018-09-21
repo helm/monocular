@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ChartsService } from '../shared/services/charts.service';
-import { ReposService } from '../shared/services/repos.service';
 import { Chart } from '../shared/models/chart';
-import { Repo, RepoAttributes } from '../shared/models/repo';
+import { RepoAttributes } from '../shared/models/repo';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { SeoService } from '../shared/services/seo.service';
 import { ConfigService } from '../shared/services/config.service';
@@ -45,11 +44,9 @@ export class ChartsComponent implements OnInit {
 
   // Repos
   repoName: string;
-  allRepo: Repo;
 
   constructor(
     private chartsService: ChartsService,
-    private reposService: ReposService,
     private route: ActivatedRoute,
     private router: Router,
     private config: ConfigService,
@@ -71,10 +68,6 @@ export class ChartsComponent implements OnInit {
       'menu',
       this.sanitizer.bypassSecurityTrustResourceUrl(`/assets/icons/menu.svg`)
     );
-    this.allRepo = new Repo();
-    this.allRepo.id = 'all';
-    this.allRepo.attributes = new RepoAttributes();
-    this.allRepo.attributes.name = 'All';
     this.route.queryParams.forEach((params: Params) => {
       this.searchTerm = params['q'] ? params['q'] : undefined;
       if (this.searchTerm) {
@@ -84,29 +77,36 @@ export class ChartsComponent implements OnInit {
     this.route.params.forEach((params: Params) => {
       this.repoName = params['repo'] ? params['repo'] : undefined;
       this.updateMetaTags();
-      this.loadRepos();
       this.loadCharts();
     });
   }
 
   loadCharts(): void {
-    this.chartsService.getCharts(this.repoName).subscribe(charts => {
+    this.chartsService.getCharts().subscribe(allCharts => {
       this.loading = false;
-      this.charts = charts;
+      this.charts = allCharts.filter(c => !this.repoName || c.attributes.repo.name === this.repoName);
       if (!this.searchTerm) {
         this.orderedCharts = this.orderCharts(this.charts);
       }
+      this.setReposFromCharts(allCharts);
     });
   }
-
-  loadRepos(): void {
-    this.reposService.getRepos().subscribe(repos => {
-      repos.splice(0, 0, this.allRepo);
-      this.filters[0].items = repos.map(r => ({
-        title: r.attributes.name,
-        value: r.id,
-        selected: this.repoName ? r.id == this.repoName : r.id == 'all'
-      }));
+  
+  setReposFromCharts(charts: Chart[]): void {
+    let repoMap = new Map<string, RepoAttributes>();
+    repoMap['all'] = { name: 'All' };
+    repoMap = charts.reduce((repos, chart) => {
+      repos[chart.attributes.repo.name] = chart.attributes.repo;
+      return repos;
+    }, repoMap);
+    
+    this.filters[0].items = Object.keys(repoMap).map(k => {
+      const r = repoMap[k];
+      return {
+        title: r.name,
+        value: k,
+        selected: this.repoName ? k === this.repoName : k == 'all'
+      }
     });
   }
 
