@@ -92,6 +92,9 @@ export class ChartsComponent implements OnInit {
     });
   }
   
+  // This takes a list of charts, extracts the unique set of repositories the
+  // charts are from and sets the Repositories filter with that list. We also
+  // add an 'all' repository filter at the top.
   setReposFromCharts(charts: Chart[]): void {
     let repoMap = new Map<string, RepoAttributes>();
     repoMap['all'] = { name: 'All' };
