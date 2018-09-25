@@ -1,4 +1,4 @@
-<header [ngClass]="{ 'header-bar': true, 'releases-enabled': config.releasesEnabled }">
+<header [ngClass]="{ 'header-bar': true }">
   <div class="header-bar__content">
     <div class="header-bar__logo">
       <h1>
@@ -25,29 +25,17 @@
             Login with GitHub
           </a>
         </li>
-        <li *ngIf="loggedIn && config.releasesEnabled" class="separator"></li>
-        <li *ngIf="loggedIn && config.releasesEnabled" routerLink="/repos" routerLinkActive="active">
-          <a class="reverse">
-            Repositories
-          </a>
-        </li>
-        <li *ngIf="loggedIn && config.releasesEnabled" class="separator"></li>
-        <li *ngIf="loggedIn && config.releasesEnabled" routerLink="/deployments" routerLinkActive="active">
-          <a class="reverse">
-            Deployments
+        <li *ngIf="loggedIn && user.email" class="separator"></li>
+        <li *ngIf="loggedIn && user.email">
+          {{ user.email }}
+          <a class="reverse" (click)="logout()" target="_blank">
+            (logout)
           </a>
         </li>
         <li class="separator"></li>
         <li>
           <a class="reverse" href="https://github.com/helm/monocular/blob/master/docs/about.md" target="_blank">
             About
-          </a>
-        </li>
-        <li *ngIf="loggedIn && user.email" class="separator"></li>
-        <li *ngIf="loggedIn && user.email">
-          {{ user.email }}
-          <a class="reverse" (click)="logout()" target="_blank">
-            (logout)
           </a>
         </li>
       </ul>

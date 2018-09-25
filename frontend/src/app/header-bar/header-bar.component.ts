@@ -4,7 +4,6 @@ import { ConfigService } from '../shared/services/config.service';
 import { MenuService } from '../shared/services/menu.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MatIconRegistry } from '@angular/material';
-import { MatSnackBar } from '@angular/material';
 import { CookieService } from 'ngx-cookie';
 import { AuthService } from '../shared/services/auth.service';
 
@@ -17,8 +16,9 @@ import { AuthService } from '../shared/services/auth.service';
   inputs: ['showSearch', 'transparent']
 })
 export class HeaderBarComponent implements OnInit {
-  // Whether or not the Monocular server requires authentication
-  public loggedIn: boolean = false;
+  // Whether or not the Monocular server requires authentication. Assume logged
+  // in to hide Login Button when loading
+  public loggedIn: boolean = true;
   // public user
   public user: any = {};
   // Show search form by default
