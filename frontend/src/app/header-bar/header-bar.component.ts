@@ -56,17 +56,17 @@ export class HeaderBarComponent implements OnInit {
     );
     this.appName = this.config.appName;
 
-    this.authService.loggedIn().subscribe(loggedIn => { this.loggedIn = loggedIn; });	
+    this.authService.loggedIn().subscribe(loggedIn => { this.loggedIn = loggedIn; });
 
-    let userClaims = this.cookieService.get("ka_claims");	
-    if (userClaims) {	
-      this.user = JSON.parse(atob(userClaims));	
+    let userClaims = this.cookieService.get("ka_claims");
+    if (userClaims) {
+      this.user = JSON.parse(atob(userClaims));
     }
   }
 
-  logout() {	
-    this.loggedIn = false;	
-    this.user = {};	
+  logout() {
+    this.loggedIn = false;
+    this.user = {};
     this.authService.logout();
   }
 

@@ -19,18 +19,18 @@
             Charts
           </a>
         </li>
-        <li *ngIf="!loggedIn" class="separator"></li>	
-        <li *ngIf="!loggedIn">	
+        <li *ngIf="!loggedIn" class="separator"></li>
+        <li *ngIf="!loggedIn">
           <a class="reverse" href="{{config.backendHostname}}/auth">
-            Login with GitHub	
-          </a>	
+            Login with GitHub
+          </a>
         </li>
-        <li *ngIf="loggedIn && user.email" class="separator"></li>	
-        <li *ngIf="loggedIn && user.email">	
-          {{ user.email }}	
-          <a class="reverse" (click)="logout()" target="_blank">	
-            (logout)	
-          </a>	
+        <li *ngIf="loggedIn && user.email" class="separator"></li>
+        <li *ngIf="loggedIn && user.email">
+          {{ user.email }}
+          <a class="reverse" (click)="logout()" target="_blank">
+            (logout)
+          </a>
         </li>
         <li class="separator"></li>
         <li>
