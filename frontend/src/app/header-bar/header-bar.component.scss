@@ -174,13 +174,4 @@ $header-bar-padding-small: 0 2em;
       margin-right: 2em;
     }
   }
-
-  @include mappy-bp(max-width large) {
-    &.releases-enabled &__search {
-      display: none !important;
-      & + li { // separator
-        display: none !important;
-      }
-    }
-  }
 }

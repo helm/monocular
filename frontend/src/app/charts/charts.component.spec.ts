@@ -9,7 +9,6 @@ import { LoaderComponent } from '../loader/loader.component';
 import { PanelComponent } from '../panel/panel.component';
 import { HeaderBarComponent } from '../header-bar/header-bar.component';
 import { ChartsService } from '../shared/services/charts.service';
-import { ReposService } from '../shared/services/repos.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SeoService } from '../shared/services/seo.service';
 import { MenuService } from '../shared/services/menu.service';
@@ -30,7 +29,6 @@ describe('Component: Charts', () => {
       providers: [
         ConfigService,
         MenuService,
-        { provide: ReposService },
         { provide: ChartsService },
         { provide: SeoService },
         { provide: ActivatedRoute },
