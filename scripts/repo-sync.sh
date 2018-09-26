@@ -18,7 +18,7 @@
 GIT_URL=github.com/helm/monocular.git
 REPO_URL=https://helm.github.io/monocular
 REPO_DIR=$TRAVIS_BUILD_DIR
-CHART_PATH="$REPO_DIR/deployment/monocular"
+CHART_PATH="$REPO_DIR/chart/monocular"
 COMMIT_CHANGES=true
 
 log () {
