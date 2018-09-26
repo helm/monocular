@@ -45,12 +45,12 @@ tailored-alpaca-monocular   *         192.168.64.30   80        11h
 
 Visit the address specified in the Ingress object in your browser, e.g. http://192.168.64.30.
 
-Read more on how to deploy Monocular [here](deployment/monocular/README.md).
+Read more on how to deploy Monocular [here](chart/monocular/README.md).
 
 ## Documentation
 
-- [Configuration](deployment/monocular/README.md#configuration)
-- [Deployment](deployment/monocular/README.md)
+- [Configuration](chart/monocular/README.md#configuration)
+- [Deployment](chart/monocular/README.md)
 - [Development](docs/development.md)
 
 ## Roadmap
