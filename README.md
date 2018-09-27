@@ -59,8 +59,9 @@ usecase better (e.g. [Kubeapps](https://github.com/kubeapps/kubeapps) or [RedHat
 Automation
 Broker](https://blog.openshift.com/automation-broker-discovering-helm-charts/)).
 
-Monocular v0.7.3 includes in-cluster features and can still be installed and
-used until your team has migrated to another tool.
+[Monocular v0.7.3](https://github.com/helm/monocular/releases/tag/v0.7.3)
+includes in-cluster features and can still be installed and used until your team
+has migrated to another tool.
 
 ## Roadmap
 
