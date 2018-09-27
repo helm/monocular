@@ -2,7 +2,7 @@
 [![Build
 Status](https://travis-ci.org/helm/monocular.svg?branch=master)](https://travis-ci.org/helm/monocular)
 
-Monocular is a web-based UI and API that enables the search and discovery of
+Monocular is a web-based application that enables the search and discovery of
 charts from multiple Helm Chart repositories. It is the codebase that powers the
 [Helm Hub](https://github.com/helm/hub) project.
 
