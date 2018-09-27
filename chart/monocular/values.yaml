@@ -62,7 +62,7 @@ chartsvc:
 ui:
   replicaCount: 2
   image:
-    repository: bitnami/monocular-ui
+    repository: quay.io/helmpack/monocular-ui
     tag: v0.7.3
     pullPolicy: Always
   service:
