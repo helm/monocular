@@ -4,40 +4,56 @@ This guide explains how to set up your environment for developing on Helm and Ti
 
 ## Prerequisites
 * Docker 1.10 or later
-* Docker Compose 1.6 or later
-* A Kubernetes cluster with Helm/Tiller installed (optional)
+* A Kubernetes cluster with Helm/Tiller installed
+* Telepresence 0.75 or later
 * kubectl 1.2 or later (optional)
 * Git
 
 ## Running Monocular
 
-We use [Docker Compose](https://docs.docker.com/compose/) to orchestrate the UI frontend and API backend containers for local development. The simplest way to get started is:
-
-```
-$ docker-compose up
-```
-
-After a few minutes, you will be able to visit http://localhost:4200/ in your browser.
-
-### Running a local cluster
-
-Monocular allows you to install and view installed charts in your Kubernetes cluster, to test and develop these features we highly recommend using the Kubernetes Minikube developer-oriented distribution. Once this is installed, you can use helm init to install Tiller into the cluster.
+We develop Monocular in a Kubernetes environment, in order to make use of the
+CronJobs for syncing chart repositories. Minikube can be used to run a local
+single-node cluster for developing Monocular:
 
 ```
 $ minikube start
-$ helm init
-$ kubectl config set-credentials minikube --client-certificate=$HOME/.minikube/apiserver.crt --client-key=$HOME/.minikube/apiserver.key --embed-certs
-$ kubectl config set-cluster minikube --certificate-authority=$HOME/.minikube/ca.crt --embed-certs
+$ minikube addons enable ingress
+$ helm init --wait
+$ helm install --name monocular ./chart/monocular
 ```
 
-Since your kubeconfig is mounted into the API container, we embed the certificates to authenticate with the cluster.
+After a few minutes, you will be able to visit the Monocular in your browser
+using the Ingress address (typically IP of Minikube VM).
+
+### Starting Monocular development server
+
+Use Telepresence to replace the UI Pod in your cluster with the development
+server:
+
+```
+$ docker build -t monocular_ui ./dev_env/ui
+$ telepresence --swap-deployment m-monocular-ui --namespace monocular --expose 4200:8080 --docker-run --rm -ti -v $(pwd)/frontend:/app monocular_ui bash
+```
+
+Inside the container's bash shell, run the following command to start the
+development server:
+
+```
+$ ng serve --host 0.0.0.0 --public-host https://localhost
+```
+
+Once running, refresh the Ingress address in your browser and you will be
+connected to the development server.
+
+**TODO:** document development instructions for chartsvc and chart-repo.
 
 ## Architecture
 
-The UI is an Angular 2 application located in `frontend/`. This path is mounted into the UI container. The server watches for file changes and automatically rebuilds the application.
+The UI is an Angular 2 application located in `frontend/`. This path is mounted
+into the UI container. The server watches for file changes and automatically
+rebuilds the application.
 
 * [UI documentation](../frontend/README.md)
 
-The API is a Go HTTP server located in `src/api/`.
-
-* [API documentation](../src/api/README.md)
+The backend is a small Go REST API service, `chartsvc`, and background CronJobs
+to run the `chart-repo` sync command.
