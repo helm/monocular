@@ -11,8 +11,9 @@ This guide explains how to set up your environment for developing on Helm and Ti
 
 ## Running Monocular
 
-We develop Monocular in a Kubernetes environment. Minikube can be used to run a
-local single-node cluster for developing Monocular:
+We develop Monocular in a Kubernetes environment, in order to make use of the
+CronJobs for syncing chart repositories. Minikube can be used to run a local
+single-node cluster for developing Monocular:
 
 ```
 $ minikube start
