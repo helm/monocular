@@ -24,9 +24,47 @@ You can use the chart in this repository to install Monocular in your cluster.
   - Install with Helm: `helm install stable/nginx-ingress`
   - **Minikube/Kubeadm**: `helm install stable/nginx-ingress --set controller.hostNetwork=true`
 
-
 ```console
 $ helm repo add monocular https://helm.github.io/monocular
+```
+
+- Need to install dns in k8s
+- Need to install PV before installing Monocular
+
+eg:
+```yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: monocular-mongodb
+spec:
+  capacity:
+    storage: 8Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Recycle
+  mountOptions:
+    - hard
+    - nfsvers=4
+  nfs:
+    path: /monocular
+    server: 172.16.79.160
+```
+
+```console
+$ kubectl apply -f monocular-pv.yml
+```
+
+Or do not install PV by modifying values.yaml
+
+```yaml
+mongodb:
+  mongodbDatabase: monocular
+  persistence:
+    enabled: false
+```
+
+```console
 $ helm install monocular/monocular
 ```
 
