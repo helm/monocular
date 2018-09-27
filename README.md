@@ -2,24 +2,20 @@
 [![Build
 Status](https://travis-ci.org/helm/monocular.svg?branch=master)](https://travis-ci.org/helm/monocular)
 
-Monocular is web-based UI for managing Kubernetes applications packaged as Helm
-Charts. It allows you to search and discover available charts from multiple
-repositories, and install them in your cluster with one click.
+Monocular is a web-based application that enables the search and discovery of
+charts from multiple Helm Chart repositories. It is the codebase that powers the
+[Helm Hub](https://github.com/helm/hub) project.
 
 ![Monocular Screenshot](docs/MonocularScreenshot.gif)
 
-See Monocular in action at [KubeApps.com](https://kubeapps.com) or click [here](docs/about.md) to learn more about Helm, Charts and Kubernetes.
-
-##### Video links
-- [Screencast](https://www.youtube.com/watch?v=YoEbvDrI5ng)
-- [Helm and Monocular Webinar](https://www.youtube.com/watch?v=u8kDkHgRbWQ)
+Click [here](docs/about.md) to learn more about Helm, Charts and Kubernetes.
 
 ## Install
 
 You can use the chart in this repository to install Monocular in your cluster.
 
 ### Prerequisites
-- [Helm and Tiller installed](https://github.com/kubernetes/helm/blob/master/docs/quickstart.md)
+- [Helm and Tiller installed](https://github.com/helm/helm/blob/master/docs/quickstart.md)
 - [Nginx Ingress controller](https://kubeapps.com/charts/stable/nginx-ingress)
   - Install with Helm: `helm install stable/nginx-ingress`
   - **Minikube/Kubeadm**: `helm install stable/nginx-ingress --set controller.hostNetwork=true`
@@ -52,6 +48,20 @@ Read more on how to deploy Monocular [here](chart/monocular/README.md).
 - [Configuration](chart/monocular/README.md#configuration)
 - [Deployment](chart/monocular/README.md)
 - [Development](docs/development.md)
+
+## Looking for an in-cluster Application management UI?
+
+To focus on the CNCF Helm Hub requirements, in-cluster features have been
+removed from Monocular 1.0 and above. We believe that providing a good solution
+for deploying and managing apps in-cluster is an orthogonal user experience to a
+public search and discovery site. There is other tooling that can support this
+usecase better (e.g. [Kubeapps](https://github.com/kubeapps/kubeapps) or [RedHat
+Automation
+Broker](https://blog.openshift.com/automation-broker-discovering-helm-charts/)).
+
+[Monocular v0.7.3](https://github.com/helm/monocular/releases/tag/v0.7.3)
+includes in-cluster features and can still be installed and used until your team
+has migrated to another tool.
 
 ## Roadmap
 

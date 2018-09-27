@@ -36,10 +36,3 @@ Other resources:
 The Charts indexed by Monocular are from the official Kubernetes Helm Chart repository.
 
 The process for contributing new Charts can be found at: https://github.com/kubernetes/charts#contributing-a-chart
-
-*Coming soon: Point Monocular to a Helm Chart registry of your choice.*
-
-
-## Who are the maintainers of Monocular and KubeApps.com?
-
-Bitnami and Deis are the main committers to the Monocular project. Bitnami also sponsors the [KubeApps](https://kubeapps.com) website by providing hosting on GKE and contributing to website design.

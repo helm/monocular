@@ -1,26 +1,26 @@
 # Monocular UI
 
-The UI is a web client for the [Monocular
-API](https://github.com/helm/monocular/tree/master/src/api), which exposes an easy way to
-navigate and search [Helm Charts](https://github.com/kubernetes/charts).
+The UI is a web client for the
+[chartsvc](https://github.com/helm/monocular/tree/master/cmd/chartsvc), which
+exposes an easy way to navigate and search [Helm
+Charts](https://github.com/kubernetes/charts).
 
 Features of the UI includes:
 
 * Listing of available charts from multiple repositories.
 * Search charts by name, keywords, maintainer, etc.
 * View chart information, e.g. installation notes, usage, versions.
-* Install charts in the cluster
-* Add and manage indexed chart repositories
 
 ## Developers
 
 ### Running Monocular UI
 
-Monocular UI requires a running instance of the Monocular backend.
+Monocular UI requires a running instance of the `chartsvc` backend.
 
-The easiest way to have a running multi-tier development environment is to use the the `docker-compose.yml` file placed at the project root directory.
+The easiest way to have a running multi-tier development environment is to
+install the Helm chart in your development Kubernetes cluster.
 
-Refer to [the Developer Guide](../../docs/development.md) for more details.
+Refer to [the Developer Guide](../docs/development.md) for more details.
 
 ### Stack
 
