@@ -27,7 +27,7 @@ after_success:
       if [[ -n "$TRAVIS_TAG" ]]; then
         docker tag $IMAGE_PREFIX/monocular-ui:latest $IMAGE_PREFIX/monocular-ui:$TRAVIS_TAG
       fi
-      docker login -u="$DOCKER_USER" -p="$DOCKER_PASSWORD"
+      docker login -u="$DOCKER_USER" -p="$DOCKER_PASSWORD" quay.io
       docker push $IMAGE_PREFIX/monocular-ui
 
       ./scripts/repo-sync.sh
