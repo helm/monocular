@@ -8,6 +8,8 @@ cache:
 services:
   - docker
 # UI dependencies
+env:
+  - IMAGE_PREFIX=quay.io/helmpack
 before_install:
   - export CHROME_BIN=chromium-browser
   - export DISPLAY=:99.0
@@ -23,10 +25,10 @@ after_success:
   - |
     if [[ "$TRAVIS_PULL_REQUEST" = false ]] && [[ "$TRAVIS_BRANCH" = "master" || -n "$TRAVIS_TAG" ]]; then
       if [[ -n "$TRAVIS_TAG" ]]; then
-        docker tag bitnami/monocular-ui:latest bitnami/monocular-ui:$TRAVIS_TAG
+        docker tag $IMAGE_PREFIX/monocular-ui:latest $IMAGE_PREFIX/monocular-ui:$TRAVIS_TAG
       fi
       docker login -u="$DOCKER_USER" -p="$DOCKER_PASSWORD"
-      docker push bitnami/monocular-ui
+      docker push $IMAGE_PREFIX/monocular-ui
 
       ./scripts/repo-sync.sh
     fi

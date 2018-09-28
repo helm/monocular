@@ -1,4 +1,4 @@
-IMAGE_REPO ?= bitnami/monocular-ui
+IMAGE_REPO ?= quay.io/helmpack/monocular-ui
 IMAGE_TAG ?= latest
 
 ifeq "$(VERSION)" ""
