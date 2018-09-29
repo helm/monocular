@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2017-2018 Bitnami
+Copyright (c) 2018 The Helm Authors
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -19,13 +19,13 @@ package main
 import (
 	"os"
 
-	"github.com/spf13/cobra"
-	"github.com/sirupsen/logrus"
 	"github.com/kubeapps/common/datastore"
+	"github.com/sirupsen/logrus"
+	"github.com/spf13/cobra"
 )
 
 var deleteCmd = &cobra.Command{
-	Use: "delete [REPO NAME]",
+	Use:   "delete [REPO NAME]",
 	Short: "delete a chart repository",
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) != 1 {
