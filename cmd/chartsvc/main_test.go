@@ -7,8 +7,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/helm/monocular/cmd/chartsvc/models"
 	"github.com/kubeapps/common/datastore/mockstore"
-	"github.com/kubeapps/kubeapps/cmd/chartsvc/models"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
