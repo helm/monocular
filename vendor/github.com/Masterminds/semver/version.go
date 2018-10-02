@@ -64,14 +64,14 @@ func NewVersion(v string) (*Version, error) {
 	}
 
 	var temp int64
-	temp, err := strconv.ParseInt(m[1], 10, 64)
+	temp, err := strconv.ParseInt(m[1], 10, 32)
 	if err != nil {
 		return nil, fmt.Errorf("Error parsing version segment: %s", err)
 	}
 	sv.major = temp
 
 	if m[2] != "" {
-		temp, err = strconv.ParseInt(strings.TrimPrefix(m[2], "."), 10, 64)
+		temp, err = strconv.ParseInt(strings.TrimPrefix(m[2], "."), 10, 32)
 		if err != nil {
 			return nil, fmt.Errorf("Error parsing version segment: %s", err)
 		}
@@ -81,7 +81,7 @@ func NewVersion(v string) (*Version, error) {
 	}
 
 	if m[3] != "" {
-		temp, err = strconv.ParseInt(strings.TrimPrefix(m[3], "."), 10, 64)
+		temp, err = strconv.ParseInt(strings.TrimPrefix(m[3], "."), 10, 32)
 		if err != nil {
 			return nil, fmt.Errorf("Error parsing version segment: %s", err)
 		}
@@ -379,15 +379,16 @@ func comparePrePart(s, o string) int {
 
 	// When s or o are empty we can use the other in an attempt to determine
 	// the response.
-	if s == "" {
-		if o != "" {
+	if o == "" {
+		_, n := strconv.ParseInt(s, 10, 64)
+		if n != nil {
 			return -1
 		}
 		return 1
 	}
-
-	if o == "" {
-		if s != "" {
+	if s == "" {
+		_, n := strconv.ParseInt(o, 10, 64)
+		if n != nil {
 			return 1
 		}
 		return -1
