@@ -108,7 +108,7 @@ jobs:
       - checkout
       - <<: *exports
       - run: |
-          CMDS=(chart-repo charsvc)
+          CMDS=(chart-repo chartsvc)
           for CMD in ${CMDS[@]}; do
             make -C cmd/${CMD} docker-build
           done
