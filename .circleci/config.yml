@@ -108,10 +108,14 @@ jobs:
       - checkout
       - <<: *exports
       - run: |
+          CMDS=(chart-repo charsvc)
+          for CMD in ${CMDS[@]}; do
+            make -C cmd/${CMD} docker-build
+          done
+
           if [[ -z "$CIRCLE_PULL_REQUEST" && -n "$DOCKER_USERNAME" && -n "$DOCKER_PASSWORD" ]]; then
             docker login -u="${DOCKER_USERNAME}" -p="${DOCKER_PASSWORD}" quay.io
-            for CMD in chart-repo chartsvc; do
-              make -C cmd/${CMD} docker-build
+            for CMD in ${CMDS[@]}; do
               docker push ${IMAGE_REPO_PREFIX}${CMD}:${IMAGE_TAG}
             done
           fi
