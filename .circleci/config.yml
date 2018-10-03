@@ -1,0 +1,126 @@
+version: 2
+
+## Build conditions
+# Build in any branch or tag
+build_always: &build_always
+  filters:
+    tags:
+      only: /^v.*/
+# Build only in master or in tags
+build_on_master_and_tags: &build_on_master_and_tags
+  filters:
+    tags:
+      only: /^v.*/
+    branches:
+      only: master
+
+workflows:
+  version: 2
+  kubeapps:
+    jobs:
+      - test_go:
+          <<: *build_always
+      - test_chart_render:
+          <<: *build_always
+      - build_and_push_go_images:
+          <<: *build_always
+          requires:
+            - test_go
+            - test_chart_render
+      - build_and_push_frontend_image:
+          <<: *build_always
+          requires:
+            - test_go
+            - test_chart_render
+      - sync_chart:
+          <<: *build_on_master_and_tags
+          requires:
+            - build_and_push_go_images
+            - build_and_push_frontend_image
+
+## Definitions
+install_helm_cli: &install_helm_cli
+  run: |
+    wget https://storage.googleapis.com/kubernetes-helm/helm-$HELM_VERSION-linux-amd64.tar.gz
+    tar zxf helm-$HELM_VERSION-linux-amd64.tar.gz
+    sudo mv linux-amd64/helm /usr/local/bin/
+exports: &exports
+  run: |
+    # It is not possible to resolve env vars in the environment section:
+    # https://circleci.com/docs/2.0/env-vars/#using-bash_env-to-set-environment-variables
+    # DEV_TAG and PROD_TAG are the tags used for the Kubeapps docker images
+    echo "export IMAGE_TAG=${CIRCLE_TAG:-latest}" >> $BASH_ENV
+###
+
+jobs:
+  test_go:
+    working_directory: /go/src/github.com/helm/monocular
+    environment:
+      CGO_ENABLED: "0"
+    docker:
+      - image: circleci/golang:1.9
+    steps:
+      - checkout
+      # Global test for all Go packages in the repo
+      - run: go test -v ./...
+
+  test_chart_render:
+    docker:
+      - image: circleci/golang:1.9
+    environment:
+      HELM_VERSION: v2.9.1
+    steps:
+      - checkout
+      - <<: *install_helm_cli
+      - run: helm init --client-only
+      - run: helm dep build ./chart/monocular
+      - run: helm template ./chart/monocular
+
+  build_and_push_frontend_image:
+    docker:
+      - image: circleci/node:8
+    environment:
+      IMAGE_REPO: quay.io/helmpack/monocular-ui
+    steps:
+      - setup_remote_docker
+      - checkout
+      - <<: *exports
+      - run: make -C frontend install
+      - run: make -C frontend VERSION=${IMAGE_TAG} set-version
+      # required due to apparent yarn issue with node-sass: https://github.com/sass/node-sass/issues/1971
+      - run: npm --prefix frontend rebuild node-sass
+      - run: make -C frontend docker-build # Tests disabled for now
+      - run: |
+          if [[ -z "${CIRCLE_PULL_REQUEST}" && -n "${DOCKER_USERNAME}" && -n "${DOCKER_PASSWORD}" ]]; then
+            docker login -u="${DOCKER_USERNAME}" -p="${DOCKER_PASSWORD}" quay.io
+            docker push ${IMAGE_REPO}:${IMAGE_TAG}
+          fi
+
+  build_and_push_go_images:
+    docker:
+      - image: circleci/golang:1.9
+    working_directory: /go/src/github.com/helm/monocular
+    environment:
+      GOPATH: /home/circleci/.go_workspace
+      IMAGE_REPO_PREFIX: quay.io/helmpack/
+    steps:
+      - setup_remote_docker
+      - checkout
+      - <<: *exports
+      - run: |
+          if [[ -z "$CIRCLE_PULL_REQUEST" && -n "$DOCKER_USERNAME" && -n "$DOCKER_PASSWORD" ]]; then
+            docker login -u="${DOCKER_USERNAME}" -p="${DOCKER_PASSWORD}" quay.io
+            for CMD in chart-repo chartsvc; do
+              make -C cmd/${CMD} docker-build
+              docker push ${IMAGE_REPO_PREFIX}${CMD}:${IMAGE_TAG}
+            done
+          fi
+
+  sync_chart:
+    docker:
+      - image: circleci/golang:1.9
+    steps:
+      - checkout
+      - <<: *exports
+      - run: |
+          ./scripts/repo-sync.sh

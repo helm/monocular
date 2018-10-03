@@ -17,7 +17,7 @@
 
 GIT_URL=github.com/helm/monocular.git
 REPO_URL=https://helm.github.io/monocular
-REPO_DIR=$TRAVIS_BUILD_DIR
+REPO_DIR=$CIRCLE_WORKING_DIRECTORY
 CHART_PATH="$REPO_DIR/chart/monocular"
 COMMIT_CHANGES=true
 
@@ -25,9 +25,9 @@ log () {
   echo -e "\033[0;33m$(date "+%H:%M:%S")\033[0;37m ==> $1."
 }
 
-travis_setup_git() {
-  git config user.email "travis@travis-ci.org"
-  git config user.name "Travis CI"
+circle_setup_git() {
+  git config user.email "circle@circleci.com"
+  git config user.name "Circle CI"
   git remote add upstream "https://$GH_TOKEN@$GIT_URL"
 }
 
@@ -35,7 +35,7 @@ show_important_vars() {
   echo "  REPO_URL: $REPO_URL"
   echo "  BUILD_DIR: $BUILD_DIR"
   echo "  REPO_DIR: $REPO_DIR"
-  echo "  TRAVIS: $TRAVIS"
+  echo "  CIRCLECI: $CIRCLECI"
   echo "  COMMIT_CHANGES: $COMMIT_CHANGES"
 }
 
@@ -71,24 +71,24 @@ update_chart_version() {
   CHART_VERSION=$(grep '^version:' $CHART_PATH/Chart.yaml | awk '{print $2}')
   CHART_VERSION_NEXT="${CHART_VERSION%.*}.$((${CHART_VERSION##*.}+1))"
   sed -i 's|^version:.*|version: '"$CHART_VERSION_NEXT"'|g' $CHART_PATH/Chart.yaml
-  sed -i 's|^appVersion:.*|appVersion: '"$TRAVIS_TAG"'|g' $CHART_PATH/Chart.yaml
-  sed -i '/bitnami\/monocular/{n; s/tag:.*/tag: '"$TRAVIS_TAG"'/}' $CHART_PATH/values.yaml
+  sed -i 's|^appVersion:.*|appVersion: '"$IMAGE_TAG"'|g' $CHART_PATH/Chart.yaml
+  sed -i '/bitnami\/monocular/{n; s/tag:.*/tag: '"$IMAGE_TAG"'/}' $CHART_PATH/values.yaml
 
   if [ $COMMIT_CHANGES != "false" ]; then
     log "Commiting chart source changes to master branch"
     git add $CHART_PATH/Chart.yaml $CHART_PATH/values.yaml
-    git commit --message "chart: bump to $CHART_VERSION_NEXT [skip ci]" --message "travis build #$TRAVIS_BUILD_NUMBER"
+    git commit --message "chart: bump to $CHART_VERSION_NEXT [skip ci]" --message "circle build #$CIRCLE_BUILD_NUM"
     git push -q upstream HEAD:master
   fi
 }
 
 show_important_vars
 
-travis_setup_git
+circle_setup_git
 git fetch upstream
 
 # Bump chart if this is a release
-if [[ -n "$TRAVIS_TAG" ]]; then
+if [[ -n "$IMAGE_TAG" ]]; then
   log "Updating chart version"
   update_chart_version
 fi
@@ -130,7 +130,7 @@ cp $BUILD_DIR/* $REPO_DIR
 if [ $COMMIT_CHANGES != "false" ]; then
   log "Commiting changes to gh-pages branch"
   git add *.tgz index.yaml
-  git commit --message "release $CHART_VERSION [skip ci]" --message "travis build #$TRAVIS_BUILD_NUMBER"
+  git commit --message "release $CHART_VERSION [skip ci]" --message "circle build #$CIRCLE_BUILD_NUM"
   git push -q upstream HEAD:gh-pages
 fi
 
