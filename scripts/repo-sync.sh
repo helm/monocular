@@ -15,7 +15,7 @@
 # Based on https://github.com/migmartri/helm-hack-night-charts/blob/master/repo-sync.sh
 # USAGE: repo-sync.sh
 
-GIT_URL=github.com/helm/monocular.git
+GIT_URL=github.com/prydonius/monocular.git
 REPO_URL=https://helm.github.io/monocular
 REPO_DIR=$CIRCLE_WORKING_DIRECTORY
 CHART_PATH="$REPO_DIR/chart/monocular"

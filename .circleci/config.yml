@@ -33,7 +33,8 @@ workflows:
             - test_go
             - test_chart_render
       - sync_chart:
-          <<: *build_on_master_and_tags
+          # TODO: change back to build_on_master_and_tags
+          <<: *build_always
           requires:
             - build_and_push_go_images
             - build_and_push_frontend_image
