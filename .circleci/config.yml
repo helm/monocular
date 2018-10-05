@@ -18,19 +18,19 @@ workflows:
   version: 2
   monocular:
     jobs:
-      - test_go:
+      - test_go_packages:
           <<: *build_always
       - test_chart_render:
           <<: *build_always
       - build_and_push_go_images:
           <<: *build_always
           requires:
-            - test_go
+            - test_go_packages
             - test_chart_render
       - build_and_push_frontend_image:
           <<: *build_always
           requires:
-            - test_go
+            - test_go_packages
             - test_chart_render
       - sync_chart:
           <<: *build_on_master_and_tags
@@ -53,7 +53,7 @@ exports: &exports
 ###
 
 jobs:
-  test_go:
+  test_go_packages:
     working_directory: /go/src/github.com/helm/monocular
     environment:
       CGO_ENABLED: "0"
