@@ -15,9 +15,10 @@
 # Based on https://github.com/migmartri/helm-hack-night-charts/blob/master/repo-sync.sh
 # USAGE: repo-sync.sh
 
-GIT_URL=github.com/prydonius/monocular.git
+GIT_URL=github.com/helm/monocular.git
 REPO_URL=https://helm.github.io/monocular
-REPO_DIR=$CIRCLE_WORKING_DIRECTORY
+# Need to expand `~` with $HOME
+REPO_DIR="${CIRCLE_WORKING_DIRECTORY/#\~/$HOME}"
 CHART_PATH="$REPO_DIR/chart/monocular"
 COMMIT_CHANGES=true
 
@@ -88,7 +89,7 @@ circle_setup_git
 git fetch upstream
 
 # Bump chart if this is a release
-if [[ -n "$IMAGE_TAG" ]]; then
+if [[ "$IMAGE_TAG" != "latest" ]]; then
   log "Updating chart version"
   update_chart_version
 fi
