@@ -1,6 +1,5 @@
 # Monocular
-[![Build
-Status](https://travis-ci.org/helm/monocular.svg?branch=master)](https://travis-ci.org/helm/monocular)
+[![CircleCI](https://circleci.com/gh/helm/monocular.svg?style=svg)](https://circleci.com/gh/helm/monocular)
 
 Monocular is a web-based application that enables the search and discovery of
 charts from multiple Helm Chart repositories. It is the codebase that powers the
