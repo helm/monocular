@@ -2,8 +2,8 @@ sync:
   # Image used to perform chart repository syncs
   image:
     registry: docker.io
-    repository: kubeapps/chart-repo
-    tag: v1.0.0-beta.0
+    repository: quay.io/helmpack/chart-repo
+    tag: v1.0.0
   repos:
     # Official repositories
     - name: stable
@@ -30,8 +30,8 @@ sync:
 chartsvc:
   image:
     registry: docker.io
-    repository: kubeapps/chartsvc
-    tag: v1.0.0-beta.0
+    repository: quay.io/helmpack/chartsvc
+    tag: v1.0.0
   service:
     port: 8080
   replicas: 3
@@ -63,7 +63,7 @@ ui:
   replicaCount: 2
   image:
     repository: quay.io/helmpack/monocular-ui
-    tag: v0.7.3
+    tag: v1.0.0
     pullPolicy: Always
   service:
     name: monocular-ui

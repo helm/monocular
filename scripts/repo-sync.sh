@@ -73,7 +73,7 @@ update_chart_version() {
   CHART_VERSION_NEXT="${CHART_VERSION%.*}.$((${CHART_VERSION##*.}+1))"
   sed -i 's|^version:.*|version: '"$CHART_VERSION_NEXT"'|g' $CHART_PATH/Chart.yaml
   sed -i 's|^appVersion:.*|appVersion: '"$IMAGE_TAG"'|g' $CHART_PATH/Chart.yaml
-  sed -i '/bitnami\/monocular/{n; s/tag:.*/tag: '"$IMAGE_TAG"'/}' $CHART_PATH/values.yaml
+  sed -i '/quay.io\/helmpack/{n; s/tag:.*/tag: '"$IMAGE_TAG"'/}' $CHART_PATH/values.yaml
 
   if [ $COMMIT_CHANGES != "false" ]; then
     log "Commiting chart source changes to master branch"
