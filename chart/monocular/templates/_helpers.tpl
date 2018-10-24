@@ -48,18 +48,24 @@ spec:
     image: {{ template "monocular.image" $global.Values.sync.image }}
     args:
     - sync
+    {{- if and .Values.global.mongoUrl (not .Values.mongodb.enabled) -}}
+    - --mongo-url={{ .Values.global.mongoUrl }}
+    {{- else }}
     - --mongo-url={{ template "mongodb.fullname" $global }}
     - --mongo-user=root
+    {{- end }}
     - {{ $repo.name }}
     - {{ $repo.url }}
     command:
     - /chart-repo
+    {{- if .Values.mongodb.enabled }}
     env:
     - name: MONGO_PASSWORD
       valueFrom:
         secretKeyRef:
           key: mongodb-root-password
           name: {{ template "mongodb.fullname" $global }}
+    {{- end }}
     resources:
 {{ toYaml $global.Values.sync.resources | indent 6 }}
 {{- with $global.Values.sync.nodeSelector }}
