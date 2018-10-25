@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: {{ .Chart.Name }}
-        image: "{{ .Values.ui.image.repository }}:{{ .Values.ui.image.tag }}"
+        image: {{ template "monocular.image" .Values.ui.image }}
         imagePullPolicy: {{ .Values.ui.image.pullPolicy }}
         ports:
         - containerPort: {{ .Values.ui.service.internalPort }}
