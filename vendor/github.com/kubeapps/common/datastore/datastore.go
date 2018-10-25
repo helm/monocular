@@ -19,9 +19,12 @@ package datastore
 
 import (
 	"errors"
+	"time"
 
 	"gopkg.in/mgo.v2"
 )
+
+const defaultTimeout = 30 * time.Second
 
 // Config configures the database connection
 type Config struct {
@@ -29,6 +32,7 @@ type Config struct {
 	Database string
 	Username string
 	Password string
+	Timeout  time.Duration
 }
 
 // Session is an interface for a MongoDB session
@@ -133,6 +137,10 @@ func NewSession(conf Config) (Session, error) {
 	if conf.Password != "" {
 		dialInfo.Password = conf.Password
 	}
+	if conf.Timeout == 0 {
+		conf.Timeout = defaultTimeout
+	}
+	dialInfo.Timeout = conf.Timeout
 	session, err := mgo.DialWithInfo(dialInfo)
 	if err != nil {
 		return nil, errors.New("unable to connect to MongoDB")
