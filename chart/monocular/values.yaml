@@ -1,8 +1,8 @@
 sync:
   # Image used to perform chart repository syncs
   image:
-    registry: docker.io
-    repository: quay.io/helmpack/chart-repo
+    registry: quay.io
+    repository: helmpack/chart-repo
     tag: v1.0.0
   repos:
     # Official repositories
@@ -29,8 +29,8 @@ sync:
 # Chartsvc is used to serve chart metadata over a REST API.
 chartsvc:
   image:
-    registry: docker.io
-    repository: quay.io/helmpack/chartsvc
+    registry: quay.io
+    repository: helmpack/chartsvc
     tag: v1.0.0
   service:
     port: 8080
@@ -62,7 +62,8 @@ chartsvc:
 ui:
   replicaCount: 2
   image:
-    repository: quay.io/helmpack/monocular-ui
+    registry: quay.io
+    repository: helmpack/monocular-ui
     tag: v1.0.0
     pullPolicy: Always
   service:
@@ -93,6 +94,7 @@ ui:
 prerender:
   replicaCount: 1
   image:
+    registry: docker.io
     repository: migmartri/prerender
     tag: latest
     pullPolicy: Always
