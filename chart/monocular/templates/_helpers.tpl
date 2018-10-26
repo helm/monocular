@@ -48,7 +48,7 @@ spec:
     image: {{ template "monocular.image" $global.Values.sync.image }}
     args:
     - sync
-    {{- if and .Values.global.mongoUrl (not .Values.mongodb.enabled) -}}
+    {{- if and $global.Values.global.mongoUrl (not $global.Values.mongodb.enabled) -}}
     - --mongo-url={{ .Values.global.mongoUrl }}
     {{- else }}
     - --mongo-url={{ template "mongodb.fullname" $global }}
@@ -58,7 +58,7 @@ spec:
     - {{ $repo.url }}
     command:
     - /chart-repo
-    {{- if .Values.mongodb.enabled }}
+    {{- if $global.Values.mongodb.enabled }}
     env:
     - name: MONGO_PASSWORD
       valueFrom:
