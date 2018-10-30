@@ -49,7 +49,7 @@ spec:
     args:
     - sync
     {{- if and $global.Values.global.mongoUrl (not $global.Values.mongodb.enabled) }}
-    - --mongo-url={{ .Values.global.mongoUrl }}
+    - --mongo-url={{ $global.Values.global.mongoUrl }}
     {{- else }}
     - --mongo-url={{ template "mongodb.fullname" $global }}
     - --mongo-user=root
