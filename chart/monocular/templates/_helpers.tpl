@@ -48,7 +48,7 @@ spec:
     image: {{ template "monocular.image" $global.Values.sync.image }}
     args:
     - sync
-    {{- if and $global.Values.global.mongoUrl (not $global.Values.mongodb.enabled) -}}
+    {{- if and $global.Values.global.mongoUrl (not $global.Values.mongodb.enabled) }}
     - --mongo-url={{ .Values.global.mongoUrl }}
     {{- else }}
     - --mongo-url={{ template "mongodb.fullname" $global }}

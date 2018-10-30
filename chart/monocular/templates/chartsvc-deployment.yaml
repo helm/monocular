@@ -25,7 +25,7 @@ spec:
         command:
         - /chartsvc
         args:
-        {{- if and .Values.global.mongoUrl (not .Values.mongodb.enabled) -}}
+        {{- if and .Values.global.mongoUrl (not .Values.mongodb.enabled) }}
         - --mongo-url={{ .Values.global.mongoUrl }}
         {{- else }}
         - --mongo-user=root
