@@ -55,6 +55,10 @@ spec:
     command:
     - /chart-repo
     env:
+    - name: HTTP_PROXY
+      value: {{ $global.Values.sync.httpProxy }}
+    - name: HTTPS_PROXY
+      value: {{ $global.Values.sync.httpsProxy }}
     - name: MONGO_PASSWORD
       valueFrom:
         secretKeyRef:
