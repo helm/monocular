@@ -140,5 +140,13 @@ ingress:
   #   secretName: monocular.local-tls
 
 mongodb:
+  enabled: true
   persistence:
     enabled: false
+
+# External MongoDB connection URL.
+# This must be set if mongodb.enabled is set to false, following the pattern:
+# `mongodb://${MONGODB_USER}:${MONGODB_ROOT_PASSWORD}@${MONGODB_DNS}:${MONGODB_PORT}/${MONGODB_DATABASE}`
+# ref: https://docs.mongodb.com/manual/reference/connection-string/
+global:
+  mongoUrl:

@@ -48,12 +48,17 @@ spec:
     image: {{ template "monocular.image" $global.Values.sync.image }}
     args:
     - sync
+    {{- if and $global.Values.global.mongoUrl (not $global.Values.mongodb.enabled) }}
+    - --mongo-url={{ $global.Values.global.mongoUrl }}
+    {{- else }}
     - --mongo-url={{ template "mongodb.fullname" $global }}
     - --mongo-user=root
+    {{- end }}
     - {{ $repo.name }}
     - {{ $repo.url }}
     command:
     - /chart-repo
+    {{- if $global.Values.mongodb.enabled }}
     env:
     - name: HTTP_PROXY
       value: {{ $global.Values.sync.httpProxy }}
@@ -64,6 +69,7 @@ spec:
         secretKeyRef:
           key: mongodb-root-password
           name: {{ template "mongodb.fullname" $global }}
+    {{- end }}
     resources:
 {{ toYaml $global.Values.sync.resources | indent 6 }}
 {{- with $global.Values.sync.nodeSelector }}
