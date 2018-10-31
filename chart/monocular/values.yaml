@@ -14,6 +14,9 @@ sync:
     #- name: my-repo-name
     #  url: my-repository-url
     #  source: my-repository-source
+  # Uncomment these properties to set HTTP proxy for chart synchronization jobs
+  # httpProxy:
+  # httpsProxy:
   # TODO: review suggested resource limits/requests
   resources: {}
     # limits:
@@ -21,7 +24,7 @@ sync:
     #  memory: 128Mi
     # requests:
     #  cpu: 100m
-   #  memory: 128Mi
+    #  memory: 128Mi
   nodeSelector: {}
   tolerations: []
   affinity: {}
