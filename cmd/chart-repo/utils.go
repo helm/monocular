@@ -315,6 +315,8 @@ func fetchAndImportFiles(dbSession datastore.Session, name string, r repo, cv ch
 	chartFilesID := fmt.Sprintf("%s/%s-%s", r.Name, name, cv.Version)
 	db, closer := dbSession.DB()
 	defer closer()
+
+	// Check if we already have indexed files for this chart version and digest
 	if err := db.C(chartFilesCollection).Find(bson.M{"_id": chartFilesID, "digest": cv.Digest}).One(&chartFiles{}); err == nil {
 		log.WithFields(log.Fields{"name": name, "version": cv.Version}).Debug("skipping existing files")
 		return nil
@@ -369,6 +371,8 @@ func fetchAndImportFiles(dbSession datastore.Session, name string, r repo, cv ch
 		log.WithFields(log.Fields{"name": name, "version": cv.Version}).Info("values.yaml not found")
 	}
 
+	// inserts the chart files if not already indexed, or updates the existing
+	// entry if digest has changed
 	db.C(chartFilesCollection).UpsertId(chartFilesID, chartFiles)
 
 	return nil
