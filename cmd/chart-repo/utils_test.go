@@ -346,7 +346,8 @@ func Test_fetchAndImportFiles(t *testing.T) {
 		netClient = &goodTarballClient{c: charts[0], skipValues: true, skipReadme: true}
 		m := mock.Mock{}
 		m.On("One", mock.Anything).Return(errors.New("return an error when checking if files already exists to force fetching"))
-		m.On("Insert", chartFiles{fmt.Sprintf("%s/%s-%s", charts[0].Repo.Name, charts[0].Name, cv.Version), "", "", charts[0].Repo})
+		chartFilesID := fmt.Sprintf("%s/%s-%s", charts[0].Repo.Name, charts[0].Name, cv.Version)
+		m.On("UpsertId", chartFilesID, chartFiles{chartFilesID, "", "", charts[0].Repo, cv.Digest})
 		dbSession := mockstore.NewMockSession(&m)
 		err := fetchAndImportFiles(dbSession, charts[0].Name, charts[0].Repo, cv)
 		assert.NoErr(t, err)
@@ -357,7 +358,8 @@ func Test_fetchAndImportFiles(t *testing.T) {
 		netClient = &authenticatedTarballClient{c: charts[0]}
 		m := mock.Mock{}
 		m.On("One", mock.Anything).Return(errors.New("return an error when checking if files already exists to force fetching"))
-		m.On("Insert", chartFiles{fmt.Sprintf("%s/%s-%s", charts[0].Repo.Name, charts[0].Name, cv.Version), testChartReadme, testChartValues, charts[0].Repo})
+		chartFilesID := fmt.Sprintf("%s/%s-%s", charts[0].Repo.Name, charts[0].Name, cv.Version)
+		m.On("UpsertId", chartFilesID, chartFiles{chartFilesID, testChartReadme, testChartValues, charts[0].Repo, cv.Digest})
 		dbSession := mockstore.NewMockSession(&m)
 		err := fetchAndImportFiles(dbSession, charts[0].Name, charts[0].Repo, cv)
 		assert.NoErr(t, err)
@@ -368,7 +370,8 @@ func Test_fetchAndImportFiles(t *testing.T) {
 		netClient = &goodTarballClient{c: charts[0]}
 		m := mock.Mock{}
 		m.On("One", mock.Anything).Return(errors.New("return an error when checking if files already exists to force fetching"))
-		m.On("Insert", chartFiles{fmt.Sprintf("%s/%s-%s", charts[0].Repo.Name, charts[0].Name, cv.Version), testChartReadme, testChartValues, charts[0].Repo})
+		chartFilesID := fmt.Sprintf("%s/%s-%s", charts[0].Repo.Name, charts[0].Name, cv.Version)
+		m.On("UpsertId", chartFilesID, chartFiles{chartFilesID, testChartReadme, testChartValues, charts[0].Repo, cv.Digest})
 		dbSession := mockstore.NewMockSession(&m)
 		err := fetchAndImportFiles(dbSession, charts[0].Name, charts[0].Repo, cv)
 		assert.NoErr(t, err)
@@ -382,7 +385,7 @@ func Test_fetchAndImportFiles(t *testing.T) {
 		dbSession := mockstore.NewMockSession(&m)
 		err := fetchAndImportFiles(dbSession, charts[0].Name, charts[0].Repo, cv)
 		assert.NoErr(t, err)
-		m.AssertNotCalled(t, "Insert", mock.Anything)
+		m.AssertNotCalled(t, "UpsertId", mock.Anything, mock.Anything)
 	})
 }
 

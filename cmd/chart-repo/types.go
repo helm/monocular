@@ -57,4 +57,5 @@ type chartFiles struct {
 	Readme string
 	Values string
 	Repo   repo
+	Digest string
 }
