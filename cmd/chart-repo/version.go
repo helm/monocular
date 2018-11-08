@@ -18,5 +18,5 @@ package main
 
 const (
 	version   = "devel"
-	userAgent = "chart-repo-sync/" + version
+	userAgent = "chart-repo/" + version
 )

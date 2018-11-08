@@ -208,7 +208,7 @@ func Test_fetchRepoIndexUserAgent(t *testing.T) {
 		name      string
 		userAgent string
 	}{
-		{"default user agent", "chart-repo-sync/devel"},
+		{"default user agent", "chart-repo/devel"},
 	}
 
 	for _, tt := range tests {
@@ -221,6 +221,7 @@ func Test_fetchRepoIndexUserAgent(t *testing.T) {
 			defer server.Close()
 
 			netClient = server.Client()
+
 			_, err := fetchRepoIndex(repo{URL: server.URL})
 			assert.NoErr(t, err)
 		})
