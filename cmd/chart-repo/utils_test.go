@@ -66,10 +66,7 @@ func (h *goodHTTPClient) Do(req *http.Request) (*http.Response, error) {
 	if req.URL.Host == "subpath.test" && req.URL.Path != "/subpath/index.yaml" {
 		w.WriteHeader(500)
 	}
-	// Ensure we're sending the right User-Agent
-	if !strings.Contains(req.Header.Get("User-Agent"), "chart-repo-sync") {
-		w.WriteHeader(500)
-	}
+
 	w.Write([]byte(validRepoIndexYAML))
 	return w.Result(), nil
 }
@@ -204,6 +201,30 @@ func Test_fetchRepoIndex(t *testing.T) {
 		_, err := fetchRepoIndex(repo{URL: "https://my.examplerepo.com"})
 		assert.ExistsErr(t, err, "failed request")
 	})
+}
+
+func Test_fetchRepoIndexUserAgent(t *testing.T) {
+	tests := []struct {
+		name      string
+		userAgent string
+	}{
+		{"default user agent", "chart-repo-sync/devel"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
+				assert.Equal(t, tt.userAgent, req.Header.Get("User-Agent"), "expected user agent")
+				rw.Write([]byte(validRepoIndexYAML))
+			}))
+			// Close the server when test finishes
+			defer server.Close()
+
+			netClient = server.Client()
+			_, err := fetchRepoIndex(repo{URL: server.URL})
+			assert.NoErr(t, err)
+		})
+	}
 }
 
 func Test_parseRepoIndex(t *testing.T) {

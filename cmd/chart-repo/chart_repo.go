@@ -24,7 +24,7 @@ import (
 
 var rootCmd = &cobra.Command{
 	Use:   "chart-repo",
-	Short: "Kubeapps Chart Repository utility",
+	Short: "Monocular Chart Repository utility",
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Help()
 	},

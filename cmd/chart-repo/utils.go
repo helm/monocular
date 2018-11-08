@@ -166,10 +166,12 @@ func fetchRepoIndex(r repo) (*helmrepo.IndexFile, error) {
 		log.WithFields(log.Fields{"url": req.URL.String()}).WithError(err).Error("could not build repo index request")
 		return nil, err
 	}
+
 	req.Header.Set("User-Agent", userAgent)
 	if len(r.AuthorizationHeader) > 0 {
 		req.Header.Set("Authorization", r.AuthorizationHeader)
 	}
+
 	res, err := netClient.Do(req)
 	if res != nil {
 		defer res.Body.Close()

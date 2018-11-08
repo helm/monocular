@@ -17,6 +17,6 @@ limitations under the License.
 package main
 
 const (
-	version   = "0.3.0"
+	version   = "devel"
 	userAgent = "chart-repo-sync/" + version
 )
