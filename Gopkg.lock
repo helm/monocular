@@ -57,6 +57,20 @@
   revision = "73d445a93680fa1a78ae23a5839bad48f32ba1ee"
 
 [[projects]]
+  digest = "1:4b08116de0de75c041bb341686f0b139930f26cb84dfdf7641d435548114181d"
+  name = "github.com/globalsign/mgo"
+  packages = [
+    ".",
+    "bson",
+    "internal/json",
+    "internal/sasl",
+    "internal/scram",
+  ]
+  pruneopts = "UT"
+  revision = "113d3961e7311526535a1ef7042196563d442761"
+  version = "r2018.06.15"
+
+[[projects]]
   digest = "1:9ae31ce33b4bab257668963e844d98765b44160be4ee98cafc44637a213e530d"
   name = "github.com/gobwas/glob"
   packages = [
@@ -135,7 +149,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:7373ba404b1bbaacf6c8a4c76a0e97531594873d63eac216d74b0a60efe677ee"
+  digest = "1:f26a041c4bcbed68963faad5d47b1fa77a0e4da9724275090a768eedf635d4b9"
   name = "github.com/kubeapps/common"
   packages = [
     "datastore",
@@ -143,7 +157,7 @@
     "response",
   ]
   pruneopts = "UT"
-  revision = "0bcfd8cf936e58615487aa8c13199891372285c9"
+  revision = "61d8eb6f11b442c6e6928301c7bc58c19860b94e"
 
 [[projects]]
   digest = "1:ff5ebae34cfbf047d505ee150de27e60570e8c394b3b8fdbb720ff6ac71985fc"
@@ -305,20 +319,6 @@
   revision = "e4b3c5e9061176387e7cea65e4dc5853801f3fb7"
 
 [[projects]]
-  branch = "v2"
-  digest = "1:988de7520a09024d5d94cd99bd545afbf194893994ec759b1cda0a0bbb6adb80"
-  name = "gopkg.in/mgo.v2"
-  packages = [
-    ".",
-    "bson",
-    "internal/json",
-    "internal/sasl",
-    "internal/scram",
-  ]
-  pruneopts = "UT"
-  revision = "9856a29383ce1c59f308dd1cf0363a79b5bef6b5"
-
-[[projects]]
   digest = "1:342378ac4dcb378a5448dd723f0784ae519383532f5e70ade24132c4c8693202"
   name = "gopkg.in/yaml.v2"
   packages = ["."]
@@ -372,6 +372,7 @@
     "github.com/arschles/assert",
     "github.com/disintegration/imaging",
     "github.com/ghodss/yaml",
+    "github.com/globalsign/mgo/bson",
     "github.com/gorilla/mux",
     "github.com/heptiolabs/healthcheck",
     "github.com/jinzhu/copier",
@@ -383,7 +384,6 @@
     "github.com/stretchr/testify/assert",
     "github.com/stretchr/testify/mock",
     "github.com/urfave/negroni",
-    "gopkg.in/mgo.v2/bson",
     "k8s.io/helm/pkg/repo",
   ]
   solver-name = "gps-cdcl"

@@ -33,10 +33,10 @@ import (
 
 	"github.com/disintegration/imaging"
 	"github.com/ghodss/yaml"
+	"github.com/globalsign/mgo/bson"
 	"github.com/jinzhu/copier"
 	"github.com/kubeapps/common/datastore"
 	log "github.com/sirupsen/logrus"
-	"gopkg.in/mgo.v2/bson"
 	helmrepo "k8s.io/helm/pkg/repo"
 )
 

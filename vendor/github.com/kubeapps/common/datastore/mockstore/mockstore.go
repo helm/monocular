@@ -1,9 +1,9 @@
 package mockstore
 
 import (
+	"github.com/globalsign/mgo"
 	"github.com/kubeapps/common/datastore"
 	"github.com/stretchr/testify/mock"
-	mgo "gopkg.in/mgo.v2"
 )
 
 // MockSession acts as a mock datastore.Session
