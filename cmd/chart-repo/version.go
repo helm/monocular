@@ -16,7 +16,10 @@ limitations under the License.
 
 package main
 
-const (
-	version   = "devel"
-	userAgent = "chart-repo/" + version
+var (
+	version = "devel"
 )
+
+func userAgent() string {
+	return "chart-repo/" + version
+}

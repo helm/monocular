@@ -205,16 +205,22 @@ func Test_fetchRepoIndex(t *testing.T) {
 
 func Test_fetchRepoIndexUserAgent(t *testing.T) {
 	tests := []struct {
-		name      string
-		userAgent string
+		name              string
+		version           string
+		expectedUserAgent string
 	}{
-		{"default user agent", "chart-repo/devel"},
+		{"default user agent", "", "chart-repo/devel"},
+		{"custom version", "1.0", "chart-repo/1.0"},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			if tt.version != "" {
+				version = tt.version
+			}
+
 			server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
-				assert.Equal(t, tt.userAgent, req.Header.Get("User-Agent"), "expected user agent")
+				assert.Equal(t, tt.expectedUserAgent, req.Header.Get("User-Agent"), "expected user agent")
 				rw.Write([]byte(validRepoIndexYAML))
 			}))
 			// Close the server when test finishes
