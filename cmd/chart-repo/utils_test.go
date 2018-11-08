@@ -207,16 +207,23 @@ func Test_fetchRepoIndexUserAgent(t *testing.T) {
 	tests := []struct {
 		name              string
 		version           string
+		application       string
 		expectedUserAgent string
 	}{
-		{"default user agent", "", "chart-repo/devel"},
-		{"custom version", "1.0", "chart-repo/1.0"},
+		{"default user agent", "", "", "chart-repo/devel"},
+		{"custom version no app", "1.0", "", "chart-repo/1.0"},
+		{"custom version and app", "1.0", "monocular/1.2", "chart-repo/1.0 (monocular/1.2)"},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			// Override global variables used to generate the userAgent
 			if tt.version != "" {
 				version = tt.version
+			}
+
+			if tt.application != "" {
+				application = tt.application
 			}
 
 			server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {

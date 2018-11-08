@@ -16,10 +16,23 @@ limitations under the License.
 
 package main
 
+import "fmt"
+
 var (
-	version = "devel"
+	version     = "devel"
+	application = ""
 )
 
+// Returns the user agent to be used during calls to the chart repositories
+// Examples:
+// chart-repo/devel
+// chart-repo/1.0
+// chart-repo/1.0 (monocular v1.0-beta4)
+// More info here https://github.com/kubeapps/kubeapps/issues/767#issuecomment-436835938
 func userAgent() string {
-	return "chart-repo/" + version
+	ua := "chart-repo/" + version
+	if application != "" {
+		ua = fmt.Sprintf("%s (%s)", ua, application)
+	}
+	return ua
 }

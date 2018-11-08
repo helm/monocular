@@ -45,6 +45,8 @@ func init() {
 		cmd.Flags().String("mongo-url", "localhost", "MongoDB URL (see https://godoc.org/labix.org/v2/mgo#Dial for format)")
 		cmd.Flags().String("mongo-database", "charts", "MongoDB database")
 		cmd.Flags().String("mongo-user", "", "MongoDB user")
+		// see version.go
+		cmd.Flags().StringVarP(&application, "application", "", "", "Name of the application using chart-repo")
 		cmd.Flags().Bool("debug", false, "verbose logging")
 	}
 }
