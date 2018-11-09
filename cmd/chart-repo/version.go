@@ -16,7 +16,35 @@ limitations under the License.
 
 package main
 
-const (
-	version   = "0.3.0"
-	userAgent = "chart-repo-sync/" + version
+import (
+	"fmt"
+
+	"github.com/spf13/cobra"
 )
+
+var (
+	version          = "devel"
+	userAgentComment string
+)
+
+// Returns the user agent to be used during calls to the chart repositories
+// Examples:
+// chart-repo/devel
+// chart-repo/1.0
+// chart-repo/1.0 (monocular v1.0-beta4)
+// More info here https://github.com/kubeapps/kubeapps/issues/767#issuecomment-436835938
+func userAgent() string {
+	ua := "chart-repo/" + version
+	if userAgentComment != "" {
+		ua = fmt.Sprintf("%s (%s)", ua, userAgentComment)
+	}
+	return ua
+}
+
+var versionCmd = &cobra.Command{
+	Use:   "version",
+	Short: "returns version information",
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println(version)
+	},
+}
