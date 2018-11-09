@@ -34,10 +34,10 @@ import (
 
 	"github.com/arschles/assert"
 	"github.com/disintegration/imaging"
+	"github.com/globalsign/mgo/bson"
 	"github.com/kubeapps/common/datastore/mockstore"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/mock"
-	"gopkg.in/mgo.v2/bson"
 )
 
 var validRepoIndexYAMLBytes, _ = ioutil.ReadFile("testdata/valid-index.yaml")

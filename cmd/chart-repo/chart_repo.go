@@ -42,7 +42,7 @@ func init() {
 
 	for _, cmd := range cmds {
 		rootCmd.AddCommand(cmd)
-		cmd.Flags().String("mongo-url", "localhost", "MongoDB URL (see https://godoc.org/labix.org/v2/mgo#Dial for format)")
+		cmd.Flags().String("mongo-url", "localhost", "MongoDB URL (see https://godoc.org/github.com/globalsign/mgo#Dial for format)")
 		cmd.Flags().String("mongo-database", "charts", "MongoDB database")
 		cmd.Flags().String("mongo-user", "", "MongoDB user")
 		cmd.Flags().Bool("debug", false, "verbose logging")

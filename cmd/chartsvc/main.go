@@ -57,7 +57,7 @@ func setupRoutes() http.Handler {
 }
 
 func main() {
-	dbURL := flag.String("mongo-url", "localhost", "MongoDB URL (see https://godoc.org/labix.org/v2/mgo#Dial for format)")
+	dbURL := flag.String("mongo-url", "localhost", "MongoDB URL (see https://godoc.org/github.com/globalsign/mgo#Dial for format)")
 	dbName := flag.String("mongo-database", "charts", "MongoDB database")
 	dbUsername := flag.String("mongo-user", "", "MongoDB user")
 	dbPassword := os.Getenv("MONGO_PASSWORD")
