@@ -48,6 +48,7 @@ spec:
     image: {{ template "monocular.image" $global.Values.sync.image }}
     args:
     - sync
+    - --user-agent-comment=monocular/{{ $global.Chart.AppVersion }}
     {{- if and $global.Values.global.mongoUrl (not $global.Values.mongodb.enabled) }}
     - --mongo-url={{ $global.Values.global.mongoUrl }}
     {{- else }}
