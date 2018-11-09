@@ -110,7 +110,13 @@ jobs:
       - run: |
           CMDS=(chart-repo chartsvc)
           for CMD in ${CMDS[@]}; do
-            make -C cmd/${CMD} docker-build
+            # If we are in a release we pass the version to the build process to bake the version
+            # By default, if no passed it will use the commit sha
+            if [[ -n "${CIRCLE_TAG}" ]]; then
+              makeArgs="VERSION=${CIRCLE_TAG}"
+            fi
+
+            make -C cmd/${CMD} $makeArgs docker-build
           done
 
           if [[ -z "${CIRCLE_PULL_REQUEST}" && -n "${DOCKER_USERNAME}" && -n "${DOCKER_PASSWORD}" ]] && [[ "${CIRCLE_BRANCH}" == "master" || -n "${CIRCLE_TAG}" ]]; then
