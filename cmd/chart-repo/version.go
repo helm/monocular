@@ -24,7 +24,7 @@ import (
 
 var (
 	version     = "devel"
-	application = ""
+	application string
 )
 
 // Returns the user agent to be used during calls to the chart repositories
