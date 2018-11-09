@@ -3,7 +3,7 @@ sync:
   image:
     registry: quay.io
     repository: helmpack/chart-repo
-    tag: v1.0.0
+    tag: v1.0.2
   repos:
     # Official repositories
     - name: stable
@@ -34,7 +34,7 @@ chartsvc:
   image:
     registry: quay.io
     repository: helmpack/chartsvc
-    tag: v1.0.0
+    tag: v1.0.2
   service:
     port: 8080
   replicas: 3
@@ -67,7 +67,7 @@ ui:
   image:
     registry: quay.io
     repository: helmpack/monocular-ui
-    tag: v1.0.0
+    tag: v1.0.2
     pullPolicy: Always
   service:
     name: monocular-ui
