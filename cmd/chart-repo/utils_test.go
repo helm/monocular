@@ -207,7 +207,7 @@ func Test_fetchRepoIndexUserAgent(t *testing.T) {
 	tests := []struct {
 		name              string
 		version           string
-		application       string
+		userAgentComment  string
 		expectedUserAgent string
 	}{
 		{"default user agent", "", "", "chart-repo/devel"},
@@ -222,8 +222,8 @@ func Test_fetchRepoIndexUserAgent(t *testing.T) {
 				version = tt.version
 			}
 
-			if tt.application != "" {
-				application = tt.application
+			if tt.userAgentComment != "" {
+				userAgentComment = tt.userAgentComment
 			}
 
 			server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {

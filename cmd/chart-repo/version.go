@@ -23,8 +23,8 @@ import (
 )
 
 var (
-	version     = "devel"
-	application string
+	version          = "devel"
+	userAgentComment string
 )
 
 // Returns the user agent to be used during calls to the chart repositories
@@ -35,8 +35,8 @@ var (
 // More info here https://github.com/kubeapps/kubeapps/issues/767#issuecomment-436835938
 func userAgent() string {
 	ua := "chart-repo/" + version
-	if application != "" {
-		ua = fmt.Sprintf("%s (%s)", ua, application)
+	if userAgentComment != "" {
+		ua = fmt.Sprintf("%s (%s)", ua, userAgentComment)
 	}
 	return ua
 }

@@ -24,7 +24,7 @@ import (
 
 var rootCmd = &cobra.Command{
 	Use:   "chart-repo",
-	Short: "Monocular Chart Repository utility",
+	Short: "Chart Repository utility",
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Help()
 	},
@@ -46,7 +46,7 @@ func init() {
 		cmd.Flags().String("mongo-database", "charts", "MongoDB database")
 		cmd.Flags().String("mongo-user", "", "MongoDB user")
 		// see version.go
-		cmd.Flags().StringVarP(&application, "application", "", "", "Name of the application using chart-repo")
+		cmd.Flags().StringVarP(&userAgentComment, "user-agent-comment", "", "", "UserAgent comment used during outbound requests")
 		cmd.Flags().Bool("debug", false, "verbose logging")
 	}
 	rootCmd.AddCommand(versionCmd)
