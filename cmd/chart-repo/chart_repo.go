@@ -49,4 +49,5 @@ func init() {
 		cmd.Flags().StringVarP(&application, "application", "", "", "Name of the application using chart-repo")
 		cmd.Flags().Bool("debug", false, "verbose logging")
 	}
+	rootCmd.AddCommand(versionCmd)
 }

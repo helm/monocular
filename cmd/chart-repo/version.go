@@ -16,7 +16,11 @@ limitations under the License.
 
 package main
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/spf13/cobra"
+)
 
 var (
 	version     = "devel"
@@ -35,4 +39,12 @@ func userAgent() string {
 		ua = fmt.Sprintf("%s (%s)", ua, application)
 	}
 	return ua
+}
+
+var versionCmd = &cobra.Command{
+	Use:   "version",
+	Short: "returns version information",
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println(version)
+	},
 }
