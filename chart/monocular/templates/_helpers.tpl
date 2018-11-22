@@ -31,6 +31,18 @@ Render image reference
 {{- end -}}
 
 {{/*
+MongoDB URL argument.
+*/}}
+{{- define "mongodb.url" -}}
+{{- if $global.Values.mongodb.enabled }}
+{{ template "mongodb.fullname" $global }}
+{{- else if $global.Values.global.mongoUrlSecret }}
+{{ "$MONGO_URL" }}
+{{- else if $global.Values.global.mongoUrl }}
+{{ $global.Values.global.mongoUrl }}
+{{- end -}}
+
+{{/*
 Sync job pod template
 */}}
 {{- define "monocular.sync.podTemplate" -}}
@@ -49,27 +61,32 @@ spec:
     args:
     - sync
     - --user-agent-comment=monocular/{{ $global.Chart.AppVersion }}
-    {{- if and $global.Values.global.mongoUrl (not $global.Values.mongodb.enabled) }}
-    - --mongo-url={{ $global.Values.global.mongoUrl }}
-    {{- else }}
-    - --mongo-url={{ template "mongodb.fullname" $global }}
+    - --mongo-url={{ template "mongodb.url" $global }}
+    {{- if $global.Values.mongodb.enabled }}
     - --mongo-user=root
     {{- end }}
     - {{ $repo.name }}
     - {{ $repo.url }}
     command:
     - /chart-repo
-    {{- if $global.Values.mongodb.enabled }}
     env:
     - name: HTTP_PROXY
       value: {{ $global.Values.sync.httpProxy }}
     - name: HTTPS_PROXY
       value: {{ $global.Values.sync.httpsProxy }}
+    {{- if $global.Values.mongodb.enabled }}
     - name: MONGO_PASSWORD
       valueFrom:
         secretKeyRef:
           key: mongodb-root-password
           name: {{ template "mongodb.fullname" $global }}
+    {{- end }}
+    {{- if $global.Values.global.mongoUrlSecret }}
+    - name: MONGO_URL
+      valueFrom:
+        secretKeyRef:
+          name: {{ $global.Values.global.mongoUrlSecret }}
+          key: mongo-url-secret
     {{- end }}
     resources:
 {{ toYaml $global.Values.sync.resources | indent 6 }}
