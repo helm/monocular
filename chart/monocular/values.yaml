@@ -148,5 +148,10 @@ mongodb:
 # This must be set if mongodb.enabled is set to false, following the pattern:
 # `mongodb://${MONGODB_USER}:${MONGODB_ROOT_PASSWORD}@${MONGODB_DNS}:${MONGODB_PORT}/${MONGODB_DATABASE}`
 # ref: https://docs.mongodb.com/manual/reference/connection-string/
+# You may set the connection URL in one of two ways:
+# - mongoUrl: store the connection string directly in Helm values
+# - mongoUrlSecret: name of the secret where the connection string is stored,
+#   where the key is "mongo-url-secret". See NOTES.txt.
 global:
   mongoUrl:
+  mongoUrlSecret:

@@ -25,17 +25,29 @@ spec:
         command:
         - /chartsvc
         args:
-        {{- if and .Values.global.mongoUrl (not .Values.mongodb.enabled) }}
-        - --mongo-url={{ .Values.global.mongoUrl }}
-        {{- else }}
-        - --mongo-user=root
+        {{- if .Values.mongodb.enabled }}
         - --mongo-url={{ template "mongodb.fullname" . }}
+        - --mongo-user=root
+        {{- else if .Values.global.mongoUrl }}
+        - --mongo-url={{ .Values.global.mongoUrl }}
+        {{- else if .Values.global.mongoUrlSecret }}
+        - --mongo-url={{ "$MONGO_URL" }}
+        {{- end }}
+        {{- if .Values.mongodb.enabled }}
         env:
         - name: MONGO_PASSWORD
           valueFrom:
             secretKeyRef:
               name: {{ template "mongodb.fullname" . }}
               key: mongodb-root-password
+        {{- end }}
+        {{- if .Values.global.mongoUrlSecret }}
+        env:
+        - name: MONGO_URL
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.global.mongoUrlSecret }}
+              key: mongo-url-secret
         {{- end }}
         ports:
         - name: http

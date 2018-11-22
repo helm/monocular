@@ -108,3 +108,4 @@ $ helm install monocular/monocular -f custom-domains.yaml
 | `ingress.annotations`   | Ingress annotations                      | `{ingress.kubernetes.io/rewrite-target: /, kubernetes.io/ingress.class: nginx}` |
 | `ingress.tls`           | TLS configuration for the Ingress object | `nil`                                                                           |
 | `global.mongoUrl`       | External MongoDB connection URL          | `nil`                                                                           |
+| `global.mongoUrlSecret` | External MongoDB connection URL secret   | `nil`                                                                           |

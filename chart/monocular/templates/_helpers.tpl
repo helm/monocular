@@ -49,27 +49,36 @@ spec:
     args:
     - sync
     - --user-agent-comment=monocular/{{ $global.Chart.AppVersion }}
-    {{- if and $global.Values.global.mongoUrl (not $global.Values.mongodb.enabled) }}
-    - --mongo-url={{ $global.Values.global.mongoUrl }}
-    {{- else }}
+    {{- if $global.Values.mongodb.enabled }}
     - --mongo-url={{ template "mongodb.fullname" $global }}
     - --mongo-user=root
+    {{- else if $global.Values.global.mongoUrl }}
+    - --mongo-url={{ $global.Values.global.mongoUrl }}
+    {{- else if $global.Values.global.mongoUrlSecret }}
+    - --mongo-url={{ "$MONGO_URL" }}
     {{- end }}
     - {{ $repo.name }}
     - {{ $repo.url }}
     command:
     - /chart-repo
-    {{- if $global.Values.mongodb.enabled }}
     env:
     - name: HTTP_PROXY
       value: {{ $global.Values.sync.httpProxy }}
     - name: HTTPS_PROXY
       value: {{ $global.Values.sync.httpsProxy }}
+    {{- if $global.Values.mongodb.enabled }}
     - name: MONGO_PASSWORD
       valueFrom:
         secretKeyRef:
           key: mongodb-root-password
           name: {{ template "mongodb.fullname" $global }}
+    {{- end }}
+    {{- if $global.Values.global.mongoUrlSecret }}
+    - name: MONGO_URL
+      valueFrom:
+        secretKeyRef:
+          name: {{ $global.Values.global.mongoUrlSecret }}
+          key: mongo-url-secret
     {{- end }}
     resources:
 {{ toYaml $global.Values.sync.resources | indent 6 }}

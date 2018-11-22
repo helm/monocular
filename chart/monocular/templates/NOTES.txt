@@ -9,3 +9,9 @@ Point your Ingress hosts to the address from the output of the above command:
 {{ end -}}
 
 Visit https://github.com/helm/monocular for more information.
+
+{{- if .Values.global.mongoUrlSecret }}
+If you have not already created the external MongoDB connection URL secret:
+
+   kubectl create secret generic {{ .Values.global.mongoUrlSecret }} --namespace {{ .Release.Namespace }} --from-file=./mongo-url-secret
+{{- end }}
