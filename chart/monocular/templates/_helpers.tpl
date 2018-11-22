@@ -31,18 +31,6 @@ Render image reference
 {{- end -}}
 
 {{/*
-MongoDB URL argument.
-*/}}
-{{- define "mongodb.url" -}}
-{{- if $global.Values.mongodb.enabled }}
-{{ template "mongodb.fullname" $global }}
-{{- else if $global.Values.global.mongoUrlSecret }}
-{{ "$MONGO_URL" }}
-{{- else if $global.Values.global.mongoUrl }}
-{{ $global.Values.global.mongoUrl }}
-{{- end -}}
-
-{{/*
 Sync job pod template
 */}}
 {{- define "monocular.sync.podTemplate" -}}
@@ -61,9 +49,13 @@ spec:
     args:
     - sync
     - --user-agent-comment=monocular/{{ $global.Chart.AppVersion }}
-    - --mongo-url={{ template "mongodb.url" $global }}
     {{- if $global.Values.mongodb.enabled }}
+    - --mongo-url={{ template "mongodb.fullname" $global }}
     - --mongo-user=root
+    {{- else if $global.Values.global.mongoUrl }}
+    - --mongo-url={{ $global.Values.global.mongoUrl }}
+    {{- else if $global.Values.global.mongoUrlSecret }}
+    - --mongo-url={{ "$MONGO_URL" }}
     {{- end }}
     - {{ $repo.name }}
     - {{ $repo.url }}
