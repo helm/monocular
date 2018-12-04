@@ -6,6 +6,7 @@ export class ConfigService {
   // They can be overriden using assets/js/overrides.js
   backendHostname: string
   appName: string
+  aboutUrl: string
   // EO configurable options
 
   constructor() {
@@ -16,5 +17,6 @@ export class ConfigService {
 
     this.backendHostname = overrides.backendHostname || "/api";
     this.appName = overrides.appName || "Monocular";
+    this.aboutUrl = overrides.aboutUrl || "https://github.com/helm/monocular/blob/master/docs/about.md";
   }
 }

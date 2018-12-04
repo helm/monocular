@@ -30,6 +30,7 @@ export class HeaderBarComponent implements OnInit {
   // Config
 
   appName: string;
+  aboutUrl: string;
   constructor(
     private router: Router,
     public config: ConfigService,
@@ -55,6 +56,7 @@ export class HeaderBarComponent implements OnInit {
       this.sanitizer.bypassSecurityTrustResourceUrl('/assets/icons/search.svg')
     );
     this.appName = this.config.appName;
+    this.aboutUrl = this.config.aboutUrl;
 
     this.authService.loggedIn().subscribe(loggedIn => { this.loggedIn = loggedIn; });
 

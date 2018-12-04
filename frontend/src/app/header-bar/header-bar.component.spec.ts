@@ -14,7 +14,7 @@ describe('Component: HeaderBar', () => {
         imports: [],
         providers: [
           { provide: Router },
-          { provide: ConfigService, useValue: { appName: 'app-name' } },
+          { provide: ConfigService, useValue: { appName: 'app-name', aboutUrl: 'about-url' } },
           { provide: MenuService }
         ]
       }).compileComponents();
