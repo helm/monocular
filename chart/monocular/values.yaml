@@ -86,6 +86,7 @@ ui:
   # ui-config populate
   googleAnalyticsId: UA-XXXXXX-X
   appName: Monocular
+  aboutUrl: "https://github.com/helm/monocular/blob/master/docs/about.md"
   # API served on same-domain at /api path using Nginx Ingress controller
   backendHostname: /api
   # e.g. API served on a different domain
