@@ -71,8 +71,8 @@ func Test_GetCharts(t *testing.T) {
 			{ID: "my-repo/my-chart", ChartVersions: []models.ChartVersion{{Version: "0.0.1"}}}},
 		},
 		{"two charts", []*models.Chart{
-			{ID: "my-repo/my-chart", ChartVersions: []models.ChartVersion{{Version: "0.0.1"}}},
-			{ID: "stable/dokuwiki", ChartVersions: []models.ChartVersion{{Version: "1.2.3"}, {Version: "1.2.2"}}},
+			{ID: "my-repo/my-chart", ChartVersions: []models.ChartVersion{{Version: "0.0.1", Digest: "123"}}},
+			{ID: "my-repo/dokuwiki", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "1234"}, {Version: "1.2.2", Digest: "12345"}}},
 		}},
 	}
 
@@ -110,11 +110,11 @@ func Test_GetChartsInRepo(t *testing.T) {
 	}{
 		{"repo has no charts", "my-repo", []*models.Chart{}},
 		{"repo has one chart", "my-repo", []*models.Chart{
-			{ID: "my-repo/my-chart", ChartVersions: []models.ChartVersion{{Version: "0.1.0"}}},
+			{ID: "my-repo/my-chart", ChartVersions: []models.ChartVersion{{Version: "0.0.1", Digest: "123"}}},
 		}},
 		{"repo has many charts", "my-repo", []*models.Chart{
-			{ID: "my-repo/my-chart", ChartVersions: []models.ChartVersion{{Version: "0.1.0"}}},
-			{ID: "my-repo/dokuwiki", ChartVersions: []models.ChartVersion{{Version: "1.2.3"}, {Version: "1.2.2"}}},
+			{ID: "my-repo/my-chart", ChartVersions: []models.ChartVersion{{Version: "0.0.1", Digest: "123"}}},
+			{ID: "my-repo/dokuwiki", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "1234"}, {Version: "1.2.2", Digest: "12345"}}},
 		}},
 	}
 

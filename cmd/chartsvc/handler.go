@@ -217,11 +217,17 @@ func newChartResponse(c *models.Chart) *apiResponse {
 }
 
 func newChartListResponse(charts []*models.Chart) apiListResponse {
+	// We will keep track of unique digest:chart to avoid duplicates
+	chartDigests := map[string]bool{}
 	cl := apiListResponse{}
 	for _, c := range charts {
-		cl = append(cl, newChartResponse(c))
+		digest := c.ChartVersions[0].Digest
+		// Filter out the chart if we've seen the same digest before
+		if _, ok := chartDigests[digest]; !ok {
+			chartDigests[digest] = true
+			cl = append(cl, newChartResponse(c))
+		}
 	}
-
 	return cl
 }
 
