@@ -217,15 +217,14 @@ func newChartResponse(c *models.Chart) *apiResponse {
 }
 
 func newChartListResponse(charts []*models.Chart) apiListResponse {
-	chartDict := map[string]*apiResponse{}
+	// We will keep track of unique digest:chart to avoid duplicates
+	chartDigests := map[string]bool{}
 	cl := apiListResponse{}
 	for _, c := range charts {
-		chartResponse := newChartResponse(c)
-		// The same chart may be present in different repos, filter just one
-		id := (chartResponse.Relationships["latestChartVersion"].Data).(models.ChartVersion).Digest
-		if found := chartDict[id]; found == nil {
-			chartDict[id] = chartResponse
-			cl = append(cl, chartResponse)
+		digest := c.ChartVersions[0].Digest
+		if _, ok := chartDigests[digest]; !ok {
+			chartDigests[digest] = true
+			cl = append(cl, newChartResponse(c))
 		}
 	}
 	return cl
