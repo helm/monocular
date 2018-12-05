@@ -217,11 +217,17 @@ func newChartResponse(c *models.Chart) *apiResponse {
 }
 
 func newChartListResponse(charts []*models.Chart) apiListResponse {
+	chartDict := map[string]*apiResponse{}
 	cl := apiListResponse{}
 	for _, c := range charts {
-		cl = append(cl, newChartResponse(c))
+		chartResponse := newChartResponse(c)
+		// The same chart may be present in different repos, filter just one
+		id := (chartResponse.Relationships["latestChartVersion"].Data).(models.ChartVersion).Digest
+		if found := chartDict[id]; found == nil {
+			chartDict[id] = chartResponse
+			cl = append(cl, chartResponse)
+		}
 	}
-
 	return cl
 }
 

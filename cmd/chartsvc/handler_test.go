@@ -126,28 +126,40 @@ func Test_newChartResponse(t *testing.T) {
 func Test_newChartListResponse(t *testing.T) {
 	tests := []struct {
 		name   string
-		charts []*models.Chart
+		input  []*models.Chart
+		result []*models.Chart
 	}{
-		{"no charts", []*models.Chart{}},
+		{"no charts", []*models.Chart{}, []*models.Chart{}},
 		{"has one chart", []*models.Chart{
-			{ID: "my-repo/my-chart", ChartVersions: []models.ChartVersion{{Version: "0.0.1"}}},
+			{ID: "my-repo/my-chart", ChartVersions: []models.ChartVersion{{Version: "0.0.1", Digest: "123"}}},
+		}, []*models.Chart{
+			{ID: "my-repo/my-chart", ChartVersions: []models.ChartVersion{{Version: "0.0.1", Digest: "123"}}},
 		}},
 		{"has two charts", []*models.Chart{
-			{ID: "my-repo/my-chart", ChartVersions: []models.ChartVersion{{Version: "0.0.1"}}},
-			{ID: "stable/wordpress", ChartVersions: []models.ChartVersion{{Version: "1.2.3"}, {Version: "1.2.2"}}},
+			{ID: "my-repo/my-chart", ChartVersions: []models.ChartVersion{{Version: "0.0.1", Digest: "123"}}},
+			{ID: "stable/wordpress", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "1234"}, {Version: "1.2.2", Digest: "12345"}}},
+		}, []*models.Chart{
+			{ID: "my-repo/my-chart", ChartVersions: []models.ChartVersion{{Version: "0.0.1", Digest: "123"}}},
+			{ID: "stable/wordpress", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "1234"}, {Version: "1.2.2", Digest: "12345"}}},
+		}},
+		{"has a duplicated chart", []*models.Chart{
+			{ID: "my-repo/my-chart", ChartVersions: []models.ChartVersion{{Version: "0.0.1", Digest: "123"}}},
+			{ID: "other-repo/my-chart", ChartVersions: []models.ChartVersion{{Version: "0.0.1", Digest: "123"}}},
+		}, []*models.Chart{
+			{ID: "my-repo/my-chart", ChartVersions: []models.ChartVersion{{Version: "0.0.1", Digest: "123"}}},
 		}},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			clResponse := newChartListResponse(tt.charts)
-			assert.Equal(t, len(clResponse), len(tt.charts), "number of charts in response should be the same")
-			for i := range tt.charts {
+			clResponse := newChartListResponse(tt.input)
+			assert.Equal(t, len(clResponse), len(tt.result), "number of charts in response should be the same")
+			for i := range tt.result {
 				assert.Equal(t, clResponse[i].Type, "chart", "response type is chart")
-				assert.Equal(t, clResponse[i].ID, tt.charts[i].ID, "chart ID should be the same")
-				assert.Equal(t, clResponse[i].Relationships["latestChartVersion"].Data.(models.ChartVersion).Version, tt.charts[i].ChartVersions[0].Version, "latestChartVersion should match version at index 0")
-				assert.Equal(t, clResponse[i].Links.(selfLink).Self, pathPrefix+"/charts/"+tt.charts[i].ID, "self link should be the same")
-				assert.Equal(t, len(clResponse[i].Attributes.(models.Chart).ChartVersions), len(tt.charts[i].ChartVersions), "number of chart versions in the response should be the same")
+				assert.Equal(t, clResponse[i].ID, tt.result[i].ID, "chart ID should be the same")
+				assert.Equal(t, clResponse[i].Relationships["latestChartVersion"].Data.(models.ChartVersion).Version, tt.result[i].ChartVersions[0].Version, "latestChartVersion should match version at index 0")
+				assert.Equal(t, clResponse[i].Links.(selfLink).Self, pathPrefix+"/charts/"+tt.result[i].ID, "self link should be the same")
+				assert.Equal(t, len(clResponse[i].Attributes.(models.Chart).ChartVersions), len(tt.result[i].ChartVersions), "number of chart versions in the response should be the same")
 			}
 		})
 	}
