@@ -26,6 +26,7 @@ import { ConfigService } from './shared/services/config.service';
 import { MenuService } from './shared/services/menu.service';
 import { SeoService } from './shared/services/seo.service';
 import { AuthService } from './shared/services/auth.service';
+import { ReposService } from './shared/services/repos.service';
 
 /* Components */
 import { AppComponent } from './app.component';
@@ -116,6 +117,7 @@ export function metaFactory(): MetaLoader {
     MenuService,
     SeoService,
     AuthService,
+    ReposService,
   ],
   entryComponents: [
   ],
