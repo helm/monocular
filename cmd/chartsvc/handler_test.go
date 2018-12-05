@@ -148,7 +148,7 @@ func Test_newChartListResponse(t *testing.T) {
 		}, []*models.Chart{
 			{ID: "my-repo/my-chart", ChartVersions: []models.ChartVersion{{Version: "0.0.1", Digest: "123"}}},
 		}},
-		{"has a duplicated chart but with different versions", []*models.Chart{
+		{"has a duplicated older chart version but different latest versions", []*models.Chart{
 			{ID: "my-repo/my-chart", ChartVersions: []models.ChartVersion{{Version: "0.0.2", Digest: "345"}, {Version: "0.0.1", Digest: "123"}}},
 			{ID: "other-repo/my-chart", ChartVersions: []models.ChartVersion{{Version: "0.0.2", Digest: "678"}, {Version: "0.0.1", Digest: "123"}}},
 		}, []*models.Chart{

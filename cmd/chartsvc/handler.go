@@ -222,6 +222,7 @@ func newChartListResponse(charts []*models.Chart) apiListResponse {
 	cl := apiListResponse{}
 	for _, c := range charts {
 		digest := c.ChartVersions[0].Digest
+		// Filter out the chart if we've seen the same digest before
 		if _, ok := chartDigests[digest]; !ok {
 			chartDigests[digest] = true
 			cl = append(cl, newChartResponse(c))
