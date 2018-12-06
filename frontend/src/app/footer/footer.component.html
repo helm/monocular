@@ -1,23 +1,25 @@
 <footer class="footer">
-  <app-footer-list [title]="'Contribute'">
-    <li><a class="reverse" target="_blank" href="https://github.com/helm/monocular">Github</a></li>
-    <li><a class="reverse" target="_blank" href="http://slack.k8s.io/#helm-users">Slack</a></li>
-    <li><a class="reverse" target="_blank" href="https://twitter.com/helmpack">Twitter</a></li>
-  </app-footer-list>
-  <app-footer-list [title]="'How to use'">
+  <app-footer-list [title]="'Helm'">
     <li><a class="reverse" target="_blank" href="https://helm.sh/">What is Helm?</a></li>
     <li><a class="reverse" target="_blank" href="https://docs.helm.sh">Documentation</a></li>
     <li><a class="reverse" target="_blank" href="https://github.com/helm/community">Community</a></li>
   </app-footer-list>
+  <app-footer-list [title]="'Contribute'">
+    <li><a class="reverse" target="_blank" href="https://github.com/helm/hub">Helm Hub</a></li>
+    <li><a class="reverse" target="_blank" href="https://github.com/helm/monocular">Monocular</a></li>
+    <li><a class="reverse" target="_blank" href="https://github.com/helm/helm">Helm</a></li>
+  </app-footer-list>
+  <app-footer-list [title]="'Follow'">
+    <li><a class="reverse" target="_blank" href="http://slack.k8s.io/#helm-users">Slack</a></li>
+    <li><a class="reverse" target="_blank" href="https://twitter.com/helmpack">Twitter</a></li>
+    <li><a class="reverse" target="_blank" href="https://www.youtube.com/c/helmpack">YouTube</a></li>
+  </app-footer-list>
   <div class="footer__repo">
-    <div class="footer__opensource">Monocular is an
-      <a class="reverse" href="https://github.com/helm/monocular">Open Source project</a>
-      | {{ monocularVersion }}
+    <div class="footer__opensource">
+        We are a <a href="https://www.cncf.io/" target="_blank">Cloud Native Computing Foundation</a> incubating project.
     </div>
     <span class="footer__maintainers">
-      With <img src="/assets/images/hearth.svg" />
-      by <a class="reverse" target="_blank" href="https://bitnami.com/">Bitnami</a>
-      and <a class="reverse" target="_blank" href="https://microsoft.com/">Microsoft</a>
+        <a href="https://www.cncf.io/" target="_blank"><img src="/assets/images/logo-CNCF.png" /></a>
     </span>
   </div>
 </footer>
