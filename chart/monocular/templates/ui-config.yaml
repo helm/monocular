@@ -19,3 +19,5 @@ data:
         {{- end }}
       }
     };
+  repos.json: |-
+    {"data": {{ toJson .Values.sync.repos }}}

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ChartsService } from '../shared/services/charts.service';
+import { ReposService } from '../shared/services/repos.service';
 import { Chart } from '../shared/models/chart';
 import { RepoAttributes } from '../shared/models/repo';
 import { ActivatedRoute, Params, Router } from '@angular/router';
@@ -47,6 +48,7 @@ export class ChartsComponent implements OnInit {
 
   constructor(
     private chartsService: ChartsService,
+    private reposService: ReposService,
     private route: ActivatedRoute,
     private router: Router,
     private config: ConfigService,
@@ -78,38 +80,29 @@ export class ChartsComponent implements OnInit {
       this.repoName = params['repo'] ? params['repo'] : undefined;
       this.updateMetaTags();
       this.loadCharts();
+      this.loadRepos();
     });
   }
 
   loadCharts(): void {
-    this.chartsService.getCharts().subscribe(allCharts => {
+    this.chartsService.getCharts(this.repoName).subscribe(charts => {
       this.loading = false;
-      this.charts = allCharts.filter(c => !this.repoName || c.attributes.repo.name === this.repoName);
+      this.charts = charts;
       if (!this.searchTerm) {
         this.orderedCharts = this.orderCharts(this.charts);
       }
-      this.setReposFromCharts(allCharts);
     });
   }
-  
-  // This takes a list of charts, extracts the unique set of repositories the
-  // charts are from and sets the Repositories filter with that list. We also
-  // add an 'all' repository filter at the top.
-  setReposFromCharts(charts: Chart[]): void {
-    let repoMap = new Map<string, RepoAttributes>();
-    repoMap['all'] = { name: 'All' };
-    repoMap = charts.reduce((repos, chart) => {
-      repos[chart.attributes.repo.name] = chart.attributes.repo;
-      return repos;
-    }, repoMap);
-    
-    this.filters[0].items = Object.keys(repoMap).map(k => {
-      const r = repoMap[k];
-      return {
+
+  loadRepos(): void {
+    this.reposService.getRepos().subscribe(repos => {
+      // Ensure the "all" link is appended to the list of repos
+      repos = [{ name: 'all', url: '' }, ...repos ];
+      this.filters[0].items = repos.map(r => ({
         title: r.name,
-        value: k,
-        selected: this.repoName ? k === this.repoName : k == 'all'
-      }
+        value: r.name,
+        selected: this.repoName ? r.name == this.repoName : r.name == 'all'
+      }));
     });
   }
 
