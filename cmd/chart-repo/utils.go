@@ -20,12 +20,15 @@ import (
 	"archive/tar"
 	"bytes"
 	"compress/gzip"
+	"crypto/tls"
+	"crypto/x509"
 	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"os"
 	"path"
 	"strings"
 	"sync"
@@ -44,6 +47,8 @@ const (
 	chartCollection       = "charts"
 	chartFilesCollection  = "files"
 	defaultTimeoutSeconds = 10
+	caRegistryDir         = "/etc/registry-ca"
+	rootCARegistry        = "/etc/ssl/certs/ca-certificates.crt"
 )
 
 type importChartFilesJob struct {
@@ -56,13 +61,19 @@ type httpClient interface {
 	Do(req *http.Request) (*http.Response, error)
 }
 
-var netClient httpClient = &http.Client{
-	Timeout: time.Second * defaultTimeoutSeconds,
-}
+var netClient httpClient = &http.Client{}
 
 func parseRepoUrl(repoURL string) (*url.URL, error) {
 	repoURL = strings.TrimSpace(repoURL)
 	return url.ParseRequestURI(repoURL)
+}
+
+func init() {
+	var err error
+	netClient, _, err = initNetClient(rootCARegistry, caRegistryDir)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 // Syncing is performed in the following steps:
@@ -414,4 +425,46 @@ func chartTarballURL(r repo, cv chartVersion) string {
 		return u.String()
 	}
 	return source
+}
+
+func initNetClient(rootCACert, additionalCACertDir string) (*http.Client, *http.Transport, error) {
+	caCertPool := x509.NewCertPool()
+	systemCACert, err := ioutil.ReadFile(rootCACert)
+	if err != nil {
+		log.Printf("Unable to read system CA certs: %v", err)
+	}
+	caCertPool.AppendCertsFromPEM(systemCACert)
+
+	files, err := ioutil.ReadDir(additionalCACertDir)
+	if err == nil && len(files) > 0 {
+		for _, fStat := range files {
+			fullPath := path.Join(additionalCACertDir, fStat.Name())
+			file, err := os.Open(fullPath)
+			if err != nil {
+				return nil, nil, fmt.Errorf("Unable to read CA cert file: %v", err)
+			}
+			fStat, err = file.Stat()
+			if err != nil {
+				return nil, nil, fmt.Errorf("Unable to read CA cert file: %v", err)
+			}
+			if !fStat.IsDir() {
+				caCert, err := ioutil.ReadFile(fullPath)
+				if err != nil {
+					return nil, nil, fmt.Errorf("Unable to read CA cert file: %v", err)
+				}
+				ok := caCertPool.AppendCertsFromPEM(caCert)
+				log.Printf("Adding CA cert from %s: %v", fullPath, ok)
+			}
+		}
+	}
+	// Return Transport for testing purposes
+	t := &http.Transport{
+		TLSClientConfig: &tls.Config{
+			RootCAs: caCertPool,
+		},
+	}
+	return &http.Client{
+		Timeout:   time.Second * defaultTimeoutSeconds,
+		Transport: t,
+	}, t, nil
 }

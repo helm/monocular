@@ -29,6 +29,8 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"path"
 	"strings"
 	"testing"
 
@@ -527,5 +529,93 @@ func createTestTarball(w io.Writer, files []tarballFile) {
 	// Make sure to check the error on Close.
 	if err := tarw.Close(); err != nil {
 		log.Fatal(err)
+	}
+}
+
+func Test_initNetClient(t *testing.T) {
+	// Test env
+	tempRootDir, err := ioutil.TempDir("", "root")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer os.RemoveAll(tempRootDir)
+	otherDir, err := ioutil.TempDir("", "ca-registry")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer os.RemoveAll(otherDir)
+
+	// Create root ca
+	rootCACert := `-----BEGIN CERTIFICATE-----
+MIIC6jCCAdKgAwIBAgIUKVfzA7lfBgSYP8enCVhlm0ql5YwwDQYJKoZIhvcNAQEL
+BQAwDTELMAkGA1UEAxMCQ0EwHhcNMTgxMjEyMTQxNzAwWhcNMjMxMjExMTQxNzAw
+WjANMQswCQYDVQQDEwJDQTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEB
+ALZU3fsAgvoUuLSHr24apslaYyuX84wGoZQmtFtQ+A3DF9KL/2nn3yZ6qJPkH0TF
+sbObEQRNi+P6vQ3nI/dSNMX5PzMBP2CB6L7zEXzZQEHtAK0Bzva5CKEBGX7OfIKl
+aBvs+dzKVJBdb+Oh0maacMwa4QbcD6ejzF90jUbaO65lpQpcL7KQdppKOGNclRaA
+hQTV2VsxrV4hH7K9btaTTxso+8W6p8v6X9vf40Ywx72p+SKnGh+FCrOp1gYLBLwo
+4SM0OUQHRvqUlj0XhZk5pW0dMRwHcoz1S2GmE5bj4edr4j+zGzGxa2wRGKvM0OCn
+Do84AVszTFPmUf+mCl4pJNECAwEAAaNCMEAwDgYDVR0PAQH/BAQDAgEGMA8GA1Ud
+EwEB/wQFMAMBAf8wHQYDVR0OBBYEFI5l5k+MEhrbOQ29dOW1qJhI0yKaMA0GCSqG
+SIb3DQEBCwUAA4IBAQByDebUOKzn6jfmXlW62vm09V+ipqId01wm21G9XMtMEqhc
+xtun6YwQeTuGPtdepWG+NXuSsiX/HNAHeaumJaaljHhdKDisnMQ0CTnNsu8NPkAl
+9iMEB3iXLWkb7+HgfPJAHZVGcMqMxNEMZYHB1Fh0G2Ne376X94+GYJ08qR2C8rUP
+BShhMSktB578h4GtPIWSjPhDUWg1fGe7sewR+GPyuL9859hOD0wGm9tUixBKloCu
+b90fhqZZ3FqZD7W1qJGKvz/8geqi0noip+uq/dokK1jarRkOVEJP+EvXkHo0tIuc
+h251U/Daz6NiQBM9AxyAw6EHm8XAZBvCuebfzyrT
+-----END CERTIFICATE-----`
+	rootCA := path.Join(tempRootDir, "ca.crt")
+	err = ioutil.WriteFile(rootCA, []byte(rootCACert), 0644)
+	if err != nil {
+		t.Error(err)
+	}
+
+	// Simulate volume content:
+	// ./..2018_12_12_08_15_45
+	// ./..data -> ..2018_12_12_08_15_45
+	// ./ca.crt -> ..data/ca.crt
+	err = os.Mkdir(path.Join(otherDir, "..2018_12_12_08_15_45"), 0755)
+	if err != nil {
+		t.Error(err)
+	}
+	otherCert := `-----BEGIN CERTIFICATE-----
+MIIC6jCCAdKgAwIBAgIUMPThf8/vhSK5k+pyIA6Ge5Lt16YwDQYJKoZIhvcNAQEL
+BQAwDTELMAkGA1UEAxMCQ0EwHhcNMTgxMjEzMTAzNjAwWhcNMjMxMjEyMTAzNjAw
+WjANMQswCQYDVQQDEwJDQTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEB
+ANu1Iv0QolyVuWxxkIUgqMkb1xkcdqCyHbUXnOgkbHt+XkJ/Auolb+TR6emTkwfx
+1DKtmJchSJ+EGS8BSR0Z2RA3OPAGQ5BtBo5fgu19KA0MWMTSeWpUlSvz2sbIY4sv
+DLNVSXqlbvSuHD0G6EoJf9ljeMwRkok04jx9D6TxLvorhJt0vjCGSuNyz0740Xem
+nXJE5AzNdgGTYzQj9yYjJpGiIyz2YSlsnAQ/5CU5l3voJVOrjeWM/q8BjmB4FQsK
+fKhwVQbRuWipAwDbXWOjRCRtr/Qhh/kbtiMLuBtVx06lbmZa3T/xVRKBqhXXdmC3
+hpQqjJcwp3G1r58hhOMwP1cCAwEAAaNCMEAwDgYDVR0PAQH/BAQDAgEGMA8GA1Ud
+EwEB/wQFMAMBAf8wHQYDVR0OBBYEFFKc4oB6n+cWDyY9pVaQA4QtfE+8MA0GCSqG
+SIb3DQEBCwUAA4IBAQCyjAVbv6VhuZsw2r4ONy1VBzU3z32XvVxgU0so3+/JFCNJ
+tFxxGcyDvdMMLoLWacmWyQBgnvU1675CtwnR5RkImpFwzUYdQ+fmDdXZNxPukasd
+FDuEP9XQ+LylhAsanxb5xNQ4BqEn0GnCQ24IF9afIqfWxgZza9n5zgg/M2HeCF3c
+CPI911CRycOpsaA84AJWw+qyVy3pZKn9kUkjNQWAMZg8JuOB6ZDSXSHY1MsaV+aR
+TyIvTChIg41WJ8ZSfAhrgESSqFZfflDKmfTo/Ht2QoKFidjLJx+xtsCBBj3JnX9g
+x+KOlj+M94sfUkHaFktzP83ytmCp9ZmgZ1J/Pqhp
+-----END CERTIFICATE-----`
+	err = os.Symlink(path.Join(otherDir, "..2018_12_12_08_15_45"), path.Join(otherDir, "..data"))
+	if err != nil {
+		t.Error(err)
+	}
+	err = ioutil.WriteFile(path.Join(otherDir, "..data/ca.crt"), []byte(otherCert), 0644)
+	if err != nil {
+		t.Error(err)
+	}
+	err = os.Symlink(path.Join(otherDir, "..data/ca.crt"), path.Join(otherDir, "ca.crt"))
+	if err != nil {
+		t.Error(err)
+	}
+
+	// It should return the two certificates
+	_, transport, err := initNetClient(rootCA, otherDir)
+	if err != nil {
+		t.Error(err)
+	}
+	certs := transport.TLSClientConfig.RootCAs.Subjects()
+	if len(certs) != 2 {
+		t.Error("Unable to parse both certs")
 	}
 }
