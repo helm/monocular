@@ -47,8 +47,7 @@ const (
 	chartCollection       = "charts"
 	chartFilesCollection  = "files"
 	defaultTimeoutSeconds = 10
-	caRegistryDir         = "/etc/registry-ca"
-	rootCARegistry        = "/etc/ssl/certs/ca-certificates.crt"
+	additionalCAFile      = "/usr/local/share/ca-certificates/ca.crt"
 )
 
 type importChartFilesJob struct {
@@ -70,7 +69,7 @@ func parseRepoUrl(repoURL string) (*url.URL, error) {
 
 func init() {
 	var err error
-	netClient, _, err = initNetClient(rootCARegistry, caRegistryDir)
+	netClient, err = initNetClient(additionalCAFile)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -427,44 +426,33 @@ func chartTarballURL(r repo, cv chartVersion) string {
 	return source
 }
 
-func initNetClient(rootCACert, additionalCACertDir string) (*http.Client, *http.Transport, error) {
-	caCertPool := x509.NewCertPool()
-	systemCACert, err := ioutil.ReadFile(rootCACert)
-	if err != nil {
-		log.Printf("Unable to read system CA certs: %v", err)
+func initNetClient(additionalCA string) (*http.Client, error) {
+	// Get the SystemCertPool, continue with an empty pool on error
+	caCertPool, _ := x509.SystemCertPool()
+	if caCertPool == nil {
+		caCertPool = x509.NewCertPool()
 	}
-	caCertPool.AppendCertsFromPEM(systemCACert)
 
-	files, err := ioutil.ReadDir(additionalCACertDir)
-	if err == nil && len(files) > 0 {
-		for _, fStat := range files {
-			fullPath := path.Join(additionalCACertDir, fStat.Name())
-			file, err := os.Open(fullPath)
-			if err != nil {
-				return nil, nil, fmt.Errorf("Unable to read CA cert file: %v", err)
-			}
-			fStat, err = file.Stat()
-			if err != nil {
-				return nil, nil, fmt.Errorf("Unable to read CA cert file: %v", err)
-			}
-			if !fStat.IsDir() {
-				caCert, err := ioutil.ReadFile(fullPath)
-				if err != nil {
-					return nil, nil, fmt.Errorf("Unable to read CA cert file: %v", err)
-				}
-				ok := caCertPool.AppendCertsFromPEM(caCert)
-				log.Printf("Adding CA cert from %s: %v", fullPath, ok)
-			}
+	// If additionalCA exists, load it
+	if _, err := os.Stat(additionalCA); !os.IsNotExist(err) {
+		certs, err := ioutil.ReadFile(additionalCA)
+		if err != nil {
+			return nil, fmt.Errorf("Failed to append %s to RootCAs: %v", additionalCA, err)
+		}
+
+		// Append our cert to the system pool
+		if ok := caCertPool.AppendCertsFromPEM(certs); !ok {
+			return nil, fmt.Errorf("Failed to append %s to RootCAs", additionalCA)
 		}
 	}
+
 	// Return Transport for testing purposes
-	t := &http.Transport{
-		TLSClientConfig: &tls.Config{
-			RootCAs: caCertPool,
-		},
-	}
 	return &http.Client{
-		Timeout:   time.Second * defaultTimeoutSeconds,
-		Transport: t,
-	}, t, nil
+		Timeout: time.Second * defaultTimeoutSeconds,
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{
+				RootCAs: caCertPool,
+			},
+		},
+	}, nil
 }
