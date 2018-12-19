@@ -29,6 +29,8 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"path"
 	"strings"
 	"testing"
 
@@ -527,5 +529,44 @@ func createTestTarball(w io.Writer, files []tarballFile) {
 	// Make sure to check the error on Close.
 	if err := tarw.Close(); err != nil {
 		log.Fatal(err)
+	}
+}
+
+func Test_initNetClient(t *testing.T) {
+	// Test env
+	otherDir, err := ioutil.TempDir("", "ca-registry")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer os.RemoveAll(otherDir)
+
+	// Create cert
+	caCert := `-----BEGIN CERTIFICATE-----
+MIIC6jCCAdKgAwIBAgIUKVfzA7lfBgSYP8enCVhlm0ql5YwwDQYJKoZIhvcNAQEL
+BQAwDTELMAkGA1UEAxMCQ0EwHhcNMTgxMjEyMTQxNzAwWhcNMjMxMjExMTQxNzAw
+WjANMQswCQYDVQQDEwJDQTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEB
+ALZU3fsAgvoUuLSHr24apslaYyuX84wGoZQmtFtQ+A3DF9KL/2nn3yZ6qJPkH0TF
+sbObEQRNi+P6vQ3nI/dSNMX5PzMBP2CB6L7zEXzZQEHtAK0Bzva5CKEBGX7OfIKl
+aBvs+dzKVJBdb+Oh0maacMwa4QbcD6ejzF90jUbaO65lpQpcL7KQdppKOGNclRaA
+hQTV2VsxrV4hH7K9btaTTxso+8W6p8v6X9vf40Ywx72p+SKnGh+FCrOp1gYLBLwo
+4SM0OUQHRvqUlj0XhZk5pW0dMRwHcoz1S2GmE5bj4edr4j+zGzGxa2wRGKvM0OCn
+Do84AVszTFPmUf+mCl4pJNECAwEAAaNCMEAwDgYDVR0PAQH/BAQDAgEGMA8GA1Ud
+EwEB/wQFMAMBAf8wHQYDVR0OBBYEFI5l5k+MEhrbOQ29dOW1qJhI0yKaMA0GCSqG
+SIb3DQEBCwUAA4IBAQByDebUOKzn6jfmXlW62vm09V+ipqId01wm21G9XMtMEqhc
+xtun6YwQeTuGPtdepWG+NXuSsiX/HNAHeaumJaaljHhdKDisnMQ0CTnNsu8NPkAl
+9iMEB3iXLWkb7+HgfPJAHZVGcMqMxNEMZYHB1Fh0G2Ne376X94+GYJ08qR2C8rUP
+BShhMSktB578h4GtPIWSjPhDUWg1fGe7sewR+GPyuL9859hOD0wGm9tUixBKloCu
+b90fhqZZ3FqZD7W1qJGKvz/8geqi0noip+uq/dokK1jarRkOVEJP+EvXkHo0tIuc
+h251U/Daz6NiQBM9AxyAw6EHm8XAZBvCuebfzyrT
+-----END CERTIFICATE-----`
+	otherCA := path.Join(otherDir, "ca.crt")
+	err = ioutil.WriteFile(otherCA, []byte(caCert), 0644)
+	if err != nil {
+		t.Error(err)
+	}
+
+	_, err = initNetClient(otherCA)
+	if err != nil {
+		t.Error(err)
 	}
 }

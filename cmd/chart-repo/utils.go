@@ -20,12 +20,15 @@ import (
 	"archive/tar"
 	"bytes"
 	"compress/gzip"
+	"crypto/tls"
+	"crypto/x509"
 	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"os"
 	"path"
 	"strings"
 	"sync"
@@ -44,6 +47,7 @@ const (
 	chartCollection       = "charts"
 	chartFilesCollection  = "files"
 	defaultTimeoutSeconds = 10
+	additionalCAFile      = "/usr/local/share/ca-certificates/ca.crt"
 )
 
 type importChartFilesJob struct {
@@ -56,13 +60,19 @@ type httpClient interface {
 	Do(req *http.Request) (*http.Response, error)
 }
 
-var netClient httpClient = &http.Client{
-	Timeout: time.Second * defaultTimeoutSeconds,
-}
+var netClient httpClient = &http.Client{}
 
 func parseRepoUrl(repoURL string) (*url.URL, error) {
 	repoURL = strings.TrimSpace(repoURL)
 	return url.ParseRequestURI(repoURL)
+}
+
+func init() {
+	var err error
+	netClient, err = initNetClient(additionalCAFile)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 // Syncing is performed in the following steps:
@@ -414,4 +424,35 @@ func chartTarballURL(r repo, cv chartVersion) string {
 		return u.String()
 	}
 	return source
+}
+
+func initNetClient(additionalCA string) (*http.Client, error) {
+	// Get the SystemCertPool, continue with an empty pool on error
+	caCertPool, _ := x509.SystemCertPool()
+	if caCertPool == nil {
+		caCertPool = x509.NewCertPool()
+	}
+
+	// If additionalCA exists, load it
+	if _, err := os.Stat(additionalCA); !os.IsNotExist(err) {
+		certs, err := ioutil.ReadFile(additionalCA)
+		if err != nil {
+			return nil, fmt.Errorf("Failed to append %s to RootCAs: %v", additionalCA, err)
+		}
+
+		// Append our cert to the system pool
+		if ok := caCertPool.AppendCertsFromPEM(certs); !ok {
+			return nil, fmt.Errorf("Failed to append %s to RootCAs", additionalCA)
+		}
+	}
+
+	// Return Transport for testing purposes
+	return &http.Client{
+		Timeout: time.Second * defaultTimeoutSeconds,
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{
+				RootCAs: caCertPool,
+			},
+		},
+	}, nil
 }
