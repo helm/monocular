@@ -32,6 +32,7 @@ single-node cluster for developing Monocular:
 $ minikube start
 $ minikube addons enable ingress
 $ helm init --wait
+$ helm dependency update
 $ helm install --name dev --namespace monocular ./chart/monocular
 ```
 
