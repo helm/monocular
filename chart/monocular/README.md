@@ -59,7 +59,7 @@ See the [values](values.yaml) for the full list of configurable values.
 You can configure the chart repositories you want to see in Monocular with the `api.config.repos` value, for example:
 
 ```console
-$ cat > custom-repos.yaml <<<EOF
+$ cat > custom-repos.yaml <<EOF
 sync:
   repos:
     - name: stable
@@ -78,7 +78,7 @@ $ helm install monocular/monocular -f custom-repos.yaml
 You can configure the Ingress object with the hostnames you wish to serve Monocular on:
 
 ```console
-$ cat > custom-domains.yaml <<<EOF
+$ cat > custom-domains.yaml <<EOF
 ingress:
   hosts:
   - monocular.local
