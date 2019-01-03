@@ -151,3 +151,7 @@ mongodb:
 # ref: https://docs.mongodb.com/manual/reference/connection-string/
 global:
   mongoUrl:
+  
+# This parameter will allow to set  securityContext: { "runAsUser": 1001} by example
+# this is usefull to set a user different to 0 (root) It allows to be launch in a Kubernetes with PodSecurityPolicy with a policy set runAsNonRoot
+securityContext:{}
