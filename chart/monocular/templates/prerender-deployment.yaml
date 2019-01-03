@@ -5,6 +5,10 @@ metadata:
   labels:
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
 spec:
+{{- with .Values.securityContext }}
+      securityContext:
+{{ toYaml . | indent 8 }}
+{{- end }}
   replicas: {{ .Values.prerender.replicaCount }}
   template:
     metadata:
