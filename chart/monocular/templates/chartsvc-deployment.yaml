@@ -19,6 +19,10 @@ spec:
         app: {{ template "fullname" . }}-chartsvc
         release: {{ .Release.Name }}
     spec:
+{{- with .Values.securityContext }}
+      securityContext:
+{{ toYaml . | indent 8 }}
+{{- end }}
       containers:
       - name: chartsvc
         image: {{ template "monocular.image" .Values.chartsvc.image }}
