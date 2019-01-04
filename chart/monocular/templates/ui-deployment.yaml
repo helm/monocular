@@ -13,6 +13,10 @@ spec:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/ui-config.yaml") . | sha256sum }}
     spec:
+{{- with .Values.securityContext }}
+      securityContext:
+{{ toYaml . | indent 8 }}
+{{- end }}
       containers:
       - name: {{ .Chart.Name }}
         image: {{ template "monocular.image" .Values.ui.image }}
