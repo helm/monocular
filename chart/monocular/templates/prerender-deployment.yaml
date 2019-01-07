@@ -5,16 +5,16 @@ metadata:
   labels:
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
 spec:
-{{- with .Values.securityContext }}
-      securityContext:
-{{ toYaml . | indent 8 }}
-{{- end }}
   replicas: {{ .Values.prerender.replicaCount }}
   template:
     metadata:
       labels:
         app: {{ template "fullname" . }}-prerender
     spec:
+{{- with .Values.securityContext }}
+      securityContext:
+{{ toYaml . | indent 8 }}
+{{- end }}
       containers:
       - name: {{ .Chart.Name }}
         image: {{ template "monocular.image" .Values.prerender.image }}
