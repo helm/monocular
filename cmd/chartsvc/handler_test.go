@@ -21,6 +21,7 @@ import (
 	"encoding/json"
 	"errors"
 	"image/color"
+	"k8s.io/helm/pkg/proto/hapi/chart"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -700,6 +701,64 @@ func Test_getChartVersionValues(t *testing.T) {
 			if tt.wantCode == http.StatusOK {
 				assert.Equal(t, string(w.Body.Bytes()), tt.files.Values, "content of values.yaml should match")
 			}
+		})
+	}
+}
+
+func Test_isChartContained(t *testing.T) {
+	tests := []struct {
+		name          string
+		chart         models.Chart
+		chartMetadata chart.Metadata
+		isContained   bool
+	}{
+		{
+			"chart is contained",
+			models.Chart{Description: "foo", Home: "home", Icon: "icon", Keywords: []string{"foo"}, Maintainers: []chart.Maintainer{chart.Maintainer{Name: "foo"}}, ChartVersions: []models.ChartVersion{models.ChartVersion{Version: "1.0.0", AppVersion: "0.1.0"}}},
+			chart.Metadata{Description: "foo", Home: "home", Icon: "icon", Keywords: []string{"foo"}, Maintainers: []*chart.Maintainer{&chart.Maintainer{Name: "foo"}}, Version: "1.0.0", AppVersion: "0.1.0"},
+			true,
+		},
+		{
+			"description differs",
+			models.Chart{Description: "foo", Home: "home", Icon: "icon", ChartVersions: []models.ChartVersion{models.ChartVersion{Version: "1.0.0", AppVersion: "0.1.0"}}},
+			chart.Metadata{Description: "bar", Home: "home", Icon: "icon", Version: "1.0.0", AppVersion: "0.1.0"},
+			false,
+		},
+		{
+			"Keywords are missing in the metadata",
+			models.Chart{Description: "foo", Home: "home", Icon: "icon", Keywords: []string{"foo"}, ChartVersions: []models.ChartVersion{models.ChartVersion{Version: "1.0.0", AppVersion: "0.1.0"}}},
+			chart.Metadata{Description: "foo", Home: "home", Icon: "icon", Version: "1.0.0", AppVersion: "0.1.0"},
+			true,
+		},
+		{
+			"Keywords differ",
+			models.Chart{Description: "foo", Home: "home", Icon: "icon", Keywords: []string{"foo"}, ChartVersions: []models.ChartVersion{models.ChartVersion{Version: "1.0.0", AppVersion: "0.1.0"}}},
+			chart.Metadata{Description: "foo", Home: "home", Icon: "icon", Keywords: []string{"bar"}, Version: "1.0.0", AppVersion: "0.1.0"},
+			false,
+		},
+		{
+			"Maintainers differ",
+			models.Chart{Description: "foo", Home: "home", Icon: "icon", Keywords: []string{"foo"}, Maintainers: []chart.Maintainer{chart.Maintainer{Name: "foo"}}, ChartVersions: []models.ChartVersion{models.ChartVersion{Version: "1.0.0", AppVersion: "0.1.0"}}},
+			chart.Metadata{Description: "foo", Home: "home", Icon: "icon", Keywords: []string{"bar"}, Maintainers: []*chart.Maintainer{&chart.Maintainer{Name: "bar"}}, Version: "1.0.0", AppVersion: "0.1.0"},
+			false,
+		},
+		{
+			"versions does not match",
+			models.Chart{Description: "foo", Home: "home", Icon: "icon", Keywords: []string{"foo"}, Maintainers: []chart.Maintainer{chart.Maintainer{Name: "foo"}}, ChartVersions: []models.ChartVersion{models.ChartVersion{Version: "1.0.0", AppVersion: "0.1.0"}}},
+			chart.Metadata{Description: "foo", Home: "home", Icon: "icon", Keywords: []string{"foo"}, Maintainers: []*chart.Maintainer{&chart.Maintainer{Name: "foo"}}, Version: "2.0.0", AppVersion: "0.1.0"},
+			false,
+		},
+		{
+			"app versions does not match",
+			models.Chart{Description: "foo", Home: "home", Icon: "icon", Keywords: []string{"foo"}, Maintainers: []chart.Maintainer{chart.Maintainer{Name: "foo"}}, ChartVersions: []models.ChartVersion{models.ChartVersion{Version: "1.0.0", AppVersion: "0.1.0"}}},
+			chart.Metadata{Description: "foo", Home: "home", Icon: "icon", Keywords: []string{"foo"}, Maintainers: []*chart.Maintainer{&chart.Maintainer{Name: "foo"}}, Version: "1.0.0", AppVersion: "0.2.0"},
+			false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, isChartContained(&tt.chart, &tt.chartMetadata), tt.isContained, "Failed to match charts")
 		})
 	}
 }

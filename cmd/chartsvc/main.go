@@ -47,6 +47,7 @@ func setupRoutes() http.Handler {
 	apiv1.Methods("GET").Path("/charts/{repo}/{chartName}").Handler(WithParams(getChart))
 	apiv1.Methods("GET").Path("/charts/{repo}/{chartName}/versions").Handler(WithParams(listChartVersions))
 	apiv1.Methods("GET").Path("/charts/{repo}/{chartName}/versions/{version}").Handler(WithParams(getChartVersion))
+	apiv1.Methods("POST").Path("/charts/resolve-repo").HandlerFunc(resolveRepo)
 	apiv1.Methods("GET").Path("/assets/{repo}/{chartName}/logo-160x160-fit.png").Handler(WithParams(getChartIcon))
 	apiv1.Methods("GET").Path("/assets/{repo}/{chartName}/versions/{version}/README.md").Handler(WithParams(getChartVersionReadme))
 	apiv1.Methods("GET").Path("/assets/{repo}/{chartName}/versions/{version}/values.yaml").Handler(WithParams(getChartVersionValues))
