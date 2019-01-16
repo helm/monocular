@@ -63,7 +63,7 @@ type ChartFiles struct {
 
 // ChartLatest express the latest version for a chart in a repo
 type ChartLatest struct {
-	Chart  string `json:"chart"`
-	Latest string `json:"latest"`
-	Repo   string `json:"repo"`
+	Name           string `json:"name"`
+	LatestVersion  string `json:"latestVersion"`
+	RepositoryName string `json:"repositoryName"`
 }

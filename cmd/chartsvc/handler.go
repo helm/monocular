@@ -17,18 +17,14 @@ limitations under the License.
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
-	"reflect"
 
 	"github.com/globalsign/mgo/bson"
 	"github.com/gorilla/mux"
 	"github.com/helm/monocular/cmd/chartsvc/models"
 	"github.com/kubeapps/common/response"
 	log "github.com/sirupsen/logrus"
-	"k8s.io/helm/pkg/proto/hapi/chart"
 )
 
 // Params a key-value map of path params
@@ -204,88 +200,35 @@ func getChartVersionValues(w http.ResponseWriter, req *http.Request, params Para
 	w.Write([]byte(files.Values))
 }
 
-func isChartContained(chartData *models.Chart, chartMetadata *chart.Metadata) bool {
-	eq := true
-	// Compare simple fields
-	if chartData.Description != chartMetadata.Description ||
-		chartData.Home != chartMetadata.Home ||
-		chartData.Icon != chartMetadata.Icon {
-		eq = false
-	}
-	// Compare array of key words (but it may be empty)
-	if len(chartData.Keywords) > 0 && len(chartMetadata.Keywords) > 0 {
-		if !reflect.DeepEqual(chartData.Keywords, chartMetadata.Keywords) {
-			eq = false
-		}
-	}
-	// Compare array of maintainers (but it may be empty)
-	if len(chartData.Maintainers) > 0 && len(chartMetadata.Maintainers) > 0 {
-		// Maintainers format is different (pointers versus structs)
-		c2MaintainerArray := []chart.Maintainer{}
-		for _, m := range chartMetadata.Maintainers {
-			c2MaintainerArray = append(c2MaintainerArray, *m)
-		}
-		if !reflect.DeepEqual(chartData.Maintainers, c2MaintainerArray) {
-			eq = false
-		}
-	}
-	if eq {
-		// Charts matches, look if the version exists
-		for _, v := range chartData.ChartVersions {
-			if v.Version == chartMetadata.Version && v.AppVersion == chartMetadata.AppVersion {
-				return true
-			}
-		}
-	}
-	return false
-}
-
-// resolveRepo returns the repo that contains the given chart and the latest version found
-func resolveRepo(w http.ResponseWriter, req *http.Request) {
+func findLatestChart(name, version, appversion string) []models.ChartLatest {
 	db, closer := dbSession.DB()
 	defer closer()
 
-	metadataBytes, err := ioutil.ReadAll(req.Body)
-	if err != nil {
-		errStr := fmt.Sprintf("could not read body %v", err)
-		log.WithError(err).Errorf(errStr)
-		response.NewErrorResponse(http.StatusUnprocessableEntity, errStr).Write(w)
-		return
-	}
-	chartMetadata := &chart.Metadata{}
-	err = json.Unmarshal(metadataBytes, chartMetadata)
-	if err != nil {
-		errStr := fmt.Sprintf("could not read body %v", err)
-		log.WithError(err).Errorf(errStr)
-		response.NewErrorResponse(http.StatusUnprocessableEntity, errStr).Write(w)
-		return
-	}
-
 	var charts []*models.Chart
-	if err := db.C(chartCollection).Find(bson.M{"name": chartMetadata.Name}).All(&charts); err != nil {
-		log.WithError(err).Errorf("could not find the given chart with id %s", chartMetadata.Name)
+	if err := db.C(chartCollection).Find(bson.M{
+		"name": name,
+		"chartversions": bson.M{
+			"$elemMatch": bson.M{"version": version, "appversion": appversion},
+		}}).All(&charts); err != nil {
+		log.WithError(err).Errorf("could not find the given chart with id %s", name)
 		// continue to return empty list
 	}
 
 	latest := []models.ChartLatest{}
 	for _, c := range charts {
-		if isChartContained(c, chartMetadata) {
-			// We rely that versions are stored in order (newer first) to return the latest
-			latest = append(latest, models.ChartLatest{
-				Chart:  c.Name,
-				Latest: c.ChartVersions[0].Version,
-				Repo:   c.Repo.Name,
-			})
-		}
+		// We rely that versions are stored in order (newer first) to return the latest
+		latest = append(latest, models.ChartLatest{
+			Name:           c.Name,
+			LatestVersion:  c.ChartVersions[0].Version,
+			RepositoryName: c.Repo.Name,
+		})
 	}
+	return latest
+}
 
-	latestRaw, err := json.Marshal(latest)
-	if err != nil {
-		log.WithError(err).Errorf("could not render result %v", err)
-		response.NewErrorResponse(http.StatusInternalServerError, "could render result").Write(w)
-		return
-	}
-	w.Write(latestRaw)
+// resolveRepos returns the list of repos that contains the given chart and the latest version found
+func resolveRepos(w http.ResponseWriter, req *http.Request, params Params) {
+	response.NewDataResponse(findLatestChart(params["chartName"], req.FormValue("version"), req.FormValue("appversion"))).Write(w)
 }
 
 func newChartResponse(c *models.Chart) *apiResponse {
