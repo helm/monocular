@@ -200,7 +200,7 @@ func getChartVersionValues(w http.ResponseWriter, req *http.Request, params Para
 	w.Write([]byte(files.Values))
 }
 
-func findLatestChart(name, version, appversion string) []models.ChartLatest {
+func findLatestChart(name, version, appversion string) []*models.Chart {
 	db, closer := dbSession.DB()
 	defer closer()
 
@@ -214,21 +214,19 @@ func findLatestChart(name, version, appversion string) []models.ChartLatest {
 		// continue to return empty list
 	}
 
-	latest := []models.ChartLatest{}
-	for _, c := range charts {
-		// We rely that versions are stored in order (newer first) to return the latest
-		latest = append(latest, models.ChartLatest{
-			Name:           c.Name,
-			LatestVersion:  c.ChartVersions[0].Version,
-			RepositoryName: c.Repo.Name,
-		})
-	}
-	return latest
+	return charts
 }
 
 // resolveRepos returns the list of repos that contains the given chart and the latest version found
 func resolveRepos(w http.ResponseWriter, req *http.Request, params Params) {
-	response.NewDataResponse(findLatestChart(params["chartName"], req.FormValue("version"), req.FormValue("appversion"))).Write(w)
+	latests := findLatestChart(params["chartName"], req.FormValue("version"), req.FormValue("appversion"))
+
+	var cvl apiListResponse
+	for _, cv := range latests {
+		cvl = append(cvl, newChartResponse(cv))
+	}
+
+	response.NewDataResponse(cvl).Write(w)
 }
 
 func newChartResponse(c *models.Chart) *apiResponse {

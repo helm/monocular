@@ -709,25 +709,22 @@ func Test_findLatestChart(t *testing.T) {
 	t.Run("returns mocked chart", func(t *testing.T) {
 		var m mock.Mock
 		dbSession = mockstore.NewMockSession(&m)
-
-		charts := []*models.Chart{
-			&models.Chart{
-				Name: "foo",
-				Repo: models.Repo{Name: "bar"},
-				ChartVersions: []models.ChartVersion{
-					models.ChartVersion{Version: "1.0.0", AppVersion: "0.1.0"},
-					models.ChartVersion{Version: "0.0.1", AppVersion: "0.1.0"},
-				},
+		chart := &models.Chart{
+			Name: "foo",
+			Repo: models.Repo{Name: "bar"},
+			ChartVersions: []models.ChartVersion{
+				models.ChartVersion{Version: "1.0.0", AppVersion: "0.1.0"},
+				models.ChartVersion{Version: "0.0.1", AppVersion: "0.1.0"},
 			},
 		}
+		charts := []*models.Chart{chart}
 		m.On("All", &chartsList).Run(func(args mock.Arguments) {
 			*args.Get(0).(*[]*models.Chart) = charts
 		})
 
-		expectedLatest := []models.ChartLatest{{Name: "foo", LatestVersion: "1.0.0", RepositoryName: "bar"}}
 		latest := findLatestChart("foo", "1.0.0", "0.1.0")
-		if !reflect.DeepEqual(latest, expectedLatest) {
-			t.Errorf("Expecting %v, received %v", expectedLatest, latest)
+		if !reflect.DeepEqual(latest[0], chart) {
+			t.Errorf("Expecting %v, received %v", chart, latest[0])
 		}
 	})
 }
