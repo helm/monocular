@@ -60,10 +60,3 @@ type ChartFiles struct {
 	Readme string
 	Values string
 }
-
-// ChartLatest express the latest version for a chart in a repo
-type ChartLatest struct {
-	Name           string `json:"name"`
-	LatestVersion  string `json:"latestVersion"`
-	RepositoryName string `json:"repositoryName"`
-}
