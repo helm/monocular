@@ -23,7 +23,6 @@ import (
 	"image/color"
 	"net/http"
 	"net/http/httptest"
-	"reflect"
 	"strings"
 	"testing"
 
@@ -707,10 +706,9 @@ func Test_getChartVersionValues(t *testing.T) {
 
 func Test_findLatestChart(t *testing.T) {
 	t.Run("returns mocked chart", func(t *testing.T) {
-		var m mock.Mock
-		dbSession = mockstore.NewMockSession(&m)
 		chart := &models.Chart{
 			Name: "foo",
+			ID:   "foo",
 			Repo: models.Repo{Name: "bar"},
 			ChartVersions: []models.ChartVersion{
 				models.ChartVersion{Version: "1.0.0", AppVersion: "0.1.0"},
@@ -718,13 +716,34 @@ func Test_findLatestChart(t *testing.T) {
 			},
 		}
 		charts := []*models.Chart{chart}
+		reqVersion := "1.0.0"
+		reqAppVersion := "0.1.0"
+
+		var m mock.Mock
+		dbSession = mockstore.NewMockSession(&m)
 		m.On("All", &chartsList).Run(func(args mock.Arguments) {
 			*args.Get(0).(*[]*models.Chart) = charts
 		})
 
-		latest := findLatestChart("foo", "1.0.0", "0.1.0")
-		if !reflect.DeepEqual(latest[0], chart) {
-			t.Errorf("Expecting %v, received %v", chart, latest[0])
+		w := httptest.NewRecorder()
+		req := httptest.NewRequest("GET", "/charts?name="+chart.Name+"&version="+reqVersion+"&appversion="+reqAppVersion, nil)
+		params := Params{
+			"name":       chart.Name,
+			"version":    reqVersion,
+			"appversion": reqAppVersion,
+		}
+
+		listChartsWithFilters(w, req, params)
+
+		var b bodyAPIListResponse
+		json.NewDecoder(w.Body).Decode(&b)
+		if b.Data == nil {
+			t.Fatal("chart list shouldn't be null")
+		}
+		data := *b.Data
+
+		if data[0].ID != chart.ID {
+			t.Errorf("Expecting %v, received %v", chart, data[0].ID)
 		}
 	})
 }

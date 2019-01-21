@@ -200,33 +200,26 @@ func getChartVersionValues(w http.ResponseWriter, req *http.Request, params Para
 	w.Write([]byte(files.Values))
 }
 
-func findLatestChart(name, version, appversion string) []*models.Chart {
+// listChartsWithFilters returns the list of repos that contains the given chart and the latest version found
+func listChartsWithFilters(w http.ResponseWriter, req *http.Request, params Params) {
 	db, closer := dbSession.DB()
 	defer closer()
 
 	var charts []*models.Chart
 	if err := db.C(chartCollection).Find(bson.M{
-		"name": name,
+		"name": params["chartName"],
 		"chartversions": bson.M{
-			"$elemMatch": bson.M{"version": version, "appversion": appversion},
-		}}).All(&charts); err != nil {
-		log.WithError(err).Errorf("could not find the given chart with id %s", name)
+			"$elemMatch": bson.M{"version": req.FormValue("version"), "appversion": req.FormValue("appversion")},
+		}}).Select(bson.M{
+		"name": 1, "repo": 1,
+		"chartversions": bson.M{"$slice": 1},
+	}).All(&charts); err != nil {
+		log.WithError(err).Errorf("could not find the given chart with id %s", params["chartName"])
 		// continue to return empty list
 	}
 
-	return charts
-}
-
-// resolveRepos returns the list of repos that contains the given chart and the latest version found
-func resolveRepos(w http.ResponseWriter, req *http.Request, params Params) {
-	latests := findLatestChart(params["chartName"], req.FormValue("version"), req.FormValue("appversion"))
-
-	var cvl apiListResponse
-	for _, cv := range latests {
-		cvl = append(cvl, newChartResponse(cv))
-	}
-
-	response.NewDataResponse(cvl).Write(w)
+	cl := newChartListResponse(charts)
+	response.NewDataResponse(cl).Write(w)
 }
 
 func newChartResponse(c *models.Chart) *apiResponse {
