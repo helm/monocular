@@ -214,7 +214,10 @@ func listChartsWithFilters(w http.ResponseWriter, req *http.Request, params Para
 		"name": 1, "repo": 1,
 		"chartversions": bson.M{"$slice": 1},
 	}).All(&charts); err != nil {
-		log.WithError(err).Errorf("could not find the given chart with id %s", params["chartName"])
+		log.WithError(err).Errorf(
+			"could not find charts with the given name %s, version %s and appversion %s",
+			params["chartName"], req.FormValue("version"), req.FormValue("appversion"),
+		)
 		// continue to return empty list
 	}
 
