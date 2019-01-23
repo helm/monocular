@@ -42,6 +42,7 @@ func setupRoutes() http.Handler {
 
 	// Routes
 	apiv1 := r.PathPrefix(pathPrefix).Subrouter()
+	apiv1.Methods("GET").Path("/charts").Queries("name", "{chartName}", "version", "{version}", "appversion", "{appversion}").Handler(WithParams(listChartsWithFilters))
 	apiv1.Methods("GET").Path("/charts").HandlerFunc(listCharts)
 	apiv1.Methods("GET").Path("/charts/{repo}").Handler(WithParams(listRepoCharts))
 	apiv1.Methods("GET").Path("/charts/{repo}/{chartName}").Handler(WithParams(getChart))

@@ -703,3 +703,47 @@ func Test_getChartVersionValues(t *testing.T) {
 		})
 	}
 }
+
+func Test_findLatestChart(t *testing.T) {
+	t.Run("returns mocked chart", func(t *testing.T) {
+		chart := &models.Chart{
+			Name: "foo",
+			ID:   "foo",
+			Repo: models.Repo{Name: "bar"},
+			ChartVersions: []models.ChartVersion{
+				models.ChartVersion{Version: "1.0.0", AppVersion: "0.1.0"},
+				models.ChartVersion{Version: "0.0.1", AppVersion: "0.1.0"},
+			},
+		}
+		charts := []*models.Chart{chart}
+		reqVersion := "1.0.0"
+		reqAppVersion := "0.1.0"
+
+		var m mock.Mock
+		dbSession = mockstore.NewMockSession(&m)
+		m.On("All", &chartsList).Run(func(args mock.Arguments) {
+			*args.Get(0).(*[]*models.Chart) = charts
+		})
+
+		w := httptest.NewRecorder()
+		req := httptest.NewRequest("GET", "/charts?name="+chart.Name+"&version="+reqVersion+"&appversion="+reqAppVersion, nil)
+		params := Params{
+			"name":       chart.Name,
+			"version":    reqVersion,
+			"appversion": reqAppVersion,
+		}
+
+		listChartsWithFilters(w, req, params)
+
+		var b bodyAPIListResponse
+		json.NewDecoder(w.Body).Decode(&b)
+		if b.Data == nil {
+			t.Fatal("chart list shouldn't be null")
+		}
+		data := *b.Data
+
+		if data[0].ID != chart.ID {
+			t.Errorf("Expecting %v, received %v", chart, data[0].ID)
+		}
+	})
+}

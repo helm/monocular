@@ -16,7 +16,11 @@ limitations under the License.
 
 package models
 
-import "time"
+import (
+	"time"
+
+	"k8s.io/helm/pkg/proto/hapi/chart"
+)
 
 // Repo holds the App repository details
 type Repo struct {
@@ -24,25 +28,19 @@ type Repo struct {
 	URL  string `json:"url"`
 }
 
-// Maintainer holds maintainer details of a chart
-type Maintainer struct {
-	Name  string `json:"name"`
-	Email string `json:"email"`
-}
-
 // Chart is a higher-level representation of a chart package
 type Chart struct {
-	ID            string         `json:"-" bson:"_id"`
-	Name          string         `json:"name"`
-	Repo          Repo           `json:"repo"`
-	Description   string         `json:"description"`
-	Home          string         `json:"home"`
-	Keywords      []string       `json:"keywords"`
-	Maintainers   []Maintainer   `json:"maintainers"`
-	Sources       []string       `json:"sources"`
-	Icon          string         `json:"icon"`
-	RawIcon       []byte         `json:"-" bson:"raw_icon"`
-	ChartVersions []ChartVersion `json:"-"`
+	ID            string             `json:"-" bson:"_id"`
+	Name          string             `json:"name"`
+	Repo          Repo               `json:"repo"`
+	Description   string             `json:"description"`
+	Home          string             `json:"home"`
+	Keywords      []string           `json:"keywords"`
+	Maintainers   []chart.Maintainer `json:"maintainers"`
+	Sources       []string           `json:"sources"`
+	Icon          string             `json:"icon"`
+	RawIcon       []byte             `json:"-" bson:"raw_icon"`
+	ChartVersions []ChartVersion     `json:"-"`
 }
 
 // ChartVersion is a representation of a specific version of a chart
