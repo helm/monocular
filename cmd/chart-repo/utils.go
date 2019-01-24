@@ -450,6 +450,7 @@ func initNetClient(additionalCA string) (*http.Client, error) {
 	return &http.Client{
 		Timeout: time.Second * defaultTimeoutSeconds,
 		Transport: &http.Transport{
+			Proxy: http.ProxyFromEnvironment,
 			TLSClientConfig: &tls.Config{
 				RootCAs: caCertPool,
 			},
