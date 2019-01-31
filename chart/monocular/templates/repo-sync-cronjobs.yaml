@@ -19,7 +19,8 @@ spec:
     spec:
       template:
 {{ include "monocular.sync.podTemplate" (list . $) | indent 8 }}
-  schedule: "0 * * * *"
-  successfulJobsHistoryLimit: 3
+  schedule: {{ default "0 * * * *" .schedule | quote }}
+  successfulJobsHistoryLimit: {{ default 3 .successfulJobsHistoryLimit }}
+ 
 ---
 {{- end -}}
