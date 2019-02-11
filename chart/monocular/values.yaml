@@ -14,6 +14,8 @@ sync:
     #- name: my-repo-name
     #  url: my-repository-url
     #  source: my-repository-source
+    #  schedule: "*/5 * * * *"
+    #  successfulJobsHistoryLimit: 1
   # Uncomment these properties to set HTTP proxy for chart synchronization jobs
   # httpProxy:
   # httpsProxy:
