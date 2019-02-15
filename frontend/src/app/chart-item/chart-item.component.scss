@@ -40,13 +40,13 @@ $chart-item-logo-width: 80px;
         background: $background-white;
       }
 
-      &.repo-incubator {
-        color: mat-color($monocular-app-warn, 600);
-      }
-
       &__namespace {
         margin-right: -4px;
-        color: mat-color($monocular-app-warn, 600);
+        color: mat-color($monocular-app-primary, 600);
+
+        &.repo-incubator {
+          color: mat-color($monocular-app-warn, 600);
+        }
 
         &::after {
           margin-left: -4px;
