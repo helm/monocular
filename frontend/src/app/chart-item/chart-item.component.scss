@@ -50,6 +50,11 @@ $chart-item-logo-width: 80px;
       }
     }
 
+    &__sep {
+      color: mat-color($monocular-app-primary, 600);
+      margin-right: -5px;
+    }
+
     &__description {
       margin: 1em;
     }
