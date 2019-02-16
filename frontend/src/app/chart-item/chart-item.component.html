@@ -6,7 +6,7 @@
           <a [href]="goToRepoUrl()" [routerLink]="goToRepoUrl()">
           {{ chart.attributes.repo.name }}</a>
       </span>
-      <span class="chart-item-info__sep">/</span>
+      <span class="chart-item-info__sep sep-{{chart.attributes.repo.name}}">/</span>
       <span class="chart-item-info__name repo-{{chart.attributes.name}}">
         <a [href]="goToDetailUrl()" [routerLink]="goToDetailUrl()">
           {{ chart.attributes.name }}</a>
