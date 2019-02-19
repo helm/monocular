@@ -159,3 +159,8 @@ global:
 # It allows to be launch in a Kubernetes with PodSecurityPolicy with a policy set runAsNonRoot
 securityContext: {}
 
+# Installs networkPolicy for the services. This will allow communication betweeen the services in
+# environments where the default policy is deny
+networkPolicy:
+  enabled: false
+

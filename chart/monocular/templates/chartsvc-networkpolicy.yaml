@@ -1,0 +1,20 @@
+{{- if .Values.networkPolicy.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ template "fullname" . }}-chartsvc
+  labels:
+    app: {{ template "fullname" . }}-chartsvc
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  podSelector:
+    matchLabels:
+      app: {{ template "fullname" . }}-chartsvc
+      release: {{ .Release.Name }}
+  ingress:
+  - ports:
+    - port: {{ .Values.chartsvc.service.port }}
+      protocol: TCP
+{{- end }}
