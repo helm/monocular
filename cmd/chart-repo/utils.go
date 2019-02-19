@@ -453,6 +453,7 @@ func initNetClient(additionalCA string) (*http.Client, error) {
 			TLSClientConfig: &tls.Config{
 				RootCAs: caCertPool,
 			},
+			Proxy: http.ProxyFromEnvironment,
 		},
 	}, nil
 }
