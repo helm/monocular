@@ -16,6 +16,7 @@ $chart-item-logo-width: 80px;
     &__title {
       margin: 0;
       font-weight: 500;
+      font-size: 1.2em;
       cursor: pointer;
       margin-bottom: 4px;
 
@@ -31,21 +32,31 @@ $chart-item-logo-width: 80px;
     // Remove this when chips are ready:
     // https://github.com/angular/material2/issues/120
     &__repo {
-      color: mat-color($monocular-app-accent);
-      font-size: .8em;
+      color: mat-color($monocular-app-primary, 600);
       padding: 2px 4px;
       border-radius: 4px;
-
-      &:hover {
-        background: $background-white;
-      }
+      margin-right: -5px;
 
       &.repo-incubator {
         color: mat-color($monocular-app-warn, 600);
       }
 
+      &:hover {
+        background: $background-white;
+      }
+
       a {
         color: inherit;
+      }
+    }
+
+    &__sep {
+      color: mat-color($monocular-app-primary, 600);
+      margin-right: -5px;
+      margin-left: -4px;
+
+      &.sep-incubator {
+        color: mat-color($monocular-app-warn, 600);
       }
     }
 
