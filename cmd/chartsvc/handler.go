@@ -18,11 +18,14 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"net/http"
+	"strconv"
 
 	"github.com/globalsign/mgo/bson"
 	"github.com/gorilla/mux"
 	"github.com/helm/monocular/cmd/chartsvc/models"
+	"github.com/kubeapps/common/datastore"
 	"github.com/kubeapps/common/response"
 	log "github.com/sirupsen/logrus"
 )
@@ -61,34 +64,97 @@ type rel struct {
 	Links selfLink    `json:"links"`
 }
 
-// listCharts returns a list of charts
-func listCharts(w http.ResponseWriter, req *http.Request) {
+type meta struct {
+	TotalPages int `json:"totalPages"`
+}
+
+// getPageNumberAndSize extracts the page number and size of a request. Default (1, 0) if not set
+func getPageNumberAndSize(req *http.Request) (int, int) {
+	pageNumber := req.FormValue("page")
+	pageSize := req.FormValue("size")
+	numberInt, err := strconv.Atoi(pageNumber)
+	if err != nil || numberInt < 1 {
+		numberInt = 1
+	}
+	sizeInt, _ := strconv.Atoi(pageSize)
+	// Safeguard for negative numbers
+	if sizeInt < 0 {
+		sizeInt = 0
+	}
+	return numberInt, sizeInt
+}
+
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
+
+func getChartList(repo string, pageNumber, pageSize int) (apiListResponse, interface{}, error) {
 	db, closer := dbSession.DB()
 	defer closer()
 	var charts []*models.Chart
-	if err := db.C(chartCollection).Find(nil).Sort("name").All(&charts); err != nil {
+
+	var query datastore.Query
+	c := db.C(chartCollection)
+	if repo != "" {
+		query = c.Find(bson.M{"repo.name": repo})
+	} else {
+		query = c.Find(nil)
+	}
+	query = query.Sort("name")
+
+	// TODO(andresmgot): We should not query the charts just yet in case we paginate the response
+	// but we need to do so since it's not possible to filter & count charts (countDocuments) until
+	// https://github.com/kubeapps/common/issues/8 is addressed
+	err := query.All(&charts)
+	if err != nil {
+		return apiListResponse{}, 0, err
+	}
+
+	totalPages := 1
+	if pageSize != 0 {
+		// If a pageSize is given, returns only the the specified number of charts and
+		// the number of pages
+		length := len(charts)
+		totalPages = int(math.Ceil(float64(length) / float64(pageSize)))
+
+		// If the page number is out of range, return the last one
+		if pageNumber > totalPages {
+			pageNumber = totalPages
+		}
+
+		first := pageSize * (pageNumber - 1)
+		last := min(first+pageSize, length)
+		charts = charts[first:last]
+	}
+
+	return newChartListResponse(charts), meta{totalPages}, nil
+}
+
+// listCharts returns a list of charts
+func listCharts(w http.ResponseWriter, req *http.Request) {
+	pageNumber, pageSize := getPageNumberAndSize(req)
+	cl, meta, err := getChartList("", pageNumber, pageSize)
+	if err != nil {
 		log.WithError(err).Error("could not fetch charts")
 		response.NewErrorResponse(http.StatusInternalServerError, "could not fetch all charts").Write(w)
 		return
 	}
-
-	cl := newChartListResponse(charts)
-	response.NewDataResponse(cl).Write(w)
+	response.NewDataResponseWithMeta(cl, meta).Write(w)
 }
 
 // listRepoCharts returns a list of charts in the given repo
 func listRepoCharts(w http.ResponseWriter, req *http.Request, params Params) {
-	db, closer := dbSession.DB()
-	defer closer()
-	var charts []*models.Chart
-	if err := db.C(chartCollection).Find(bson.M{"repo.name": params["repo"]}).Sort("_id").All(&charts); err != nil {
+	pageNumber, pageSize := getPageNumberAndSize(req)
+	cl, meta, err := getChartList(params["repo"], pageNumber, pageSize)
+	if err != nil {
 		log.WithError(err).Error("could not fetch charts")
 		response.NewErrorResponse(http.StatusInternalServerError, "could not fetch all charts").Write(w)
 		return
 	}
-
-	cl := newChartListResponse(charts)
-	response.NewDataResponse(cl).Write(w)
+	response.NewDataResponseWithMeta(cl, meta).Write(w)
 }
 
 // getChart returns the chart from the given repo
