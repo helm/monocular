@@ -70,18 +70,14 @@ type meta struct {
 
 // getPageNumberAndSize extracts the page number and size of a request. Default (1, 0) if not set
 func getPageNumberAndSize(req *http.Request) (int, int) {
-	pageNumber := req.FormValue("page")
-	pageSize := req.FormValue("size")
-	numberInt, err := strconv.Atoi(pageNumber)
-	if err != nil || numberInt < 1 {
-		numberInt = 1
+	page := req.FormValue("page")
+	size := req.FormValue("size")
+	pageInt, err := strconv.ParseUint(page, 10, 64)
+	if err != nil {
+		pageInt = 1
 	}
-	sizeInt, _ := strconv.Atoi(pageSize)
-	// Safeguard for negative numbers
-	if sizeInt < 0 {
-		sizeInt = 0
-	}
-	return numberInt, sizeInt
+	sizeInt, _ := strconv.ParseUint(size, 10, 64)
+	return int(pageInt), int(sizeInt)
 }
 
 func min(a, b int) int {
@@ -89,6 +85,21 @@ func min(a, b int) int {
 		return a
 	}
 	return b
+}
+
+func uniqChartList(charts []*models.Chart) []*models.Chart {
+	// We will keep track of unique digest:chart to avoid duplicates
+	chartDigests := map[string]bool{}
+	res := []*models.Chart{}
+	for _, c := range charts {
+		digest := c.ChartVersions[0].Digest
+		// Filter out the chart if we've seen the same digest before
+		if _, ok := chartDigests[digest]; !ok {
+			chartDigests[digest] = true
+			res = append(res, c)
+		}
+	}
+	return res
 }
 
 func getChartList(repo string, pageNumber, pageSize int) (apiListResponse, interface{}, error) {
@@ -112,6 +123,8 @@ func getChartList(repo string, pageNumber, pageSize int) (apiListResponse, inter
 	if err != nil {
 		return apiListResponse{}, 0, err
 	}
+	// Filter duplicated charts
+	charts = uniqChartList(charts)
 
 	totalPages := 1
 	if pageSize != 0 {
@@ -287,7 +300,7 @@ func listChartsWithFilters(w http.ResponseWriter, req *http.Request, params Para
 		// continue to return empty list
 	}
 
-	cl := newChartListResponse(charts)
+	cl := newChartListResponse(uniqChartList(charts))
 	response.NewDataResponse(cl).Write(w)
 }
 
@@ -308,16 +321,9 @@ func newChartResponse(c *models.Chart) *apiResponse {
 }
 
 func newChartListResponse(charts []*models.Chart) apiListResponse {
-	// We will keep track of unique digest:chart to avoid duplicates
-	chartDigests := map[string]bool{}
 	cl := apiListResponse{}
 	for _, c := range charts {
-		digest := c.ChartVersions[0].Digest
-		// Filter out the chart if we've seen the same digest before
-		if _, ok := chartDigests[digest]; !ok {
-			chartDigests[digest] = true
-			cl = append(cl, newChartResponse(c))
-		}
+		cl = append(cl, newChartResponse(c))
 	}
 	return cl
 }

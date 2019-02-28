@@ -143,19 +143,6 @@ func Test_newChartListResponse(t *testing.T) {
 			{ID: "my-repo/my-chart", ChartVersions: []models.ChartVersion{{Version: "0.0.1", Digest: "123"}}},
 			{ID: "stable/wordpress", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "1234"}, {Version: "1.2.2", Digest: "12345"}}},
 		}},
-		{"has a duplicated chart", []*models.Chart{
-			{ID: "my-repo/my-chart", ChartVersions: []models.ChartVersion{{Version: "0.0.1", Digest: "123"}}},
-			{ID: "other-repo/my-chart", ChartVersions: []models.ChartVersion{{Version: "0.0.1", Digest: "123"}}},
-		}, []*models.Chart{
-			{ID: "my-repo/my-chart", ChartVersions: []models.ChartVersion{{Version: "0.0.1", Digest: "123"}}},
-		}},
-		{"has a duplicated older chart version but different latest versions", []*models.Chart{
-			{ID: "my-repo/my-chart", ChartVersions: []models.ChartVersion{{Version: "0.0.2", Digest: "345"}, {Version: "0.0.1", Digest: "123"}}},
-			{ID: "other-repo/my-chart", ChartVersions: []models.ChartVersion{{Version: "0.0.2", Digest: "678"}, {Version: "0.0.1", Digest: "123"}}},
-		}, []*models.Chart{
-			{ID: "my-repo/my-chart", ChartVersions: []models.ChartVersion{{Version: "0.0.2", Digest: "345"}, {Version: "0.0.1", Digest: "123"}}},
-			{ID: "other-repo/my-chart", ChartVersions: []models.ChartVersion{{Version: "0.0.2", Digest: "678"}, {Version: "0.0.1", Digest: "123"}}},
-		}},
 	}
 
 	for _, tt := range tests {
@@ -304,6 +291,14 @@ func Test_listCharts(t *testing.T) {
 			{ID: "stable/dokuwiki", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "1234"}}},
 			{ID: "stable/drupal", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "12345"}}},
 			{ID: "stable/wordpress", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "123456"}}},
+		}, meta{1}},
+		{"ignore duplicated charts", "?page=1&size=2", []*models.Chart{
+			{ID: "bitnami/dokuwiki", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "1234"}}},
+			{ID: "stable/dokuwiki", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "1234"}}},
+			{ID: "stable/drupal", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "12345"}}},
+		}, []*models.Chart{
+			{ID: "bitnami/dokuwiki", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "1234"}}},
+			{ID: "stable/drupal", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "12345"}}},
 		}, meta{1}},
 	}
 
@@ -829,6 +824,42 @@ func Test_findLatestChart(t *testing.T) {
 
 		if data[0].ID != chart.ID {
 			t.Errorf("Expecting %v, received %v", chart, data[0].ID)
+		}
+	})
+	t.Run("ignores duplicated chart", func(t *testing.T) {
+		charts := []*models.Chart{
+			{Name: "foo", ID: "stable/foo", Repo: models.Repo{Name: "bar"}, ChartVersions: []models.ChartVersion{models.ChartVersion{Version: "1.0.0", AppVersion: "0.1.0", Digest: "123"}}},
+			{Name: "foo", ID: "bitnami/foo", Repo: models.Repo{Name: "bar"}, ChartVersions: []models.ChartVersion{models.ChartVersion{Version: "1.0.0", AppVersion: "0.1.0", Digest: "123"}}},
+		}
+		reqVersion := "1.0.0"
+		reqAppVersion := "0.1.0"
+
+		var m mock.Mock
+		dbSession = mockstore.NewMockSession(&m)
+		m.On("All", &chartsList).Run(func(args mock.Arguments) {
+			*args.Get(0).(*[]*models.Chart) = charts
+		})
+
+		w := httptest.NewRecorder()
+		req := httptest.NewRequest("GET", "/charts?name="+charts[0].Name+"&version="+reqVersion+"&appversion="+reqAppVersion, nil)
+		params := Params{
+			"name":       charts[0].Name,
+			"version":    reqVersion,
+			"appversion": reqAppVersion,
+		}
+
+		listChartsWithFilters(w, req, params)
+
+		var b bodyAPIListResponse
+		json.NewDecoder(w.Body).Decode(&b)
+		if b.Data == nil {
+			t.Fatal("chart list shouldn't be null")
+		}
+		data := *b.Data
+
+		assert.Equal(t, len(data), 1, "it should return a single chart")
+		if data[0].ID != charts[0].ID {
+			t.Errorf("Expecting %v, received %v", charts[0], data[0].ID)
 		}
 	})
 }
