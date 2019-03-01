@@ -73,24 +73,6 @@ func (h *goodHTTPClient) Do(req *http.Request) (*http.Response, error) {
 	return w.Result(), nil
 }
 
-type chartHTTPClient struct{}
-
-func (h *chartHTTPClient) Do(req *http.Request) (*http.Response, error){
-	w := httptest.NewRecorder()
-	// Don't accept trailing slashes
-	if strings.HasPrefix(req.URL.Path, "//") {
-		w.WriteHeader(500)
-	}
-	// If subpath repo URL test, check that index.yaml is correctly added to the
-	// subpath
-	if req.URL.Host == "subpath.test" && req.URL.Path != "/subpath/index.yaml" {
-		w.WriteHeader(500)
-	}
-
-	w.Write(nil)
-	return w.Result(), nil
-}
-
 type authenticatedHTTPClient struct{}
 
 func (h *authenticatedHTTPClient) Do(req *http.Request) (*http.Response, error) {
@@ -594,16 +576,16 @@ var emptyRepoIndexYAML = string(emptyRepoIndexYAMLBytes)
 
 type emptyChartRepoHTTPClient struct{}
 
-
-func (h *emptyChartRepoHTTPClient) Do(req *http.Request) (*http.Response, error){
+func (h *emptyChartRepoHTTPClient) Do(req *http.Request) (*http.Response, error) {
 	w := httptest.NewRecorder()
 	w.Write([]byte(emptyRepoIndexYAML))
 	return w.Result(), nil
-}  
-
+}
 
 func Test_emptyChartRepo(t *testing.T) {
-	netClient = &badHTTPClient{} 
-	_, err := fetchRepoIndex(repo{URL: "https://my.examplerepo.com"})
-	assert.ExistsErr(t, err, "failed request")
+	netClient = &emptyChartRepoHTTPClient{}
+	m := mock.Mock{}
+	dbSession := mockstore.NewMockSession(&m)
+	err := syncRepo(dbSession, "testRepo", "https://my.examplerepo.com", "")
+	assert.ExistsErr(t, err, "Failed Request")
 }
