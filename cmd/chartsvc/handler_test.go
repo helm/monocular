@@ -218,88 +218,24 @@ func Test_listCharts(t *testing.T) {
 	tests := []struct {
 		name   string
 		query  string
-		store  []*models.Chart
-		result []*models.Chart
+		charts []*models.Chart
 		meta   meta
 	}{
-		{"no charts", "", []*models.Chart{}, []*models.Chart{}, meta{1}},
+		{"no charts", "", []*models.Chart{}, meta{1}},
 		{"one chart", "", []*models.Chart{
-			{ID: "my-repo/my-chart", ChartVersions: []models.ChartVersion{{Version: "0.0.1", Digest: "123"}}},
-		}, []*models.Chart{
 			{ID: "my-repo/my-chart", ChartVersions: []models.ChartVersion{{Version: "0.0.1", Digest: "123"}}},
 		}, meta{1}},
 		{"two charts", "", []*models.Chart{
 			{ID: "my-repo/my-chart", ChartVersions: []models.ChartVersion{{Version: "0.0.1", Digest: "123"}}},
 			{ID: "stable/dokuwiki", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "1234"}, {Version: "1.2.2", Digest: "12345"}}},
-		}, []*models.Chart{
-			{ID: "my-repo/my-chart", ChartVersions: []models.ChartVersion{{Version: "0.0.1", Digest: "123"}}},
-			{ID: "stable/dokuwiki", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "1234"}, {Version: "1.2.2", Digest: "12345"}}},
 		}, meta{1}},
 		// Pagination tests
-		{"four charts with pagination", "?page=2&size=2", []*models.Chart{
+		{"four charts with pagination", "?size=2", []*models.Chart{
 			{ID: "my-repo/my-chart", ChartVersions: []models.ChartVersion{{Version: "0.0.1", Digest: "123"}}},
 			{ID: "stable/dokuwiki", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "1234"}}},
-			{ID: "stable/drupal", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "12345"}}},
-			{ID: "stable/wordpress", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "123456"}}},
-		}, []*models.Chart{
 			{ID: "stable/drupal", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "12345"}}},
 			{ID: "stable/wordpress", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "123456"}}},
 		}, meta{2}},
-		{"last page with charts", "?page=2&size=3", []*models.Chart{
-			{ID: "my-repo/my-chart", ChartVersions: []models.ChartVersion{{Version: "0.0.1", Digest: "123"}}},
-			{ID: "stable/dokuwiki", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "1234"}}},
-			{ID: "stable/drupal", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "12345"}}},
-			{ID: "stable/wordpress", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "123456"}}},
-		}, []*models.Chart{
-			{ID: "stable/wordpress", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "123456"}}},
-		}, meta{2}},
-		{"bigger size than charts", "?page=1&size=10", []*models.Chart{
-			{ID: "my-repo/my-chart", ChartVersions: []models.ChartVersion{{Version: "0.0.1", Digest: "123"}}},
-			{ID: "stable/dokuwiki", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "1234"}}},
-			{ID: "stable/drupal", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "12345"}}},
-			{ID: "stable/wordpress", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "123456"}}},
-		}, []*models.Chart{
-			{ID: "my-repo/my-chart", ChartVersions: []models.ChartVersion{{Version: "0.0.1", Digest: "123"}}},
-			{ID: "stable/dokuwiki", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "1234"}}},
-			{ID: "stable/drupal", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "12345"}}},
-			{ID: "stable/wordpress", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "123456"}}},
-		}, meta{1}},
-		{"page bigger than existing, returns last one", "?page=10&size=3", []*models.Chart{
-			{ID: "my-repo/my-chart", ChartVersions: []models.ChartVersion{{Version: "0.0.1", Digest: "123"}}},
-			{ID: "stable/dokuwiki", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "1234"}}},
-			{ID: "stable/drupal", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "12345"}}},
-			{ID: "stable/wordpress", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "123456"}}},
-		}, []*models.Chart{
-			{ID: "stable/wordpress", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "123456"}}},
-		}, meta{2}},
-		{"negative page, defaults to first", "?page=-1&size=2", []*models.Chart{
-			{ID: "my-repo/my-chart", ChartVersions: []models.ChartVersion{{Version: "0.0.1", Digest: "123"}}},
-			{ID: "stable/dokuwiki", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "1234"}}},
-			{ID: "stable/drupal", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "12345"}}},
-			{ID: "stable/wordpress", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "123456"}}},
-		}, []*models.Chart{
-			{ID: "my-repo/my-chart", ChartVersions: []models.ChartVersion{{Version: "0.0.1", Digest: "123"}}},
-			{ID: "stable/dokuwiki", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "1234"}}},
-		}, meta{2}},
-		{"negative size, defaults to unlimited", "?page=1&size=-2", []*models.Chart{
-			{ID: "my-repo/my-chart", ChartVersions: []models.ChartVersion{{Version: "0.0.1", Digest: "123"}}},
-			{ID: "stable/dokuwiki", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "1234"}}},
-			{ID: "stable/drupal", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "12345"}}},
-			{ID: "stable/wordpress", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "123456"}}},
-		}, []*models.Chart{
-			{ID: "my-repo/my-chart", ChartVersions: []models.ChartVersion{{Version: "0.0.1", Digest: "123"}}},
-			{ID: "stable/dokuwiki", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "1234"}}},
-			{ID: "stable/drupal", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "12345"}}},
-			{ID: "stable/wordpress", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "123456"}}},
-		}, meta{1}},
-		{"ignore duplicated charts", "?page=1&size=2", []*models.Chart{
-			{ID: "bitnami/dokuwiki", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "1234"}}},
-			{ID: "stable/dokuwiki", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "1234"}}},
-			{ID: "stable/drupal", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "12345"}}},
-		}, []*models.Chart{
-			{ID: "bitnami/dokuwiki", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "1234"}}},
-			{ID: "stable/drupal", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "12345"}}},
-		}, meta{1}},
 	}
 
 	for _, tt := range tests {
@@ -308,8 +244,11 @@ func Test_listCharts(t *testing.T) {
 			dbSession = mockstore.NewMockSession(&m)
 
 			m.On("All", &chartsList).Run(func(args mock.Arguments) {
-				*args.Get(0).(*[]*models.Chart) = tt.store
+				*args.Get(0).(*[]*models.Chart) = tt.charts
 			})
+			if tt.query != "" {
+				m.On("Count").Return(len(tt.charts))
+			}
 
 			w := httptest.NewRecorder()
 			req := httptest.NewRequest("GET", "/charts"+tt.query, nil)
@@ -324,12 +263,12 @@ func Test_listCharts(t *testing.T) {
 				t.Fatal("chart list shouldn't be null")
 			}
 			data := *b.Data
-			assert.Len(t, data, len(tt.result))
+			assert.Len(t, data, len(tt.charts))
 			for i, resp := range data {
-				assert.Equal(t, resp.ID, tt.result[i].ID, "chart id in the response should be the same")
+				assert.Equal(t, resp.ID, tt.charts[i].ID, "chart id in the response should be the same")
 				assert.Equal(t, resp.Type, "chart", "response type is chart")
-				assert.Equal(t, resp.Links.(map[string]interface{})["self"], pathPrefix+"/charts/"+tt.result[i].ID, "self link should be the same")
-				assert.Equal(t, resp.Relationships["latestChartVersion"].Data.(map[string]interface{})["version"], tt.result[i].ChartVersions[0].Version, "latestChartVersion should match version at index 0")
+				assert.Equal(t, resp.Links.(map[string]interface{})["self"], pathPrefix+"/charts/"+tt.charts[i].ID, "self link should be the same")
+				assert.Equal(t, resp.Relationships["latestChartVersion"].Data.(map[string]interface{})["version"], tt.charts[i].ChartVersions[0].Version, "latestChartVersion should match version at index 0")
 			}
 			assert.Equal(t, b.Meta, tt.meta, "response meta should be the same")
 		})
@@ -341,29 +280,20 @@ func Test_listRepoCharts(t *testing.T) {
 		name   string
 		repo   string
 		query  string
-		store  []*models.Chart
-		result []*models.Chart
+		charts []*models.Chart
 		meta   meta
 	}{
-		{"repo has no charts", "my-repo", "", []*models.Chart{}, []*models.Chart{}, meta{1}},
+		{"repo has no charts", "my-repo", "", []*models.Chart{}, meta{1}},
 		{"repo has one chart", "my-repo", "", []*models.Chart{
-			{ID: "my-repo/my-chart", ChartVersions: []models.ChartVersion{{Version: "0.0.1", Digest: "123"}}},
-		}, []*models.Chart{
 			{ID: "my-repo/my-chart", ChartVersions: []models.ChartVersion{{Version: "0.0.1", Digest: "123"}}},
 		}, meta{1}},
 		{"repo has many charts", "my-repo", "", []*models.Chart{
 			{ID: "my-repo/my-chart", ChartVersions: []models.ChartVersion{{Version: "0.0.1", Digest: "123"}}},
 			{ID: "my-repo/dokuwiki", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "1234"}, {Version: "1.2.2", Digest: "12345"}}},
-		}, []*models.Chart{
-			{ID: "my-repo/my-chart", ChartVersions: []models.ChartVersion{{Version: "0.0.1", Digest: "123"}}},
-			{ID: "my-repo/dokuwiki", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "1234"}, {Version: "1.2.2", Digest: "12345"}}},
 		}, meta{1}},
-		{"repo has many charts with pagination", "my-repo", "?page=2&size=2", []*models.Chart{
+		{"repo has many charts with pagination", "my-repo", "?size=2", []*models.Chart{
 			{ID: "my-repo/my-chart", ChartVersions: []models.ChartVersion{{Version: "0.0.1", Digest: "123"}}},
 			{ID: "stable/dokuwiki", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "1234"}}},
-			{ID: "stable/drupal", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "12345"}}},
-			{ID: "stable/wordpress", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "123456"}}},
-		}, []*models.Chart{
 			{ID: "stable/drupal", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "12345"}}},
 			{ID: "stable/wordpress", ChartVersions: []models.ChartVersion{{Version: "1.2.3", Digest: "123456"}}},
 		}, meta{2}},
@@ -375,8 +305,11 @@ func Test_listRepoCharts(t *testing.T) {
 			dbSession = mockstore.NewMockSession(&m)
 
 			m.On("All", &chartsList).Run(func(args mock.Arguments) {
-				*args.Get(0).(*[]*models.Chart) = tt.store
+				*args.Get(0).(*[]*models.Chart) = tt.charts
 			})
+			if tt.query != "" {
+				m.On("Count").Return(len(tt.charts))
+			}
 
 			w := httptest.NewRecorder()
 			req := httptest.NewRequest("GET", "/charts/"+tt.repo+tt.query, nil)
@@ -392,11 +325,11 @@ func Test_listRepoCharts(t *testing.T) {
 			var b bodyAPIListResponse
 			json.NewDecoder(w.Body).Decode(&b)
 			data := *b.Data
-			assert.Len(t, data, len(tt.result))
+			assert.Len(t, data, len(tt.charts))
 			for i, resp := range data {
-				assert.Equal(t, resp.ID, tt.result[i].ID, "chart id in the response should be the same")
+				assert.Equal(t, resp.ID, tt.charts[i].ID, "chart id in the response should be the same")
 				assert.Equal(t, resp.Type, "chart", "response type is chart")
-				assert.Equal(t, resp.Relationships["latestChartVersion"].Data.(map[string]interface{})["version"], tt.result[i].ChartVersions[0].Version, "latestChartVersion should match version at index 0")
+				assert.Equal(t, resp.Relationships["latestChartVersion"].Data.(map[string]interface{})["version"], tt.charts[i].ChartVersions[0].Version, "latestChartVersion should match version at index 0")
 			}
 			assert.Equal(t, b.Meta, tt.meta, "response meta should be the same")
 		})

@@ -76,10 +76,14 @@ func getPageNumberAndSize(req *http.Request) (int, int) {
 	if err != nil {
 		pageInt = 1
 	}
+	// ParseUint will return 0 if size is a not positive integer
 	sizeInt, _ := strconv.ParseUint(size, 10, 64)
 	return int(pageInt), int(sizeInt)
 }
 
+// min returns the minimum of two integers.
+// We are not using math.Min since that compares float64
+// and it's unnecesary complex.
 func min(a, b int) int {
 	if a < b {
 		return a
@@ -102,35 +106,41 @@ func uniqChartList(charts []*models.Chart) []*models.Chart {
 	return res
 }
 
-func getChartList(repo string, pageNumber, pageSize int) (apiListResponse, interface{}, error) {
+func getPaginatedChartList(repo string, pageNumber, pageSize int) (apiListResponse, interface{}, error) {
 	db, closer := dbSession.DB()
 	defer closer()
 	var charts []*models.Chart
 
-	var query datastore.Query
 	c := db.C(chartCollection)
+	pipedActions := []bson.M{}
+	var countQuery datastore.Query
 	if repo != "" {
-		query = c.Find(bson.M{"repo.name": repo})
+		pipedActions = append(pipedActions, bson.M{"$match": bson.M{"repo.name": repo}})
+		countQuery = c.Find(bson.M{"repo.name": repo})
 	} else {
-		query = c.Find(nil)
+		countQuery = c.Find(nil)
 	}
-	query = query.Sort("name")
 
-	// TODO(andresmgot): We should not query the charts just yet in case we paginate the response
-	// but we need to do so since it's not possible to filter & count charts (countDocuments) until
-	// https://github.com/kubeapps/common/issues/8 is addressed
-	err := query.All(&charts)
-	if err != nil {
-		return apiListResponse{}, 0, err
-	}
-	// Filter duplicated charts
-	charts = uniqChartList(charts)
+	// We should query unique charts
+	pipedActions = append(pipedActions,
+		// Add a new field to store the latest version
+		bson.M{"$addFields": bson.M{"firstChartVersion": bson.M{"$arrayElemAt": []interface{}{"$chartversions", 0}}}},
+		// Group by unique digest for the latest version (remove duplicates)
+		bson.M{"$group": bson.M{"_id": "$firstChartVersion.digest", "chart": bson.M{"$first": "$$ROOT"}}},
+		// Restore original object struct
+		bson.M{"$replaceRoot": bson.M{"newRoot": "$chart"}},
+		// Order by name
+		bson.M{"$sort": bson.M{"name": 1}},
+	)
 
 	totalPages := 1
 	if pageSize != 0 {
 		// If a pageSize is given, returns only the the specified number of charts and
 		// the number of pages
-		length := len(charts)
+		length, err := countQuery.Count()
+		if err != nil {
+			return apiListResponse{}, 0, err
+		}
 		totalPages = int(math.Ceil(float64(length) / float64(pageSize)))
 
 		// If the page number is out of range, return the last one
@@ -138,9 +148,14 @@ func getChartList(repo string, pageNumber, pageSize int) (apiListResponse, inter
 			pageNumber = totalPages
 		}
 
-		first := pageSize * (pageNumber - 1)
-		last := min(first+pageSize, length)
-		charts = charts[first:last]
+		pipedActions = append(pipedActions,
+			bson.M{"$skip": pageSize * (pageNumber - 1)},
+			bson.M{"$limit": pageSize},
+		)
+	}
+	err := c.Pipe(pipedActions).All(&charts)
+	if err != nil {
+		return apiListResponse{}, 0, err
 	}
 
 	return newChartListResponse(charts), meta{totalPages}, nil
@@ -149,7 +164,7 @@ func getChartList(repo string, pageNumber, pageSize int) (apiListResponse, inter
 // listCharts returns a list of charts
 func listCharts(w http.ResponseWriter, req *http.Request) {
 	pageNumber, pageSize := getPageNumberAndSize(req)
-	cl, meta, err := getChartList("", pageNumber, pageSize)
+	cl, meta, err := getPaginatedChartList("", pageNumber, pageSize)
 	if err != nil {
 		log.WithError(err).Error("could not fetch charts")
 		response.NewErrorResponse(http.StatusInternalServerError, "could not fetch all charts").Write(w)
@@ -161,7 +176,7 @@ func listCharts(w http.ResponseWriter, req *http.Request) {
 // listRepoCharts returns a list of charts in the given repo
 func listRepoCharts(w http.ResponseWriter, req *http.Request, params Params) {
 	pageNumber, pageSize := getPageNumberAndSize(req)
-	cl, meta, err := getChartList(params["repo"], pageNumber, pageSize)
+	cl, meta, err := getPaginatedChartList(params["repo"], pageNumber, pageSize)
 	if err != nil {
 		log.WithError(err).Error("could not fetch charts")
 		response.NewErrorResponse(http.StatusInternalServerError, "could not fetch all charts").Write(w)
