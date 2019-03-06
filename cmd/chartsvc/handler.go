@@ -25,7 +25,6 @@ import (
 	"github.com/globalsign/mgo/bson"
 	"github.com/gorilla/mux"
 	"github.com/helm/monocular/cmd/chartsvc/models"
-	"github.com/kubeapps/common/datastore"
 	"github.com/kubeapps/common/response"
 	log "github.com/sirupsen/logrus"
 )
@@ -68,6 +67,10 @@ type meta struct {
 	TotalPages int `json:"totalPages"`
 }
 
+type count struct {
+	Count int `json:"count"`
+}
+
 // getPageNumberAndSize extracts the page number and size of a request. Default (1, 0) if not set
 func getPageNumberAndSize(req *http.Request) (int, int) {
 	page := req.FormValue("page")
@@ -83,7 +86,7 @@ func getPageNumberAndSize(req *http.Request) (int, int) {
 
 // min returns the minimum of two integers.
 // We are not using math.Min since that compares float64
-// and it's unnecesary complex.
+// and it's unnecessarily complex.
 func min(a, b int) int {
 	if a < b {
 		return a
@@ -112,17 +115,13 @@ func getPaginatedChartList(repo string, pageNumber, pageSize int) (apiListRespon
 	var charts []*models.Chart
 
 	c := db.C(chartCollection)
-	pipedActions := []bson.M{}
-	var countQuery datastore.Query
+	pipeline := []bson.M{}
 	if repo != "" {
-		pipedActions = append(pipedActions, bson.M{"$match": bson.M{"repo.name": repo}})
-		countQuery = c.Find(bson.M{"repo.name": repo})
-	} else {
-		countQuery = c.Find(nil)
+		pipeline = append(pipeline, bson.M{"$match": bson.M{"repo.name": repo}})
 	}
 
 	// We should query unique charts
-	pipedActions = append(pipedActions,
+	pipeline = append(pipeline,
 		// Add a new field to store the latest version
 		bson.M{"$addFields": bson.M{"firstChartVersion": bson.M{"$arrayElemAt": []interface{}{"$chartversions", 0}}}},
 		// Group by unique digest for the latest version (remove duplicates)
@@ -137,23 +136,25 @@ func getPaginatedChartList(repo string, pageNumber, pageSize int) (apiListRespon
 	if pageSize != 0 {
 		// If a pageSize is given, returns only the the specified number of charts and
 		// the number of pages
-		length, err := countQuery.Count()
+		countPipeline := append(pipeline, bson.M{"$count": "count"})
+		cc := count{}
+		err := c.Pipe(countPipeline).One(&cc)
 		if err != nil {
 			return apiListResponse{}, 0, err
 		}
-		totalPages = int(math.Ceil(float64(length) / float64(pageSize)))
+		totalPages = int(math.Ceil(float64(cc.Count) / float64(pageSize)))
 
 		// If the page number is out of range, return the last one
 		if pageNumber > totalPages {
 			pageNumber = totalPages
 		}
 
-		pipedActions = append(pipedActions,
+		pipeline = append(pipeline,
 			bson.M{"$skip": pageSize * (pageNumber - 1)},
 			bson.M{"$limit": pageSize},
 		)
 	}
-	err := c.Pipe(pipedActions).All(&charts)
+	err := c.Pipe(pipeline).All(&charts)
 	if err != nil {
 		return apiListResponse{}, 0, err
 	}

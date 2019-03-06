@@ -43,6 +43,7 @@ type bodyAPIResponse struct {
 }
 
 var chartsList []*models.Chart
+var cc count
 
 const testChartReadme = "# Quickstart\n\n```bash\nhelm install my-repo/my-chart\n```"
 const testChartValues = "image:\n  registry: docker.io\n  repository: my-repo/my-chart\n  tag: 0.1.0"
@@ -247,7 +248,9 @@ func Test_listCharts(t *testing.T) {
 				*args.Get(0).(*[]*models.Chart) = tt.charts
 			})
 			if tt.query != "" {
-				m.On("Count").Return(len(tt.charts))
+				m.On("One", &cc).Run(func(args mock.Arguments) {
+					*args.Get(0).(*count) = count{len(tt.charts)}
+				})
 			}
 
 			w := httptest.NewRecorder()
@@ -308,7 +311,9 @@ func Test_listRepoCharts(t *testing.T) {
 				*args.Get(0).(*[]*models.Chart) = tt.charts
 			})
 			if tt.query != "" {
-				m.On("Count").Return(len(tt.charts))
+				m.On("One", &cc).Run(func(args mock.Arguments) {
+					*args.Get(0).(*count) = count{len(tt.charts)}
+				})
 			}
 
 			w := httptest.NewRecorder()
