@@ -149,7 +149,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:f26a041c4bcbed68963faad5d47b1fa77a0e4da9724275090a768eedf635d4b9"
+  digest = "1:450878c69b3a95b75a60e66e69569767d36374f76a8c948057ea09462c108fab"
   name = "github.com/kubeapps/common"
   packages = [
     "datastore",
@@ -157,7 +157,7 @@
     "response",
   ]
   pruneopts = "UT"
-  revision = "61d8eb6f11b442c6e6928301c7bc58c19860b94e"
+  revision = "fcd6537ca4e3f1ecdfa122046bccd009672fc764"
 
 [[projects]]
   digest = "1:ff5ebae34cfbf047d505ee150de27e60570e8c394b3b8fdbb720ff6ac71985fc"
@@ -384,6 +384,7 @@
     "github.com/stretchr/testify/assert",
     "github.com/stretchr/testify/mock",
     "github.com/urfave/negroni",
+    "k8s.io/helm/pkg/proto/hapi/chart",
     "k8s.io/helm/pkg/repo",
   ]
   solver-name = "gps-cdcl"
