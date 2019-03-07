@@ -570,3 +570,22 @@ h251U/Daz6NiQBM9AxyAw6EHm8XAZBvCuebfzyrT
 		t.Error(err)
 	}
 }
+
+var emptyRepoIndexYAMLBytes, _ = ioutil.ReadFile("testdata/empty-repo-index.yaml")
+var emptyRepoIndexYAML = string(emptyRepoIndexYAMLBytes)
+
+type emptyChartRepoHTTPClient struct{}
+
+func (h *emptyChartRepoHTTPClient) Do(req *http.Request) (*http.Response, error) {
+	w := httptest.NewRecorder()
+	w.Write([]byte(emptyRepoIndexYAML))
+	return w.Result(), nil
+}
+
+func Test_emptyChartRepo(t *testing.T) {
+	netClient = &emptyChartRepoHTTPClient{}
+	m := mock.Mock{}
+	dbSession := mockstore.NewMockSession(&m)
+	err := syncRepo(dbSession, "testRepo", "https://my.examplerepo.com", "")
+	assert.ExistsErr(t, err, "Failed Request")
+}
