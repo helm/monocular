@@ -129,7 +129,7 @@ ingress:
   ##
   annotations:
     ## Nginx ingress controller (default)
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
     kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: 'true'
     ## Traefik ingress controller
