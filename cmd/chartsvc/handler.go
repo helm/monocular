@@ -18,7 +18,9 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"net/http"
+	"strconv"
 
 	"github.com/globalsign/mgo/bson"
 	"github.com/gorilla/mux"
@@ -61,34 +63,128 @@ type rel struct {
 	Links selfLink    `json:"links"`
 }
 
-// listCharts returns a list of charts
-func listCharts(w http.ResponseWriter, req *http.Request) {
+type meta struct {
+	TotalPages int `json:"totalPages"`
+}
+
+// count is used to parse the result of a $count operation in the database
+type count struct {
+	Count int
+}
+
+// getPageNumberAndSize extracts the page number and size of a request. Default (1, 0) if not set
+func getPageNumberAndSize(req *http.Request) (int, int) {
+	page := req.FormValue("page")
+	size := req.FormValue("size")
+	pageInt, err := strconv.ParseUint(page, 10, 64)
+	if err != nil {
+		pageInt = 1
+	}
+	// ParseUint will return 0 if size is a not positive integer
+	sizeInt, _ := strconv.ParseUint(size, 10, 64)
+	return int(pageInt), int(sizeInt)
+}
+
+// min returns the minimum of two integers.
+// We are not using math.Min since that compares float64
+// and it's unnecessarily complex.
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
+
+func uniqChartList(charts []*models.Chart) []*models.Chart {
+	// We will keep track of unique digest:chart to avoid duplicates
+	chartDigests := map[string]bool{}
+	res := []*models.Chart{}
+	for _, c := range charts {
+		digest := c.ChartVersions[0].Digest
+		// Filter out the chart if we've seen the same digest before
+		if _, ok := chartDigests[digest]; !ok {
+			chartDigests[digest] = true
+			res = append(res, c)
+		}
+	}
+	return res
+}
+
+func getPaginatedChartList(repo string, pageNumber, pageSize int) (apiListResponse, interface{}, error) {
 	db, closer := dbSession.DB()
 	defer closer()
 	var charts []*models.Chart
-	if err := db.C(chartCollection).Find(nil).Sort("name").All(&charts); err != nil {
+
+	c := db.C(chartCollection)
+	pipeline := []bson.M{}
+	if repo != "" {
+		pipeline = append(pipeline, bson.M{"$match": bson.M{"repo.name": repo}})
+	}
+
+	// We should query unique charts
+	pipeline = append(pipeline,
+		// Add a new field to store the latest version
+		bson.M{"$addFields": bson.M{"firstChartVersion": bson.M{"$arrayElemAt": []interface{}{"$chartversions", 0}}}},
+		// Group by unique digest for the latest version (remove duplicates)
+		bson.M{"$group": bson.M{"_id": "$firstChartVersion.digest", "chart": bson.M{"$first": "$$ROOT"}}},
+		// Restore original object struct
+		bson.M{"$replaceRoot": bson.M{"newRoot": "$chart"}},
+		// Order by name
+		bson.M{"$sort": bson.M{"name": 1}},
+	)
+
+	totalPages := 1
+	if pageSize != 0 {
+		// If a pageSize is given, returns only the the specified number of charts and
+		// the number of pages
+		countPipeline := append(pipeline, bson.M{"$count": "count"})
+		cc := count{}
+		err := c.Pipe(countPipeline).One(&cc)
+		if err != nil {
+			return apiListResponse{}, 0, err
+		}
+		totalPages = int(math.Ceil(float64(cc.Count) / float64(pageSize)))
+
+		// If the page number is out of range, return the last one
+		if pageNumber > totalPages {
+			pageNumber = totalPages
+		}
+
+		pipeline = append(pipeline,
+			bson.M{"$skip": pageSize * (pageNumber - 1)},
+			bson.M{"$limit": pageSize},
+		)
+	}
+	err := c.Pipe(pipeline).All(&charts)
+	if err != nil {
+		return apiListResponse{}, 0, err
+	}
+
+	return newChartListResponse(charts), meta{totalPages}, nil
+}
+
+// listCharts returns a list of charts
+func listCharts(w http.ResponseWriter, req *http.Request) {
+	pageNumber, pageSize := getPageNumberAndSize(req)
+	cl, meta, err := getPaginatedChartList("", pageNumber, pageSize)
+	if err != nil {
 		log.WithError(err).Error("could not fetch charts")
 		response.NewErrorResponse(http.StatusInternalServerError, "could not fetch all charts").Write(w)
 		return
 	}
-
-	cl := newChartListResponse(charts)
-	response.NewDataResponse(cl).Write(w)
+	response.NewDataResponseWithMeta(cl, meta).Write(w)
 }
 
 // listRepoCharts returns a list of charts in the given repo
 func listRepoCharts(w http.ResponseWriter, req *http.Request, params Params) {
-	db, closer := dbSession.DB()
-	defer closer()
-	var charts []*models.Chart
-	if err := db.C(chartCollection).Find(bson.M{"repo.name": params["repo"]}).Sort("_id").All(&charts); err != nil {
+	pageNumber, pageSize := getPageNumberAndSize(req)
+	cl, meta, err := getPaginatedChartList(params["repo"], pageNumber, pageSize)
+	if err != nil {
 		log.WithError(err).Error("could not fetch charts")
 		response.NewErrorResponse(http.StatusInternalServerError, "could not fetch all charts").Write(w)
 		return
 	}
-
-	cl := newChartListResponse(charts)
-	response.NewDataResponse(cl).Write(w)
+	response.NewDataResponseWithMeta(cl, meta).Write(w)
 }
 
 // getChart returns the chart from the given repo
@@ -221,7 +317,7 @@ func listChartsWithFilters(w http.ResponseWriter, req *http.Request, params Para
 		// continue to return empty list
 	}
 
-	cl := newChartListResponse(charts)
+	cl := newChartListResponse(uniqChartList(charts))
 	response.NewDataResponse(cl).Write(w)
 }
 
@@ -242,16 +338,9 @@ func newChartResponse(c *models.Chart) *apiResponse {
 }
 
 func newChartListResponse(charts []*models.Chart) apiListResponse {
-	// We will keep track of unique digest:chart to avoid duplicates
-	chartDigests := map[string]bool{}
 	cl := apiListResponse{}
 	for _, c := range charts {
-		digest := c.ChartVersions[0].Digest
-		// Filter out the chart if we've seen the same digest before
-		if _, ok := chartDigests[digest]; !ok {
-			chartDigests[digest] = true
-			cl = append(cl, newChartResponse(c))
-		}
+		cl = append(cl, newChartResponse(c))
 	}
 	return cl
 }
