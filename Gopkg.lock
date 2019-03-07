@@ -149,7 +149,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:dedb317ee5e0ddbec8cbf4837563ffd3490c50e3c24df79f3657a24bb29572e6"
+  digest = "1:450878c69b3a95b75a60e66e69569767d36374f76a8c948057ea09462c108fab"
   name = "github.com/kubeapps/common"
   packages = [
     "datastore",
@@ -157,7 +157,7 @@
     "response",
   ]
   pruneopts = "UT"
-  revision = "80e810ba7d1d481f642349f7a720437f6f54b288"
+  revision = "fcd6537ca4e3f1ecdfa122046bccd009672fc764"
 
 [[projects]]
   digest = "1:ff5ebae34cfbf047d505ee150de27e60570e8c394b3b8fdbb720ff6ac71985fc"

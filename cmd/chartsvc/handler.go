@@ -67,8 +67,9 @@ type meta struct {
 	TotalPages int `json:"totalPages"`
 }
 
+// count is used to parse the result of a $count operation in the database
 type count struct {
-	Count int `json:"count"`
+	Count int
 }
 
 // getPageNumberAndSize extracts the page number and size of a request. Default (1, 0) if not set

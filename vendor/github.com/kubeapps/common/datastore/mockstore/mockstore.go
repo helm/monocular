@@ -74,6 +74,10 @@ func (c mockCollection) Count() (int, error) {
 	return 0, nil
 }
 
+func (c mockCollection) Pipe(pipeline interface{}) datastore.Pipe {
+	return mockPipe{c.Mock}
+}
+
 // mockBulk acts as a mock datastore.Bulk
 type mockBulk struct {
 	*mock.Mock
@@ -112,6 +116,21 @@ func (q mockQuery) Sort(fields ...string) datastore.Query {
 
 func (q mockQuery) Select(selector interface{}) datastore.Query {
 	return q
+}
+
+// mockPipe acts as a mock datastore.Pipe
+type mockPipe struct {
+	*mock.Mock
+}
+
+func (p mockPipe) All(result interface{}) error {
+	p.Called(result)
+	return nil
+}
+
+func (p mockPipe) One(result interface{}) error {
+	p.Called(result)
+	return nil
 }
 
 // NewMockSession returns a mocked Session
