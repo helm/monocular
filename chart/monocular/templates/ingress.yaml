@@ -20,11 +20,11 @@ spec:
       - backend:
           serviceName: {{ template "fullname" $ }}-ui
           servicePort: {{ $.Values.ui.service.externalPort }}
-        path: /
+        path: /?(.*)
       - backend:
           serviceName: {{ template "fullname" $ }}-chartsvc
           servicePort: {{ $.Values.chartsvc.service.port }}
-        path: /api/chartsvc
+        path: /api/chartsvc/?(.*)
     host: {{ . | quote }}
   {{- end }}
 {{- if .Values.ingress.tls }}
