@@ -332,15 +332,16 @@ func findCharts(w http.ResponseWriter, req *http.Request, params Params) {
 	db, closer := dbSession.DB()
 	defer closer()
 
+	query := req.FormValue("q")
 	var charts []*models.Chart
 	conditions := bson.M{
 		"$or": []bson.M{
-			{"name": bson.M{"$regex": req.FormValue("match")}},
-			{"description": bson.M{"$regex": req.FormValue("match")}},
-			{"repo.name": bson.M{"$regex": req.FormValue("match")}},
-			{"keywords": bson.M{"$elemMatch": bson.M{"$regex": req.FormValue("match")}}},
-			{"sources": bson.M{"$elemMatch": bson.M{"$regex": req.FormValue("match")}}},
-			{"maintainers": bson.M{"$elemMatch": bson.M{"name": bson.M{"$regex": req.FormValue("match")}}}},
+			{"name": bson.M{"$regex": query}},
+			{"description": bson.M{"$regex": query}},
+			{"repo.name": bson.M{"$regex": query}},
+			{"keywords": bson.M{"$elemMatch": bson.M{"$regex": query}}},
+			{"sources": bson.M{"$elemMatch": bson.M{"$regex": query}}},
+			{"maintainers": bson.M{"$elemMatch": bson.M{"name": bson.M{"$regex": query}}}},
 		},
 	}
 	if params["repo"] != "" {
@@ -349,7 +350,7 @@ func findCharts(w http.ResponseWriter, req *http.Request, params Params) {
 	if err := db.C(chartCollection).Find(conditions).All(&charts); err != nil {
 		log.WithError(err).Errorf(
 			"could not find charts with the given query %s",
-			req.FormValue("match"),
+			query,
 		)
 		// continue to return empty list
 	}
