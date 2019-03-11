@@ -321,6 +321,44 @@ func listChartsWithFilters(w http.ResponseWriter, req *http.Request, params Para
 	response.NewDataResponse(cl).Write(w)
 }
 
+// searchCharts returns the list of charts that matches the query param in any of these fields:
+//  - name
+//  - description
+//  - repository name
+//  - any keyword
+//  - any source
+//  - any maintainer name
+func searchCharts(w http.ResponseWriter, req *http.Request, params Params) {
+	db, closer := dbSession.DB()
+	defer closer()
+
+	query := req.FormValue("q")
+	var charts []*models.Chart
+	conditions := bson.M{
+		"$or": []bson.M{
+			{"name": bson.M{"$regex": query}},
+			{"description": bson.M{"$regex": query}},
+			{"repo.name": bson.M{"$regex": query}},
+			{"keywords": bson.M{"$elemMatch": bson.M{"$regex": query}}},
+			{"sources": bson.M{"$elemMatch": bson.M{"$regex": query}}},
+			{"maintainers": bson.M{"$elemMatch": bson.M{"name": bson.M{"$regex": query}}}},
+		},
+	}
+	if params["repo"] != "" {
+		conditions["repo.name"] = params["repo"]
+	}
+	if err := db.C(chartCollection).Find(conditions).All(&charts); err != nil {
+		log.WithError(err).Errorf(
+			"could not find charts with the given query %s",
+			query,
+		)
+		// continue to return empty list
+	}
+
+	cl := newChartListResponse(uniqChartList(charts))
+	response.NewDataResponse(cl).Write(w)
+}
+
 func newChartResponse(c *models.Chart) *apiResponse {
 	latestCV := c.ChartVersions[0]
 	return &apiResponse{
