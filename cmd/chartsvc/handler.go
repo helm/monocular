@@ -321,14 +321,14 @@ func listChartsWithFilters(w http.ResponseWriter, req *http.Request, params Para
 	response.NewDataResponse(cl).Write(w)
 }
 
-// findCharts returns the list of charts that matches the query param in any of these fields:
+// searchCharts returns the list of charts that matches the query param in any of these fields:
 //  - name
 //  - description
 //  - repository name
 //  - any keyword
 //  - any source
 //  - any maintainer name
-func findCharts(w http.ResponseWriter, req *http.Request, params Params) {
+func searchCharts(w http.ResponseWriter, req *http.Request, params Params) {
 	db, closer := dbSession.DB()
 	defer closer()
 
