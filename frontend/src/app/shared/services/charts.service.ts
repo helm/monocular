@@ -83,11 +83,13 @@ export class ChartsService {
   }
 
   arrayMatch(keywords: string[], re): boolean {
-    if(!keywords) return false
-
-    return keywords.some((keyword) => {
-      return !!keyword.match(re)
-    })
+    if (!!keywords) {
+      return keywords.some((keyword) => {
+        return !!keyword.match(re)
+      })
+    }}
+    
+    return false
   }
 
   /**
