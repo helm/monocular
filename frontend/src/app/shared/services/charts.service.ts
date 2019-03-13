@@ -87,7 +87,7 @@ export class ChartsService {
       return keywords.some((keyword) => {
         return !!keyword.match(re)
       })
-    }}
+    }
     
     return false
   }
