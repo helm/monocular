@@ -90,7 +90,7 @@ export class ChartsService {
     if(!keywords) return false
 
     return keywords.some((keyword) => {
-      return this.checkDefinedMatch(!!keyword, re)
+      return this.checkDefinedMatch(keyword, re)
     })
   }
 
