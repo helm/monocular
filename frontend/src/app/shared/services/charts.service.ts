@@ -72,9 +72,9 @@ export class ChartsService {
     let re = new RegExp(query, 'i');
     return this.getCharts(repo).map(charts => {
       return charts.filter(chart => {
-        return chart.attributes.name.match(re) ||
-         chart.attributes.description.match(re) ||
-         chart.attributes.repo.name.match(re) ||
+        return this.checkDefinedMatch(chart.attributes.name, re) ||
+         this.checkDefinedMatch(chart.attributes.description, re) ||
+         this.checkDefinedMatch(chart.attributes.repo.name, re) ||
          this.arrayMatch(chart.attributes.keywords, re) ||
          this.arrayMatch((chart.attributes.maintainers || []).map((m)=> { return m.name }), re) ||
          this.arrayMatch(chart.attributes.sources, re)
@@ -82,11 +82,15 @@ export class ChartsService {
     })
   }
 
+  checkDefinedMatch(member, matcher) {
+    return member && member.match(matcher);
+  }
+
   arrayMatch(keywords: string[], re): boolean {
     if(!keywords) return false
 
     return keywords.some((keyword) => {
-      return !!keyword.match(re)
+      return this.checkDefinedMatch(keyword, re)
     })
   }
 
@@ -129,7 +133,7 @@ export class ChartsService {
 
   /**
    * Get the URL for retrieving the chart's icon
-   * 
+   *
    * @param {Chart} chart Chart object
    */
   getChartIconURL(chart: Chart): string {
