@@ -57,8 +57,10 @@ jobs:
     working_directory: /go/src/github.com/helm/monocular
     environment:
       CGO_ENABLED: "0"
+      GO111MODULE: "on"
+      GOPROXY: https://gocenter.io
     docker:
-      - image: circleci/golang:1.9
+      - image: circleci/golang:1.12
     steps:
       - checkout
       # Global test for all Go packages in the repo
@@ -66,7 +68,7 @@ jobs:
 
   test_chart_render:
     docker:
-      - image: circleci/golang:1.9
+      - image: circleci/golang:1.12
     environment:
       HELM_VERSION: v2.9.1
     steps:
@@ -98,7 +100,7 @@ jobs:
 
   build_and_push_go_images:
     docker:
-      - image: circleci/golang:1.9
+      - image: circleci/golang:1.12
     working_directory: /go/src/github.com/helm/monocular
     environment:
       GOPATH: /home/circleci/.go_workspace
@@ -128,7 +130,7 @@ jobs:
 
   sync_chart:
     docker:
-      - image: circleci/golang:1.9
+      - image: circleci/golang:1.12
     steps:
       - checkout
       - <<: *exports

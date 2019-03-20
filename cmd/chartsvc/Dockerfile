@@ -1,7 +1,7 @@
-FROM golang:1.11 as builder
+FROM golang:1.12 as builder
 COPY . /go/src/github.com/helm/monocular
 WORKDIR /go/src/github.com/helm/monocular
-RUN CGO_ENABLED=0 go build -a -installsuffix cgo ./cmd/chartsvc
+RUN GO111MODULE=on GOPROXY=https://gocenter.io CGO_ENABLED=0 go build -a -installsuffix cgo ./cmd/chartsvc
 
 FROM scratch
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
