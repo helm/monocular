@@ -1,4 +1,4 @@
-module github.com/rimusz/monocular
+module github.com/helm/monocular
 
 go 1.12
 
