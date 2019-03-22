@@ -7,8 +7,7 @@ This guide explains how to set up your environment for developing on Helm and Ti
 * A Kubernetes cluster with Helm/Tiller installed
 * Telepresence 0.75 or later
 * kubectl 1.2 or later (optional)
-* Go 1.11 or later
-* Go dep https://golang.github.io/dep/
+* Go 1.12 or later
 * Git
 
 ## Architecture
@@ -64,7 +63,7 @@ connected to the development server.
 chartsvc is a Go REST API service. To build it, run the following commands:
 
 ```
-$ dep ensure
+$ go mod tidy
 $ make -C cmd/chartsvc docker-build
 ```
 
@@ -83,7 +82,7 @@ repositories. In development, it can be run standalone outside of the scheduled
 CronJobs. To build it, run the following commands:
 
 ```
-$ dep ensure
+$ go mod tidy
 $ make -C cmd/chart-repo docker-build
 ```
 
