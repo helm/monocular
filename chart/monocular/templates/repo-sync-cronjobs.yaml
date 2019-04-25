@@ -2,7 +2,7 @@
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: {{ printf "%s-%s-%s" (include "fullname" $) "sync-scheduled" .name | trunc 52 }}
+  name: {{ printf "%s-%s" (include "fullname" $) "sync-scheduled" | trunc 42 }}-{{ .name | trunc 10 }}
   labels:
     monocular.helm.sh/repo-name: {{ .name }}
     app: {{ template "fullname" $ }}
