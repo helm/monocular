@@ -19,6 +19,7 @@ sync:
   # Uncomment these properties to set HTTP proxy for chart synchronization jobs
   # httpProxy:
   # httpsProxy:
+  # noProxy:
   # TODO: review suggested resource limits/requests
   resources: {}
     # limits:
