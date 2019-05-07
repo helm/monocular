@@ -85,6 +85,11 @@ func getPageNumberAndSize(req *http.Request) (int, int) {
 	return int(pageInt), int(sizeInt)
 }
 
+// showDuplicates returns if a request wants to retrieve charts. Default false
+func showDuplicates(req *http.Request) bool {
+	return len(req.FormValue("showDuplicates")) > 0
+}
+
 // min returns the minimum of two integers.
 // We are not using math.Min since that compares float64
 // and it's unnecessarily complex.
@@ -110,7 +115,7 @@ func uniqChartList(charts []*models.Chart) []*models.Chart {
 	return res
 }
 
-func getPaginatedChartList(repo string, pageNumber, pageSize int) (apiListResponse, interface{}, error) {
+func getPaginatedChartList(repo string, pageNumber, pageSize int, showDuplicates bool) (apiListResponse, interface{}, error) {
 	db, closer := dbSession.DB()
 	defer closer()
 	var charts []*models.Chart
@@ -121,17 +126,20 @@ func getPaginatedChartList(repo string, pageNumber, pageSize int) (apiListRespon
 		pipeline = append(pipeline, bson.M{"$match": bson.M{"repo.name": repo}})
 	}
 
-	// We should query unique charts
-	pipeline = append(pipeline,
-		// Add a new field to store the latest version
-		bson.M{"$addFields": bson.M{"firstChartVersion": bson.M{"$arrayElemAt": []interface{}{"$chartversions", 0}}}},
-		// Group by unique digest for the latest version (remove duplicates)
-		bson.M{"$group": bson.M{"_id": "$firstChartVersion.digest", "chart": bson.M{"$first": "$$ROOT"}}},
-		// Restore original object struct
-		bson.M{"$replaceRoot": bson.M{"newRoot": "$chart"}},
-		// Order by name
-		bson.M{"$sort": bson.M{"name": 1}},
-	)
+	if !showDuplicates {
+		// We should query unique charts
+		pipeline = append(pipeline,
+			// Add a new field to store the latest version
+			bson.M{"$addFields": bson.M{"firstChartVersion": bson.M{"$arrayElemAt": []interface{}{"$chartversions", 0}}}},
+			// Group by unique digest for the latest version (remove duplicates)
+			bson.M{"$group": bson.M{"_id": "$firstChartVersion.digest", "chart": bson.M{"$first": "$$ROOT"}}},
+			// Restore original object struct
+			bson.M{"$replaceRoot": bson.M{"newRoot": "$chart"}},
+		)
+	}
+
+	// Order by name
+	pipeline = append(pipeline, bson.M{"$sort": bson.M{"name": 1}})
 
 	totalPages := 1
 	if pageSize != 0 {
@@ -166,7 +174,7 @@ func getPaginatedChartList(repo string, pageNumber, pageSize int) (apiListRespon
 // listCharts returns a list of charts
 func listCharts(w http.ResponseWriter, req *http.Request) {
 	pageNumber, pageSize := getPageNumberAndSize(req)
-	cl, meta, err := getPaginatedChartList("", pageNumber, pageSize)
+	cl, meta, err := getPaginatedChartList("", pageNumber, pageSize, showDuplicates(req))
 	if err != nil {
 		log.WithError(err).Error("could not fetch charts")
 		response.NewErrorResponse(http.StatusInternalServerError, "could not fetch all charts").Write(w)
@@ -178,7 +186,7 @@ func listCharts(w http.ResponseWriter, req *http.Request) {
 // listRepoCharts returns a list of charts in the given repo
 func listRepoCharts(w http.ResponseWriter, req *http.Request, params Params) {
 	pageNumber, pageSize := getPageNumberAndSize(req)
-	cl, meta, err := getPaginatedChartList(params["repo"], pageNumber, pageSize)
+	cl, meta, err := getPaginatedChartList(params["repo"], pageNumber, pageSize, showDuplicates(req))
 	if err != nil {
 		log.WithError(err).Error("could not fetch charts")
 		response.NewErrorResponse(http.StatusInternalServerError, "could not fetch all charts").Write(w)
@@ -317,7 +325,11 @@ func listChartsWithFilters(w http.ResponseWriter, req *http.Request, params Para
 		// continue to return empty list
 	}
 
-	cl := newChartListResponse(uniqChartList(charts))
+	chartResponse := charts
+	if !showDuplicates(req) {
+		chartResponse = uniqChartList(charts)
+	}
+	cl := newChartListResponse(chartResponse)
 	response.NewDataResponse(cl).Write(w)
 }
 
@@ -355,7 +367,11 @@ func searchCharts(w http.ResponseWriter, req *http.Request, params Params) {
 		// continue to return empty list
 	}
 
-	cl := newChartListResponse(uniqChartList(charts))
+	chartResponse := charts
+	if !showDuplicates(req) {
+		chartResponse = uniqChartList(charts)
+	}
+	cl := newChartListResponse(chartResponse)
 	response.NewDataResponse(cl).Write(w)
 }
 
