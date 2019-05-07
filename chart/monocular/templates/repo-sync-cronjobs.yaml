@@ -2,7 +2,7 @@
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: {{ template "fullname" $ }}-sync-scheduled-{{ .name }}
+  name: {{ template "fullname" $ }}-sync-scheduled-{{ .name | lower }}
   labels:
     monocular.helm.sh/repo-name: {{ .name }}
     app: {{ template "fullname" $ }}
