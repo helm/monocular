@@ -800,7 +800,7 @@ func Test_findLatestChart(t *testing.T) {
 			t.Errorf("Expecting %v, received %v", charts[0], data[0].ID)
 		}
 	})
-	t.Run("includes duplicated chart", func(t *testing.T) {
+	t.Run("includes duplicated charts when showDuplicates param set", func(t *testing.T) {
 		charts := []*models.Chart{
 			{Name: "foo", ID: "stable/foo", Repo: models.Repo{Name: "bar"}, ChartVersions: []models.ChartVersion{models.ChartVersion{Version: "1.0.0", AppVersion: "0.1.0", Digest: "123"}}},
 			{Name: "foo", ID: "bitnami/foo", Repo: models.Repo{Name: "bar"}, ChartVersions: []models.ChartVersion{models.ChartVersion{Version: "1.0.0", AppVersion: "0.1.0", Digest: "123"}}},
