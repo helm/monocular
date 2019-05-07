@@ -800,4 +800,37 @@ func Test_findLatestChart(t *testing.T) {
 			t.Errorf("Expecting %v, received %v", charts[0], data[0].ID)
 		}
 	})
+	t.Run("includes duplicated chart", func(t *testing.T) {
+		charts := []*models.Chart{
+			{Name: "foo", ID: "stable/foo", Repo: models.Repo{Name: "bar"}, ChartVersions: []models.ChartVersion{models.ChartVersion{Version: "1.0.0", AppVersion: "0.1.0", Digest: "123"}}},
+			{Name: "foo", ID: "bitnami/foo", Repo: models.Repo{Name: "bar"}, ChartVersions: []models.ChartVersion{models.ChartVersion{Version: "1.0.0", AppVersion: "0.1.0", Digest: "123"}}},
+		}
+		reqVersion := "1.0.0"
+		reqAppVersion := "0.1.0"
+
+		var m mock.Mock
+		dbSession = mockstore.NewMockSession(&m)
+		m.On("All", &chartsList).Run(func(args mock.Arguments) {
+			*args.Get(0).(*[]*models.Chart) = charts
+		})
+
+		w := httptest.NewRecorder()
+		req := httptest.NewRequest("GET", "/charts?showDuplicates=true&name="+charts[0].Name+"&version="+reqVersion+"&appversion="+reqAppVersion, nil)
+		params := Params{
+			"name":       charts[0].Name,
+			"version":    reqVersion,
+			"appversion": reqAppVersion,
+		}
+
+		listChartsWithFilters(w, req, params)
+
+		var b bodyAPIListResponse
+		json.NewDecoder(w.Body).Decode(&b)
+		if b.Data == nil {
+			t.Fatal("chart list shouldn't be null")
+		}
+		data := *b.Data
+
+		assert.Equal(t, len(data), 2, "it should return both charts")
+	})
 }

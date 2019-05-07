@@ -85,13 +85,9 @@ func getPageNumberAndSize(req *http.Request) (int, int) {
 	return int(pageInt), int(sizeInt)
 }
 
-// getUnique returns if a request require unique charts. Default true
-func getUnique(req *http.Request) bool {
-	uniq := req.FormValue("uniq")
-	if uniq == "false" {
-		return false
-	}
-	return true
+// showDuplicates returns if a request wants to retrieve charts. Default false
+func showDuplicates(req *http.Request) bool {
+	return len(req.FormValue("showDuplicates")) > 0
 }
 
 // min returns the minimum of two integers.
@@ -119,7 +115,7 @@ func uniqChartList(charts []*models.Chart) []*models.Chart {
 	return res
 }
 
-func getPaginatedChartList(repo string, pageNumber, pageSize int, unique bool) (apiListResponse, interface{}, error) {
+func getPaginatedChartList(repo string, pageNumber, pageSize int, showDuplicates bool) (apiListResponse, interface{}, error) {
 	db, closer := dbSession.DB()
 	defer closer()
 	var charts []*models.Chart
@@ -130,7 +126,7 @@ func getPaginatedChartList(repo string, pageNumber, pageSize int, unique bool) (
 		pipeline = append(pipeline, bson.M{"$match": bson.M{"repo.name": repo}})
 	}
 
-	if unique {
+	if !showDuplicates {
 		// We should query unique charts
 		pipeline = append(pipeline,
 			// Add a new field to store the latest version
@@ -178,7 +174,7 @@ func getPaginatedChartList(repo string, pageNumber, pageSize int, unique bool) (
 // listCharts returns a list of charts
 func listCharts(w http.ResponseWriter, req *http.Request) {
 	pageNumber, pageSize := getPageNumberAndSize(req)
-	cl, meta, err := getPaginatedChartList("", pageNumber, pageSize, getUnique(req))
+	cl, meta, err := getPaginatedChartList("", pageNumber, pageSize, showDuplicates(req))
 	if err != nil {
 		log.WithError(err).Error("could not fetch charts")
 		response.NewErrorResponse(http.StatusInternalServerError, "could not fetch all charts").Write(w)
@@ -190,7 +186,7 @@ func listCharts(w http.ResponseWriter, req *http.Request) {
 // listRepoCharts returns a list of charts in the given repo
 func listRepoCharts(w http.ResponseWriter, req *http.Request, params Params) {
 	pageNumber, pageSize := getPageNumberAndSize(req)
-	cl, meta, err := getPaginatedChartList(params["repo"], pageNumber, pageSize, getUnique(req))
+	cl, meta, err := getPaginatedChartList(params["repo"], pageNumber, pageSize, showDuplicates(req))
 	if err != nil {
 		log.WithError(err).Error("could not fetch charts")
 		response.NewErrorResponse(http.StatusInternalServerError, "could not fetch all charts").Write(w)
@@ -329,7 +325,11 @@ func listChartsWithFilters(w http.ResponseWriter, req *http.Request, params Para
 		// continue to return empty list
 	}
 
-	cl := newChartListResponse(uniqChartList(charts))
+	chartResponse := charts
+	if !showDuplicates(req) {
+		chartResponse = uniqChartList(charts)
+	}
+	cl := newChartListResponse(chartResponse)
 	response.NewDataResponse(cl).Write(w)
 }
 
@@ -367,7 +367,11 @@ func searchCharts(w http.ResponseWriter, req *http.Request, params Params) {
 		// continue to return empty list
 	}
 
-	cl := newChartListResponse(uniqChartList(charts))
+	chartResponse := charts
+	if !showDuplicates(req) {
+		chartResponse = uniqChartList(charts)
+	}
+	cl := newChartListResponse(chartResponse)
 	response.NewDataResponse(cl).Write(w)
 }
 
