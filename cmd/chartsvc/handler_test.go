@@ -64,7 +64,7 @@ func Test_chartAttributes(t *testing.T) {
 			ID: "stable/wordpress",
 		}},
 		{"chart has a icon", models.Chart{
-			ID: "repo/mychart", RawIcon: iconBytes(),
+			ID: "repo/mychart", RawIcon: iconBytes(), IconContentType: "image/svg",
 		}},
 	}
 
@@ -76,7 +76,8 @@ func Test_chartAttributes(t *testing.T) {
 			if len(tt.chart.RawIcon) == 0 {
 				assert.Equal(t, len(c.Icon), 0, "icon url should be undefined")
 			} else {
-				assert.Equal(t, c.Icon, pathPrefix+"/assets/"+tt.chart.ID+"/logo-160x160-fit.png", "the icon url should be the same")
+				assert.Equal(t, c.Icon, pathPrefix+"/assets/"+tt.chart.ID+"/logo", "the icon url should be the same")
+				assert.Equal(t, c.IconContentType, tt.chart.IconContentType, "the icon content type should be the same")
 			}
 		})
 	}
@@ -551,7 +552,7 @@ func Test_getChartIcon(t *testing.T) {
 		{
 			"chart has icon",
 			nil,
-			models.Chart{ID: "my-repo/my-chart", RawIcon: iconBytes()},
+			models.Chart{ID: "my-repo/my-chart", RawIcon: iconBytes(), IconContentType: "image/png"},
 			http.StatusOK,
 		},
 		{
@@ -559,6 +560,12 @@ func Test_getChartIcon(t *testing.T) {
 			nil,
 			models.Chart{ID: "my-repo/my-chart"},
 			http.StatusNotFound,
+		},
+		{
+			"chart has icon with custom type",
+			nil,
+			models.Chart{ID: "my-repo/my-chart", RawIcon: iconBytes(), IconContentType: "image/svg"},
+			http.StatusOK,
 		},
 	}
 
@@ -576,7 +583,7 @@ func Test_getChartIcon(t *testing.T) {
 			}
 
 			w := httptest.NewRecorder()
-			req := httptest.NewRequest("GET", "/assets/"+tt.chart.ID+"/logo-160x160-fit.png", nil)
+			req := httptest.NewRequest("GET", "/assets/"+tt.chart.ID+"/logo", nil)
 			parts := strings.Split(tt.chart.ID, "/")
 			params := Params{
 				"repo":      parts[0],
@@ -589,6 +596,7 @@ func Test_getChartIcon(t *testing.T) {
 			assert.Equal(t, tt.wantCode, w.Code, "http status code should match")
 			if tt.wantCode == http.StatusOK {
 				assert.Equal(t, w.Body.Bytes(), tt.chart.RawIcon, "raw icon data should match")
+				assert.Equal(t, w.Header().Get("Content-Type"), tt.chart.IconContentType, "icon content type should match")
 			}
 		})
 	}

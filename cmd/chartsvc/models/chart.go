@@ -30,17 +30,18 @@ type Repo struct {
 
 // Chart is a higher-level representation of a chart package
 type Chart struct {
-	ID            string             `json:"-" bson:"_id"`
-	Name          string             `json:"name"`
-	Repo          Repo               `json:"repo"`
-	Description   string             `json:"description"`
-	Home          string             `json:"home"`
-	Keywords      []string           `json:"keywords"`
-	Maintainers   []chart.Maintainer `json:"maintainers"`
-	Sources       []string           `json:"sources"`
-	Icon          string             `json:"icon"`
-	RawIcon       []byte             `json:"-" bson:"raw_icon"`
-	ChartVersions []ChartVersion     `json:"-"`
+	ID              string             `json:"-" bson:"_id"`
+	Name            string             `json:"name"`
+	Repo            Repo               `json:"repo"`
+	Description     string             `json:"description"`
+	Home            string             `json:"home"`
+	Keywords        []string           `json:"keywords"`
+	Maintainers     []chart.Maintainer `json:"maintainers"`
+	Sources         []string           `json:"sources"`
+	Icon            string             `json:"icon"`
+	RawIcon         []byte             `json:"-" bson:"raw_icon"`
+	IconContentType string             `json:"-" bson:"icon_content_type,omitempty"`
+	ChartVersions   []ChartVersion     `json:"-"`
 }
 
 // ChartVersion is a representation of a specific version of a chart

@@ -109,6 +109,16 @@ func (h *goodIconClient) Do(req *http.Request) (*http.Response, error) {
 	return w.Result(), nil
 }
 
+type svgIconClient struct{}
+
+func (h *svgIconClient) Do(req *http.Request) (*http.Response, error) {
+	w := httptest.NewRecorder()
+	w.Write([]byte("foo"))
+	res := w.Result()
+	res.Header.Set("Content-Type", "image/svg")
+	return res, nil
+}
+
 type goodTarballClient struct {
 	c          chart
 	skipReadme bool
@@ -360,7 +370,21 @@ func Test_fetchAndImportIcon(t *testing.T) {
 		c := charts[0]
 		m := mock.Mock{}
 		dbSession := mockstore.NewMockSession(&m)
-		m.On("UpdateId", c.ID, bson.M{"$set": bson.M{"raw_icon": iconBytes()}}).Return(nil)
+		m.On("UpdateId", c.ID, bson.M{"$set": bson.M{"raw_icon": iconBytes(), "icon_content_type": "image/png"}}).Return(nil)
+		assert.NoErr(t, fetchAndImportIcon(dbSession, c))
+		m.AssertExpectations(t)
+	})
+
+	t.Run("valid SVG icon", func(t *testing.T) {
+		netClient = &svgIconClient{}
+		c := chart{
+			ID:   "foo",
+			Icon: "https://foo/bar/logo.svg",
+			Repo: repo{},
+		}
+		m := mock.Mock{}
+		dbSession := mockstore.NewMockSession(&m)
+		m.On("UpdateId", c.ID, bson.M{"$set": bson.M{"raw_icon": []byte("foo"), "icon_content_type": "image/svg"}}).Return(nil)
 		assert.NoErr(t, fetchAndImportIcon(dbSession, c))
 		m.AssertExpectations(t)
 	})
