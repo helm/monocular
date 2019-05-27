@@ -587,5 +587,5 @@ func Test_emptyChartRepo(t *testing.T) {
 	m := mock.Mock{}
 	dbSession := mockstore.NewMockSession(&m)
 	err := syncRepo(dbSession, "testRepo", "https://my.examplerepo.com", "")
-	assert.ExistsErr(t, err, "Failed Request")
+	assert.NoErr(t, err)
 }
