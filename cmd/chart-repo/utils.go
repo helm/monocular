@@ -323,7 +323,7 @@ func fetchAndImportIcon(dbSession datastore.Session, c chart) error {
 		// if the icon is in any other format try to convert it to PNG
 		orig, err := imaging.Decode(res.Body)
 		if err != nil {
-			log.Infof("failing to decode %v", err)
+			log.WithFields(log.Fields{"name": c.Name}).WithError(err).Error("failed to decode icon")
 			return err
 		}
 
