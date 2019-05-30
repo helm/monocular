@@ -310,20 +310,35 @@ func fetchAndImportIcon(dbSession datastore.Session, c chart) error {
 		return fmt.Errorf("%d %s", res.StatusCode, c.Icon)
 	}
 
-	orig, err := imaging.Decode(res.Body)
-	if err != nil {
-		return err
+	b := []byte{}
+	contentType := ""
+	if strings.Contains(res.Header.Get("Content-Type"), "image/svg") {
+		// if the icon is a SVG file simply read it
+		b, err = ioutil.ReadAll(res.Body)
+		if err != nil {
+			return err
+		}
+		contentType = res.Header.Get("Content-Type")
+	} else {
+		// if the icon is in any other format try to convert it to PNG
+		orig, err := imaging.Decode(res.Body)
+		if err != nil {
+			log.WithFields(log.Fields{"name": c.Name}).WithError(err).Error("failed to decode icon")
+			return err
+		}
+
+		// TODO: make this configurable?
+		icon := imaging.Fit(orig, 160, 160, imaging.Lanczos)
+
+		var buf bytes.Buffer
+		imaging.Encode(&buf, icon, imaging.PNG)
+		b = buf.Bytes()
+		contentType = "image/png"
 	}
-
-	// TODO: make this configurable?
-	icon := imaging.Fit(orig, 160, 160, imaging.Lanczos)
-
-	var b bytes.Buffer
-	imaging.Encode(&b, icon, imaging.PNG)
 
 	db, closer := dbSession.DB()
 	defer closer()
-	return db.C(chartCollection).UpdateId(c.ID, bson.M{"$set": bson.M{"raw_icon": b.Bytes()}})
+	return db.C(chartCollection).UpdateId(c.ID, bson.M{"$set": bson.M{"raw_icon": b, "icon_content_type": contentType}})
 }
 
 func fetchAndImportFiles(dbSession datastore.Session, name string, r repo, cv chartVersion) error {

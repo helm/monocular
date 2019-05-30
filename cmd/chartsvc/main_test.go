@@ -342,7 +342,7 @@ func Test_GetChartIcon(t *testing.T) {
 				})
 			}
 
-			res, err := http.Get(ts.URL + pathPrefix + "/assets/" + tt.chart.ID + "/logo-160x160-fit.png")
+			res, err := http.Get(ts.URL + pathPrefix + "/assets/" + tt.chart.ID + "/logo")
 			assert.NoError(t, err)
 			defer res.Body.Close()
 
