@@ -59,3 +59,9 @@ type chartFiles struct {
 	Repo   repo
 	Digest string
 }
+
+type repoCheck struct {
+	ID         string    `bson:"_id"`
+	LastUpdate time.Time `bson:"last_update"`
+	Checksum   string    `bson:"checksum"`
+}

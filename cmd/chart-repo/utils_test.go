@@ -33,6 +33,7 @@ import (
 	"path"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/arschles/assert"
 	"github.com/disintegration/imaging"
@@ -609,7 +610,57 @@ func (h *emptyChartRepoHTTPClient) Do(req *http.Request) (*http.Response, error)
 func Test_emptyChartRepo(t *testing.T) {
 	netClient = &emptyChartRepoHTTPClient{}
 	m := mock.Mock{}
+	m.On("One", &repoCheck{}).Return(nil)
 	dbSession := mockstore.NewMockSession(&m)
 	err := syncRepo(dbSession, "testRepo", "https://my.examplerepo.com", "")
 	assert.ExistsErr(t, err, "Failed Request")
+}
+
+func Test_getSha256(t *testing.T) {
+	sha, err := getSha256([]byte("this is a test"))
+	assert.Equal(t, err, nil, "Unable to get sha")
+	assert.Equal(t, sha, "2e99758548972a8e8822ad47fa1017ff72f06f3ff6a016851f45c398732bc50c", "Unable to get sha")
+}
+
+func Test_repoAlreadyProcessed(t *testing.T) {
+	tests := []struct {
+		name            string
+		checksum        string
+		mockedLastCheck repoCheck
+		processed       bool
+	}{
+		{"not processed yet", "bar", repoCheck{}, false},
+		{"already processed", "bar", repoCheck{Checksum: "bar"}, true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			m := mock.Mock{}
+			repo := &repoCheck{}
+			m.On("One", repo).Run(func(args mock.Arguments) {
+				*args.Get(0).(*repoCheck) = tt.mockedLastCheck
+			}).Return(nil)
+			dbSession := mockstore.NewMockSession(&m)
+			res := repoAlreadyProcessed(dbSession, "", tt.checksum)
+			if res != tt.processed {
+				t.Errorf("Expected alreadyProcessed to be %v got %v", tt.processed, res)
+			}
+		})
+	}
+}
+
+func Test_updateLastCheck(t *testing.T) {
+	m := mock.Mock{}
+	repoName := "foo"
+	checksum := "bar"
+	now := time.Now()
+	m.On("UpsertId", repoName, bson.M{"$set": bson.M{"last_update": now, "checksum": checksum}}).Return(nil)
+	dbSession := mockstore.NewMockSession(&m)
+	err := updateLastCheck(dbSession, repoName, checksum, now)
+	if err != nil {
+		t.Errorf("Unexpected error %v", err)
+	}
+	if len(m.Calls) != 1 {
+		t.Errorf("Expected one call got %d", len(m.Calls))
+	}
 }
