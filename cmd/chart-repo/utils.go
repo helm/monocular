@@ -20,6 +20,7 @@ import (
 	"archive/tar"
 	"bytes"
 	"compress/gzip"
+	"crypto/sha256"
 	"crypto/tls"
 	"crypto/x509"
 	"errors"
@@ -45,6 +46,7 @@ import (
 
 const (
 	chartCollection       = "charts"
+	repositoryCollection  = "repos"
 	chartFilesCollection  = "files"
 	defaultTimeoutSeconds = 10
 	additionalCAFile      = "/usr/local/share/ca-certificates/ca.crt"
@@ -62,7 +64,7 @@ type httpClient interface {
 
 var netClient httpClient = &http.Client{}
 
-func parseRepoUrl(repoURL string) (*url.URL, error) {
+func parseRepoURL(repoURL string) (*url.URL, error) {
 	repoURL = strings.TrimSpace(repoURL)
 	return url.ParseRequestURI(repoURL)
 }
@@ -85,14 +87,30 @@ func init() {
 // imported into the database as fast as possible. E.g. we want all icons for
 // charts before fetching readmes for each chart and version pair.
 func syncRepo(dbSession datastore.Session, repoName, repoURL string, authorizationHeader string) error {
-	url, err := parseRepoUrl(repoURL)
+	url, err := parseRepoURL(repoURL)
 	if err != nil {
 		log.WithFields(log.Fields{"url": repoURL}).WithError(err).Error("failed to parse URL")
 		return err
 	}
 
 	r := repo{Name: repoName, URL: url.String(), AuthorizationHeader: authorizationHeader}
-	index, err := fetchRepoIndex(r)
+	repoBytes, err := fetchRepoIndex(r)
+	if err != nil {
+		return err
+	}
+
+	repoChecksum, err := getSha256(repoBytes)
+	if err != nil {
+		return err
+	}
+
+	// Check if the repo has been already processed
+	if repoAlreadyProcessed(dbSession, repoName, repoChecksum) {
+		log.WithFields(log.Fields{"url": repoURL}).Info("Skipping repository since there are no updates")
+		return nil
+	}
+
+	index, err := parseRepoIndex(repoBytes)
 	if err != nil {
 		return err
 	}
@@ -148,7 +166,37 @@ func syncRepo(dbSession datastore.Session, repoName, repoURL string, authorizati
 	// Wait for the worker pools to finish processing
 	wg.Wait()
 
+	// Update cache in the database
+	if err = updateLastCheck(dbSession, repoName, repoChecksum, time.Now()); err != nil {
+		return err
+	}
+	log.WithFields(log.Fields{"url": repoURL}).Info("Stored repository update in cache")
+
 	return nil
+}
+
+func getSha256(src []byte) (string, error) {
+	f := bytes.NewReader(src)
+	h := sha256.New()
+	if _, err := io.Copy(h, f); err != nil {
+		return "", err
+	}
+	return fmt.Sprintf("%x", h.Sum(nil)), nil
+}
+
+func repoAlreadyProcessed(dbSession datastore.Session, repoName string, checksum string) bool {
+	db, closer := dbSession.DB()
+	defer closer()
+	lastCheck := &repoCheck{}
+	err := db.C(repositoryCollection).Find(bson.M{"_id": repoName}).One(lastCheck)
+	return err == nil && checksum == lastCheck.Checksum
+}
+
+func updateLastCheck(dbSession datastore.Session, repoName string, checksum string, now time.Time) error {
+	db, closer := dbSession.DB()
+	defer closer()
+	_, err := db.C(repositoryCollection).UpsertId(repoName, bson.M{"$set": bson.M{"last_update": now, "checksum": checksum}})
+	return err
 }
 
 func deleteRepo(dbSession datastore.Session, repoName string) error {
@@ -167,8 +215,8 @@ func deleteRepo(dbSession datastore.Session, repoName string) error {
 	return err
 }
 
-func fetchRepoIndex(r repo) (*helmrepo.IndexFile, error) {
-	indexURL, err := parseRepoUrl(r.URL)
+func fetchRepoIndex(r repo) ([]byte, error) {
+	indexURL, err := parseRepoURL(r.URL)
 	if err != nil {
 		log.WithFields(log.Fields{"url": r.URL}).WithError(err).Error("failed to parse URL")
 		return nil, err
@@ -203,7 +251,7 @@ func fetchRepoIndex(r repo) (*helmrepo.IndexFile, error) {
 	if err != nil {
 		return nil, err
 	}
-	return parseRepoIndex(body)
+	return body, nil
 }
 
 func parseRepoIndex(body []byte) (*helmrepo.IndexFile, error) {
@@ -433,7 +481,7 @@ func extractFilesFromTarball(filenames []string, tarf *tar.Reader) (map[string]s
 
 func chartTarballURL(r repo, cv chartVersion) string {
 	source := cv.URLs[0]
-	if _, err := parseRepoUrl(source); err != nil {
+	if _, err := parseRepoURL(source); err != nil {
 		// If the chart URL is not absolute, join with repo URL. It's fine if the
 		// URL we build here is invalid as we can catch this error when actually
 		// making the request
