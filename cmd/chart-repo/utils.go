@@ -106,7 +106,7 @@ func syncRepo(dbSession datastore.Session, repoName, repoURL string, authorizati
 
 	// Check if the repo has been already processed
 	if repoAlreadyProcessed(dbSession, repoName, repoChecksum) {
-		log.WithFields(log.Fields{"url": repoURL}).Info("Skipping repository since it has been already processed")
+		log.WithFields(log.Fields{"url": repoURL}).Info("Skipping repository since there are no updates")
 		return nil
 	}
 
