@@ -468,7 +468,7 @@ func extractFilesFromTarball(filenames []string, tarf *tar.Reader) (map[string]s
 		}
 
 		for _, f := range filenames {
-			if header.Name == f {
+			if strings.EqualFold(header.Name, f) {
 				var b bytes.Buffer
 				io.Copy(&b, tarf)
 				ret[f] = string(b.Bytes())
