@@ -479,6 +479,7 @@ func Test_extractFilesFromTarball(t *testing.T) {
 		{"file", []tarballFile{{"file.txt", "best file ever"}}, "file.txt", "best file ever"},
 		{"multiple file tarball", []tarballFile{{"file.txt", "best file ever"}, {"file2.txt", "worst file ever"}}, "file2.txt", "worst file ever"},
 		{"file in dir", []tarballFile{{"file.txt", "best file ever"}, {"test/file2.txt", "worst file ever"}}, "test/file2.txt", "worst file ever"},
+		{"filename ignore case", []tarballFile{{"Readme.md", "# readme for chart"}, {"values.yaml", "key: value"}}, "README.md", "# readme for chart"},
 	}
 
 	for _, tt := range tests {
