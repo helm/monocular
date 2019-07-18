@@ -2,6 +2,21 @@ apiVersion: v1
 entries:
   monocular:
   - apiVersion: v1
+    appVersion: v1.8.2
+    created: 2019-07-18T09:42:23.187625951Z
+    description: Monocular is a search and discovery front end for Helm Charts Repositories.
+    digest: 836e3417b2ef9c6174c3a2f0c28720bdef9a9cd902a9d9513065ab6712a7b4d4
+    home: https://github.com/helm/monocular
+    maintainers:
+    - email: adnan@bitnami.com
+      name: prydonius
+    name: monocular
+    sources:
+    - https://github.com/helm/monocular
+    urls:
+    - https://helm.github.io/monocular/monocular-1.4.9.tgz
+    version: 1.4.9
+  - apiVersion: v1
     appVersion: v1.8.1
     created: 2019-07-15T10:32:58.307526854Z
     description: Monocular is a search and discovery front end for Helm Charts Repositories.
@@ -736,4 +751,4 @@ entries:
     urls:
     - https://helm.github.io/monocular/monocular-0.4.2.tgz
     version: 0.4.2
-generated: 2019-07-15T10:32:58.304748316Z
+generated: 2019-07-18T09:42:23.186274891Z
