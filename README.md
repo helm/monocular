@@ -62,6 +62,10 @@ Broker](https://blog.openshift.com/automation-broker-discovering-helm-charts/)).
 includes in-cluster features and can still be installed and used until your team
 has migrated to another tool.
 
+## Happy helming in China
+
+If you are in China, there are some problems to use Helm Hub (e.g. gcr.io, googleapis.com etc), you can use this mirror hub at https://developer.aliyun.com/hub.
+
 ## Roadmap
 
 The [Monocular roadmap is currently located in the wiki](https://github.com/helm/monocular/wiki/Roadmap).
