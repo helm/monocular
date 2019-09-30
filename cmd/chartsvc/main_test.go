@@ -465,3 +465,60 @@ func Test_GetChartValues(t *testing.T) {
 		})
 	}
 }
+
+// tests the GET /{apiVersion}/assets/{repo}/{chartName}/versions/{version}/values/schema.json endpoint
+func Test_GetChartSchema(t *testing.T) {
+	ts := httptest.NewServer(setupRoutes())
+	defer ts.Close()
+
+	tests := []struct {
+		name     string
+		version  string
+		err      error
+		files    models.ChartFiles
+		wantCode int
+	}{
+		{
+			"chart does not exist",
+			"0.1.0",
+			errors.New("return an error when checking if chart exists"),
+			models.ChartFiles{ID: "my-repo/my-chart"},
+			http.StatusNotFound,
+		},
+		{
+			"chart exists",
+			"3.2.1",
+			nil,
+			models.ChartFiles{ID: "my-repo/my-chart", Schema: testChartSchema},
+			http.StatusOK,
+		},
+		{
+			"chart does not have values.schema.json",
+			"2.2.2",
+			nil,
+			models.ChartFiles{ID: "my-repo/my-chart"},
+			http.StatusOK,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var m mock.Mock
+			dbSession = mockstore.NewMockSession(&m)
+			if tt.err != nil {
+				m.On("One", mock.Anything).Return(tt.err)
+			} else {
+				m.On("One", &models.ChartFiles{}).Return(nil).Run(func(args mock.Arguments) {
+					*args.Get(0).(*models.ChartFiles) = tt.files
+				})
+			}
+
+			res, err := http.Get(ts.URL + pathPrefix + "/assets/" + tt.files.ID + "/versions/" + tt.version + "/values.schema.json")
+			assert.NoError(t, err)
+			defer res.Body.Close()
+
+			m.AssertExpectations(t)
+			assert.Equal(t, res.StatusCode, tt.wantCode, "http status code should match")
+		})
+	}
+}

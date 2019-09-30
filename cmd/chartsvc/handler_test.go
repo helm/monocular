@@ -47,6 +47,7 @@ var cc count
 
 const testChartReadme = "# Quickstart\n\n```bash\nhelm install my-repo/my-chart\n```"
 const testChartValues = "image:\n  registry: docker.io\n  repository: my-repo/my-chart\n  tag: 0.1.0"
+const testChartSchema = `{"properties": {"type": "object"}}`
 
 func iconBytes() []byte {
 	var b bytes.Buffer
@@ -725,6 +726,70 @@ func Test_getChartVersionValues(t *testing.T) {
 			assert.Equal(t, tt.wantCode, w.Code, "http status code should match")
 			if tt.wantCode == http.StatusOK {
 				assert.Equal(t, string(w.Body.Bytes()), tt.files.Values, "content of values.yaml should match")
+			}
+		})
+	}
+}
+
+func Test_getChartVersionSchema(t *testing.T) {
+	tests := []struct {
+		name     string
+		version  string
+		err      error
+		files    models.ChartFiles
+		wantCode int
+	}{
+		{
+			"chart does not exist",
+			"0.1.0",
+			errors.New("return an error when checking if chart exists"),
+			models.ChartFiles{ID: "my-repo/my-chart"},
+			http.StatusNotFound,
+		},
+		{
+			"chart exists",
+			"3.2.1",
+			nil,
+			models.ChartFiles{ID: "my-repo/my-chart", Schema: testChartSchema},
+			http.StatusOK,
+		},
+		{
+			"chart does not have values.yaml",
+			"2.2.2",
+			nil,
+			models.ChartFiles{ID: "my-repo/my-chart"},
+			http.StatusOK,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var m mock.Mock
+			dbSession = mockstore.NewMockSession(&m)
+
+			if tt.err != nil {
+				m.On("One", mock.Anything).Return(tt.err)
+			} else {
+				m.On("One", &models.ChartFiles{}).Return(nil).Run(func(args mock.Arguments) {
+					*args.Get(0).(*models.ChartFiles) = tt.files
+				})
+			}
+
+			w := httptest.NewRecorder()
+			req := httptest.NewRequest("GET", "/assets/"+tt.files.ID+"/versions/"+tt.version+"/values.schema.json", nil)
+			parts := strings.Split(tt.files.ID, "/")
+			params := Params{
+				"repo":      parts[0],
+				"chartName": parts[1],
+				"version":   "0.1.0",
+			}
+
+			getChartVersionSchema(w, req, params)
+
+			m.AssertExpectations(t)
+			assert.Equal(t, tt.wantCode, w.Code, "http status code should match")
+			if tt.wantCode == http.StatusOK {
+				assert.Equal(t, string(w.Body.Bytes()), tt.files.Schema, "content of values.schema.json should match")
 			}
 		})
 	}
