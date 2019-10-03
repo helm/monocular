@@ -310,6 +310,21 @@ func getChartVersionValues(w http.ResponseWriter, req *http.Request, params Para
 	w.Write([]byte(files.Values))
 }
 
+// getChartVersionSchema returns the values.schema.json for a given chart
+func getChartVersionSchema(w http.ResponseWriter, req *http.Request, params Params) {
+	db, closer := dbSession.DB()
+	defer closer()
+	var files models.ChartFiles
+	fileID := fmt.Sprintf("%s/%s-%s", params["repo"], params["chartName"], params["version"])
+	if err := db.C(filesCollection).FindId(fileID).One(&files); err != nil {
+		log.WithError(err).Errorf("could not find values.schema.json with id %s", fileID)
+		http.NotFound(w, req)
+		return
+	}
+
+	w.Write([]byte(files.Schema))
+}
+
 // listChartsWithFilters returns the list of repos that contains the given chart and the latest version found
 func listChartsWithFilters(w http.ResponseWriter, req *http.Request, params Params) {
 	db, closer := dbSession.DB()

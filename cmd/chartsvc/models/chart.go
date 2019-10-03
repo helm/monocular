@@ -53,6 +53,7 @@ type ChartVersion struct {
 	URLs       []string  `json:"urls"`
 	Readme     string    `json:"readme" bson:"-"`
 	Values     string    `json:"values" bson:"-"`
+	Schema     string    `json:"schema" bson:"-"`
 }
 
 // ChartFiles holds the README and values for a given chart version
@@ -60,4 +61,5 @@ type ChartFiles struct {
 	ID     string `bson:"_id"`
 	Readme string
 	Values string
+	Schema string
 }

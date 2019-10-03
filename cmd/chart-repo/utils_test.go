@@ -124,10 +124,12 @@ type goodTarballClient struct {
 	c          chart
 	skipReadme bool
 	skipValues bool
+	skipSchema bool
 }
 
 var testChartReadme = "# readme for chart\n\nBest chart in town"
 var testChartValues = "image: test"
+var testChartSchema = `{"properties": {}}`
 
 func (h *goodTarballClient) Do(req *http.Request) (*http.Response, error) {
 	w := httptest.NewRecorder()
@@ -138,6 +140,9 @@ func (h *goodTarballClient) Do(req *http.Request) (*http.Response, error) {
 	}
 	if !h.skipReadme {
 		files = append(files, tarballFile{h.c.Name + "/README.md", testChartReadme})
+	}
+	if !h.skipSchema {
+		files = append(files, tarballFile{h.c.Name + "/values.schema.json", testChartSchema})
 	}
 	createTestTarball(gzw, files)
 	gzw.Flush()
@@ -159,6 +164,7 @@ func (h *authenticatedTarballClient) Do(req *http.Request) (*http.Response, erro
 		files := []tarballFile{{h.c.Name + "/Chart.yaml", "should be a Chart.yaml here..."}}
 		files = append(files, tarballFile{h.c.Name + "/values.yaml", testChartValues})
 		files = append(files, tarballFile{h.c.Name + "/README.md", testChartReadme})
+		files = append(files, tarballFile{h.c.Name + "/values.schema.json", testChartSchema})
 		createTestTarball(gzw, files)
 		gzw.Flush()
 	}
@@ -405,11 +411,11 @@ func Test_fetchAndImportFiles(t *testing.T) {
 	})
 
 	t.Run("file not found", func(t *testing.T) {
-		netClient = &goodTarballClient{c: charts[0], skipValues: true, skipReadme: true}
+		netClient = &goodTarballClient{c: charts[0], skipValues: true, skipReadme: true, skipSchema: true}
 		m := mock.Mock{}
 		m.On("One", mock.Anything).Return(errors.New("return an error when checking if files already exists to force fetching"))
 		chartFilesID := fmt.Sprintf("%s/%s-%s", charts[0].Repo.Name, charts[0].Name, cv.Version)
-		m.On("UpsertId", chartFilesID, chartFiles{chartFilesID, "", "", charts[0].Repo, cv.Digest})
+		m.On("UpsertId", chartFilesID, chartFiles{chartFilesID, "", "", "", charts[0].Repo, cv.Digest})
 		dbSession := mockstore.NewMockSession(&m)
 		err := fetchAndImportFiles(dbSession, charts[0].Name, charts[0].Repo, cv)
 		assert.NoErr(t, err)
@@ -421,7 +427,7 @@ func Test_fetchAndImportFiles(t *testing.T) {
 		m := mock.Mock{}
 		m.On("One", mock.Anything).Return(errors.New("return an error when checking if files already exists to force fetching"))
 		chartFilesID := fmt.Sprintf("%s/%s-%s", charts[0].Repo.Name, charts[0].Name, cv.Version)
-		m.On("UpsertId", chartFilesID, chartFiles{chartFilesID, testChartReadme, testChartValues, charts[0].Repo, cv.Digest})
+		m.On("UpsertId", chartFilesID, chartFiles{chartFilesID, testChartReadme, testChartValues, testChartSchema, charts[0].Repo, cv.Digest})
 		dbSession := mockstore.NewMockSession(&m)
 		err := fetchAndImportFiles(dbSession, charts[0].Name, charts[0].Repo, cv)
 		assert.NoErr(t, err)
@@ -433,7 +439,7 @@ func Test_fetchAndImportFiles(t *testing.T) {
 		m := mock.Mock{}
 		m.On("One", mock.Anything).Return(errors.New("return an error when checking if files already exists to force fetching"))
 		chartFilesID := fmt.Sprintf("%s/%s-%s", charts[0].Repo.Name, charts[0].Name, cv.Version)
-		m.On("UpsertId", chartFilesID, chartFiles{chartFilesID, testChartReadme, testChartValues, charts[0].Repo, cv.Digest})
+		m.On("UpsertId", chartFilesID, chartFiles{chartFilesID, testChartReadme, testChartValues, testChartSchema, charts[0].Repo, cv.Digest})
 		dbSession := mockstore.NewMockSession(&m)
 		err := fetchAndImportFiles(dbSession, charts[0].Name, charts[0].Repo, cv)
 		assert.NoErr(t, err)
