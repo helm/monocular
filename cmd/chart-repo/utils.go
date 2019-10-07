@@ -430,7 +430,8 @@ func fetchAndImportFiles(dbSession datastore.Session, name string, r repo, cv ch
 
 	readmeFileName := name + "/README.md"
 	valuesFileName := name + "/values.yaml"
-	filenames := []string{valuesFileName, readmeFileName}
+	schemaFileName := name + "/values.schema.json"
+	filenames := []string{valuesFileName, readmeFileName, schemaFileName}
 
 	files, err := extractFilesFromTarball(filenames, tarf)
 	if err != nil {
@@ -447,6 +448,11 @@ func fetchAndImportFiles(dbSession datastore.Session, name string, r repo, cv ch
 		chartFiles.Values = v
 	} else {
 		log.WithFields(log.Fields{"name": name, "version": cv.Version}).Info("values.yaml not found")
+	}
+	if v, ok := files[schemaFileName]; ok {
+		chartFiles.Schema = v
+	} else {
+		log.WithFields(log.Fields{"name": name, "version": cv.Version}).Info("values.schema.json not found")
 	}
 
 	// inserts the chart files if not already indexed, or updates the existing
