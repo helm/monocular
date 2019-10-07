@@ -56,7 +56,7 @@ See the [values](values.yaml) for the full list of configurable values.
 
 ### Configuring chart repositories
 
-You can configure the chart repositories you want to see in Monocular with the `api.config.repos` value, for example:
+You can configure the chart repositories you want to see in Monocular with the `sync.repos` value, for example:
 
 ```console
 $ cat > custom-repos.yaml <<EOF

@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ template "fullname" . }}-ui
@@ -6,6 +6,9 @@ metadata:
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
 spec:
   replicas: {{ .Values.ui.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "fullname" . }}-ui
   template:
     metadata:
       labels:
