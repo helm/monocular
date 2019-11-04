@@ -14,7 +14,7 @@ Click [here](docs/about.md) to learn more about Helm, Charts and Kubernetes.
 You can use the chart in this repository to install Monocular in your cluster.
 
 ### Prerequisites
-- [Helm and Tiller installed](https://github.com/helm/helm/blob/master/docs/quickstart.md)
+- [Helm and Tiller installed](https://helm.sh/docs/using_helm/#quickstart)
 - [Nginx Ingress controller](https://kubeapps.com/charts/stable/nginx-ingress)
   - Install with Helm: `helm install stable/nginx-ingress`
   - **Minikube/Kubeadm**: `helm install stable/nginx-ingress --set controller.hostNetwork=true`
