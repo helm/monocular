@@ -2,7 +2,7 @@
   <h1>Install</h1>
   <mat-tab-group>
     <mat-tab label="Helm CLI">
-      <div *ngIf="showRepoInstructions" class="chart-details-usage__repository">
+      <div class="chart-details-usage__repository">
         <h2 class="chart-details-usage__label">Add {{ chart.attributes.repo.name }} repository</h2>
         <mat-form-field>
           <input matInput floatingPlaceholder=false [value]=repoAddInstructions>

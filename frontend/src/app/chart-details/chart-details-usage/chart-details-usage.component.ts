@@ -42,10 +42,6 @@ export class ChartDetailsUsageComponent implements OnInit {
     });
   }
 
-  get showRepoInstructions(): boolean {
-    return this.chart.attributes.repo.name != 'stable';
-  }
-
   get repoAddInstructions(): string {
     return `helm repo add ${this.chart.attributes.repo.name} ${this.chart
       .attributes.repo.url}`;
