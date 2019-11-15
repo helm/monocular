@@ -29,6 +29,10 @@ export class ChartDetailsReadmeComponent implements OnChanges {
     this.chartsService.getChartReadme(this.currentVersion).subscribe(resp => {
       this.loading = false;
       this.readmeContent = markdown(resp.text());
+    },
+    err => {
+      this.loading = false;
+      this.readmeContent = markdown("#### Readme not found!");
     });
   }
 }
