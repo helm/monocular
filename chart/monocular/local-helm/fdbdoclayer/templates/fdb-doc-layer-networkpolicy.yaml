@@ -1,0 +1,20 @@
+{{- if .Values.networkPolicy.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ template "fullname" . }}-fdbdoclayer
+  labels:
+    app: {{ template "fullname" . }}-fdbdoclayer
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  podSelector:
+    matchLabels:
+      app: {{ template "fullname" . }}-fdbdoclayer
+      release: {{ .Release.Name }}
+  ingress:
+    ports:
+      port: {{ .Values.fdbdoclayer.service.port }}
+      protocol: TCP
+{{- end }}

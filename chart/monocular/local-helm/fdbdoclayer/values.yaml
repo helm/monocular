@@ -1,0 +1,26 @@
+fdbserver:
+  replicas: 1
+  image:
+    registry: docker.io
+    repository: kreinecke/foundationdb
+    tag: 6.0.18-k8s
+    pullPolicy: Always
+  service:
+    name: fdbserver
+    port: 4500
+
+fdbdoclayer:
+  replicas: 1
+  image:
+    registry: docker.io
+    repository: kreinecke/fdb-document-layer
+    tag: 1.6.3-k8s
+    pullPolicy: Always
+  service:
+    name: fdbdoclayer
+    port: 27016
+
+# Installs networkPolicy for the services. This will allow communication betweeen the services in
+# environments where the default policy is deny
+networkPolicy:
+  enabled: false

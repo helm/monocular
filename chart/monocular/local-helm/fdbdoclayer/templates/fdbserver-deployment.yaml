@@ -1,0 +1,45 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ template "fullname" . }}-fdbserver
+  labels:
+    app: {{ template "fullname" . }}-fdbserver
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  replicas: {{ .Values.fdbserver.replicas }}
+  selector:
+    matchLabels:
+      app: {{ template "fullname" . }}-fdbserver
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "fullname" . }}-fdbserver
+        release: {{ .Release.Name }}
+    spec:
+{{- with .Values.securityContext }}
+      securityContext:
+{{ toYaml . | indent 8 }}
+{{- end }}
+      containers:
+      - name: fdbserver
+        image: {{ template "fdb.image" .Values.fdbserver.image }}
+        env:
+        - name: FDB_COORDINATOR
+          value: {{ template "fullname" . }}-fdbserver.monocular.svc.cluster.local
+        - name: CLUSTER_ID
+          value: chartdb:erlklkg
+        ports:
+        - containerPort: {{ .Values.fdbserver.service.port }}
+        livenessProbe:
+          tcpSocket:
+            port: {{ .Values.fdbserver.service.port }}
+          initialDelaySeconds: 3
+          periodSeconds: 20
+        readinessProbe:
+          tcpSocket:
+            port: {{ .Values.fdbserver.service.port }}
+          initialDelaySeconds: 3
+          periodSeconds: 10

@@ -29,17 +29,25 @@ spec:
         command:
         - /chartsvc
         args:
-        {{- if and .Values.global.mongoUrl (not .Values.mongodb.enabled) }}
+        - --debug={{ default false .Values.dbDebug }}
+        {{- if and .Values.global.mongoUrl (and (not .Values.mongodb.enabled) (not .Values.fdbserver.enabled))}}
         - --mongo-url={{ .Values.global.mongoUrl }}
+        - --db-type=mongodb
+        {{- else if .Values.fdbserver.enabled}}
+        - --doclayer-url=mongodb://{{ template "doclayer.fullname" . }}:27016
+        - --db-type=fdb
         {{- else }}
-        - --mongo-user=root
         - --mongo-url={{ template "mongodb.fullname" . }}
-        env:
+        - --mongo-user=root
+        - --db-type=mongodb
+        {{- end }}
+        {{- if not .Values.fdbserver.enabled }}
+        env: 
         - name: MONGO_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: {{ template "mongodb.fullname" . }}
               key: mongodb-root-password
+              name: {{ template "mongodb.fullname" . }}
         {{- end }}
         ports:
         - name: http

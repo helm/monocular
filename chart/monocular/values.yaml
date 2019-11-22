@@ -1,9 +1,10 @@
 sync:
   # Image used to perform chart repository syncs
   image:
-    registry: quay.io
-    repository: helmpack/chart-repo
-    tag: v1.9.0
+    registry: docker.io
+    repository: kreinecke/chart-repo
+    tag: latest
+    pullPolicy: Always
   repos:
     # Official repositories
     - name: stable
@@ -35,9 +36,10 @@ sync:
 # Chartsvc is used to serve chart metadata over a REST API.
 chartsvc:
   image:
-    registry: quay.io
-    repository: helmpack/chartsvc
-    tag: v1.9.0
+    registry: docker.io
+    repository: kreinecke/chartsvc
+    tag: latest
+    pullPolicy: Always
   service:
     port: 8080
   replicas: 3
@@ -148,8 +150,11 @@ mongodb:
   persistence:
     enabled: false
 
+fdbserver:
+  enabled: false
+
 # External MongoDB connection URL.
-# This must be set if mongodb.enabled is set to false, following the pattern:
+# This must be set if mongodb.enabled and foundationdb are set to false, following the pattern:
 # `mongodb://${MONGODB_USER}:${MONGODB_ROOT_PASSWORD}@${MONGODB_DNS}:${MONGODB_PORT}/${MONGODB_DATABASE}`
 # ref: https://docs.mongodb.com/manual/reference/connection-string/
 global:
@@ -165,3 +170,5 @@ securityContext: {}
 networkPolicy:
   enabled: false
 
+# Enable debug output in chartsvc and cmd deployments
+debug: true

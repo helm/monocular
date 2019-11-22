@@ -1,4 +1,4 @@
-IMAGE_REPO ?= quay.io/helmpack/chartsvc
+IMAGE_REPO ?= docker.io/kreinecke/chartsvc
 IMAGE_TAG ?= latest
 
 docker-build:
