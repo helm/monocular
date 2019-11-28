@@ -212,6 +212,13 @@ func deleteRepo(dbSession datastore.Session, repoName string) error {
 	_, err = db.C(chartFilesCollection).RemoveAll(bson.M{
 		"repo.name": repoName,
 	})
+	if err != nil {
+		return err
+	}
+
+	_, err = db.C(repositoryCollection).RemoveAll(bson.M{
+		"_id": repoName,
+	})
 	return err
 }
 

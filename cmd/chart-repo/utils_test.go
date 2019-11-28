@@ -336,6 +336,9 @@ func Test_DeleteRepo(t *testing.T) {
 	m.On("RemoveAll", bson.M{
 		"repo.name": "test",
 	})
+	m.On("RemoveAll", bson.M{
+		"_id": "test",
+	})
 	dbSession := mockstore.NewMockSession(m)
 
 	err := deleteRepo(dbSession, "test")
