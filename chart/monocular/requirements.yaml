@@ -3,3 +3,7 @@ dependencies:
   version: 7.2.10
   repository: https://kubernetes-charts.storage.googleapis.com
   condition: mongodb.enabled
+- name: fdbdoclayer
+  version: 0.1.0
+  repository: file://./local-helm/fdbdoclayer/
+  condition: fdbserver.enabled

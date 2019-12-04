@@ -12,9 +12,11 @@ require (
 	github.com/eknkc/amber v0.0.0-20171010120322-cdade1c07385 // indirect
 	github.com/ghodss/yaml v0.0.0-20150909031657-73d445a93680
 	github.com/globalsign/mgo v0.0.0-20180615134936-113d3961e731
+	github.com/go-stack/stack v1.8.0 // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/gogo/protobuf v1.2.1 // indirect
 	github.com/golang/protobuf v1.2.0 // indirect
+	github.com/golang/snappy v0.0.1 // indirect
 	github.com/gorilla/context v1.1.1 // indirect
 	github.com/gorilla/mux v1.6.2
 	github.com/heptiolabs/healthcheck v0.0.0-20180807145615-6ff867650f40
@@ -34,12 +36,18 @@ require (
 	github.com/stretchr/testify v1.2.2
 	github.com/unrolled/render v0.0.0-20180914162206-b9786414de4d // indirect
 	github.com/urfave/negroni v1.0.0
+	github.com/xdg/scram v0.0.0-20180814205039-7eeb5667e42c // indirect
+	github.com/xdg/stringprep v1.0.0 // indirect
+	go.mongodb.org/mongo-driver v1.1.3
 	golang.org/x/image v0.0.0-20180926015637-991ec62608f3 // indirect
 	golang.org/x/sync v0.0.0-20190227155943-e225da77a7e6 // indirect
 	golang.org/x/sys v0.0.0-20180928133829-e4b3c5e90611 // indirect
+	golang.org/x/text v0.3.2 // indirect
 	gopkg.in/DATA-DOG/go-sqlmock.v1 v1.3.0 // indirect
 	gopkg.in/yaml.v2 v2.2.1 // indirect
 	k8s.io/apimachinery v0.0.0-20180621070125-103fd098999d // indirect
 	k8s.io/client-go v9.0.0+incompatible // indirect
 	k8s.io/helm v2.13.1+incompatible
 )
+
+replace github.com/helm/monocular => github.com/cf-stratos/monocular v1.5.1-0.20191202124725-625fe8595697

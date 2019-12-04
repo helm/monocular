@@ -31,6 +31,14 @@ Render image reference
 {{- end -}}
 
 {{/*
+Create a default fully qualified app name for the document layer.
+We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
+*/}}
+{{- define "doclayer.fullname" -}}
+{{- printf "%s-%s" .Release.Name "fdbdoclayer" | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+{{/*
 Sync job pod template
 */}}
 {{- define "monocular.sync.podTemplate" -}}
@@ -48,18 +56,24 @@ spec:
     image: {{ template "monocular.image" $global.Values.sync.image }}
     args:
     - sync
+    - --debug={{ default false $global.Values.debug }}
     - --user-agent-comment=monocular/{{ $global.Chart.AppVersion }}
-    {{- if and $global.Values.global.mongoUrl (not $global.Values.mongodb.enabled) }}
+    {{- if and $global.Values.global.mongoUrl (and (not $global.Values.mongodb.enabled) (not $global.Values.fdbserver.enabled))}}
     - --mongo-url={{ $global.Values.global.mongoUrl }}
+    - --db-type=mongodb
+    {{- else if $global.Values.fdbserver.enabled}}
+    - --doclayer-url=mongodb://{{ template "doclayer.fullname" $global }}:27016
+    - --db-type=fdb
     {{- else }}
     - --mongo-url={{ template "mongodb.fullname" $global }}
     - --mongo-user=root
+    - --db-type=mongodb
     {{- end }}
     - {{ $repo.name }}
     - {{ $repo.url }}
     command:
     - /chart-repo
-    {{- if $global.Values.mongodb.enabled }}
+    {{- if or $global.Values.mongodb.enabled $global.Values.fdbserver.enabled}}
     env:
     - name: HTTP_PROXY
       value: {{ $global.Values.sync.httpProxy }}
@@ -67,6 +81,8 @@ spec:
       value: {{ $global.Values.sync.httpsProxy }}
     - name: NO_PROXY
       value: {{ $global.Values.sync.noProxy }}
+    {{- end }}
+    {{- if not $global.Values.fdbserver.enabled }}
     - name: MONGO_PASSWORD
       valueFrom:
         secretKeyRef:
