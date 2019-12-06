@@ -64,7 +64,7 @@ sync:
   repos:
     - name: stable
       url: https://kubernetes-charts.storage.googleapis.com
-      schedule: "0 * * * *"
+      schedule: "*/10 * * * *"
       successfulJobsHistoryLimit: 1
     - name: incubator
       url: https://kubernetes-charts-incubator.storage.googleapis.com
@@ -73,7 +73,7 @@ sync:
       url: https://helm.github.io/monocular
 EOF
 
-`schedule` and `successfulJobsHistoryLimit` are optional parameters. They default to `"0 * * * *"` and `3` respectively
+`schedule` and `successfulJobsHistoryLimit` are optional parameters. They default to `"*/10 * * * *"` and `3` respectively
 
 $ helm install monocular/monocular -f custom-repos.yaml
 ```
