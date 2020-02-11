@@ -86,7 +86,7 @@ func init() {
 // These steps are processed in this way to ensure relevant chart data is
 // imported into the database as fast as possible. E.g. we want all icons for
 // charts before fetching readmes for each chart and version pair.
-func syncRepo(dbSession datastore.Session, repoName, repoURL string, authorizationHeader string) error {
+func syncRepo(dbSession datastore.Session, repoName, repoURL string, authorizationHeader string, filter *filters) error {
 	url, err := parseRepoURL(repoURL)
 	if err != nil {
 		log.WithFields(log.Fields{"url": repoURL}).WithError(err).Error("failed to parse URL")
@@ -115,7 +115,7 @@ func syncRepo(dbSession datastore.Session, repoName, repoURL string, authorizati
 		return err
 	}
 
-	charts := chartsFromIndex(index, r)
+	charts := chartsFromIndex(index, r, filter)
 	if len(charts) == 0 {
 		return errors.New("no charts in repository index")
 	}
@@ -271,13 +271,39 @@ func parseRepoIndex(body []byte) (*helmrepo.IndexFile, error) {
 	return &index, nil
 }
 
-func chartsFromIndex(index *helmrepo.IndexFile, r repo) []chart {
+func chartsFromIndex(index *helmrepo.IndexFile, r repo, filter *filters) []chart {
 	var charts []chart
 	for _, entry := range index.Entries {
 		if entry[0].GetDeprecated() {
 			log.WithFields(log.Fields{"name": entry[0].GetName()}).Info("skipping deprecated chart")
 			continue
 		}
+		if len(filter.Annotations) > 0 {
+			for a, av := range filter.Annotations {
+				if v, ok := entry[0].Annotations[a]; ok {
+					if v == av {
+						charts = append(charts, newChart(entry, r))
+						continue
+					}
+				}
+			}
+		}
+
+		if len(filter.Names) > 0 {
+			for _, n := range filter.Names {
+				if entry[0].Name == n {
+					charts = append(charts, newChart(entry, r))
+					continue
+				}
+			}
+		}
+
+		if len(filter.Annotations) > 0 ||
+			len(filter.Names) > 0 {
+			log.WithFields(log.Fields{"name": entry[0].GetName()}).Info("skipping  chart as filters did not match")
+			continue
+		}
+
 		charts = append(charts, newChart(entry, r))
 	}
 	return charts

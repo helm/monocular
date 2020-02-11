@@ -66,3 +66,8 @@ type repoCheck struct {
 	LastUpdate time.Time `bson:"last_update"`
 	Checksum   string    `bson:"checksum"`
 }
+
+type filters struct {
+	Annotations map[string]string
+	Names       []string
+}

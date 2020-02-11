@@ -16,6 +16,9 @@ sync:
     #  source: my-repository-source
     #  schedule: "*/5 * * * *"
     #  successfulJobsHistoryLimit: 1
+    #  args:
+    #  - --filter-name=name
+    #  - --filter-annotation=annotation
   # Uncomment these properties to set HTTP proxy for chart synchronization jobs
   # httpProxy:
   # httpsProxy:
