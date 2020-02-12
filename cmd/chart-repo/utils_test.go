@@ -287,20 +287,6 @@ func Test_chartsFromIndex(t *testing.T) {
 	index, _ := parseRepoIndex([]byte(validRepoIndexYAML))
 	charts := chartsFromIndex(index, r, new(filters))
 	assert.Equal(t, len(charts), 2, "number of charts")
-	// filter on name
-	filter := new(filters)
-	filter.Names = append(filter.Names, "wordpress")
-	filter.Names = append(filter.Names, "not-found")
-    charts = chartsFromIndex(index, r, filter)
-    assert.Equal(t, len(charts), 1, "number of charts")
-	// filter on annotation
-	filter = new(filters)
-	filter.Annotations = make(map[string]string)
-	filter.Annotations["sync"] = "true"
-	filter.Annotations["not-found"] = "missing"
-	filter.Annotations["no-value"] = ""
-    assert.Equal(t, len(charts), 1, "number of charts")
-
 	indexWithDeprecated := validRepoIndexYAML + `
   deprecated-chart:
   - name: deprecated-chart
@@ -309,6 +295,50 @@ func Test_chartsFromIndex(t *testing.T) {
 	assert.NoErr(t, err)
 	charts = chartsFromIndex(index2, r, new(filters))
 	assert.Equal(t, len(charts), 2, "number of charts")
+}
+
+func Test_chartsFromIndexFilterByName(t *testing.T) {
+	r := repo{Name: "test", URL: "http://testrepo.com"}
+	index, _ := parseRepoIndex([]byte(validRepoIndexYAML))
+	filter := new(filters)
+	filter.Names = append(filter.Names, "wordpress")
+	filter.Names = append(filter.Names, "not-found")
+	charts := chartsFromIndex(index, r, filter)
+	assert.Equal(t, len(charts), 1, "number of charts")
+}
+
+func Test_chartsFromIndexFilterByAnnotationWithValue(t *testing.T) {
+	r := repo{Name: "test", URL: "http://testrepo.com"}
+	index, _ := parseRepoIndex([]byte(validRepoIndexYAML))
+	filter := new(filters)
+	filter.Annotations = make(map[string]string)
+	filter.Annotations["sync"] = "true"
+	filter.Annotations["not-found"] = "missing"
+	filter.Annotations["sync-by-name-only"] = ""
+	charts := chartsFromIndex(index, r, filter)
+	assert.Equal(t, len(charts), 1, "number of charts")
+}
+
+func Test_chartsFromIndexFilterByAnnotation(t *testing.T) {
+	r := repo{Name: "test", URL: "http://testrepo.com"}
+	index, _ := parseRepoIndex([]byte(validRepoIndexYAML))
+	// filter on annotation
+	filter := new(filters)
+	filter.Annotations = make(map[string]string)
+	filter.Annotations["sync-by-name-only"] = ""
+	charts := chartsFromIndex(index, r, filter)
+	assert.Equal(t, len(charts), 1, "number of charts")
+}
+
+func Test_chartsFromIndexFilterByAnnotationDuplicateMatches(t *testing.T) {
+	r := repo{Name: "test", URL: "http://testrepo.com"}
+	index, _ := parseRepoIndex([]byte(validRepoIndexYAML))
+	filter := new(filters)
+	filter.Annotations = make(map[string]string)
+	filter.Annotations["sync"] = "true"
+	filter.Annotations["sync-by-name-only"] = ""
+	charts := chartsFromIndex(index, r, filter)
+	assert.Equal(t, len(charts), 1, "number of charts")
 }
 
 func Test_newChart(t *testing.T) {

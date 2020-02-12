@@ -273,6 +273,7 @@ func parseRepoIndex(body []byte) (*helmrepo.IndexFile, error) {
 
 func chartsFromIndex(index *helmrepo.IndexFile, r repo, filter *filters) []chart {
 	var charts []chart
+ENTRYLOOP:
 	for _, entry := range index.Entries {
 		if entry[0].GetDeprecated() {
 			log.WithFields(log.Fields{"name": entry[0].GetName()}).Info("skipping deprecated chart")
@@ -281,9 +282,12 @@ func chartsFromIndex(index *helmrepo.IndexFile, r repo, filter *filters) []chart
 		if len(filter.Annotations) > 0 {
 			for a, av := range filter.Annotations {
 				if v, ok := entry[0].Annotations[a]; ok {
-					if v == av {
+					if len(av) == 0 {
 						charts = append(charts, newChart(entry, r))
-						continue
+						continue ENTRYLOOP
+					} else if v == av {
+						charts = append(charts, newChart(entry, r))
+						continue ENTRYLOOP
 					}
 				}
 			}
@@ -293,7 +297,7 @@ func chartsFromIndex(index *helmrepo.IndexFile, r repo, filter *filters) []chart
 			for _, n := range filter.Names {
 				if entry[0].Name == n {
 					charts = append(charts, newChart(entry, r))
-					continue
+					continue ENTRYLOOP
 				}
 			}
 		}

@@ -42,6 +42,9 @@ entries:
     urls:
     - https://kubernetes-charts.storage.googleapis.com/wordpress-0.7.5.tgz
     version: 0.7.5
+    annotations:
+      sync: "true"
+      sync-by-name-only: "true"
   - appVersion: 4.9.0
     created: 2017-12-01T11:49:00.136950565Z
     description: Web publishing platform for building blogs and websites.
