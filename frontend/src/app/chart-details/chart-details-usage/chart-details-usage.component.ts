@@ -48,6 +48,6 @@ export class ChartDetailsUsageComponent implements OnInit {
   }
 
   get installInstructions(): string {
-    return `helm install ${this.chart.id} --version ${this.currentVersion}`;
+    return `helm install ${this.chart.id} --version ${this.currentVersion} --generate-name`;
   }
 }
