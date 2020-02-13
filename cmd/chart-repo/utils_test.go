@@ -314,7 +314,6 @@ func Test_chartsFromIndexFilterByAnnotationWithValue(t *testing.T) {
 	filter.Annotations = make(map[string]string)
 	filter.Annotations["sync"] = "true"
 	filter.Annotations["not-found"] = "missing"
-	filter.Annotations["sync-by-name-only"] = ""
 	charts := chartsFromIndex(index, r, filter)
 	assert.Equal(t, len(charts), 1, "number of charts")
 }
@@ -337,6 +336,17 @@ func Test_chartsFromIndexFilterByAnnotationDuplicateMatches(t *testing.T) {
 	filter.Annotations = make(map[string]string)
 	filter.Annotations["sync"] = "true"
 	filter.Annotations["sync-by-name-only"] = ""
+	charts := chartsFromIndex(index, r, filter)
+	assert.Equal(t, len(charts), 1, "number of charts")
+}
+
+func Test_chartsFromIndexFilterByAnnotationAndName(t *testing.T) {
+	r := repo{Name: "test", URL: "http://testrepo.com"}
+	index, _ := parseRepoIndex([]byte(validRepoIndexYAML))
+	filter := new(filters)
+	filter.Annotations = make(map[string]string)
+	filter.Annotations["sync"] = "true"
+	filter.Names = append(filter.Names, "wordpress")
 	charts := chartsFromIndex(index, r, filter)
 	assert.Equal(t, len(charts), 1, "number of charts")
 }

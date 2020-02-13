@@ -273,38 +273,18 @@ func parseRepoIndex(body []byte) (*helmrepo.IndexFile, error) {
 
 func chartsFromIndex(index *helmrepo.IndexFile, r repo, filter *filters) []chart {
 	var charts []chart
-ENTRYLOOP:
 	for _, entry := range index.Entries {
 		if entry[0].GetDeprecated() {
 			log.WithFields(log.Fields{"name": entry[0].GetName()}).Info("skipping deprecated chart")
 			continue
 		}
-		if len(filter.Annotations) > 0 {
-			for a, av := range filter.Annotations {
-				if v, ok := entry[0].Annotations[a]; ok {
-					if len(av) == 0 {
-						charts = append(charts, newChart(entry, r))
-						continue ENTRYLOOP
-					} else if v == av {
-						charts = append(charts, newChart(entry, r))
-						continue ENTRYLOOP
-					}
-				}
-			}
-		}
-
-		if len(filter.Names) > 0 {
-			for _, n := range filter.Names {
-				if entry[0].Name == n {
-					charts = append(charts, newChart(entry, r))
-					continue ENTRYLOOP
-				}
-			}
-		}
 
 		if len(filter.Annotations) > 0 ||
 			len(filter.Names) > 0 {
-			log.WithFields(log.Fields{"name": entry[0].GetName()}).Info("skipping  chart as filters did not match")
+			if filterEntry(entry[0], filter){
+				charts = append(charts, newChart(entry, r))
+			}
+			log.WithFields(log.Fields{"name": entry[0].GetName()}).Info("skipping chart as filters did not match")
 			continue
 		}
 
@@ -565,4 +545,28 @@ func initNetClient(additionalCA string) (*http.Client, error) {
 			Proxy: http.ProxyFromEnvironment,
 		},
 	}, nil
+}
+
+// return true if entry matches any filter
+func filterEntry( entry *helmrepo.ChartVersion, filter *filters) bool {
+	if len(filter.Annotations) > 0 {
+		for a, av := range filter.Annotations {
+			if v, ok := entry.Annotations[a]; ok {
+				if len(av) == 0 {
+					return true
+				} else if v == av {
+					return true
+				}
+			}
+		}
+	}
+
+	if len(filter.Names) > 0 {
+		for _, n := range filter.Names {
+			if entry.Name == n {
+				return true
+			}
+		}
+	}
+	return false
 }
