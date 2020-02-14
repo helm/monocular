@@ -48,7 +48,7 @@ func init() {
 		cmd.Flags().String("mongo-database", "charts", "MongoDB database")
 		cmd.Flags().String("mongo-user", "", "MongoDB user")
 		cmd.Flags().StringSliceVar(&filterAnnotations, "filter-annotation", []string{}, "Filter by charts that match any of these annotations")
-		cmd.Flags().StringSliceVar(&filterNames, "filter-name", []string{}, "Filter charts name")
+		cmd.Flags().StringSliceVar(&filterNames, "filter-name", []string{}, "Filter by charts that match these names")
 
 		// see version.go
 		cmd.Flags().StringVarP(&userAgentComment, "user-agent-comment", "", "", "UserAgent comment used during outbound requests")
