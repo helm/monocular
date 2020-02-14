@@ -281,11 +281,10 @@ func chartsFromIndex(index *helmrepo.IndexFile, r repo, filter *filters) []chart
 
 		if len(filter.Annotations) > 0 ||
 			len(filter.Names) > 0 {
-			if filterEntry(entry[0], filter){
-				charts = append(charts, newChart(entry, r))
+			if !filterEntry(entry[0], filter) {
+				log.WithFields(log.Fields{"name": entry[0].GetName()}).Info("skipping chart as filters did not match")
+				continue
 			}
-			log.WithFields(log.Fields{"name": entry[0].GetName()}).Info("skipping chart as filters did not match")
-			continue
 		}
 
 		charts = append(charts, newChart(entry, r))
@@ -548,7 +547,7 @@ func initNetClient(additionalCA string) (*http.Client, error) {
 }
 
 // return true if entry matches any filter
-func filterEntry( entry *helmrepo.ChartVersion, filter *filters) bool {
+func filterEntry(entry *helmrepo.ChartVersion, filter *filters) bool {
 	if len(filter.Annotations) > 0 {
 		for a, av := range filter.Annotations {
 			if v, ok := entry.Annotations[a]; ok {

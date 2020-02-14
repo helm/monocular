@@ -277,7 +277,7 @@ func Test_parseRepoIndex(t *testing.T) {
 	t.Run("valid", func(t *testing.T) {
 		index, err := parseRepoIndex([]byte(validRepoIndexYAML))
 		assert.NoErr(t, err)
-		assert.Equal(t, len(index.Entries), 2, "number of charts")
+		assert.Equal(t, len(index.Entries), 3, "number of charts")
 		assert.Equal(t, index.Entries["acs-engine-autoscaler"][0].GetName(), "acs-engine-autoscaler", "chart version populated")
 	})
 }
@@ -286,7 +286,7 @@ func Test_chartsFromIndex(t *testing.T) {
 	r := repo{Name: "test", URL: "http://testrepo.com"}
 	index, _ := parseRepoIndex([]byte(validRepoIndexYAML))
 	charts := chartsFromIndex(index, r, new(filters))
-	assert.Equal(t, len(charts), 2, "number of charts")
+	assert.Equal(t, len(charts), 3, "number of charts")
 	indexWithDeprecated := validRepoIndexYAML + `
   deprecated-chart:
   - name: deprecated-chart
@@ -294,7 +294,7 @@ func Test_chartsFromIndex(t *testing.T) {
 	index2, err := parseRepoIndex([]byte(indexWithDeprecated))
 	assert.NoErr(t, err)
 	charts = chartsFromIndex(index2, r, new(filters))
-	assert.Equal(t, len(charts), 2, "number of charts")
+	assert.Equal(t, len(charts), 3, "number of charts")
 }
 
 func Test_chartsFromIndexFilterByName(t *testing.T) {
