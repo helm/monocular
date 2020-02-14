@@ -47,7 +47,7 @@ func init() {
 		cmd.Flags().String("mongo-url", "localhost", "MongoDB URL (see https://godoc.org/github.com/globalsign/mgo#Dial for format)")
 		cmd.Flags().String("mongo-database", "charts", "MongoDB database")
 		cmd.Flags().String("mongo-user", "", "MongoDB user")
-		cmd.Flags().StringSliceVar(&filterAnnotations, "filter-annotation", []string{}, "Filter charts with annotation")
+		cmd.Flags().StringSliceVar(&filterAnnotations, "filter-annotation", []string{}, "Filter by charts that match any of these annotations")
 		cmd.Flags().StringSliceVar(&filterNames, "filter-name", []string{}, "Filter charts name")
 
 		// see version.go
