@@ -307,6 +307,26 @@ func Test_chartsFromIndexFilterByName(t *testing.T) {
 	assert.Equal(t, len(charts), 1, "number of charts")
 }
 
+func Test_chartsFromIndexFilterByNameGlobbedSingleChar(t *testing.T) {
+	r := repo{Name: "test", URL: "http://testrepo.com"}
+	index, _ := parseRepoIndex([]byte(validRepoIndexYAML))
+	filter := new(filters)
+	filter.Names = append(filter.Names, "word?ress")
+	filter.Names = append(filter.Names, "not-found")
+	charts := chartsFromIndex(index, r, filter)
+	assert.Equal(t, len(charts), 1, "number of charts")
+}
+
+func Test_chartsFromIndexFilterByNameGlobbedWildcard(t *testing.T) {
+	r := repo{Name: "test", URL: "http://testrepo.com"}
+	index, _ := parseRepoIndex([]byte(validRepoIndexYAML))
+	filter := new(filters)
+	filter.Names = append(filter.Names, "word*")
+	filter.Names = append(filter.Names, "not-found")
+	charts := chartsFromIndex(index, r, filter)
+	assert.Equal(t, len(charts), 1, "number of charts")
+}
+
 func Test_chartsFromIndexFilterByAnnotationWithValue(t *testing.T) {
 	r := repo{Name: "test", URL: "http://testrepo.com"}
 	index, _ := parseRepoIndex([]byte(validRepoIndexYAML))

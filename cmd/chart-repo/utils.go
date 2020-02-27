@@ -31,6 +31,7 @@ import (
 	"net/url"
 	"os"
 	"path"
+	"path/filepath"
 	"strings"
 	"sync"
 	"time"
@@ -562,7 +563,8 @@ func filterEntry(entry *helmrepo.ChartVersion, filter *filters) bool {
 
 	if len(filter.Names) > 0 {
 		for _, n := range filter.Names {
-			if entry.Name == n {
+			matched, _ := filepath.Match(n, entry.Name)
+			if matched {
 				return true
 			}
 		}
