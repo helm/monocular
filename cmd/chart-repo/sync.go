@@ -18,6 +18,7 @@ package main
 
 import (
 	"os"
+	"strings"
 
 	"github.com/kubeapps/common/datastore"
 	"github.com/sirupsen/logrus"
@@ -46,6 +47,27 @@ var syncCmd = &cobra.Command{
 		if err != nil {
 			logrus.Fatal(err)
 		}
+
+		filter := new(filters)
+		filter.Annotations = make(map[string]string)
+		filterAnnotationsStrings, err := cmd.Flags().GetStringSlice("filter-annotation")
+		if err != nil {
+			logrus.Fatal(err)
+		}
+		for _, a := range filterAnnotationsStrings {
+			kv := strings.Split(a, "=")
+			if len(kv) == 2 {
+				filter.Annotations[kv[0]] = kv[1]
+			} else {
+				filter.Annotations[a] = ""
+			}
+		}
+		filterNammesStrings, err := cmd.Flags().GetStringSlice("filter-name")
+		if err != nil {
+			logrus.Fatal(err)
+		}
+		filter.Names = filterNammesStrings
+
 		mongoPW := os.Getenv("MONGO_PASSWORD")
 		debug, err := cmd.Flags().GetBool("debug")
 		if err != nil {
@@ -61,7 +83,7 @@ var syncCmd = &cobra.Command{
 		}
 
 		authorizationHeader := os.Getenv("AUTHORIZATION_HEADER")
-		if err = syncRepo(dbSession, args[0], args[1], authorizationHeader); err != nil {
+		if err = syncRepo(dbSession, args[0], args[1], authorizationHeader, filter); err != nil {
 			logrus.Fatalf("Can't add chart repository to database: %v", err)
 		}
 

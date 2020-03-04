@@ -16,6 +16,10 @@ sync:
     #  source: my-repository-source
     #  schedule: "*/5 * * * *"
     #  successfulJobsHistoryLimit: 1
+    #  args:
+    #  - --filter-name=name                    # sync if chart is named
+    #  - --filter-annotation=annotation        # sync if annotation exists
+    #  - --filter-annotation=annotation=value  # sync if annotation has value
   # Uncomment these properties to set HTTP proxy for chart synchronization jobs
   # httpProxy:
   # httpsProxy:
@@ -154,9 +158,8 @@ mongodb:
 # ref: https://docs.mongodb.com/manual/reference/connection-string/
 global:
   mongoUrl:
-  
 # This parameter will allow to set  securityContext: { "runAsUser": 1001} by example
-# this is usefull to set a user different to 0 (root) 
+# this is usefull to set a user different to 0 (root)
 # It allows to be launch in a Kubernetes with PodSecurityPolicy with a policy set runAsNonRoot
 securityContext: {}
 

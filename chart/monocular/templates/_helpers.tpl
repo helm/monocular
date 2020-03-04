@@ -55,6 +55,9 @@ spec:
     - --mongo-url={{ template "mongodb.fullname" $global }}
     - --mongo-user=root
     {{- end }}
+    {{- range $repo.args }}
+    - {{ . }}
+    {{- end }}
     - {{ $repo.name }}
     - {{ $repo.url }}
     command:

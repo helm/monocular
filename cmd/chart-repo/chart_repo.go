@@ -39,12 +39,17 @@ func main() {
 
 func init() {
 	cmds := []*cobra.Command{syncCmd, deleteCmd}
+	filterAnnotations := []string{}
+	filterNames := []string{}
 
 	for _, cmd := range cmds {
 		rootCmd.AddCommand(cmd)
 		cmd.Flags().String("mongo-url", "localhost", "MongoDB URL (see https://godoc.org/github.com/globalsign/mgo#Dial for format)")
 		cmd.Flags().String("mongo-database", "charts", "MongoDB database")
 		cmd.Flags().String("mongo-user", "", "MongoDB user")
+		cmd.Flags().StringSliceVar(&filterAnnotations, "filter-annotation", []string{}, "Filter by charts that match any of these annotations")
+		cmd.Flags().StringSliceVar(&filterNames, "filter-name", []string{}, "Filter by charts that match these names")
+
 		// see version.go
 		cmd.Flags().StringVarP(&userAgentComment, "user-agent-comment", "", "", "UserAgent comment used during outbound requests")
 		cmd.Flags().Bool("debug", false, "verbose logging")

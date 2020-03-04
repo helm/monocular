@@ -17,6 +17,53 @@ entries:
     urls:
     - https://kubernetes-charts.storage.googleapis.com/acs-engine-autoscaler-2.1.1.tgz
     version: 2.1.1
+  nginx-ingress:
+  - apiVersion: v1
+    appVersion: 0.28.0
+    created: 2020-02-14T00:58:48.780420335Z
+    description: An nginx Ingress controller that uses ConfigMap to store the nginx
+      configuration.
+    digest: c170639916a16e33a570923cebefe06066558a266f28a9b2c04d98357f984427
+    engine: gotpl
+    home: https://github.com/kubernetes/ingress-nginx
+    icon: https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Nginx_logo.svg/500px-Nginx_logo.svg.png
+    keywords:
+    - ingress
+    - nginx
+    kubeVersion: '>=1.10.0-0'
+    maintainers:
+    - name: ChiefAlexander
+    - email: Trevor.G.Wood@gmail.com
+      name: taharah
+    name: nginx-ingress
+    sources:
+    - https://github.com/kubernetes/ingress-nginx
+    urls:
+    - https://kubernetes-charts.storage.googleapis.com/nginx-ingress-1.30.2.tgz
+    version: 1.30.2
+  - apiVersion: v1
+    appVersion: 0.28.0
+    created: 2020-02-13T21:29:23.810801158Z
+    description: An nginx Ingress controller that uses ConfigMap to store the nginx
+      configuration.
+    digest: be955d4e77599468d63d61d1dc471fc488e36a3fca2263efd639f17260db1968
+    engine: gotpl
+    home: https://github.com/kubernetes/ingress-nginx
+    icon: https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Nginx_logo.svg/500px-Nginx_logo.svg.png
+    keywords:
+    - ingress
+    - nginx
+    kubeVersion: '>=1.10.0-0'
+    maintainers:
+    - name: ChiefAlexander
+    - email: Trevor.G.Wood@gmail.com
+      name: taharah
+    name: nginx-ingress
+    sources:
+    - https://github.com/kubernetes/ingress-nginx
+    urls:
+    - https://kubernetes-charts.storage.googleapis.com/nginx-ingress-1.30.1.tgz
+    version: 1.30.1
   wordpress:
   - appVersion: 4.9.1
     created: 2017-12-06T18:48:59.644981487Z
@@ -42,6 +89,9 @@ entries:
     urls:
     - https://kubernetes-charts.storage.googleapis.com/wordpress-0.7.5.tgz
     version: 0.7.5
+    annotations:
+      sync: "true"
+      sync-by-name-only: "true"
   - appVersion: 4.9.0
     created: 2017-12-01T11:49:00.136950565Z
     description: Web publishing platform for building blogs and websites.

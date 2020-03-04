@@ -183,7 +183,7 @@ func Test_syncURLInvalidity(t *testing.T) {
 	dbSession := mockstore.NewMockSession(&m)
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := syncRepo(dbSession, "test", tt.repoURL, "")
+			err := syncRepo(dbSession, "test", tt.repoURL, "", new(filters))
 			assert.ExistsErr(t, err, tt.name)
 		})
 	}
@@ -277,7 +277,7 @@ func Test_parseRepoIndex(t *testing.T) {
 	t.Run("valid", func(t *testing.T) {
 		index, err := parseRepoIndex([]byte(validRepoIndexYAML))
 		assert.NoErr(t, err)
-		assert.Equal(t, len(index.Entries), 2, "number of charts")
+		assert.Equal(t, len(index.Entries), 3, "number of charts")
 		assert.Equal(t, index.Entries["acs-engine-autoscaler"][0].GetName(), "acs-engine-autoscaler", "chart version populated")
 	})
 }
@@ -285,17 +285,90 @@ func Test_parseRepoIndex(t *testing.T) {
 func Test_chartsFromIndex(t *testing.T) {
 	r := repo{Name: "test", URL: "http://testrepo.com"}
 	index, _ := parseRepoIndex([]byte(validRepoIndexYAML))
-	charts := chartsFromIndex(index, r)
-	assert.Equal(t, len(charts), 2, "number of charts")
-
+	charts := chartsFromIndex(index, r, new(filters))
+	assert.Equal(t, len(charts), 3, "number of charts")
 	indexWithDeprecated := validRepoIndexYAML + `
   deprecated-chart:
   - name: deprecated-chart
     deprecated: true`
 	index2, err := parseRepoIndex([]byte(indexWithDeprecated))
 	assert.NoErr(t, err)
-	charts = chartsFromIndex(index2, r)
-	assert.Equal(t, len(charts), 2, "number of charts")
+	charts = chartsFromIndex(index2, r, new(filters))
+	assert.Equal(t, len(charts), 3, "number of charts")
+}
+
+func Test_chartsFromIndexFilterByName(t *testing.T) {
+	r := repo{Name: "test", URL: "http://testrepo.com"}
+	index, _ := parseRepoIndex([]byte(validRepoIndexYAML))
+	filter := new(filters)
+	filter.Names = append(filter.Names, "wordpress")
+	filter.Names = append(filter.Names, "not-found")
+	charts := chartsFromIndex(index, r, filter)
+	assert.Equal(t, len(charts), 1, "number of charts")
+}
+
+func Test_chartsFromIndexFilterByNameGlobbedSingleChar(t *testing.T) {
+	r := repo{Name: "test", URL: "http://testrepo.com"}
+	index, _ := parseRepoIndex([]byte(validRepoIndexYAML))
+	filter := new(filters)
+	filter.Names = append(filter.Names, "word?ress")
+	filter.Names = append(filter.Names, "not-found")
+	charts := chartsFromIndex(index, r, filter)
+	assert.Equal(t, len(charts), 1, "number of charts")
+}
+
+func Test_chartsFromIndexFilterByNameGlobbedWildcard(t *testing.T) {
+	r := repo{Name: "test", URL: "http://testrepo.com"}
+	index, _ := parseRepoIndex([]byte(validRepoIndexYAML))
+	filter := new(filters)
+	filter.Names = append(filter.Names, "word*")
+	filter.Names = append(filter.Names, "not-found")
+	charts := chartsFromIndex(index, r, filter)
+	assert.Equal(t, len(charts), 1, "number of charts")
+}
+
+func Test_chartsFromIndexFilterByAnnotationWithValue(t *testing.T) {
+	r := repo{Name: "test", URL: "http://testrepo.com"}
+	index, _ := parseRepoIndex([]byte(validRepoIndexYAML))
+	filter := new(filters)
+	filter.Annotations = make(map[string]string)
+	filter.Annotations["sync"] = "true"
+	filter.Annotations["not-found"] = "missing"
+	charts := chartsFromIndex(index, r, filter)
+	assert.Equal(t, len(charts), 1, "number of charts")
+}
+
+func Test_chartsFromIndexFilterByAnnotation(t *testing.T) {
+	r := repo{Name: "test", URL: "http://testrepo.com"}
+	index, _ := parseRepoIndex([]byte(validRepoIndexYAML))
+	// filter on annotation
+	filter := new(filters)
+	filter.Annotations = make(map[string]string)
+	filter.Annotations["sync-by-name-only"] = ""
+	charts := chartsFromIndex(index, r, filter)
+	assert.Equal(t, len(charts), 1, "number of charts")
+}
+
+func Test_chartsFromIndexFilterByAnnotationDuplicateMatches(t *testing.T) {
+	r := repo{Name: "test", URL: "http://testrepo.com"}
+	index, _ := parseRepoIndex([]byte(validRepoIndexYAML))
+	filter := new(filters)
+	filter.Annotations = make(map[string]string)
+	filter.Annotations["sync"] = "true"
+	filter.Annotations["sync-by-name-only"] = ""
+	charts := chartsFromIndex(index, r, filter)
+	assert.Equal(t, len(charts), 1, "number of charts")
+}
+
+func Test_chartsFromIndexFilterByAnnotationAndName(t *testing.T) {
+	r := repo{Name: "test", URL: "http://testrepo.com"}
+	index, _ := parseRepoIndex([]byte(validRepoIndexYAML))
+	filter := new(filters)
+	filter.Annotations = make(map[string]string)
+	filter.Annotations["sync"] = "true"
+	filter.Names = append(filter.Names, "wordpress")
+	charts := chartsFromIndex(index, r, filter)
+	assert.Equal(t, len(charts), 1, "number of charts")
 }
 
 func Test_newChart(t *testing.T) {
@@ -316,7 +389,7 @@ func Test_importCharts(t *testing.T) {
 	m.On("RemoveAll", mock.Anything)
 	dbSession := mockstore.NewMockSession(m)
 	index, _ := parseRepoIndex([]byte(validRepoIndexYAML))
-	charts := chartsFromIndex(index, repo{Name: "test", URL: "http://testrepo.com"})
+	charts := chartsFromIndex(index, repo{Name: "test", URL: "http://testrepo.com"}, new(filters))
 	importCharts(dbSession, charts)
 
 	m.AssertExpectations(t)
@@ -357,7 +430,7 @@ func Test_fetchAndImportIcon(t *testing.T) {
 	})
 
 	index, _ := parseRepoIndex([]byte(validRepoIndexYAML))
-	charts := chartsFromIndex(index, repo{Name: "test", URL: "http://testrepo.com"})
+	charts := chartsFromIndex(index, repo{Name: "test", URL: "http://testrepo.com"}, new(filters))
 
 	t.Run("failed download", func(t *testing.T) {
 		netClient = &badHTTPClient{}
@@ -402,7 +475,7 @@ func Test_fetchAndImportIcon(t *testing.T) {
 
 func Test_fetchAndImportFiles(t *testing.T) {
 	index, _ := parseRepoIndex([]byte(validRepoIndexYAML))
-	charts := chartsFromIndex(index, repo{Name: "test", URL: "http://testrepo.com", AuthorizationHeader: "Bearer ThisSecretAccessTokenAuthenticatesTheClient1s"})
+	charts := chartsFromIndex(index, repo{Name: "test", URL: "http://testrepo.com", AuthorizationHeader: "Bearer ThisSecretAccessTokenAuthenticatesTheClient1s"}, new(filters))
 	cv := charts[0].ChartVersions[0]
 
 	t.Run("http error", func(t *testing.T) {
@@ -622,7 +695,7 @@ func Test_emptyChartRepo(t *testing.T) {
 	m := mock.Mock{}
 	m.On("One", &repoCheck{}).Return(nil)
 	dbSession := mockstore.NewMockSession(&m)
-	err := syncRepo(dbSession, "testRepo", "https://my.examplerepo.com", "")
+	err := syncRepo(dbSession, "testRepo", "https://my.examplerepo.com", "", new(filters))
 	assert.ExistsErr(t, err, "Failed Request")
 }
 
