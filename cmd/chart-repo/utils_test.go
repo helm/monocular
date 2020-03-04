@@ -623,7 +623,7 @@ func Test_emptyChartRepo(t *testing.T) {
 	m.On("One", &repoCheck{}).Return(nil)
 	dbSession := mockstore.NewMockSession(&m)
 	err := syncRepo(dbSession, "testRepo", "https://my.examplerepo.com", "")
-	assert.ExistsErr(t, err, "Failed Request")
+	assert.NoErr(t, err)
 }
 
 func Test_getSha256(t *testing.T) {

@@ -117,7 +117,8 @@ func syncRepo(dbSession datastore.Session, repoName, repoURL string, authorizati
 
 	charts := chartsFromIndex(index, r)
 	if len(charts) == 0 {
-		return errors.New("no charts in repository index")
+		log.Warnf("The repository %s has no charts.", repoName)
+		return nil
 	}
 	err = importCharts(dbSession, charts)
 	if err != nil {
