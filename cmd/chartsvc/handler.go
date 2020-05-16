@@ -21,8 +21,10 @@ import (
 	"math"
 	"net/http"
 	"strconv"
+	"io"
 
 	"github.com/globalsign/mgo/bson"
+	"github.com/gorilla/feeds"
 	"github.com/gorilla/mux"
 	"github.com/helm/monocular/cmd/chartsvc/models"
 	"github.com/kubeapps/common/response"
@@ -209,6 +211,47 @@ func getChart(w http.ResponseWriter, req *http.Request, params Params) {
 
 	cr := newChartResponse(&chart)
 	response.NewDataResponse(cr).Write(w)
+}
+
+// getFeed returns the rss feed from the given repo
+func getFeed(w http.ResponseWriter, req *http.Request, params Params) {
+	db, closer := dbSession.DB()
+	defer closer()
+	var chart models.Chart
+	chartID := fmt.Sprintf("%s/%s", params["repo"], params["chartName"])
+	if err := db.C(chartCollection).FindId(chartID).One(&chart); err != nil {
+		log.WithError(err).Errorf("could not find chart with id %s", chartID)
+		response.NewErrorResponse(http.StatusNotFound, "could not find chart").Write(w)
+		return
+	}
+
+	feed := &feeds.Feed{
+		Title:       fmt.Sprintf("RSS Feed for chart %s/%s", params["repo"], params["chartName"]),
+		Link:        &feeds.Link{Href: fmt.Sprintf("%s/charts/%s/%s", req.Host, params["repo"], params["chartName"])},
+		Description: chart.Description,
+		Author:      &feeds.Author{Name: chart.Maintainers[0].Name, Email: chart.Maintainers[0].Email},
+	}
+
+	for _, cv := range chart.ChartVersions {
+		feed.Add(
+			&feeds.Item{
+				Title:       cv.Version,
+				Link:        &feeds.Link{Href: fmt.Sprintf("https://%s/charts/%s/%s/%s", req.Host, params["repo"], params["chartName"], cv.Version)},
+				Description: cv.Readme,
+				Created:     cv.Created,
+			},
+		)
+	}
+
+	rss, err := feed.ToAtom()
+	if err != nil {
+		log.WithError(err).Errorf("could not find rss feed for chart with id %s", chartID)
+		response.NewErrorResponse(http.StatusNotFound, "could not find rss feed for chart").Write(w)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/atom+xml; charset=utf-8")
+	io.WriteString(w, rss)
 }
 
 // listChartVersions returns a list of chart versions for the given chart

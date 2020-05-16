@@ -52,6 +52,7 @@ func setupRoutes() http.Handler {
 	apiv1.Methods("GET").Path("/charts/{repo}/search").Queries("q", "{query}").Handler(WithParams(searchCharts))
 	apiv1.Methods("GET").Path("/charts/{repo}/search").Queries("q", "{query}", "showDuplicates", "{showDuplicates}").Handler(WithParams(searchCharts))
 	apiv1.Methods("GET").Path("/charts/{repo}/{chartName}").Handler(WithParams(getChart))
+	apiv1.Methods("GET").Path("/charts/{repo}/{chartName}/rss").Handler(WithParams(getFeed))
 	apiv1.Methods("GET").Path("/charts/{repo}/{chartName}/versions").Handler(WithParams(listChartVersions))
 	apiv1.Methods("GET").Path("/charts/{repo}/{chartName}/versions/{version}").Handler(WithParams(getChartVersion))
 	apiv1.Methods("GET").Path("/assets/{repo}/{chartName}/logo").Handler(WithParams(getChartIcon))
