@@ -76,6 +76,10 @@ spec:
           key: mongodb-root-password
           name: {{ template "mongodb.fullname" $global }}
     {{- end }}
+    {{- with $global.Values.sync.extraVolumeMounts }}
+    volumeMounts:
+{{ toYaml . | indent 6 }}
+{{- end }}
     resources:
 {{ toYaml $global.Values.sync.resources | indent 6 }}
 {{- with $global.Values.sync.nodeSelector }}
@@ -88,6 +92,10 @@ spec:
 {{- end }}
 {{- with $global.Values.sync.tolerations }}
   tolerations:
+{{ toYaml . | indent 4 }}
+{{- end }}
+{{- with $global.Values.sync.extraVolumes }}
+  volumes:
 {{ toYaml . | indent 4 }}
 {{- end }}
 {{- end -}}
