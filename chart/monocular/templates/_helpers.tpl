@@ -77,25 +77,19 @@ spec:
           name: {{ template "mongodb.fullname" $global }}
     {{- end }}
     {{- with $global.Values.sync.extraVolumeMounts }}
-    volumeMounts:
-{{ toYaml . | indent 6 }}
+    volumeMounts: {{ toYaml . | nindent 6 }}
 {{- end }}
-    resources:
-{{ toYaml $global.Values.sync.resources | indent 6 }}
+    resources: {{ toYaml $global.Values.sync.resources | nindent 6 }}
 {{- with $global.Values.sync.nodeSelector }}
-  nodeSelector:
-{{ toYaml . | indent 4 }}
+  nodeSelector: {{ toYaml . | nindent 4 }}
 {{- end }}
 {{- with $global.Values.sync.affinity }}
-  affinity:
-{{ toYaml . | indent 4 }}
+  affinity: {{ toYaml . | nindent 4 }}
 {{- end }}
 {{- with $global.Values.sync.tolerations }}
-  tolerations:
-{{ toYaml . | indent 4 }}
+  tolerations: {{ toYaml . | nindent 4 }}
 {{- end }}
 {{- with $global.Values.sync.extraVolumes }}
-  volumes:
-{{ toYaml . | indent 4 }}
+  volumes: {{ toYaml . | nindent 4 }}
 {{- end }}
 {{- end -}}
