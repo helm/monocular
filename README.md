@@ -1,3 +1,6 @@
+|![](https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Warning.svg/156px-Warning.svg.png) | This project is no longer supported.
+|---|---|
+
 # Monocular
 [![CircleCI](https://circleci.com/gh/helm/monocular.svg?style=svg)](https://circleci.com/gh/helm/monocular)
 
@@ -8,6 +11,16 @@ charts from multiple Helm Chart repositories. It is the codebase that powers the
 ![Monocular Screenshot](docs/MonocularScreenshot.gif)
 
 Click [here](docs/about.md) to learn more about Helm, Charts and Kubernetes.
+
+## ⚠️ Deprecation and Archive Notice
+
+Monocular is deprecated and no longer supported. There have been no new updates
+to the codebase since March 2020. It has now been deprecated by the maintainers.
+
+If you need an open source project to display your charts you may consider using
+the [Artifact Hub](https://github.com/artifacthub/hub) (which you can
+[run yourself](https://artifacthub.io/packages/helm/artifact-hub/artifact-hub)).
+Helm uses the Artifact Hub software to power the built-in hub search.
 
 ## Install
 
