@@ -61,6 +61,11 @@ func setupRoutes() http.Handler {
 	apiv1.Methods("GET").Path("/assets/{repo}/{chartName}/versions/{version}/values.yaml").Handler(WithParams(getChartVersionValues))
 	apiv1.Methods("GET").Path("/assets/{repo}/{chartName}/versions/{version}/values.schema.json").Handler(WithParams(getChartVersionSchema))
 
+	// Handle redirects to the root chart. That way you can
+	// `helm install monocular.example.com/charts/foo/bar` and have monocular
+	// redirect to the right place.
+	apiv1.Methods("GET").PathPrefix("/redirect").HandlerFunc(redirectToChartVersionPackage)
+
 	n := negroni.Classic()
 	n.UseHandler(r)
 	return n

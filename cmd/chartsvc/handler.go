@@ -21,6 +21,7 @@ import (
 	"math"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/globalsign/mgo/bson"
 	"github.com/gorilla/mux"
@@ -458,4 +459,75 @@ func newChartVersionListResponse(c *models.Chart) apiListResponse {
 	}
 
 	return cvl
+}
+
+func redirectToChartVersionPackage(w http.ResponseWriter, req *http.Request) {
+	// The URL can be in one of two forms:
+	// - /v1/redirect/charts/stable/aerospike
+	// - /v1/redirect/charts/stable/aerospike/v1.2.3
+	// And either of these can optionally have a trailing /
+
+	// Make sure the path is valid
+	ct := strings.TrimPrefix(req.URL.Path, "/v1/redirect/charts/")
+
+	// check if URL for provenance
+	prov := strings.HasSuffix(ct, ".prov")
+	ct = strings.TrimSuffix(ct, ".prov")
+
+	ct = strings.TrimSuffix(ct, "/") // Removing the optional / on the end
+	parts := strings.Split(ct, "/")
+
+	// Not enough parts passed in to the path
+	if len(parts) < 2 || len(parts) > 3 {
+		response.NewErrorResponse(http.StatusNotFound, "could not find chart").Write(w)
+		return
+	}
+
+	// Decide if latest or a version
+	var version string
+	if len(parts) == 3 {
+		version = parts[2]
+	}
+
+	// Look it up. This will be different if there is a version or we are getting
+	// the latest
+	db, closer := dbSession.DB()
+	defer closer()
+	var chart models.Chart
+	chartID := fmt.Sprintf("%s/%s", parts[0], parts[1])
+
+	if version == "" {
+		if err := db.C(chartCollection).FindId(chartID).One(&chart); err != nil {
+			log.WithError(err).Errorf("could not find chart with id %s", chartID)
+			response.NewErrorResponse(http.StatusNotFound, "could not find chart").Write(w)
+			return
+		}
+	} else {
+		if err := db.C(chartCollection).Find(bson.M{
+			"_id":           chartID,
+			"chartversions": bson.M{"$elemMatch": bson.M{"version": version}},
+		}).Select(bson.M{
+			"name": 1, "repo": 1, "description": 1, "home": 1, "keywords": 1, "maintainers": 1, "sources": 1,
+			"chartversions.$": 1,
+		}).One(&chart); err != nil {
+			log.WithError(err).Errorf("could not find chart with id %s", chartID)
+			response.NewErrorResponse(http.StatusNotFound, "could not find chart version").Write(w)
+			return
+		}
+	}
+
+	// Respond with proper redirect for tarball and prov
+	if len(chart.ChartVersions) > 0 {
+		cv := chart.ChartVersions[0]
+		if len(cv.URLs) > 0 {
+			if prov {
+				http.Redirect(w, req, cv.URLs[0]+".prov", http.StatusTemporaryRedirect)
+			} else {
+				http.Redirect(w, req, cv.URLs[0], http.StatusTemporaryRedirect)
+			}
+			return
+		}
+	}
+
+	response.NewErrorResponse(http.StatusNotFound, "could not find chart version").Write(w)
 }

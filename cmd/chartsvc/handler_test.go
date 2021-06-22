@@ -907,3 +907,89 @@ func Test_findLatestChart(t *testing.T) {
 		assert.Equal(t, len(data), 2, "it should return both charts")
 	})
 }
+
+func Test_redirectToChartVersionPackage(t *testing.T) {
+	tests := []struct {
+		name     string
+		err      error
+		chart    models.Chart
+		wantCode int
+		location string
+	}{
+		{
+			"chart does not exist",
+			errors.New("return an error when checking if chart exists"),
+			models.Chart{ID: "my-repo/my-chart"},
+			http.StatusNotFound,
+			"",
+		},
+		{
+			"chart exists",
+			nil,
+			models.Chart{ID: "my-repo/my-chart", ChartVersions: []models.ChartVersion{{Version: "0.1.0", URLs: []string{"https://example.com/my-chart-0.1.0.tgz"}}, {Version: "0.0.1", URLs: []string{"https://example.com/my-chart-0.0.1.tgz"}}}},
+			http.StatusTemporaryRedirect,
+			"https://example.com/my-chart-0.1.0.tgz",
+		},
+		{
+			"chart exists with trailing /",
+			nil,
+			models.Chart{ID: "my-repo/my-chart/", ChartVersions: []models.ChartVersion{{Version: "0.1.0", URLs: []string{"https://example.com/my-chart-0.1.0.tgz"}}, {Version: "0.0.1", URLs: []string{"https://example.com/my-chart-0.0.1.tgz"}}}},
+			http.StatusTemporaryRedirect,
+			"https://example.com/my-chart-0.1.0.tgz",
+		},
+		{
+			"chart with version",
+			nil,
+			models.Chart{ID: "my-repo/my-chart/0.1.0", ChartVersions: []models.ChartVersion{{Version: "0.1.0", URLs: []string{"https://example.com/my-chart-0.1.0.tgz"}}}},
+			http.StatusTemporaryRedirect,
+			"https://example.com/my-chart-0.1.0.tgz",
+		},
+		{
+			"chart with version with trailing /",
+			nil,
+			models.Chart{ID: "my-repo/my-chart/0.1.0/", ChartVersions: []models.ChartVersion{{Version: "0.1.0", URLs: []string{"https://example.com/my-chart-0.1.0.tgz"}}}},
+			http.StatusTemporaryRedirect,
+			"https://example.com/my-chart-0.1.0.tgz",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var m mock.Mock
+			dbSession = mockstore.NewMockSession(&m)
+
+			if tt.err != nil {
+				m.On("One", mock.Anything).Return(tt.err)
+			} else {
+				m.On("One", &models.Chart{}).Return(nil).Run(func(args mock.Arguments) {
+					*args.Get(0).(*models.Chart) = tt.chart
+				})
+			}
+
+			w := httptest.NewRecorder()
+			req := httptest.NewRequest("GET", "/v1/redirect/charts/"+tt.chart.ID, nil)
+
+			redirectToChartVersionPackage(w, req)
+
+			m.AssertExpectations(t)
+			assert.Equal(t, tt.wantCode, w.Code)
+			if tt.wantCode == http.StatusTemporaryRedirect {
+				resp := w.Result()
+				assert.Equal(t, tt.location, resp.Header.Get("Location"), "response header location should be chart url")
+			}
+
+			// Check for provenance file
+			w = httptest.NewRecorder()
+			req = httptest.NewRequest("GET", "/v1/redirect/charts/"+tt.chart.ID+".prov", nil)
+
+			redirectToChartVersionPackage(w, req)
+
+			m.AssertExpectations(t)
+			assert.Equal(t, tt.wantCode, w.Code)
+			if tt.wantCode == http.StatusTemporaryRedirect {
+				resp := w.Result()
+				assert.Equal(t, tt.location+".prov", resp.Header.Get("Location"), "response header location should be chart provenance url")
+			}
+		})
+	}
+}
