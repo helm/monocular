@@ -35,6 +35,13 @@ sync:
   nodeSelector: {}
   tolerations: []
   affinity: {}
+  extraVolumes: []
+    # - name: monocular-ca-certs
+    #   configMap:
+    #     name: monocular-ca-certs
+  extraVolumeMounts: []
+    # - name: monocular-ca-certs
+    #   mountPath: /etc/ssl/certs/
 
 # Chartsvc is used to serve chart metadata over a REST API.
 chartsvc:
