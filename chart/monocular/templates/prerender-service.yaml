@@ -8,6 +8,9 @@ spec:
   type: {{ .Values.prerender.service.type }}
   ports:
   - port: {{ .Values.prerender.service.externalPort }}
+    {{if (and (eq .Values.prerender.service.type "NodePort") (not (empty .Values.prerender.service.nodePort)))}}
+    nodePort: {{.Values.prerender.service.nodePort}}
+    {{end}}
     targetPort: {{ .Values.prerender.service.internalPort }}
     protocol: TCP
     name: {{ .Values.prerender.service.name }}

@@ -115,6 +115,7 @@ prerender:
     type: NodePort
     externalPort: 80
     internalPort: 3000
+    nodePort: 30800
   resources:
     requests:
       cpu: 100m
