@@ -53,6 +53,19 @@ type apiResponse struct {
 
 type apiListResponse []*apiResponse
 
+// An object to return for the Helm search API. This is a simple representation
+// of the data.
+type helmApiResponse struct {
+	ID          string `json:"id"`
+	RepoID      string `json:"repoName"`
+	Repo        string `json:"repoUrl"`
+	Version     string `json:"version"`
+	AppVersion  string `json:"appVersion"`
+	Description string `json:"description"`
+}
+
+type helmApiListResponse []*helmApiResponse
+
 type selfLink struct {
 	Self string `json:"self"`
 }
@@ -458,4 +471,69 @@ func newChartVersionListResponse(c *models.Chart) apiListResponse {
 	}
 
 	return cvl
+}
+
+// helmAPISearch returns the list of charts that matches the query param in any of these fields:
+//  - name
+//  - description
+//  - repository name
+//  - any keyword
+//  - any source
+//  - any maintainer name
+// This API is means for Helm or other external clients to call
+func helmAPISearch(w http.ResponseWriter, req *http.Request, params Params) {
+	db, closer := dbSession.DB()
+	defer closer()
+
+	query := req.FormValue("q")
+	var charts []*models.Chart
+	conditions := bson.M{
+		"$or": []bson.M{
+			{"name": bson.M{"$regex": query}},
+			{"description": bson.M{"$regex": query}},
+			{"repo.name": bson.M{"$regex": query}},
+			{"keywords": bson.M{"$elemMatch": bson.M{"$regex": query}}},
+			{"sources": bson.M{"$elemMatch": bson.M{"$regex": query}}},
+			{"maintainers": bson.M{"$elemMatch": bson.M{"name": bson.M{"$regex": query}}}},
+		},
+	}
+	if params["repo"] != "" {
+		conditions["repo.name"] = params["repo"]
+	}
+	if err := db.C(chartCollection).Find(conditions).All(&charts); err != nil {
+		log.WithError(err).Errorf(
+			"could not find charts with the given query %s",
+			query,
+		)
+		// continue to return empty list
+	}
+
+	// Note, uniqChartList is used in the internal search, for the UI, and it will
+	// return just one instance of a chart from one repo with the same hash. The
+	// first one wins. In this case we are not adding the unique qualifier as the
+	// same chart could be in more than one repo and the repo is a level of decision
+	// making.
+	cl := newHelmAPIChartListResponse(charts)
+	response.NewDataResponse(cl).Write(w)
+}
+
+//
+func newHelmAPIChartListResponse(charts []*models.Chart) helmApiListResponse {
+	cl := helmApiListResponse{}
+	for _, c := range charts {
+		cl = append(cl, newHelmAPIChartResponse(c))
+	}
+	return cl
+}
+
+func newHelmAPIChartResponse(c *models.Chart) *helmApiResponse {
+	latestCV := c.ChartVersions[0]
+	return &helmApiResponse{
+		ID:          c.ID,
+		RepoID:      c.Repo.Name,
+		Repo:        c.Repo.URL,
+		Version:     latestCV.Version,
+		AppVersion:  latestCV.AppVersion,
+		Description: c.Description,
+	}
 }
